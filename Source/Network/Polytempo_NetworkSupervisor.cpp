@@ -1,0 +1,145 @@
+/* ==============================================================================
+ 
+ This file is part of the POLYTEMPO software package.
+ Copyright (c) 2016 - Zurich University of the Arts,
+ ICST Institute for Computer Music and Sound Technology
+ http://www.icst.net
+ 
+ Author: Philippe Kocher
+ 
+ POLYTEMPO is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ 
+ POLYTEMPO is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with this software. If not, see <http://www.gnu.org/licenses/>.
+ 
+ ============================================================================== */
+
+
+#include "Polytempo_NetworkSupervisor.h"
+
+#include "../../Resources/OSCPackLibrary/osc/OscOutboundPacketStream.h"
+
+#define SUPERVISOR_BUFFER_SIZE 1024
+
+
+Polytempo_NetworkSupervisor::Polytempo_NetworkSupervisor()
+{
+    startTimer(1000);
+
+    connectedPeersMap = new HashMap < String, String >();
+    tempConnectedPeersMap = new HashMap < String, String >();
+    
+    socket = nullptr;
+}
+
+Polytempo_NetworkSupervisor::~Polytempo_NetworkSupervisor()
+{
+    localAddress = nullptr;
+    localName = nullptr;
+    connectedPeersMap = nullptr;
+    tempConnectedPeersMap = nullptr;
+    
+    clearSingletonInstance();
+}
+
+juce_ImplementSingleton(Polytempo_NetworkSupervisor);
+
+void Polytempo_NetworkSupervisor::timerCallback()
+{
+    if(socket == nullptr) return;
+    // nothing to do, if there is no socket
+    
+    char buffer[SUPERVISOR_BUFFER_SIZE];
+    memset(buffer, 0, SUPERVISOR_BUFFER_SIZE);
+    osc::OutboundPacketStream p(buffer, SUPERVISOR_BUFFER_SIZE);
+    
+    Array<IPAddress> ip;
+    IPAddress::findAllAddresses(ip);
+    String addr = "0.0.0.0";
+    
+    // find local ip address
+    for(int i=0; i<ip.size(); i++)
+    {
+        if(ip[i].address[0] == 169) // inside a zeroconf network
+        {
+            addr = ip[i].toString();
+        }
+    }
+    
+    if(addr != *localAddress)
+    {
+        localAddress = new String(addr);
+        socket->renew();
+    }
+
+    // broadcast a heartbeat
+    String *name;
+    if(localName == nullptr) name = new String("Unnamed");
+    else                     name = localName;
+    p.Clear();
+    p << osc::BeginMessage("/node") << localAddress->toRawUTF8() << name->toRawUTF8() << osc::EndMessage;
+    socket->write(buffer, SUPERVISOR_BUFFER_SIZE);
+    
+
+    // update hash maps
+    connectedPeersMap->clear();
+    HashMap < String, String >::Iterator it(*tempConnectedPeersMap);
+    while(it.next())
+    {
+        connectedPeersMap->set(it.getKey(), it.getValue());
+    }
+    tempConnectedPeersMap->clear();
+    
+    if(component) component->repaint();
+}
+
+String Polytempo_NetworkSupervisor::getLocalAddress()
+{
+    return *localAddress;
+}
+
+String Polytempo_NetworkSupervisor::getLocalName()
+{
+    if(localName == nullptr) return "Local";
+    else                     return *localName;
+}
+
+HashMap <String, String>* Polytempo_NetworkSupervisor::getPeers()
+{
+    return connectedPeersMap;
+}
+
+void Polytempo_NetworkSupervisor::setSocket(Polytempo_Socket *theSocket)
+{
+    socket = theSocket;
+}
+
+void Polytempo_NetworkSupervisor::setComponent(Component *aComponent)
+{
+    component = aComponent;
+}
+
+void Polytempo_NetworkSupervisor::addPeer(String ip, String name)
+{
+    connectedPeersMap->set(ip, name);
+    tempConnectedPeersMap->set(ip, name);
+    component->repaint();
+}
+
+void Polytempo_NetworkSupervisor::eventNotification(Polytempo_Event *event)
+{
+    if(event->getType() == eventType_Settings)
+    {
+        localName = new String(event->getProperty("name").toString());
+    }
+}
+
+

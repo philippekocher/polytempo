@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="at55VB" name="PolytempoNetwork" projectType="guiapp" version="0.2.1"
+              bundleIdentifier="net.icst.PolytempoNetwork" jucerVersion="4.3.0"
+              companyName="ICST Institute for Computermusic and Sound Technology, Zurich"
+              includeBinaryInAppConfig="1" companyWebsite="www.icst.net" defines="POLYTEMPO_NETWORK=1">
+  <MAINGROUP id="AdMxtt" name="PolytempoNetwork">
+    <GROUP id="{380F2332-7EED-CAEF-0B98-BEC0BC16E53A}" name="Resources">
+      <GROUP id="{FD053D41-9B6B-00B6-836D-C43B3D3E8BDD}" name="OscPackLibrary">
+        <GROUP id="{D38E7D29-796B-14F5-1A72-D17F4974CAB8}" name="ip">
+          <GROUP id="{6B2428E9-5B1B-CDAB-BFD5-4F18BAA3A449}" name="posix">
+            <FILE id="Io7g1G" name="NetworkingUtils.cpp" compile="1" resource="0"
+                  file="../Resources/OscPackLibrary/ip/posix/NetworkingUtils.cpp"/>
+            <FILE id="cwqGlm" name="UdpSocket.cpp" compile="1" resource="0" file="../Resources/OscPackLibrary/ip/posix/UdpSocket.cpp"/>
+          </GROUP>
+          <GROUP id="{9F1AD134-62B9-04F6-C487-5D00EC002E25}" name="win32">
+            <FILE id="Zlg4dJ" name="NetworkingUtils.cpp" compile="0" resource="0"
+                  file="../Resources/OscPackLibrary/ip/win32/NetworkingUtils.cpp"/>
+            <FILE id="xO8It4" name="UdpSocket.cpp" compile="0" resource="0" file="../Resources/OscPackLibrary/ip/win32/UdpSocket.cpp"/>
+          </GROUP>
+          <FILE id="IucsCT" name="IpEndpointName.cpp" compile="1" resource="0"
+                file="../Resources/OscPackLibrary/ip/IpEndpointName.cpp"/>
+          <FILE id="XjHSSP" name="IpEndpointName.h" compile="0" resource="0"
+                file="../Resources/OscPackLibrary/ip/IpEndpointName.h"/>
+          <FILE id="R2q6er" name="NetworkingUtils.h" compile="0" resource="0"
+                file="../Resources/OscPackLibrary/ip/NetworkingUtils.h"/>
+          <FILE id="zAe0rt" name="PacketListener.h" compile="0" resource="0"
+                file="../Resources/OscPackLibrary/ip/PacketListener.h"/>
+          <FILE id="vahfOB" name="TimerListener.h" compile="0" resource="0" file="../Resources/OscPackLibrary/ip/TimerListener.h"/>
+          <FILE id="K21vR1" name="UdpSocket.h" compile="0" resource="0" file="../Resources/OscPackLibrary/ip/UdpSocket.h"/>
+        </GROUP>
+        <GROUP id="{917949A6-1288-94C9-9BEF-EA99EF33C8E9}" name="osc">
+          <FILE id="LYJgjL" name="MessageMappingOscPacketListener.h" compile="0"
+                resource="0" file="../Resources/OscPackLibrary/osc/MessageMappingOscPacketListener.h"/>
+          <FILE id="zxhdsl" name="OscException.h" compile="0" resource="0" file="../Resources/OscPackLibrary/osc/OscException.h"/>
+          <FILE id="b1WZNL" name="OscHostEndianness.h" compile="0" resource="0"
+                file="../Resources/OscPackLibrary/osc/OscHostEndianness.h"/>
+          <FILE id="hoB7Fe" name="OscOutboundPacketStream.cpp" compile="1" resource="0"
+                file="../Resources/OscPackLibrary/osc/OscOutboundPacketStream.cpp"/>
+          <FILE id="OQekuo" name="OscOutboundPacketStream.h" compile="0" resource="0"
+                file="../Resources/OscPackLibrary/osc/OscOutboundPacketStream.h"/>
+          <FILE id="Der5NW" name="OscPacketListener.h" compile="0" resource="0"
+                file="../Resources/OscPackLibrary/osc/OscPacketListener.h"/>
+          <FILE id="ucbHiV" name="OscPrintReceivedElements.cpp" compile="1" resource="0"
+                file="../Resources/OscPackLibrary/osc/OscPrintReceivedElements.cpp"/>
+          <FILE id="Fqzvqv" name="OscPrintReceivedElements.h" compile="0" resource="0"
+                file="../Resources/OscPackLibrary/osc/OscPrintReceivedElements.h"/>
+          <FILE id="HWp9pZ" name="OscReceivedElements.cpp" compile="1" resource="0"
+                file="../Resources/OscPackLibrary/osc/OscReceivedElements.cpp"/>
+          <FILE id="eiPNjm" name="OscReceivedElements.h" compile="0" resource="0"
+                file="../Resources/OscPackLibrary/osc/OscReceivedElements.h"/>
+          <FILE id="dH9STd" name="OscTypes.cpp" compile="1" resource="0" file="../Resources/OscPackLibrary/osc/OscTypes.cpp"/>
+          <FILE id="GesVZl" name="OscTypes.h" compile="0" resource="0" file="../Resources/OscPackLibrary/osc/OscTypes.h"/>
+        </GROUP>
+      </GROUP>
+      <FILE id="KOwPbh" name="icon.png" compile="0" resource="1" file="../Resources/icon.png"/>
+    </GROUP>
+    <FILE id="wwqCqe" name="Polytempo_NetworkMain.cpp" compile="1" resource="0"
+          file="../Source/Polytempo_NetworkMain.cpp"/>
+    <GROUP id="{0EAC018C-788E-AB92-4FA3-01D4C1320A00}" name="Application">
+      <GROUP id="{3BD75F47-1C2F-A2D5-271F-A00954DE0079}" name="PolytempoNetwork">
+        <FILE id="iqFdSp" name="Polytempo_NetworkApplication.cpp" compile="1"
+              resource="0" file="../Source/Application/PolytempoNetwork/Polytempo_NetworkApplication.cpp"/>
+        <FILE id="Pbhzyw" name="Polytempo_NetworkApplication.h" compile="0"
+              resource="0" file="../Source/Application/PolytempoNetwork/Polytempo_NetworkApplication.h"/>
+        <FILE id="L3r7EE" name="Polytempo_NetworkMenuBarModel.cpp" compile="1"
+              resource="0" file="../Source/Application/PolytempoNetwork/Polytempo_NetworkMenuBarModel.cpp"/>
+        <FILE id="XiIHwS" name="Polytempo_NetworkMenuBarModel.h" compile="0"
+              resource="0" file="../Source/Application/PolytempoNetwork/Polytempo_NetworkMenuBarModel.h"/>
+        <FILE id="DIJ0JG" name="Polytempo_NetworkWindow.cpp" compile="1" resource="0"
+              file="../Source/Application/PolytempoNetwork/Polytempo_NetworkWindow.cpp"/>
+        <FILE id="kXP3yW" name="Polytempo_NetworkWindow.h" compile="0" resource="0"
+              file="../Source/Application/PolytempoNetwork/Polytempo_NetworkWindow.h"/>
+      </GROUP>
+      <FILE id="eAaDjP" name="Polytempo_AboutWindow.cpp" compile="1" resource="0"
+            file="../Source/Application/Polytempo_AboutWindow.cpp"/>
+      <FILE id="CF39yG" name="Polytempo_AboutWindow.h" compile="0" resource="0"
+            file="../Source/Application/Polytempo_AboutWindow.h"/>
+      <FILE id="hV3g2Z" name="Polytempo_CommandIDs.h" compile="0" resource="0"
+            file="../Source/Application/Polytempo_CommandIDs.h"/>
+    </GROUP>
+    <GROUP id="{8166BBFE-D7D8-14E7-B24F-CF8613A26D47}" name="Audio+Midi">
+      <FILE id="wBgxBL" name="Polytempo_AudioClick.cpp" compile="1" resource="0"
+            file="../Source/Audio+Midi/Polytempo_AudioClick.cpp"/>
+      <FILE id="DMozbO" name="Polytempo_AudioClick.h" compile="0" resource="0"
+            file="../Source/Audio+Midi/Polytempo_AudioClick.h"/>
+      <FILE id="hEWiER" name="Polytempo_AudioDeviceManager.h" compile="0"
+            resource="0" file="../Source/Audio+Midi/Polytempo_AudioDeviceManager.h"/>
+      <FILE id="LkK3pX" name="Polytempo_MidiClick.cpp" compile="1" resource="0"
+            file="../Source/Audio+Midi/Polytempo_MidiClick.cpp"/>
+      <FILE id="YtDHYX" name="Polytempo_MidiClick.h" compile="0" resource="0"
+            file="../Source/Audio+Midi/Polytempo_MidiClick.h"/>
+      <FILE id="lbE6Gv" name="Polytempo_MidiInput.cpp" compile="1" resource="0"
+            file="../Source/Audio+Midi/Polytempo_MidiInput.cpp"/>
+      <FILE id="DPU9SM" name="Polytempo_MidiInput.h" compile="0" resource="0"
+            file="../Source/Audio+Midi/Polytempo_MidiInput.h"/>
+    </GROUP>
+    <GROUP id="{F9665608-9464-0810-C0A8-53FF50276476}" name="Data">
+      <FILE id="HUMUzZ" name="Polytempo_Score.cpp" compile="1" resource="0"
+            file="../Source/Data/Polytempo_Score.cpp"/>
+      <FILE id="t7G8OE" name="Polytempo_Score.h" compile="0" resource="0"
+            file="../Source/Data/Polytempo_Score.h"/>
+    </GROUP>
+    <GROUP id="{9EEF613D-4A99-41BD-A02B-A8D3B85FDC72}" name="Misc">
+      <FILE id="tL1VKC" name="Polytempo_Alerts.h" compile="0" resource="0"
+            file="../Source/Misc/Polytempo_Alerts.h"/>
+      <FILE id="NjgSdl" name="DragHandle.h" compile="0" resource="0" file="../Source/Misc/DragHandle.h"/>
+      <FILE id="l18ly7" name="Polytempo_Button.h" compile="0" resource="0"
+            file="../Source/Misc/Polytempo_Button.h"/>
+      <FILE id="bQeuDt" name="Polytempo_Globals.h" compile="0" resource="0"
+            file="../Source/Misc/Polytempo_Globals.h"/>
+      <FILE id="I1vaqm" name="Rational.h" compile="0" resource="0" file="../Source/Misc/Rational.h"/>
+      <FILE id="HhnxXR" name="Polytempo_Textbox.h" compile="0" resource="0"
+            file="../Source/Misc/Polytempo_Textbox.h"/>
+    </GROUP>
+    <GROUP id="{20871079-D757-6FAE-C7D7-6B4E6D796F76}" name="Network">
+      <FILE id="z9n1rK" name="Polytempo_NetworkSupervisor.cpp" compile="1"
+            resource="0" file="../Source/Network/Polytempo_NetworkSupervisor.cpp"/>
+      <FILE id="l8U2XX" name="Polytempo_NetworkSupervisor.h" compile="0"
+            resource="0" file="../Source/Network/Polytempo_NetworkSupervisor.h"/>
+      <FILE id="yEMJvo" name="Polytempo_OSCListener.cpp" compile="1" resource="0"
+            file="../Source/Network/Polytempo_OSCListener.cpp"/>
+      <FILE id="JgelSA" name="Polytempo_OSCListener.h" compile="0" resource="0"
+            file="../Source/Network/Polytempo_OSCListener.h"/>
+      <FILE id="TyPrSr" name="Polytempo_OSCSender.cpp" compile="1" resource="0"
+            file="../Source/Network/Polytempo_OSCSender.cpp"/>
+      <FILE id="ZIpQiM" name="Polytempo_OSCSender.h" compile="0" resource="0"
+            file="../Source/Network/Polytempo_OSCSender.h"/>
+    </GROUP>
+    <GROUP id="{47AC34E2-55B8-0A83-90F9-17E330BE25A4}" name="Preferences">
+      <FILE id="TtP3Vf" name="Polytempo_DefaultPreferences.cpp" compile="1"
+            resource="0" file="../Source/Preferences/Polytempo_DefaultPreferences.cpp"/>
+      <FILE id="AvwaHJ" name="Polytempo_DefaultPreferences.h" compile="0"
+            resource="0" file="../Source/Preferences/Polytempo_DefaultPreferences.h"/>
+      <FILE id="cHye3X" name="Polytempo_NetworkPrefenercesPanel.cpp" compile="1"
+            resource="0" file="../Source/Preferences/Polytempo_NetworkPrefenercesPanel.cpp"/>
+      <FILE id="G5hgHl" name="Polytempo_NetworkPreferencesPanel.h" compile="0"
+            resource="0" file="../Source/Preferences/Polytempo_NetworkPreferencesPanel.h"/>
+      <FILE id="tidu9S" name="Polytempo_StoredPreferences.cpp" compile="1"
+            resource="0" file="../Source/Preferences/Polytempo_StoredPreferences.cpp"/>
+      <FILE id="LOvd4N" name="Polytempo_StoredPreferences.h" compile="0"
+            resource="0" file="../Source/Preferences/Polytempo_StoredPreferences.h"/>
+    </GROUP>
+    <GROUP id="{84DE8E66-8605-C755-2401-EA93089F693B}" name="Scheduler">
+      <FILE id="NeUVvC" name="Polytempo_EventDispatcher.cpp" compile="1"
+            resource="0" file="../Source/Scheduler/Polytempo_EventDispatcher.cpp"/>
+      <FILE id="qLupYl" name="Polytempo_EventDispatcher.h" compile="0" resource="0"
+            file="../Source/Scheduler/Polytempo_EventDispatcher.h"/>
+      <FILE id="aPvR1f" name="Polytempo_Event.cpp" compile="1" resource="0"
+            file="../Source/Scheduler/Polytempo_Event.cpp"/>
+      <FILE id="T958Xl" name="Polytempo_Event.h" compile="0" resource="0"
+            file="../Source/Scheduler/Polytempo_Event.h"/>
+      <FILE id="ViFW90" name="Polytempo_EventObserver.cpp" compile="1" resource="0"
+            file="../Source/Scheduler/Polytempo_EventObserver.cpp"/>
+      <FILE id="QMlCv4" name="Polytempo_EventObserver.h" compile="0" resource="0"
+            file="../Source/Scheduler/Polytempo_EventObserver.h"/>
+      <FILE id="GuAQqg" name="Polytempo_Scheduler.cpp" compile="1" resource="0"
+            file="../Source/Scheduler/Polytempo_Scheduler.cpp"/>
+      <FILE id="U2bY8I" name="Polytempo_Scheduler.h" compile="0" resource="0"
+            file="../Source/Scheduler/Polytempo_Scheduler.h"/>
+      <FILE id="NANk1X" name="Polytempo_SchedulerEngine.cpp" compile="1"
+            resource="0" file="../Source/Scheduler/Polytempo_SchedulerEngine.cpp"/>
+      <FILE id="zk0Cl1" name="Polytempo_SchedulerEngine.h" compile="0" resource="0"
+            file="../Source/Scheduler/Polytempo_SchedulerEngine.h"/>
+    </GROUP>
+    <GROUP id="{387130A6-2BE3-19EF-2CB5-6ADE3718BBBC}" name="Views">
+      <GROUP id="{59998D8D-099D-1311-792D-74F9D735FAFF}" name="PolytempoNetwork">
+        <FILE id="u9knYA" name="Polytempo_AuxiliaryView.cpp" compile="1" resource="0"
+              file="../Source/Views/PolytempoNetwork/Polytempo_AuxiliaryView.cpp"/>
+        <FILE id="yj74Xp" name="Polytempo_AuxiliaryView.h" compile="0" resource="0"
+              file="../Source/Views/PolytempoNetwork/Polytempo_AuxiliaryView.h"/>
+        <FILE id="GkUsnq" name="Polytempo_GraphicsSplitViewRegion.cpp" compile="1"
+              resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_GraphicsSplitViewRegion.cpp"/>
+        <FILE id="I41ADb" name="Polytempo_GraphicsSplitViewRegion.h" compile="0"
+              resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_GraphicsSplitViewRegion.h"/>
+        <FILE id="xkX3nw" name="Polytempo_GraphicsView.cpp" compile="1" resource="0"
+              file="../Source/Views/PolytempoNetwork/Polytempo_GraphicsView.cpp"/>
+        <FILE id="Z6a5Uv" name="Polytempo_GraphicsView.h" compile="0" resource="0"
+              file="../Source/Views/PolytempoNetwork/Polytempo_GraphicsView.h"/>
+        <FILE id="MVPgnU" name="Polytempo_GraphicsViewRegion.cpp" compile="1"
+              resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_GraphicsViewRegion.cpp"/>
+        <FILE id="ZOmWKz" name="Polytempo_GraphicsViewRegion.h" compile="0"
+              resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_GraphicsViewRegion.h"/>
+        <FILE id="K4iWQX" name="Polytempo_ImageEditorComponent.cpp" compile="1"
+              resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_ImageEditorComponent.cpp"/>
+        <FILE id="RrLDZg" name="Polytempo_ImageEditorComponent.h" compile="0"
+              resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_ImageEditorComponent.h"/>
+        <FILE id="rujGNc" name="Polytempo_ImageEditorView.cpp" compile="1"
+              resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_ImageEditorView.cpp"/>
+        <FILE id="RsrOOJ" name="Polytempo_ImageEditorView.h" compile="0" resource="0"
+              file="../Source/Views/PolytempoNetwork/Polytempo_ImageEditorView.h"/>
+        <FILE id="wYVHeb" name="Polytempo_ImageManager.cpp" compile="1" resource="0"
+              file="../Source/Views/PolytempoNetwork/Polytempo_ImageManager.cpp"/>
+        <FILE id="knovRA" name="Polytempo_ImageManager.h" compile="0" resource="0"
+              file="../Source/Views/PolytempoNetwork/Polytempo_ImageManager.h"/>
+        <FILE id="pqaFmI" name="Polytempo_NetworkMainView.cpp" compile="1"
+              resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_NetworkMainView.cpp"/>
+        <FILE id="UVwdls" name="Polytempo_NetworkMainView.h" compile="0" resource="0"
+              file="../Source/Views/PolytempoNetwork/Polytempo_NetworkMainView.h"/>
+        <FILE id="pMRrnG" name="Polytempo_Progressbar.cpp" compile="1" resource="0"
+              file="../Source/Views/PolytempoNetwork/Polytempo_Progressbar.cpp"/>
+        <FILE id="JjsnBh" name="Polytempo_Progressbar.h" compile="0" resource="0"
+              file="../Source/Views/PolytempoNetwork/Polytempo_Progressbar.h"/>
+        <FILE id="TEAJZH" name="Polytempo_VisualMetro.cpp" compile="1" resource="0"
+              file="../Source/Views/PolytempoNetwork/Polytempo_VisualMetro.cpp"/>
+        <FILE id="vsBBMn" name="Polytempo_VisualMetro.h" compile="0" resource="0"
+              file="../Source/Views/PolytempoNetwork/Polytempo_VisualMetro.h"/>
+      </GROUP>
+    </GROUP>
+  </MAINGROUP>
+  <MODULES>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_cryptography" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_opengl" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_video" showAllCode="1" useLocalCopy="1"/>
+  </MODULES>
+  <EXPORTFORMATS>
+    <XCODE_MAC targetFolder="Builds/MacOSX/PolytempoNetwork" smallIcon="KOwPbh"
+               customPList="&lt;plist&gt;&lt;dict&gt;&#10;    &lt;key&gt;NSAppTransportSecurity&lt;/key&gt;  &#10;    &lt;dict&gt;  &#10;        &lt;key&gt;NSAllowsArbitraryLoads&lt;/key&gt;&#10;        &lt;true/&gt;  &#10;    &lt;/dict&gt;&#10;&lt;/dict&gt;&lt;/plist&gt;">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" osxSDK="default" osxCompatibility="10.9 SDK" osxArchitecture="default"
+                       isDebug="1" optimisation="1" targetName="PolytempoNetwork"/>
+        <CONFIGURATION name="Release" osxSDK="default" osxCompatibility="10.9 SDK" osxArchitecture="default"
+                       isDebug="0" optimisation="2" targetName="PolytempoNetwork" defines=""
+                       customXcodeFlags="COPY_PHASE_STRIP = NO,  GCC_GENERATE_DEBUGGING_SYMBOLS = YES "/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_video" path="../../../../../Documents/JUCE/modules"/>
+        <MODULEPATH id="juce_opengl" path="../../../../../Documents/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../../../../Documents/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../../../Documents/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../../../Documents/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../../../../Documents/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../../../Documents/JUCE/modules"/>
+        <MODULEPATH id="juce_cryptography" path="../../../../../Documents/JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../../../../../Documents/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../../../../Documents/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../../../../Documents/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../../../../Documents/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../../../../Documents/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="../../../../../Documents/JUCE/modules"/>
+      </MODULEPATHS>
+    </XCODE_MAC>
+  </EXPORTFORMATS>
+  <JUCEOPTIONS/>
+  <LIVE_SETTINGS>
+    <OSX enableCxx11="1"/>
+  </LIVE_SETTINGS>
+</JUCERPROJECT>
