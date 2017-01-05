@@ -23,9 +23,9 @@
  ============================================================================== */
 
 #include "Polytempo_NetworkMenuBarModel.h"
-#include "Polytempo_AboutWindow.h"
+#include "../Polytempo_AboutWindow.h"
 #include "Polytempo_NetworkApplication.h"
-#include "Polytempo_CommandIDs.h"
+#include "../Polytempo_CommandIDs.h"
 #include "../../Preferences/Polytempo_NetworkPreferencesPanel.h"
 #include "../../Preferences/Polytempo_StoredPreferences.h"
 #include "../../Scheduler/Polytempo_Scheduler.h"

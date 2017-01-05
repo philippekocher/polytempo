@@ -23,7 +23,7 @@
  ============================================================================== */
 
 #include "Polytempo_Ruler.h"
-#include "Polytempo_Globals.h"
+#include "../../Misc/Polytempo_Globals.h"
 #include "../../Preferences/Polytempo_StoredPreferences.h"
 #include "../../Data/Polytempo_Composition.h"
 

@@ -28,8 +28,8 @@
 #include "../../Preferences/Polytempo_StoredPreferences.h"
 #include "../../Data/Polytempo_Composition.h"
 #include "../../Scheduler/Polytempo_Scheduler.h"
-#include "Polytempo_CommandIDs.h"
-#include "Polytempo_DialogWindows.h"
+#include "../Polytempo_CommandIDs.h"
+#include "../../Views/PolytempoComposer/Polytempo_DialogWindows.h"
 
 
 Polytempo_ComposerMenuBarModel::Polytempo_ComposerMenuBarModel()
@@ -74,7 +74,7 @@ StringArray Polytempo_ComposerMenuBarModel::getMenuBarNames()
 #if JUCE_MAC
     const char* const names[] = { "File", "Edit", "View", "Scheduler", /*"Window",*/ "Help", 0 };
 #else
-    const char* const names[] = { JUCEApplication::getInstance()->getApplicationName(), "File", "Edit", "View", "Scheduler", /*"Window",*/ "Help", 0 };
+    const char* const names[] = { "File", "Edit", "View", "Scheduler", /*"Window",*/ "Help", 0 };
 #endif
     
     return StringArray (names);

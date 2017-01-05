@@ -26,7 +26,7 @@
 #define __Polytempo_Score__
 
 //#include "../../JuceLibraryCode/JuceHeader.h"
-#include "Polytempo_Event.h"
+#include "../Scheduler/Polytempo_Event.h"
 
 class Polytempo_Score_Section;
 

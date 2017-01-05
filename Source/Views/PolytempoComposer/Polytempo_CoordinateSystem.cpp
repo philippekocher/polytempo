@@ -23,10 +23,10 @@
  ============================================================================== */
 
 #include "Polytempo_CoordinateSystem.h"
-#include "Polytempo_Globals.h"
+#include "../../Misc/Polytempo_Globals.h"
 #include "../../Preferences/Polytempo_StoredPreferences.h"
 #include "Polytempo_Ruler.h"
-#include "Polytempo_ComposerApplication.h"
+#include "../../Application/PolytempoComposer/Polytempo_ComposerApplication.h"
 #include "../../Application/Polytempo_CommandIDs.h"
 
 

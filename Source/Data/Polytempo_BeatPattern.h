@@ -26,7 +26,7 @@
 #define __Polytempo_BeatPattern__
 
 #include "../Misc/Rational.h"
-#include "Polytempo_Event.h"
+#include "../Scheduler/Polytempo_Event.h"
 
 /*
  BeatPattern (a kind of "pattern factory" for beat events)
