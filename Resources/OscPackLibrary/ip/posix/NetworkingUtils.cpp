@@ -34,6 +34,7 @@
 	requested that these non-binding requests be included whenever the
 	above license is reproduced.
 */
+#ifndef WIN32
 #include "../NetworkingUtils.h"
 
 #include <netdb.h>
@@ -62,3 +63,4 @@ unsigned long GetHostByName( const char *name )
 
     return result;
 }
+#endif

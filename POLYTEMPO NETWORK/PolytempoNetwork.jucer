@@ -14,9 +14,9 @@
             <FILE id="cwqGlm" name="UdpSocket.cpp" compile="1" resource="0" file="../Resources/OscPackLibrary/ip/posix/UdpSocket.cpp"/>
           </GROUP>
           <GROUP id="{9F1AD134-62B9-04F6-C487-5D00EC002E25}" name="win32">
-            <FILE id="Zlg4dJ" name="NetworkingUtils.cpp" compile="0" resource="0"
+            <FILE id="Zlg4dJ" name="NetworkingUtils.cpp" compile="1" resource="0"
                   file="../Resources/OscPackLibrary/ip/win32/NetworkingUtils.cpp"/>
-            <FILE id="xO8It4" name="UdpSocket.cpp" compile="0" resource="0" file="../Resources/OscPackLibrary/ip/win32/UdpSocket.cpp"/>
+            <FILE id="xO8It4" name="UdpSocket.cpp" compile="1" resource="0" file="../Resources/OscPackLibrary/ip/win32/UdpSocket.cpp"/>
           </GROUP>
           <FILE id="IucsCT" name="IpEndpointName.cpp" compile="1" resource="0"
                 file="../Resources/OscPackLibrary/ip/IpEndpointName.cpp"/>
@@ -251,6 +251,30 @@
         <MODULEPATH id="juce_audio_basics" path="../../../../../Documents/JUCE/modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
+    <VS2015 targetFolder="Builds/VisualStudio2015">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
+                       isDebug="1" optimisation="1" targetName="PolytempoNetwork"/>
+        <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
+                       isDebug="0" optimisation="3" targetName="PolytempoNetwork"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_video" path="..\..\JUCE\modules"/>
+        <MODULEPATH id="juce_opengl" path="..\..\JUCE\modules"/>
+        <MODULEPATH id="juce_gui_extra" path="..\..\JUCE\modules"/>
+        <MODULEPATH id="juce_gui_basics" path="..\..\JUCE\modules"/>
+        <MODULEPATH id="juce_graphics" path="..\..\JUCE\modules"/>
+        <MODULEPATH id="juce_events" path="..\..\JUCE\modules"/>
+        <MODULEPATH id="juce_data_structures" path="..\..\JUCE\modules"/>
+        <MODULEPATH id="juce_cryptography" path="..\..\JUCE\modules"/>
+        <MODULEPATH id="juce_core" path="..\..\JUCE\modules"/>
+        <MODULEPATH id="juce_audio_utils" path="..\..\JUCE\modules"/>
+        <MODULEPATH id="juce_audio_processors" path="..\..\JUCE\modules"/>
+        <MODULEPATH id="juce_audio_formats" path="..\..\JUCE\modules"/>
+        <MODULEPATH id="juce_audio_devices" path="..\..\JUCE\modules"/>
+        <MODULEPATH id="juce_audio_basics" path="..\..\JUCE\modules"/>
+      </MODULEPATHS>
+    </VS2015>
   </EXPORTFORMATS>
   <JUCEOPTIONS/>
   <LIVE_SETTINGS>
