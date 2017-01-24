@@ -23,7 +23,7 @@
  ============================================================================== */
 
 #include "Polytempo_NetworkWindow.h"
-#include "Polytempo_NetworkMainView.h"
+#include "../../Views/PolytempoNetwork/Polytempo_NetworkMainView.h"
 #include "../../Preferences/Polytempo_StoredPreferences.h"
 #include "../../Scheduler/Polytempo_Scheduler.h"
 

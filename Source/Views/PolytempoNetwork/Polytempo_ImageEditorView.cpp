@@ -23,7 +23,7 @@
  ============================================================================== */
 
 #include "Polytempo_ImageEditorView.h"
-#include "Polytempo_NetworkApplication.h"
+#include "../../Application/PolytempoNetwork/Polytempo_NetworkApplication.h"
 #include "../../Preferences/Polytempo_StoredPreferences.h"
 #include "../../Misc/Polytempo_Alerts.h"
 

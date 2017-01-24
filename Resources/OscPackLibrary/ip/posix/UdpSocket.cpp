@@ -36,6 +36,8 @@
 */
 #include "../UdpSocket.h"
 
+#ifndef WIN32
+
 #include <pthread.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -600,3 +602,4 @@ void SocketReceiveMultiplexer::AsynchronousBreak()
 	impl_->AsynchronousBreak();
 }
 
+#endif
