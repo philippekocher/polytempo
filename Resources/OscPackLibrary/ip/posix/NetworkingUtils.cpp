@@ -1,3 +1,5 @@
+#ifndef WIN32
+
 /*
 	oscpack -- Open Sound Control (OSC) packet manipulation library
 	http://www.rossbencina.com/code/oscpack
@@ -34,7 +36,6 @@
 	requested that these non-binding requests be included whenever the
 	above license is reproduced.
 */
-#ifndef WIN32
 #include "../NetworkingUtils.h"
 
 #include <netdb.h>

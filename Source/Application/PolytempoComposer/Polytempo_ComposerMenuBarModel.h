@@ -26,13 +26,14 @@
 #define __Polytempo_ComposerMenuBarModel__
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "Polytempo_ComposerWindow.h"
 
 class Polytempo_ComposerMenuBarModel : public MenuBarModel,
                                        public ApplicationCommandTarget
 
 {
 public:
-    Polytempo_ComposerMenuBarModel();
+    Polytempo_ComposerMenuBarModel(Polytempo_ComposerWindow *theWindow);
     ~Polytempo_ComposerMenuBarModel();
         
     StringArray getMenuBarNames();
@@ -45,7 +46,8 @@ public:
 	bool perform (const InvocationInfo& info);
     
 private:
-    
+	Polytempo_ComposerWindow *window;
+
 #if JUCE_MAC
     ScopedPointer<PopupMenu> extraAppleMenuItems;
 #endif

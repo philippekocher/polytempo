@@ -49,7 +49,7 @@ Polytempo_ComposerWindow::Polytempo_ComposerWindow()
     restoreWindowContentStateFromString(Polytempo_StoredPreferences::getInstance()->getProps().getValue("mainWindowContent"));
 
     // create and manage a MenuBarComponent
-    menuBarModel = new Polytempo_ComposerMenuBarModel();
+    menuBarModel = new Polytempo_ComposerMenuBarModel(this);
 #if !JUCE_MAC
     //setMenuBar(MenuBarModel);
 #endif
