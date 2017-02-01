@@ -45,6 +45,7 @@ public:
 	bool perform (const InvocationInfo& info);
     
 
+private:
 #if JUCE_MAC
     ScopedPointer<PopupMenu> extraAppleMenuItems;
 #endif
