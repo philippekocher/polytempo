@@ -26,7 +26,6 @@
 #define __Polytempo_ComposerMenuBarModel__
 
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "Polytempo_ComposerWindow.h"
 
 class Polytempo_ComposerMenuBarModel : public MenuBarModel,
                                        public ApplicationCommandTarget
