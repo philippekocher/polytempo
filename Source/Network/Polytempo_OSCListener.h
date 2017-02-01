@@ -28,10 +28,10 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 
 
-class OSCMessage : public Message
+class PolytempoOSCMessage : public Message
 {
 public:
-    ~OSCMessage()
+    ~PolytempoOSCMessage()
     {
         data = nullptr;
     }

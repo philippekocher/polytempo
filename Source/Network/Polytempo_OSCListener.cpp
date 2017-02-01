@@ -51,9 +51,9 @@ void Polytempo_OSCListener::handleMessage(const Message& message)
 {
     if(true) //message.intParameter1 == 1) // 1 means I've received stuff.
     {        
-        int length = ((OSCMessage *)&message)->length;
+        int length = ((PolytempoOSCMessage *)&message)->length;
         
-        MemoryBlock* data (static_cast <MemoryBlock*> (((OSCMessage *)&message)->data));
+        MemoryBlock* data (static_cast <MemoryBlock*> (((PolytempoOSCMessage *)&message)->data));
                 
         osc::ReceivedMessage m = osc::ReceivedMessage(osc::ReceivedPacket((char *)data->getData(),length));
         
@@ -103,8 +103,8 @@ void Polytempo_OSCListener::handleMessage(const Message& message)
                 arg++;                
             }
             
-            Polytempo_Event *event = Polytempo_Event::makeEvent(address, *messages);
-            Polytempo_Scheduler::getInstance()->handleEvent(event, event->getTime());
+            //Polytempo_Event *event = Polytempo_Event::makeEvent(address, *messages);
+            //Polytempo_Scheduler::getInstance()->handleEvent(event, event->getTime());
         }
     }
 }
@@ -135,7 +135,7 @@ void Polytempo_OSCListener::run()
             
             if(senderIPAddress != Polytempo_NetworkSupervisor::getInstance()->getLocalAddress())
             {
-                OSCMessage *message = new OSCMessage();
+                PolytempoOSCMessage *message = new PolytempoOSCMessage();
             
                 message->setData(bytesRead, new MemoryBlock(*messageData));
                 postMessage(message);
