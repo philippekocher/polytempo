@@ -44,8 +44,6 @@ public:
     void getCommandInfo (CommandID commandID, ApplicationCommandInfo& result);
 	bool perform (const InvocationInfo& info);
     
-private:
-	Polytempo_ComposerWindow *window;
 
 #if JUCE_MAC
     ScopedPointer<PopupMenu> extraAppleMenuItems;
