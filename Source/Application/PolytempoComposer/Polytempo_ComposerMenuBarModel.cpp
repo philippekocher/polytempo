@@ -32,11 +32,9 @@
 #include "../../Views/PolytempoComposer/Polytempo_DialogWindows.h"
 
 
-Polytempo_ComposerMenuBarModel::Polytempo_ComposerMenuBarModel(Polytempo_ComposerWindow *theWindow)
+Polytempo_ComposerMenuBarModel::Polytempo_ComposerMenuBarModel()
 {
-	window = theWindow;
-
-    ApplicationCommandManager* commandManager = &Polytempo_ComposerApplication::getCommandManager();
+	ApplicationCommandManager* commandManager = &Polytempo_ComposerApplication::getCommandManager();
 
     commandManager->registerAllCommandsForTarget(this);
     commandManager->setFirstCommandTarget(this);
@@ -54,8 +52,6 @@ Polytempo_ComposerMenuBarModel::Polytempo_ComposerMenuBarModel(Polytempo_Compose
     extraAppleMenuItems->addCommandItem(commandManager, Polytempo_CommandIDs::preferencesWindow);
     
     MenuBarModel::setMacMainMenu (this, extraAppleMenuItems);
-#else
-	window->setMenuBar(this);
 #endif
     
 }

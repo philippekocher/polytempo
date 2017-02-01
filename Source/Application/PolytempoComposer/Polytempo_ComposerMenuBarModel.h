@@ -33,7 +33,7 @@ class Polytempo_ComposerMenuBarModel : public MenuBarModel,
 
 {
 public:
-    Polytempo_ComposerMenuBarModel(Polytempo_ComposerWindow *theWindow);
+    Polytempo_ComposerMenuBarModel();
     ~Polytempo_ComposerMenuBarModel();
         
     StringArray getMenuBarNames();

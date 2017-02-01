@@ -49,10 +49,8 @@ Polytempo_ComposerWindow::Polytempo_ComposerWindow()
     restoreWindowContentStateFromString(Polytempo_StoredPreferences::getInstance()->getProps().getValue("mainWindowContent"));
 
     // create and manage a MenuBarComponent
-    menuBarModel = new Polytempo_ComposerMenuBarModel(this);
-#if !JUCE_MAC
-    //setMenuBar(MenuBarModel);
-#endif
+	menuBarModel = new Polytempo_ComposerMenuBarModel();
+    setMenuBar(menuBarModel);
     
     // use keypresses that arrive in this window to send out commands
     ApplicationCommandManager* commandManager = &Polytempo_ComposerApplication::getCommandManager();
@@ -63,6 +61,7 @@ Polytempo_ComposerWindow::Polytempo_ComposerWindow()
 
 Polytempo_ComposerWindow::~Polytempo_ComposerWindow()
 {
+	setMenuBar(nullptr);
     mainView = nullptr;
 }
 
