@@ -103,8 +103,8 @@ void Polytempo_OSCListener::handleMessage(const Message& message)
                 arg++;                
             }
             
-            //Polytempo_Event *event = Polytempo_Event::makeEvent(address, *messages);
-            //Polytempo_Scheduler::getInstance()->handleEvent(event, event->getTime());
+            Polytempo_Event *event = Polytempo_Event::makeEvent(address, *messages);
+            Polytempo_Scheduler::getInstance()->handleEvent(event, event->getTime());
         }
     }
 }
