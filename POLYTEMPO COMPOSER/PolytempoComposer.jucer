@@ -185,6 +185,10 @@
               file="../Source/Network/Polytempo_OSCSender.cpp"/>
         <FILE id="WiX1Bc" name="Polytempo_OSCSender.h" compile="0" resource="0"
               file="../Source/Network/Polytempo_OSCSender.h"/>
+        <FILE id="jJjurB" name="Polytempo_Socket.cpp" compile="1" resource="0"
+              file="../Source/Network/Polytempo_Socket.cpp"/>
+        <FILE id="d3aVSt" name="Polytempo_Socket.h" compile="0" resource="0"
+              file="../Source/Network/Polytempo_Socket.h"/>
       </GROUP>
       <GROUP id="{70D5B0C3-A3BD-0007-7A8F-0EC797B02A2F}" name="Scheduler">
         <FILE id="wSI9vL" name="Polytempo_Event.cpp" compile="1" resource="0"

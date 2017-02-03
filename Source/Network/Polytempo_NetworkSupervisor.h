@@ -27,7 +27,7 @@
 
 //#include "../../JuceLibraryCode/JuceHeader.h"
 #include "../Scheduler/Polytempo_EventObserver.h"
-
+#include "Polytempo_Socket.h"
 #include "Polytempo_OSCSender.h"
 
 

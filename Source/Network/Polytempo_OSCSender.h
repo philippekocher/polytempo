@@ -28,24 +28,7 @@
 //#include "../../JuceLibraryCode/JuceHeader.h"
 
 #include "../Scheduler/Polytempo_EventObserver.h"
-
-
-class Polytempo_Socket
-{
-public:
-    Polytempo_Socket(const String& hostName_, int port_, bool ticks_ = false);
-    ~Polytempo_Socket();
-    
-    void renew();
-    void write(const void *sourceBuffer, int numBytesToWrite);
-    bool transmitsTicks();
-    
-private:
-    ScopedPointer < DatagramSocket > socket;
-    ScopedPointer < String > hostName;
-    int  port;
-    bool ticks;
-};
+#include "Polytempo_Socket.h"
 
 class Polytempo_OSCSender : public Polytempo_EventObserver
 {
