@@ -60,7 +60,11 @@ void Polytempo_OSCListener::handleMessage(const Message& message)
         if(std::strcmp(m.AddressPattern(), "/node" ) == 0)
         {
             osc::ReceivedMessage::const_iterator arg = m.ArgumentsBegin();
-            Polytempo_NetworkSupervisor::getInstance()->addPeer(arg->AsString(),(++arg)->AsString());
+			juce::String argIp = arg->AsString();
+			arg++;
+			juce::String argName = arg->AsString();
+
+            Polytempo_NetworkSupervisor::getInstance()->addPeer(argIp, argName);
         }
         
 #ifdef POLYTEMPO_NETWORK
