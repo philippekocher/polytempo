@@ -146,7 +146,7 @@ public:
     NamedValueSet* getProperties();
     
     // event to message conversion
-    const char* getOscAddressFromType();
+	String getOscAddressFromType();
     Array<var> getOscMessageFromParameters();
     static Polytempo_Event* makeEvent(const char *address, Array<var> values);
 

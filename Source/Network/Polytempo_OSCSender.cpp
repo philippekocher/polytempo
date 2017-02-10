@@ -87,7 +87,9 @@ void Polytempo_OSCSender::sendEventAsMessage(Polytempo_Event *event, Polytempo_S
     osc::OutboundPacketStream p( buffer, OUTPUT_BUFFER_SIZE );
     
     p.Clear();
-    p << osc::BeginMessage(event->getOscAddressFromType());
+
+	String addressType = event->getOscAddressFromType();
+    p << osc::BeginMessage(addressType.toRawUTF8());
     Array < var > messages = event->getOscMessageFromParameters();
     for(int i=0;i<messages.size();i++)
     {

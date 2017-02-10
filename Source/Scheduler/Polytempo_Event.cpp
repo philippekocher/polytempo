@@ -248,12 +248,11 @@ NamedValueSet* Polytempo_Event::getProperties()
 #pragma mark -
 #pragma mark event to message conversion
 
-const char* Polytempo_Event::getOscAddressFromType()
+String Polytempo_Event::getOscAddressFromType()
 {
     String address = getTypeString();
-    
-    address = "/"+address;
-    return address.toRawUTF8();
+    address = "/" + address;
+    return address;
 }
 
 Array<var> Polytempo_Event::getOscMessageFromParameters()
