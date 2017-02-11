@@ -94,7 +94,7 @@ void Polytempo_OSCListener::oscMessageReceived(const OSCMessage & message)
 			arg++;
 		}
 
-		Polytempo_Event *event = Polytempo_Event::makeEvent(address, *messages);
+		ScopedPointer<Polytempo_Event> event = Polytempo_Event::makeEvent(address, *messages);
 		Polytempo_Scheduler::getInstance()->handleEvent(event, event->getTime());
 	}
 }
