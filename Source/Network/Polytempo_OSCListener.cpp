@@ -83,10 +83,9 @@ void Polytempo_OSCListener::oscMessageReceived(const OSCMessage & message)
 			if ((*arg).isString())
 				messages->add(var(String((arg)->getString())));
 			else if ((*arg).isInt32())
-				messages->add(var((int32)(arg)->getInt32()));
+				messages->add(var(int32((arg)->getInt32())));
 			else if ((*arg).isFloat32())
-				messages->add(var((float)(arg)->getFloat32()));
-			// Todo: Double not supported!!!
+				messages->add(var(float((arg)->getFloat32())));
 			else if ((*arg).isBlob())
 				DBG("<blob>");
 			else
