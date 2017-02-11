@@ -24,126 +24,78 @@
 
 #include "Polytempo_OSCListener.h"
 #include "Polytempo_NetworkSupervisor.h"
-#include "../../Resources/OSCPackLibrary/osc/OscReceivedElements.h"
 #include "../Scheduler/Polytempo_Scheduler.h"
 #include "../Misc/Polytempo_Alerts.h"
 #include "../Application/PolytempoNetwork/Polytempo_NetworkApplication.h"
 
 
 
-Polytempo_OSCListener::Polytempo_OSCListener(int port) : Thread ("OSC_Listener Thread"), m_Port(port)
-{}
+Polytempo_OSCListener::Polytempo_OSCListener(int port) : m_Port(port)
+{
+	oscReceiver = new OSCReceiver();
+
+	if (!oscReceiver->connect(m_Port))
+		Polytempo_Alert::show("Error", "Can't bind to port: " + String(m_Port) + "\nProbably there is another socket already bound to this port");
+
+	oscReceiver->addListener(this);
+}
 
 Polytempo_OSCListener::~Polytempo_OSCListener()
 {
-    signalThreadShouldExit();
-    
-   // if (socket != 0)
-   //     socket->close();
-    
-    // allow the thread 2 seconds to stop cleanly - should be plenty of time.
-    stopThread (2000);
-    
-    messageData = nullptr;
 }
 
-void Polytempo_OSCListener::handleMessage(const Message& message)
+void Polytempo_OSCListener::oscMessageReceived(const OSCMessage & message)
 {
-    if(true) //message.intParameter1 == 1) // 1 means I've received stuff.
-    {        
-        int length = ((PolytempoOSCMessage *)&message)->length;
-        
-        MemoryBlock* data (static_cast <MemoryBlock*> (((PolytempoOSCMessage *)&message)->data));
-                
-        osc::ReceivedMessage m = osc::ReceivedMessage(osc::ReceivedPacket((char *)data->getData(),length));
-        
-        if(std::strcmp(m.AddressPattern(), "/node" ) == 0)
-        {
-            osc::ReceivedMessage::const_iterator arg = m.ArgumentsBegin();
-			juce::String argIp = arg->AsString();
-			arg++;
-			juce::String argName = arg->AsString();
+	// Todo: check sender IP!!!
 
-            Polytempo_NetworkSupervisor::getInstance()->addPeer(argIp, argName);
-        }
-        
+	if (message.getAddressPattern() == "/node")
+	{
+		OSCArgument* arg = message.begin();
+		String argIp = arg->getString();
+		arg++;
+		String argName = arg->getString();
+
+		Polytempo_NetworkSupervisor::getInstance()->addPeer(argIp, argName);
+	}
+
 #ifdef POLYTEMPO_NETWORK
-        else if(std::strcmp(m.AddressPattern(), "/open" ) == 0)
-        {
-            DBG("osc: open");
-            // "Open Score": only PolytempoNetwork
-            
-            Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
-            osc::ReceivedMessage::const_iterator arg = m.ArgumentsBegin();
-            if(arg != m.ArgumentsEnd())
-                app->openScoreFilePath(arg->AsString());
-        }
+	else if (message.getAddressPattern() == "/open")
+	{
+		DBG("osc: open");
+		// "Open Score": only PolytempoNetwork
+
+		Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
+		OSCArgument* arg = message.begin();
+		if (arg->isString())
+			app->openScoreFilePath(arg->getString());
+	}
 #endif
-        else
-        {
-            Array<var> *messages = new Array<var>();
+	else
+	{
+		Array<var> *messages = new Array<var>();
 
-            const char *address = m.AddressPattern();
-            DBG("osc: "<<address);
-            
-            osc::ReceivedMessage::const_iterator arg = m.ArgumentsBegin();
-            while(arg != m.ArgumentsEnd())
-            {
-                if((*arg).IsString())
-                    messages->add(var(String((arg)->AsString())));
-//                else if((*arg).IsInt64())
-//                    messages->add(var((int64)(arg)->AsInt64()));
-                else if((*arg).IsInt32())
-                    messages->add(var((int32)(arg)->AsInt32()));
-                else if((*arg).IsFloat())
-                    messages->add(var((float)(arg)->AsFloat()));
-                else if((*arg).IsDouble())
-                    messages->add(var((double)(arg)->AsDouble()));
-                else if((*arg).IsBlob())
-                    DBG("<blob>");
-                else
-                    DBG("<unknown>");
+		String address = message.getAddressPattern().toString();
+		DBG("osc: " << address);
 
-                arg++;                
-            }
-            
-            Polytempo_Event *event = Polytempo_Event::makeEvent(address, *messages);
-            Polytempo_Scheduler::getInstance()->handleEvent(event, event->getTime());
-        }
-    }
-}
+		OSCArgument* arg = message.begin();
+		while (arg != message.end())
+		{
+			if ((*arg).isString())
+				messages->add(var(String((arg)->getString())));
+			else if ((*arg).isInt32())
+				messages->add(var((int32)(arg)->getInt32()));
+			else if ((*arg).isFloat32())
+				messages->add(var((float)(arg)->getFloat32()));
+			// Todo: Double not supported!!!
+			else if ((*arg).isBlob())
+				DBG("<blob>");
+			else
+				DBG("<unknown>");
 
-void Polytempo_OSCListener::run()
-{
-    messageData = new MemoryBlock(65535, true);
-    socket = new DatagramSocket(-1);
-    
-    int readyForReading;
-    int bytesRead;
-    
-    String senderIPAddress;
-    int senderPort;
-        
-    if(!socket->bindToPort(m_Port))
-    {
-        Polytempo_Alert::show("Error", "Can't bind to port: " + String(m_Port)+"\nProbably there is another socket already bound to this port");
-    }
-    
-    while(!threadShouldExit())
-    {
-        readyForReading = socket->waitUntilReady(true, 1000);
-        
-        if(readyForReading > 0)
-        {
-            bytesRead = socket->read(static_cast <char*> (messageData->getData()), 65535, false, senderIPAddress, senderPort);
-            
-            if(senderIPAddress != Polytempo_NetworkSupervisor::getInstance()->getLocalAddress())
-            {
-                PolytempoOSCMessage *message = new PolytempoOSCMessage();
-            
-                message->setData(bytesRead, new MemoryBlock(*messageData));
-                postMessage(message);
-            }
-        }
-    }
+			arg++;
+		}
+
+		Polytempo_Event *event = Polytempo_Event::makeEvent(address.toRawUTF8(), *messages);
+		Polytempo_Scheduler::getInstance()->handleEvent(event, event->getTime());
+	}
 }

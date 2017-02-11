@@ -60,7 +60,6 @@ void Polytempo_NetworkApplication::initialise(const String& commandLine)
     
     // create network connection
     oscListener = new Polytempo_OSCListener(47522);
-    oscListener->startThread();
     oscSender   = new Polytempo_OSCSender();
     oscSender->addBroadcastSender(47522);
     Polytempo_EventDispatcher::getInstance()->setBroadcastSender(oscSender);
