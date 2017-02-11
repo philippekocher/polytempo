@@ -55,7 +55,7 @@ void Polytempo_GraphicsViewRegion::paint(Graphics& g)
         
         float yOffset = (getHeight() - (imageHeight * imageZoom)) * 0.5f;
         g.drawImage(*image,
-                    0, yOffset, (int)(imageWidth * imageZoom), (int)(imageHeight * imageZoom),
+                    0, (int)yOffset, (int)(imageWidth * imageZoom), (int)(imageHeight * imageZoom),
                     (int)imageLeft, (int)imageTop, (int)imageWidth, (int)imageHeight);
         
     }

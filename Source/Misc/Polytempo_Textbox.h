@@ -133,7 +133,7 @@ public:
         }
     }
     
-    void setInputRestrictions(int num, String s, float min = 0, float max = 0)
+    void setInputRestrictions(int, String s, float min = 0, float max = 0)
     {
         inputRestriction = s;
 

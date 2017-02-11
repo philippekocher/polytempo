@@ -47,7 +47,7 @@ public:
         return tree.getNumChildren() > 0;
     }
     
-    void itemOpennessChanged(bool isNowOpen) override
+    void itemOpennessChanged(bool) override
     {
         clearSubItems();
         

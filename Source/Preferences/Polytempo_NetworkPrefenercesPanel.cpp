@@ -342,7 +342,7 @@ public:
         }
     }
     
-    void buttonStateChanged(Button* button)
+    void buttonStateChanged(Button*)
     {}
 };
 
@@ -598,13 +598,13 @@ public:
         }
     }
     
-    void buttonStateChanged(Button* button) override
+    void buttonStateChanged(Button*) override
     {}
     
     /* combo box listener
      --------------------------------------- */
     
-    void comboBoxChanged(ComboBox* box) override
+    void comboBoxChanged(ComboBox*) override
     {}
     
     
@@ -900,7 +900,7 @@ public:
         }
     }
     
-    void buttonStateChanged(Button* button) override
+    void buttonStateChanged(Button*) override
     {}
     
     /* combo box listener
@@ -922,7 +922,7 @@ public:
     /* change listener
      --------------------------------------- */
     
-    void changeListenerCallback(ChangeBroadcaster *source) override
+    void changeListenerCallback(ChangeBroadcaster*) override
     {}
     
 };

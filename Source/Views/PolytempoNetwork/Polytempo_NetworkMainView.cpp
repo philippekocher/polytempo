@@ -92,7 +92,7 @@ void Polytempo_NetworkMainView::resized()
     
 }
 
-void Polytempo_NetworkMainView::changeListenerCallback (ChangeBroadcaster* source)
+void Polytempo_NetworkMainView::changeListenerCallback (ChangeBroadcaster*)
 {
     // settings have changed
     

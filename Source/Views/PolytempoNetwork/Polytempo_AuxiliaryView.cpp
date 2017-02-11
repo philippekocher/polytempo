@@ -75,23 +75,23 @@ void Polytempo_AuxiliaryView::paint (Graphics& g)
 {
     g.fillAll (Colours::white);   // clear the background
     
-    AttributedString peers;
-    peers.append("Network\n", Font(14.0f, Font::plain));
-    peers.append(Polytempo_NetworkSupervisor::getInstance()->getLocalName(), Font(12.0f, Font::bold));
-    peers.append(" \n", Font(22.0f, Font::plain));
-    peers.append(Polytempo_NetworkSupervisor::getInstance()->getLocalAddress()+"\n", Font(12.0f, Font::bold));
+    AttributedString attributedPeers;
+	attributedPeers.append("Network\n", Font(14.0f, Font::plain));
+	attributedPeers.append(Polytempo_NetworkSupervisor::getInstance()->getLocalName(), Font(12.0f, Font::bold));
+	attributedPeers.append(" \n", Font(22.0f, Font::plain));
+	attributedPeers.append(Polytempo_NetworkSupervisor::getInstance()->getLocalAddress()+"\n", Font(12.0f, Font::bold));
     
     HashMap < String, String >::Iterator it(*Polytempo_NetworkSupervisor::getInstance()->getPeers());
     while(it.next())
     {
-        peers.append(it.getValue(), Font(12.0f, Font::plain));
-        peers.append(" \n", Font(22.0f, Font::plain));
-        peers.append(it.getKey()+"\n", Font(12.0f, Font::plain));
+		attributedPeers.append(it.getValue(), Font(12.0f, Font::plain));
+		attributedPeers.append(" \n", Font(22.0f, Font::plain));
+		attributedPeers.append(it.getKey()+"\n", Font(12.0f, Font::plain));
         
     }
     
     g.drawHorizontalLine(320, 0.0f, (float)getWidth());
-    peers.draw(g, Rectangle<int>(10, 330, getWidth() - 20, 100).toFloat());
+	attributedPeers.draw(g, Rectangle<int>(10, 330, getWidth() - 20, 100).toFloat());
 
     g.setColour(Colours::grey);
     g.drawVerticalLine(0, 0.0f, (float)getHeight());
@@ -180,7 +180,7 @@ void Polytempo_AuxiliaryView::buttonClicked(Button *button)
         Polytempo_Scheduler::getInstance()->skipToEvent(eventType_Image, false);
 }
 
-void Polytempo_AuxiliaryView::buttonStateChanged(Button *button)
+void Polytempo_AuxiliaryView::buttonStateChanged(Button*)
 {}
 
 

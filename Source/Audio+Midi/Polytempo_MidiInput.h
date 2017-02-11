@@ -49,7 +49,7 @@ public:
 //        audioDeviceManager.removeMidiInputCallback (MidiInput::getDevices()[1], this);
     }
     
-    void handleIncomingMidiMessage(MidiInput* source, const MidiMessage& message)
+    void handleIncomingMidiMessage(MidiInput*, const MidiMessage& message)
     {
         DBG(message.getDescription());
     }

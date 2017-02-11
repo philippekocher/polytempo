@@ -136,7 +136,7 @@ void Polytempo_ImageEditorView::refresh()
                 item.addChild(createTree(*imageIDs.getUnchecked(i), j), -1, nullptr);
                 if(selectedEvent && selectedEvent == imageEvents[j])
                 {
-                    imageID      = imageIDs.getUnchecked(i);
+                    imageID      = *imageIDs.getUnchecked(i);
                     sectionIndex = j;
                     selectedItem = (TreeItem*)tree->getItemOnRow(0);
                     selectedEvent = nullptr;
@@ -378,7 +378,7 @@ void Polytempo_ImageEditorView::addSection()
 #pragma mark -
 #pragma mark label listener
 
-void Polytempo_ImageEditorView::editorShown(Label* label, TextEditor&)
+void Polytempo_ImageEditorView::editorShown(Label*, TextEditor&)
 {}
 
 void Polytempo_ImageEditorView::labelTextChanged(Label* label)

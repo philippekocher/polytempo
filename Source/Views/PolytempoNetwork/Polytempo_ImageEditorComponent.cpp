@@ -173,7 +173,7 @@ void Polytempo_ImageEditorComponent::positionChanged(DragHandle* handle)
 #pragma mark -
 #pragma mark change listener
 
-void Polytempo_ImageEditorComponent::changeListenerCallback(ChangeBroadcaster* bc)
+void Polytempo_ImageEditorComponent::changeListenerCallback(ChangeBroadcaster*)
 {
     if(!isVisible()) return;
     
