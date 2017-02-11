@@ -34,11 +34,6 @@
 #include "../../Network/Polytempo_NetworkSupervisor.h"
 #include "../../Misc/Polytempo_Alerts.h"
 
-#include "../../../Resources/OscPackLibrary/osc/OscReceivedElements.h"
-#include "../../../Resources/OscPackLibrary/osc/OscPacketListener.h"
-#include "../../../Resources/OscPackLibrary/ip/UdpSocket.h"
-
-
 Polytempo_NetworkApplication::Polytempo_NetworkApplication()
 {}
 
