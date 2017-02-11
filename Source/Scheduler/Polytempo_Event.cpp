@@ -285,10 +285,10 @@ Array<var> Polytempo_Event::getOscMessageFromParameters()
     return *messages;
 }
 
-Polytempo_Event* Polytempo_Event::makeEvent(const char *address, Array<var> messages)
+Polytempo_Event* Polytempo_Event::makeEvent(String address, Array<var> messages)
 {
     Polytempo_Event *event = new Polytempo_Event();
-    event->setType(address+1);
+    event->setType(address.substring(1));
     
     if(messages.size()>0 && !messages[0].isString())
     {

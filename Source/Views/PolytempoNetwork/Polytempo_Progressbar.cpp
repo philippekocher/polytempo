@@ -43,7 +43,7 @@ void Polytempo_Progressbar::paint(Graphics &g)
     bounds.setHeight(bounds.getHeight() * 0.5);
     g.setFont(24.0f);
     g.setColour(Colours::black);
-    g.drawFittedText(text->toRawUTF8(),
+    g.drawFittedText(*text,
                      bounds,  // inset rect
                      Justification::topLeft, 1);
     

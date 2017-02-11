@@ -148,7 +148,7 @@ public:
     // event to message conversion
 	String getOscAddressFromType();
     Array<var> getOscMessageFromParameters();
-    static Polytempo_Event* makeEvent(const char *address, Array<var> values);
+    static Polytempo_Event* makeEvent(String address, Array<var> values);
 
 
 private:
