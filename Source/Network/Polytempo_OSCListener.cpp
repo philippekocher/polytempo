@@ -72,7 +72,7 @@ void Polytempo_OSCListener::oscMessageReceived(const OSCMessage & message)
 #endif
 	else
 	{
-		Array<var> *messages = new Array<var>();
+		ScopedPointer<Array<var>> messages = new Array<var>();
 
 		String address = message.getAddressPattern().toString();
 		DBG("osc: " << address);

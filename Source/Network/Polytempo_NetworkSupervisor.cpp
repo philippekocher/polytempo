@@ -25,9 +25,6 @@
 
 #include "Polytempo_NetworkSupervisor.h"
 
-#define SUPERVISOR_BUFFER_SIZE 1024
-
-
 Polytempo_NetworkSupervisor::Polytempo_NetworkSupervisor()
 {
     startTimer(1000);
@@ -75,7 +72,7 @@ void Polytempo_NetworkSupervisor::timerCallback()
     socket->renew();
     
     // broadcast a heartbeat
-    String *name;
+    ScopedPointer<String> name;
     if(localName == nullptr) name = new String("Unnamed");
     else                     name = localName;
     
