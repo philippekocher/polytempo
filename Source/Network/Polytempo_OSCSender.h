@@ -25,8 +25,6 @@
 #ifndef __Polytempo_OSCSender__
 #define __Polytempo_OSCSender__
 
-//#include "../../JuceLibraryCode/JuceHeader.h"
-
 #include "../Scheduler/Polytempo_EventObserver.h"
 #include "Polytempo_Socket.h"
 

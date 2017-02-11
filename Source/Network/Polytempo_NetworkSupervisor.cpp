@@ -25,8 +25,6 @@
 
 #include "Polytempo_NetworkSupervisor.h"
 
-#include "../../Resources/OSCPackLibrary/osc/OscOutboundPacketStream.h"
-
 #define SUPERVISOR_BUFFER_SIZE 1024
 
 
@@ -57,10 +55,6 @@ void Polytempo_NetworkSupervisor::timerCallback()
     if(socket == nullptr) return;
     // nothing to do, if there is no socket
     
-    char buffer[SUPERVISOR_BUFFER_SIZE];
-    memset(buffer, 0, SUPERVISOR_BUFFER_SIZE);
-    osc::OutboundPacketStream p(buffer, SUPERVISOR_BUFFER_SIZE);
-    
     Array<IPAddress> ip;
     IPAddress::findAllAddresses(ip);
     String addr = "0.0.0.0";
@@ -74,21 +68,15 @@ void Polytempo_NetworkSupervisor::timerCallback()
         }
     }
     
-    if(addr != *localAddress)
-    {
-        localAddress = new String(addr);
-        socket->renew();
-    }
-
+    socket->renew();
+    
     // broadcast a heartbeat
     String *name;
     if(localName == nullptr) name = new String("Unnamed");
     else                     name = localName;
-    p.Clear();
-    p << osc::BeginMessage("/node") << localAddress->toRawUTF8() << name->toRawUTF8() << osc::EndMessage;
-    socket->write(buffer, SUPERVISOR_BUFFER_SIZE);
     
-
+	socket->write(OSCMessage(OSCAddressPattern("/node"), OSCArgument(*localAddress), OSCArgument(*name)));
+	
     // update hash maps
     connectedPeersMap->clear();
     HashMap < String, String >::Iterator it(*tempConnectedPeersMap);

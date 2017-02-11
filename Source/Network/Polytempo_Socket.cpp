@@ -13,28 +13,27 @@
 
 Polytempo_Socket::Polytempo_Socket(const String& hostName_, int port_, bool ticks_)
 {
-	socket = new DatagramSocket(true);
+	oscSender = new OSCSender();
 	port = port_;
-	socket->bindToPort(0, Polytempo_NetworkSupervisor::getInstance()->getLocalAddress());
+	oscSender->connect(Polytempo_NetworkSupervisor::getInstance()->getLocalAddress(), 0);
 	hostName = new String(hostName_);
 	ticks = ticks_;
 }
 
 Polytempo_Socket::~Polytempo_Socket()
 {
-	socket = nullptr;
+	oscSender = nullptr;
 	hostName = nullptr;
 }
 
 void Polytempo_Socket::renew()
 {
-	socket = new DatagramSocket(true);
-	socket->bindToPort(0, Polytempo_NetworkSupervisor::getInstance()->getLocalAddress());
+	oscSender->connect(Polytempo_NetworkSupervisor::getInstance()->getLocalAddress(), 0);
 }
 
-void Polytempo_Socket::write(const void *sourceBuffer, int numBytesToWrite)
+void Polytempo_Socket::write(OSCMessage oscMessage)
 {
-	socket->write(*hostName, port, sourceBuffer, numBytesToWrite);
+	oscSender->sendToIPAddress(*hostName, port, oscMessage);
 }
 
 bool Polytempo_Socket::transmitsTicks() { return ticks; }

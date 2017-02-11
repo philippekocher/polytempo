@@ -24,10 +24,6 @@
 
 #include "Polytempo_OSCSender.h"
 #include "Polytempo_NetworkSupervisor.h"
-#include "../../Resources/OSCPackLibrary/osc/OscOutboundPacketStream.h"
-
-
-#define OUTPUT_BUFFER_SIZE 1024
 
 Polytempo_OSCSender::Polytempo_OSCSender()
 {
@@ -82,62 +78,42 @@ void Polytempo_OSCSender::broadcastEventAsMessage(Polytempo_Event *event)
 
 void Polytempo_OSCSender::sendEventAsMessage(Polytempo_Event *event, Polytempo_Socket *socket)
 {
-    char buffer[OUTPUT_BUFFER_SIZE];
-    memset(buffer, 0, OUTPUT_BUFFER_SIZE);
-    osc::OutboundPacketStream p( buffer, OUTPUT_BUFFER_SIZE );
-    
-    p.Clear();
+	OSCMessage oscMessage = OSCMessage(OSCAddressPattern(event->getOscAddressFromType()));
+	for each (var message in event->getOscMessageFromParameters())
+	{
+		if (message.isInt())          oscMessage.addInt32(int(message));
+		else if (message.isDouble())  oscMessage.addFloat32(float(message));
+		else if (message.isString())  oscMessage.addString(message.toString());
+	}
 
-	String addressType = event->getOscAddressFromType();
-    p << osc::BeginMessage(addressType.toRawUTF8());
-    Array < var > messages = event->getOscMessageFromParameters();
-    for(int i=0;i<messages.size();i++)
-    {
-        var element = messages[i];
-        if(element.isInt())          p << int(element);
-        //else if(element.isInt64())   p << osc::int64(int64(element));
-        
-        else if(element.isDouble())  p << float(element);
-        else if(element.isString())  p << element.toString().toRawUTF8();
-        //else                         p << "error";
-    }
-    p << osc::EndMessage;
-    socket->write(buffer, OUTPUT_BUFFER_SIZE);
+	socket->write(oscMessage);
 }
 
 void Polytempo_OSCSender::sendOscEventAsMessage(Polytempo_Event *event)
 {
-    char buffer[OUTPUT_BUFFER_SIZE];
-    memset(buffer, 0, OUTPUT_BUFFER_SIZE);
-    osc::OutboundPacketStream p( buffer, OUTPUT_BUFFER_SIZE );
-    
-    p << osc::BeginMessage(event->getProperty("address").toString().toRawUTF8());
-    var message = event->getProperty("message");
-    Array < var > *messageArray;
-    
-    if(message.isArray())
-    {
-        messageArray = message.getArray();
-    }
-    else
-    {
-        messageArray = new Array < var >;
-        messageArray->add(message);
-    }
-    
-    for(int i=0;i<messageArray->size();i++)
-    {
-        var element = messageArray->getUnchecked(i);
-        if(element.isInt())          p << int(element);
-        //else if(element.isInt64())   p << osc::int64(int64(element));
-        else if(element.isDouble())  p << double(element);
-        else if(element.isString())  p << element.toString().toRawUTF8();
-        else                         p << "error";
-    }
-    p << osc::EndMessage;
-    
-    Polytempo_Socket *socket = (*socketsMap)[event->getProperty("senderID")];
-    if(socket != nullptr) socket->write(buffer, OUTPUT_BUFFER_SIZE);
+	OSCMessage oscMessage = OSCMessage(OSCAddressPattern(event->getProperty("address").toString()));
+	var message = event->getProperty("message");
+	Array < var > *messageArray;
+
+	if (message.isArray())
+	{
+		messageArray = message.getArray();
+	}
+	else
+	{
+		messageArray = new Array < var >;
+		messageArray->add(message);
+	}
+
+	for each (var message in *messageArray)
+	{
+		if (message.isInt())          oscMessage.addInt32(int(message));
+		else if (message.isDouble())  oscMessage.addFloat32(float(message));
+		else if (message.isString())  oscMessage.addString(message.toString());
+	}
+
+	Polytempo_Socket *socket = (*socketsMap)[event->getProperty("senderID")];
+	if (socket != nullptr) socket->write(oscMessage);
 }
 
 void Polytempo_OSCSender::sendTick(Polytempo_Event *event)

@@ -20,11 +20,11 @@ public:
 	~Polytempo_Socket();
 
 	void renew();
-	void write(const void *sourceBuffer, int numBytesToWrite);
+	void write(OSCMessage oscMessage);
 	bool transmitsTicks();
 
 private:
-	ScopedPointer < DatagramSocket > socket;
+	ScopedPointer < OSCSender > oscSender;
 	ScopedPointer < String > hostName;
 	int  port;
 	bool ticks;
