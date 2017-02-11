@@ -45,7 +45,7 @@ public:
     
     /* network events
      --------------------------------------- */
-    void handleEvent(Polytempo_Event *event, int deferTime = 0);
+    void handleEvent(Polytempo_Event *event, float deferTime = 0.0f);
 
     /* notify event observers
      --------------------------------------- */

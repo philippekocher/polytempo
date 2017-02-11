@@ -66,7 +66,7 @@ public:
         boundsConstraint = r;
     }
     
-    void mouseDown(const MouseEvent& e) override
+    void mouseDown(const MouseEvent&) override
     {
         originalPosition = Point<float>(getCentreX(), getCentreY());
     }
@@ -82,11 +82,11 @@ public:
         
         if(constraint == 1)
         {
-            setCentrePosition(point.x, getCentreY());
+            setCentrePosition(point.x, (int)getCentreY());
         }
         else if(constraint == 2)
         {
-            setCentrePosition(getCentreX(), point.y);
+            setCentrePosition((int)getCentreX(), point.y);
         }
         else
         {
@@ -103,12 +103,12 @@ public:
     
     float getCentreX()
     {
-        return getX() + getWidth() / 2;
+        return getX() + getWidth() / 2.0f;
     }
     
     float getCentreY()
     {
-        return getY() + getHeight() / 2;
+        return getY() + getHeight() / 2.0f;
     }
     
 private:

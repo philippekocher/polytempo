@@ -30,9 +30,9 @@ Polytempo_MidiClick::Polytempo_MidiClick()
 {
     downbeatPitch = Polytempo_StoredPreferences::getInstance()->getProps().getIntValue("midiDownbeatPitch");
     beatPitch = Polytempo_StoredPreferences::getInstance()->getProps().getIntValue("midiBeatPitch");
-    downbeatVelocity = Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("midiDownbeatVelocity");
-    beatVelocity = Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("midiBeatVelocity");
-    channel = Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("midiChannel");
+    downbeatVelocity = Polytempo_StoredPreferences::getInstance()->getProps().getIntValue("midiDownbeatVelocity");
+    beatVelocity = Polytempo_StoredPreferences::getInstance()->getProps().getIntValue("midiBeatVelocity");
+    channel = Polytempo_StoredPreferences::getInstance()->getProps().getIntValue("midiChannel");
     
     juce::StringArray midiDevices = MidiOutput::getDevices();
     outputDeviceIndex = midiDevices.indexOf(Polytempo_StoredPreferences::getInstance()->getProps().getValue("midiOutputDevice"));
@@ -77,19 +77,19 @@ void Polytempo_MidiClick::eventNotification(Polytempo_Event *event)
             if(int(event->getProperty(eventPropertyString_Cue)) != 0)
             {
                 pitch = cuePitch;
-                velocity = cueVelocity;
+                velocity = (int8)cueVelocity;
             }
             else
             {
                 if(pattern < 20)
                 {
                     pitch = downbeatPitch;
-                    velocity = downbeatVelocity;
+                    velocity = (int8)downbeatVelocity;
                 }
                 else
                 {
                     pitch = beatPitch;
-                    velocity = beatVelocity;
+                    velocity = (int8)beatVelocity;
                 }
             }
 

@@ -105,11 +105,11 @@ void Polytempo_OSCSender::sendOscEventAsMessage(Polytempo_Event *event)
 		messageArray->add(message);
 	}
 
-    for (var message : *messageArray)
+    for (var msg : *messageArray)
 	{
-		if (message.isInt())          oscMessage.addInt32(int(message));
-		else if (message.isDouble())  oscMessage.addFloat32(float(message));
-		else if (message.isString())  oscMessage.addString(message.toString());
+		if (msg.isInt())          oscMessage.addInt32(int(msg));
+		else if (msg.isDouble())  oscMessage.addFloat32(float(msg));
+		else if (msg.isString())  oscMessage.addString(msg.toString());
 	}
 
 	Polytempo_Socket *socket = (*socketsMap)[event->getProperty("senderID")];

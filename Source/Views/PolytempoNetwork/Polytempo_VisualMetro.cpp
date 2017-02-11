@@ -59,8 +59,8 @@ public:
         g.fillAll (backgroundColour);
         
         g.setColour(frameColour);
-        g.drawHorizontalLine(getHeight() - 1, 0, getWidth());
-        g.drawVerticalLine(getWidth() - 1, 0, getHeight());
+        g.drawHorizontalLine(getHeight() - 1, 0.0f, (float)getWidth());
+        g.drawVerticalLine(getWidth() - 1, 0.0f, (float)getHeight());
 
 
         /* draw the bar
@@ -158,8 +158,8 @@ void Polytempo_VisualMetro::setWidth(float val)
 {
     width = val;
     
-    hComponent->setBounds(width, 0, getWidth()-width, width);
-    vComponent->setBounds(0, width, width, getWidth()-width);
+    hComponent->setBounds((int)width, 0, (int)(getWidth()-width), (int)width);
+    vComponent->setBounds(0, (int)width, (int)width, (int)(getWidth()-width));
 
     repaint();
 }
@@ -194,14 +194,14 @@ void Polytempo_VisualMetro::hiResTimerCallback()
     /* conductor position
      ----------------------------------- */
     
-    float ictus = 1.0 - increment * 5;
+    float ictus = 1.0f - increment * 5.0f;
     /* This factor creates a sudden jerk at the end of the movement. The animation of the conductor reaches only a certain amount of the total length (ictus < 1.0, dependent on the tempo) and jumps to the max when the next beat is due.
      */
     
     if(beatSubdivision > 1)
     {
         subpos = (int)(pos * 1000) % (1000 / beatSubdivision) / (float)(1000 / beatSubdivision);
-        subpos = 1 - 0.75 * pow(subpos, exponentSub);
+        subpos = 1.0f - 0.75f * pow(subpos, exponentSub);
     }
     else
     {
@@ -259,7 +259,7 @@ void Polytempo_VisualMetro::eventNotification(Polytempo_Event *event)
         if(event->hasProperty(eventPropertyString_Duration))
             beatDuration = event->getProperty(eventPropertyString_Duration);
         else
-            beatDuration = 1.0 / timeInterval;
+            beatDuration = 1.0f / timeInterval;
         
         // the subdivision feature is not implemented yet
         beatSubdivision = 0;
@@ -276,8 +276,8 @@ void Polytempo_VisualMetro::eventNotification(Polytempo_Event *event)
         /* the look and feel of the conductor's movement is based on three parameters: (1) an exponent that depends on the duration of the beat, (2) a certain point at which the conductor jumps immediately to the max, creating an ictus - see above - and (3) a certain duration through which the max is held.  */
         
         float actualDuration = beatDuration / tempoFactor;
-        exponentMain = 0.75 + actualDuration;
-        exponentMain = exponentMain > 2.5 ? 2.5 : exponentMain; // clip
+        exponentMain = 0.75f + actualDuration;
+        exponentMain = exponentMain > 2.5f ? 2.5f : exponentMain; // clip
         
         /*
          40 / timeInterval looks good on a fast computer.
@@ -286,7 +286,7 @@ void Polytempo_VisualMetro::eventNotification(Polytempo_Event *event)
         
         holdMax = 60 / timeInterval;
         
-        increment = (float)timeInterval / actualDuration * 0.001;
+        increment = (float)timeInterval / actualDuration * 0.001f;
 
         pos = 0;
         
@@ -295,7 +295,7 @@ void Polytempo_VisualMetro::eventNotification(Polytempo_Event *event)
     else if(event->getType() == eventType_TempoFactor)
     {
         tempoFactor = event->getProperty("value");
-        increment = (float)timeInterval / beatDuration * tempoFactor * 0.001;
+        increment = (float)timeInterval / beatDuration * tempoFactor * 0.001f;
     }
     else if(event->getType() == eventType_Pause)
     {

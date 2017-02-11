@@ -41,7 +41,7 @@ Polytempo_ImageEditorComponent::Polytempo_ImageEditorComponent()
         addChildComponent(dh);
     }
     
-    zoomFactor = Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("zoom");
+    zoomFactor = (float)Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("zoom");
     Polytempo_StoredPreferences::getInstance()->getProps().addChangeListener(this);
 }
 
@@ -60,7 +60,7 @@ void Polytempo_ImageEditorComponent::paint(Graphics& g)
     if(image != nullptr)
     {
         g.drawImage(*image,
-                    0, 0, image->getWidth() * zoomFactor, image->getHeight() * zoomFactor,
+                    0, 0, (int)(image->getWidth() * zoomFactor), (int)(image->getHeight() * zoomFactor),
                     0, 0, image->getWidth(), image->getHeight());
         
         if(!sectionRect.isEmpty())
@@ -80,17 +80,17 @@ void Polytempo_ImageEditorComponent::resized()
 {
     if(image && image->isValid())
     {
-        setBounds(0, 0, image->getWidth() * zoomFactor, image->getHeight() * zoomFactor);
+        setBounds(0, 0, (int)(image->getWidth() * zoomFactor), (int)(image->getHeight() * zoomFactor));
     
         if(dragHandles.getUnchecked(0)->isVisible())
         {
-            dragHandles.getUnchecked(0)->setCentrePosition((sectionRect.getX() + sectionRect.getWidth() * 0.5) * image->getWidth() * zoomFactor, sectionRect.getY() * image->getHeight() * zoomFactor);
+            dragHandles.getUnchecked(0)->setCentrePosition((int)((sectionRect.getX() + sectionRect.getWidth() * 0.5) * image->getWidth() * zoomFactor), (int)(sectionRect.getY() * image->getHeight() * zoomFactor));
             
-            dragHandles.getUnchecked(1)->setCentrePosition((sectionRect.getX()+sectionRect.getWidth()) * image->getWidth() * zoomFactor, (sectionRect.getY() + sectionRect.getHeight() * 0.5) * image->getHeight() * zoomFactor);
+            dragHandles.getUnchecked(1)->setCentrePosition((int)((sectionRect.getX()+sectionRect.getWidth()) * image->getWidth() * zoomFactor), (int)((sectionRect.getY() + sectionRect.getHeight() * 0.5) * image->getHeight() * zoomFactor));
             
-            dragHandles.getUnchecked(2)->setCentrePosition((sectionRect.getX() + sectionRect.getWidth() * 0.5) * image->getWidth() * zoomFactor, (sectionRect.getY()+sectionRect.getHeight()) * image->getHeight() * zoomFactor);
+            dragHandles.getUnchecked(2)->setCentrePosition((int)((sectionRect.getX() + sectionRect.getWidth() * 0.5) * image->getWidth() * zoomFactor), (int)((sectionRect.getY()+sectionRect.getHeight()) * image->getHeight() * zoomFactor));
             
-            dragHandles.getUnchecked(3)->setCentrePosition(sectionRect.getX() * image->getWidth() * zoomFactor, (sectionRect.getY() + sectionRect.getHeight() * 0.5) * image->getHeight() * zoomFactor);
+            dragHandles.getUnchecked(3)->setCentrePosition((int)(sectionRect.getX() * image->getWidth() * zoomFactor), (int)((sectionRect.getY() + sectionRect.getHeight() * 0.5) * image->getHeight() * zoomFactor));
         }
     }
 }
@@ -139,16 +139,16 @@ void Polytempo_ImageEditorComponent::draggingSessionEnded()
 void Polytempo_ImageEditorComponent::positionChanged(DragHandle* handle)
 {
     if(handle != dragHandles.getUnchecked(0))
-        dragHandles.getUnchecked(0)->setCentrePosition(dragHandles.getUnchecked(3)->getCentreX() + (dragHandles.getUnchecked(1)->getCentreX() - dragHandles.getUnchecked(3)->getCentreX()) * 0.5, dragHandles.getUnchecked(0)->getCentreY());
+        dragHandles.getUnchecked(0)->setCentrePosition((int)(dragHandles.getUnchecked(3)->getCentreX() + (dragHandles.getUnchecked(1)->getCentreX() - dragHandles.getUnchecked(3)->getCentreX()) * 0.5), (int)(dragHandles.getUnchecked(0)->getCentreY()));
 
     if(handle != dragHandles.getUnchecked(1))
-        dragHandles.getUnchecked(1)->setCentrePosition(dragHandles.getUnchecked(1)->getCentreX(), dragHandles.getUnchecked(2)->getCentreY() + (dragHandles.getUnchecked(0)->getCentreY() - dragHandles.getUnchecked(2)->getCentreY()) * 0.5);
+        dragHandles.getUnchecked(1)->setCentrePosition((int)(dragHandles.getUnchecked(1)->getCentreX()), (int)(dragHandles.getUnchecked(2)->getCentreY() + (dragHandles.getUnchecked(0)->getCentreY() - dragHandles.getUnchecked(2)->getCentreY()) * 0.5));
 
     if(handle != dragHandles.getUnchecked(2))
-        dragHandles.getUnchecked(2)->setCentrePosition(dragHandles.getUnchecked(3)->getCentreX() + (dragHandles.getUnchecked(1)->getCentreX() - dragHandles.getUnchecked(3)->getCentreX()) * 0.5, dragHandles.getUnchecked(2)->getCentreY());
+        dragHandles.getUnchecked(2)->setCentrePosition((int)(dragHandles.getUnchecked(3)->getCentreX() + (dragHandles.getUnchecked(1)->getCentreX() - dragHandles.getUnchecked(3)->getCentreX()) * 0.5), (int)(dragHandles.getUnchecked(2)->getCentreY()));
 
     if(handle != dragHandles.getUnchecked(3))
-        dragHandles.getUnchecked(3)->setCentrePosition(dragHandles.getUnchecked(3)->getCentreX(), dragHandles.getUnchecked(2)->getCentreY() + (dragHandles.getUnchecked(0)->getCentreY() - dragHandles.getUnchecked(2)->getCentreY()) * 0.5);
+        dragHandles.getUnchecked(3)->setCentrePosition((int)(dragHandles.getUnchecked(3)->getCentreX()), (int)(dragHandles.getUnchecked(2)->getCentreY() + (dragHandles.getUnchecked(0)->getCentreY() - dragHandles.getUnchecked(2)->getCentreY()) * 0.5));
 
 
     Array<var> r;
@@ -179,7 +179,7 @@ void Polytempo_ImageEditorComponent::changeListenerCallback(ChangeBroadcaster* b
     
     if(zoomFactor != Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("zoom"))
     {
-        zoomFactor = Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("zoom");
+        zoomFactor = (float)Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("zoom");
         resized();
     }
 }

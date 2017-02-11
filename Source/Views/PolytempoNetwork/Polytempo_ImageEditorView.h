@@ -101,9 +101,9 @@ private:
         repaintItem();
     }
     
-    void valueTreeChildAdded (ValueTree& parentTree, ValueTree&) override {}
-    void valueTreeChildRemoved (ValueTree& parentTree, ValueTree&, int) override {}
-    void valueTreeChildOrderChanged (ValueTree& parentTree, int, int) override {}
+    void valueTreeChildAdded (ValueTree&, ValueTree&) override {}
+    void valueTreeChildRemoved (ValueTree&, ValueTree&, int) override {}
+    void valueTreeChildOrderChanged (ValueTree&, int, int) override {}
     void valueTreeParentChanged (ValueTree&) override {}
     
 };

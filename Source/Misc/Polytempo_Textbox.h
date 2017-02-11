@@ -33,7 +33,7 @@ class Polytempo_Textbox : public Label
 public:
     static String timeToString(float seconds)
     {
-        int miliseconds = seconds * 1000 + 0.5;
+        int miliseconds = (int)(seconds * 1000.0 + 0.5);
         
         int hours = abs(miliseconds) / 3600000;
         int mins  = (abs(miliseconds) / 60000) % 60;
@@ -77,7 +77,7 @@ public:
     {
         setJustificationType(Justification::centredLeft);
         setEditable(true, true, false);
-        setMinimumHorizontalScale(0.1);
+        setMinimumHorizontalScale(0.1f);
         reset();
         
         switch(type)
@@ -104,12 +104,12 @@ public:
         textboxLabel->attachToComponent(this, false);
     }
     
-    void editorShown(TextEditor* editor)
+    void editorShown(TextEditor* textEditor)
     {
-        Point<int> point = editor->getMouseXYRelative();
-        int index = editor->getTextIndexAt(point.x, point.y);
-        editor->setHighlightedRegion(Range<int>::emptyRange(index));        
-        editor->setInputRestrictions(0,inputRestriction);
+        Point<int> point = textEditor->getMouseXYRelative();
+        int index = textEditor->getTextIndexAt(point.x, point.y);
+		textEditor->setHighlightedRegion(Range<int>::emptyRange(index));
+		textEditor->setInputRestrictions(0,inputRestriction);
     }
     
     void textWasEdited()

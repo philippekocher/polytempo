@@ -137,7 +137,7 @@ void Polytempo_NetworkEngine::run()
         
         if(++x > 20 && !shouldStop)
         {
-            schedulerTick->setTime(milisecondLocator * 0.001);
+            schedulerTick->setTime(milisecondLocator * 0.001f);
             scheduler->notify(schedulerTick);
             x=0;
         }

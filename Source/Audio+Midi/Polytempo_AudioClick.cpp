@@ -146,7 +146,8 @@ public:
     }
     
 private:
-    double currentAngle, angleDelta, level, tailOff, audioCh0 = 0, audioCh1 = 1;
+	double currentAngle, angleDelta, level, tailOff;
+	int audioCh0 = 0, audioCh1 = 1;
 };
 
 
@@ -213,9 +214,9 @@ Polytempo_AudioClick::Polytempo_AudioClick()
     downbeatPitch = Polytempo_StoredPreferences::getInstance()->getProps().getIntValue("audioDownbeatPitch");
     beatPitch = Polytempo_StoredPreferences::getInstance()->getProps().getIntValue("audioBeatPitch");
     cuePitch = Polytempo_StoredPreferences::getInstance()->getProps().getIntValue("audioCuePitch");
-    downbeatVolume = Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("audioDownbeatVolume");
-    beatVolume = Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("audioBeatVolume");
-    cueVolume = Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("audioCueVolume");
+    downbeatVolume = (float)Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("audioDownbeatVolume");
+    beatVolume = (float)Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("audioBeatVolume");
+    cueVolume = (float)Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("audioCueVolume");
 }
 
 Polytempo_AudioClick::~Polytempo_AudioClick()

@@ -244,8 +244,8 @@ void Polytempo_ImageEditorView::paint(Graphics& g)
     g.setColour(Colour::Colour(245,245,245));
     g.fillRect(r.removeFromRight(TREE_VIEW_WIDTH));
     g.setColour(Colours::grey);
-    g.drawVerticalLine(TREE_VIEW_WIDTH, 0, getHeight());
-    g.drawVerticalLine(getWidth() - TREE_VIEW_WIDTH, 0, getHeight());
+    g.drawVerticalLine(TREE_VIEW_WIDTH, 0.0f, (float)getHeight());
+    g.drawVerticalLine(getWidth() - TREE_VIEW_WIDTH, 0.0f, (float)getHeight());
 }
 
 void Polytempo_ImageEditorView::resized()
@@ -276,11 +276,11 @@ void Polytempo_ImageEditorView::resized()
     yPosition += 45;
     
     xTextbox->setBounds(getWidth() - TREE_VIEW_WIDTH + 10, yPosition, 55, 26);
-    yTextbox->setBounds(getWidth() - TREE_VIEW_WIDTH * 0.5 + 10, yPosition, 55, 26);
+    yTextbox->setBounds((int)(getWidth() - TREE_VIEW_WIDTH * 0.5 + 10), yPosition, 55, 26);
     yPosition +=45;
 
     wTextbox->setBounds(getWidth() - TREE_VIEW_WIDTH + 10, yPosition, 55, 26);
-    hTextbox->setBounds(getWidth() - TREE_VIEW_WIDTH * 0.5 + 10, yPosition, 55, 26);
+    hTextbox->setBounds((int)(getWidth() - TREE_VIEW_WIDTH * 0.5 + 10), yPosition, 55, 26);
 }
 
 //------------------------------------------------------------------------------
@@ -428,7 +428,7 @@ void Polytempo_ImageEditorView::labelTextChanged(Label* label)
         Array < var > r = *imageEvents[sectionIndex]->getProperty(eventPropertyString_Rect).getArray();
         imageEditorViewport->getComponent()->setSectionRect(Rectangle<float>(r[0],r[1],r[2],r[3]));
         float num = label->getText().getFloatValue();
-        num = num < 0.0 ? 0.0 : num > 1.0 ? 1.0 : num;
+        num = num < 0.0f ? 0.0f : num > 1.0f ? 1.0f : num;
         
         if     (label == xTextbox) r.set(0, num);
         else if(label == yTextbox) r.set(1, num);

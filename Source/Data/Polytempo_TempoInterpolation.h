@@ -43,10 +43,10 @@ public:
     
     float    time; // in seconds
     Rational position = 0;
-    float    tempoIn = 0.25; // 0.25 is crotchet = MM 60, better choice?
-    float    tempoOut = 0.25;
-    float    tempoInWeight = 0.33;
-    float    tempoOutWeight = 0.33;
+    float    tempoIn = 0.25f; // 0.25 is crotchet = MM 60, better choice?
+    float    tempoOut = 0.25f;
+    float    tempoInWeight = 0.33f;
+    float    tempoOutWeight = 0.33f;
     
     bool locked = false;
     

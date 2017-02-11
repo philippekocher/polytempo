@@ -139,7 +139,7 @@ public:
 
     }
     
-    void textEditorReturnKeyPressed (TextEditor& editor)
+    void textEditorReturnKeyPressed (TextEditor&)
     {}
     
     void textEditorEscapeKeyPressed (TextEditor&)
@@ -175,7 +175,7 @@ public:
          }
     }
     
-    void buttonStateChanged(Button* button)
+    void buttonStateChanged(Button&)
     {}
 
 };
@@ -511,7 +511,7 @@ public:
     
     /* text editor listener
      --------------------------------------- */
-    void textEditorTextChanged(TextEditor& textEditor) override
+    void textEditorTextChanged(TextEditor&) override
     {}
     
     void textEditorReturnKeyPressed(TextEditor& textEditor) override
@@ -519,12 +519,12 @@ public:
         textEditor.moveKeyboardFocusToSibling(true);
     }
     
-    void textEditorEscapeKeyPressed(TextEditor& textEditor) override
+    void textEditorEscapeKeyPressed(TextEditor&) override
     {}
     
     void textEditorFocusLost(TextEditor& textEditor) override
     {
-        int value;
+        int value = 0;
         
         if(&textEditor == audioDownbeatPitch || &textEditor == audioBeatPitch ||
            &textEditor == audioCuePitch)
@@ -559,17 +559,17 @@ public:
         if(slider == audioDownbeatVolumeSlider)
         {
             Polytempo_StoredPreferences::getInstance()->getProps().setValue("audioDownbeatVolume", slider->getValue());
-            Polytempo_AudioClick::getInstance()->downbeatVolume = slider->getValue();
+            Polytempo_AudioClick::getInstance()->downbeatVolume = (float)slider->getValue();
         }
         else if(slider == audioBeatVolumeSlider)
         {
             Polytempo_StoredPreferences::getInstance()->getProps().setValue("audioBeatVolume", slider->getValue());
-            Polytempo_AudioClick::getInstance()->beatVolume = slider->getValue();
+            Polytempo_AudioClick::getInstance()->beatVolume = (float)slider->getValue();
         }
         else if(slider == audioCueVolumeSlider)
         {
             Polytempo_StoredPreferences::getInstance()->getProps().setValue("audioCueVolume", slider->getValue());
-            Polytempo_AudioClick::getInstance()->beatVolume = slider->getValue();
+            Polytempo_AudioClick::getInstance()->beatVolume = (float)slider->getValue();
         }
     }
     
@@ -688,7 +688,7 @@ public:
         midiDownbeatVelocitySlider->setSliderStyle(Slider::LinearHorizontal);
         midiDownbeatVelocitySlider->setTextBoxStyle(Slider::TextBoxLeft, false, 80, 20);
         midiDownbeatVelocitySlider->addListener(this);
-        midiDownbeatVelocitySlider->setValue(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("midiDownbeatVelocity"));
+        midiDownbeatVelocitySlider->setValue(Polytempo_StoredPreferences::getInstance()->getProps().getIntValue("midiDownbeatVelocity"));
         midiDownbeatVelocitySlider->setEnabled(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("midiClick"));
         
         /* midi beat
@@ -716,7 +716,7 @@ public:
         midiBeatVelocitySlider->setSliderStyle(Slider::LinearHorizontal);
         midiBeatVelocitySlider->setTextBoxStyle(Slider::TextBoxLeft, false, 80, 20);
         midiBeatVelocitySlider->addListener(this);
-        midiBeatVelocitySlider->setValue(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("midiBeatVelocity"));
+        midiBeatVelocitySlider->setValue(Polytempo_StoredPreferences::getInstance()->getProps().getIntValue("midiBeatVelocity"));
         midiBeatVelocitySlider->setEnabled(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("midiClick"));
         
         /* midi cue in
@@ -811,7 +811,7 @@ public:
     
     /* text editor listener
      --------------------------------------- */
-    void textEditorTextChanged(TextEditor& textEditor) override
+    void textEditorTextChanged(TextEditor&) override
     {}
     
     void textEditorReturnKeyPressed(TextEditor& textEditor) override
@@ -819,12 +819,12 @@ public:
         textEditor.moveKeyboardFocusToSibling(true);
     }
     
-    void textEditorEscapeKeyPressed(TextEditor& textEditor) override
+    void textEditorEscapeKeyPressed(TextEditor&) override
     {}
     
     void textEditorFocusLost(TextEditor& textEditor) override
     {
-        int value;
+        int value = 0;
         
         if(&textEditor == midiDownbeatPitch || &textEditor == midiBeatPitch)
         {
@@ -863,13 +863,13 @@ public:
     {
         if(slider == midiDownbeatVelocitySlider)
         {
-            Polytempo_StoredPreferences::getInstance()->getProps().setValue("midiDownbeatVelocity", slider->getValue());
+            Polytempo_StoredPreferences::getInstance()->getProps().setValue("midiDownbeatVelocity", (int)slider->getValue());
             Polytempo_MidiClick::getInstance()->setDownbeatVelocity((int)slider->getValue());
         }
         else if(slider == midiBeatVelocitySlider)
         {
-            Polytempo_StoredPreferences::getInstance()->getProps().setValue("midiBeatVelocity", slider->getValue());
-            Polytempo_MidiClick::getInstance()->setBeatVelocity(slider->getValue());
+            Polytempo_StoredPreferences::getInstance()->getProps().setValue("midiBeatVelocity", (int)slider->getValue());
+            Polytempo_MidiClick::getInstance()->setBeatVelocity((int)slider->getValue());
         }
     }
     

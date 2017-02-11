@@ -69,7 +69,7 @@ public:
     virtual void setLocator(float locator) = 0;
     float getLocator()
     {
-        return milisecondLocator * 0.001;
+        return milisecondLocator * 0.001f;
     }
     void setTempoFactor(float factor)
     {

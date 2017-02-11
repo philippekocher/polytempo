@@ -206,7 +206,7 @@ float Polytempo_Event::getTime()
 
 int Polytempo_Event::getMilisecondTime()
 {
-    return time * 1000 + 0.5;
+    return (int)(time * 1000.0f + 0.5f);
 }
 
 void Polytempo_Event::setPosition(Rational pos)
