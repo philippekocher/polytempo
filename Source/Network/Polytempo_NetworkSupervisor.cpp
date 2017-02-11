@@ -68,6 +68,10 @@ void Polytempo_NetworkSupervisor::timerCallback()
         }
     }
     
+    if(addr != *localAddress)
+    {
+        localAddress = new String(addr);
+    }
     socket->renew();
     
     // broadcast a heartbeat
