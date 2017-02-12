@@ -39,11 +39,11 @@ String Polytempo_IPAddress::addressDescription()
 	if (ipAddress == IPAddress(127, 0, 0, 1))
 		return "Localhost";
 	if (ipAddress.address[0] == 192 && ipAddress.address[1] == 168)
-		return "Private local 192-range network";
+		return "Private local network";
 	if (ipAddress.address[0] == 172 && ipAddress.address[1] >= 16 && ipAddress.address[1] <= 31)
-		return "Private local 172-range network";
+		return "Private local network";
 	if (ipAddress.address[0] == 10)
-		return "Private local 10-range network";
+		return "Private local network";
 	if (ipAddress.address[1] == 169 && ipAddress.address[1] == 254)
 		return "Link-local network";
 
@@ -52,14 +52,23 @@ String Polytempo_IPAddress::addressDescription()
 
 IPAddress Polytempo_IPAddress::getBroadcastAddress()
 {
-	int8 networkAddress[4];
+	IPAddress networkAddress = getNetworkAddress();
 	int8 broadcastAddress[4];
 	for (int i = 0; i < 4; i++)
 	{
-		networkAddress[i] = ipAddress.address[i] & subnetMask.address[i];
-		broadcastAddress[i] = networkAddress[i] | ~subnetMask.address[i];
+		broadcastAddress[i] = networkAddress.address[i] | ~subnetMask.address[i];
 	}
 	return IPAddress(broadcastAddress[0], broadcastAddress[1], broadcastAddress[2], broadcastAddress[3]);
+}
+
+IPAddress Polytempo_IPAddress::getNetworkAddress()
+{
+	int8 networkAddress[4];
+	for (int i = 0; i < 4; i++)
+	{
+		networkAddress[i] = ipAddress.address[i] & subnetMask.address[i];
+	}
+	return IPAddress(networkAddress[0], networkAddress[1], networkAddress[2], networkAddress[3]);
 }
 
 

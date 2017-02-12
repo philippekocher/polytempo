@@ -22,6 +22,7 @@ public:
 
 	String addressDescription();
 	IPAddress getBroadcastAddress();
+	IPAddress getNetworkAddress();
 
 	Polytempo_IPAddress(IPAddress address, IPAddress mask);
 	Polytempo_IPAddress() noexcept;

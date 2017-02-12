@@ -35,8 +35,6 @@ Polytempo_NetworkSupervisor::Polytempo_NetworkSupervisor()
     
     socket = nullptr;
 
-	Polytempo_NetworkInterfaceManager::getInstance()->addChangeListener(this);
-
 	startTimer(1000);
 }
 
@@ -78,14 +76,10 @@ void Polytempo_NetworkSupervisor::timerCallback()
     if(component) component->repaint();
 }
 
-void Polytempo_NetworkSupervisor::changeListenerCallback(ChangeBroadcaster *)
+String Polytempo_NetworkSupervisor::getAdapterInfo()
 {
-	connectedPeersMap->clear();
-}
-
-String Polytempo_NetworkSupervisor::getLocalAddress()
-{
-    return Polytempo_NetworkInterfaceManager::getInstance()->getSelectedIpAddress().ipAddress.toString();
+	Polytempo_IPAddress ip = Polytempo_NetworkInterfaceManager::getInstance()->getSelectedIpAddress();
+    return ip.addressDescription() + "\r\n" + ip.getNetworkAddress().toString() + "\r\n(" + ip.ipAddress.toString() + ")";
 }
 
 Uuid Polytempo_NetworkSupervisor::getUniqueId()

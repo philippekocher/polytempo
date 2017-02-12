@@ -13,8 +13,7 @@
 
 #include "Polytempo_IPAddress.h"
 
-class Polytempo_NetworkInterfaceManager :	public Timer, 
-											public ChangeBroadcaster
+class Polytempo_NetworkInterfaceManager
 {
 public:
 	Polytempo_NetworkInterfaceManager();
@@ -27,7 +26,6 @@ public:
 	void setSelectedIpAddress(Polytempo_IPAddress ip);
 
 private:
-	void timerCallback();
 	bool updateAddresses();
 
 private:

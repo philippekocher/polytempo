@@ -79,7 +79,7 @@ void Polytempo_AuxiliaryView::paint (Graphics& g)
 	attributedPeers.append("Network\n", Font(14.0f, Font::plain));
 	attributedPeers.append(Polytempo_NetworkSupervisor::getInstance()->getLocalName(), Font(12.0f, Font::bold));
 	attributedPeers.append(" \n", Font(22.0f, Font::plain));
-	attributedPeers.append(Polytempo_NetworkSupervisor::getInstance()->getLocalAddress()+"\n", Font(12.0f, Font::bold));
+	attributedPeers.append(Polytempo_NetworkSupervisor::getInstance()->getAdapterInfo()+"\n", Font(12.0f, Font::bold));
     
     HashMap < String, String >::Iterator it(*Polytempo_NetworkSupervisor::getInstance()->getPeers());
     while(it.next())

@@ -31,8 +31,7 @@
 
 
 class Polytempo_NetworkSupervisor : public Timer,
-                                    public Polytempo_EventObserver,
-									public ChangeListener
+                                    public Polytempo_EventObserver
 {
 public:
 	juce_DeclareSingleton(Polytempo_NetworkSupervisor, false);
@@ -41,9 +40,8 @@ public:
     ~Polytempo_NetworkSupervisor();
     
     void timerCallback();
-	void changeListenerCallback(ChangeBroadcaster*) override;
 
-    String getLocalAddress();
+    String getAdapterInfo();
     String getLocalName();
     HashMap <String, String>* getPeers();
     void setSocket(Polytempo_Socket *aSocket);

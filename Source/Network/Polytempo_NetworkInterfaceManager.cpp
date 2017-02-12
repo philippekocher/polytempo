@@ -18,6 +18,7 @@ Polytempo_NetworkInterfaceManager::Polytempo_NetworkInterfaceManager()
 	updateAddresses();
 
 	String lastAddress = Polytempo_StoredPreferences::getInstance()->getProps().getValue("selectedIP", String::empty);
+	bool found = false;
 	if (lastAddress != String::empty)
 	{
 		for (Polytempo_IPAddress ip : availableIpAddresses)
@@ -25,29 +26,34 @@ Polytempo_NetworkInterfaceManager::Polytempo_NetworkInterfaceManager()
 			if (ip.ipAddress.toString() == lastAddress)
 			{
 				selectedIpAddress = ip;
+				found = true;
 				break;
 			}
 		}
 	}
-	else
+	
+	if(!found)
 	{
 		for (Polytempo_IPAddress ip : availableIpAddresses)
 		{
 			if (ip.ipAddress.address[0] == 192)
 			{
 				selectedIpAddress = ip;
+				found = true;
 				break;
 			}
 		}
 	}
 
-	startTimer(500);
+	if (!found)
+	{
+		if (availableIpAddresses.size() > 0)
+			selectedIpAddress = availableIpAddresses[0];
+	}
 }
 
 Polytempo_NetworkInterfaceManager::~Polytempo_NetworkInterfaceManager()
 {
-	stopTimer();
-	
 	clearSingletonInstance();
 }
 
@@ -70,20 +76,7 @@ void Polytempo_NetworkInterfaceManager::setSelectedIpAddress(Polytempo_IPAddress
 	if (availableIpAddresses.contains(ip))
 	{
 		selectedIpAddress = ip;
-		sendChangeMessage();
 		Polytempo_StoredPreferences::getInstance()->getProps().setValue("selectedIP", ip.ipAddress.toString());
-	}
-}
-
-void Polytempo_NetworkInterfaceManager::timerCallback()
-{
-	if (updateAddresses())
-	{
-		if (!availableIpAddresses.contains(selectedIpAddress))
-		{
-			selectedIpAddress = Polytempo_IPAddress();
-		}
-		sendChangeMessage();
 	}
 }
 
@@ -94,6 +87,10 @@ bool Polytempo_NetworkInterfaceManager::updateAddresses()
 
 	if (detectedIPs != availableIpAddresses)
 	{
+		if (!availableIpAddresses.contains(selectedIpAddress))
+		{
+			selectedIpAddress = Polytempo_IPAddress();
+		}
 		availableIpAddresses = detectedIPs;
 		return true;
 	}
