@@ -24,6 +24,7 @@
 
 
 #include "Polytempo_NetworkSupervisor.h"
+#include "../Preferences/Polytempo_StoredPreferences.h"
 
 Polytempo_NetworkSupervisor::Polytempo_NetworkSupervisor()
 {
@@ -76,7 +77,7 @@ void Polytempo_NetworkSupervisor::timerCallback()
     if(localName == nullptr) name = new String("Unnamed");
     else                     name = localName;
     
-	socket->write(OSCMessage(OSCAddressPattern("/node"), OSCArgument(*localAddress), OSCArgument(*name)));
+	socket->write(OSCMessage(OSCAddressPattern("/node"), OSCArgument(getUniqueId().toString()), OSCArgument(*localAddress), OSCArgument(*name)));
 	
     // update hash maps
     connectedPeersMap->clear();
@@ -93,6 +94,23 @@ void Polytempo_NetworkSupervisor::timerCallback()
 String Polytempo_NetworkSupervisor::getLocalAddress()
 {
     return *localAddress;
+}
+
+Uuid Polytempo_NetworkSupervisor::getUniqueId()
+{
+	if (uniqueId != nullptr)
+		return uniqueId;
+
+	String uuidStr = Polytempo_StoredPreferences::getInstance()->getProps().getValue("uniqueId", String::empty);
+	if(uuidStr != String::empty)
+		uniqueId = Uuid(uuidStr);
+	else
+	{
+		// create new UUID
+		uniqueId = Uuid();
+		Polytempo_StoredPreferences::getInstance()->getProps().setValue("uniqueId", uniqueId.toString());
+	}
+	return uniqueId;
 }
 
 String Polytempo_NetworkSupervisor::getLocalName()

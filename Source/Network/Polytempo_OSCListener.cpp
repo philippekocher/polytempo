@@ -46,55 +46,55 @@ Polytempo_OSCListener::~Polytempo_OSCListener()
 
 void Polytempo_OSCListener::oscMessageReceived(const OSCMessage & message)
 {
-	// Todo: check sender IP!!!
+	String addressPattern = message.getAddressPattern().toString();
+	OSCArgument* argumentIterator = message.begin();
+	Uuid senderId = Uuid((argumentIterator++)->getString());
 
-	if (message.getAddressPattern() == "/node")
+	if (senderId == Polytempo_NetworkSupervisor::getInstance()->getUniqueId())
+		return;
+
+	if (addressPattern == "/node")
 	{
-		OSCArgument* arg = message.begin();
-		String argIp = arg->getString();
-		arg++;
-		String argName = arg->getString();
+		String argIp = (argumentIterator++)->getString();
+		String argName = (argumentIterator++)->getString();
 
 		Polytempo_NetworkSupervisor::getInstance()->addPeer(argIp, argName);
 	}
 
 #ifdef POLYTEMPO_NETWORK
-	else if (message.getAddressPattern() == "/open")
+	else if (addressPattern == "/open")
 	{
 		DBG("osc: open");
 		// "Open Score": only PolytempoNetwork
 
 		Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
-		OSCArgument* arg = message.begin();
-		if (arg->isString())
-			app->openScoreFilePath(arg->getString());
+		if ((*argumentIterator).isString())
+			app->openScoreFilePath(argumentIterator->getString());
 	}
 #endif
 	else
 	{
 		ScopedPointer<Array<var>> messages = new Array<var>();
 
-		String address = message.getAddressPattern().toString();
-		DBG("osc: " << address);
+		DBG("osc: " << addressPattern);
 
-		OSCArgument* arg = message.begin();
-		while (arg != message.end())
+		while (argumentIterator != message.end())
 		{
-			if ((*arg).isString())
-				messages->add(var(String((arg)->getString())));
-			else if ((*arg).isInt32())
-				messages->add(var(int32((arg)->getInt32())));
-			else if ((*arg).isFloat32())
-				messages->add(var(float((arg)->getFloat32())));
-			else if ((*arg).isBlob())
+			if ((*argumentIterator).isString())
+				messages->add(var(String((argumentIterator)->getString())));
+			else if ((*argumentIterator).isInt32())
+				messages->add(var(int32((argumentIterator)->getInt32())));
+			else if ((*argumentIterator).isFloat32())
+				messages->add(var(float((argumentIterator)->getFloat32())));
+			else if ((*argumentIterator).isBlob())
 				DBG("<blob>");
 			else
 				DBG("<unknown>");
 
-			arg++;
+			argumentIterator++;
 		}
 
-		ScopedPointer<Polytempo_Event> event = Polytempo_Event::makeEvent(address, *messages);
+		ScopedPointer<Polytempo_Event> event = Polytempo_Event::makeEvent(addressPattern, *messages);
 		Polytempo_Scheduler::getInstance()->handleEvent(event, event->getTime());
 	}
 }

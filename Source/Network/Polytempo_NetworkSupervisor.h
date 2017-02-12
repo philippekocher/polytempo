@@ -50,8 +50,10 @@ public:
     void addPeer(String ip, String name);
 
     void eventNotification(Polytempo_Event *event);
+	Uuid getUniqueId();
 
 private:
+	Uuid uniqueId = nullptr;
     Polytempo_Socket *socket;
     Component *component;
     
