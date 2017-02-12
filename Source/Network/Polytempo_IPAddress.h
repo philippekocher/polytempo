@@ -12,7 +12,6 @@
 #define POLYTEMPO_IPADDRESS_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "../JuceLibraryCode/modules/juce_core/native/juce_BasicNativeHeaders.h"
 
 class Polytempo_IPAddress
 {

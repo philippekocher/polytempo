@@ -10,6 +10,16 @@
 
 #include "Polytempo_IPAddress.h"
 
+#if JUCE_WINDOWS
+#include "../JuceLibraryCode/modules/juce_core/native/juce_BasicNativeHeaders.h"
+#else
+#include "/usr/include/sys/socket.h"
+#include "/usr/include/sys/sockio.h"
+#include "/usr/include/sys/ioctl.h"
+#include "/usr/include/net/if.h"
+#include "/usr/include/netinet/in.h"
+#endif
+
 Polytempo_IPAddress::Polytempo_IPAddress() noexcept
 {
 	ipAddress = IPAddress();
@@ -127,17 +137,18 @@ void Polytempo_IPAddress::findAllAddresses(Array<Polytempo_IPAddress>& result)
 
 
 #else
-static void addAddress(const sockaddr_in* addr_in, Array<Polytempo_IPAddress>& result)
+static void addAddress(const sockaddr_in* addr_in, const sockaddr_in* subnet_in, Array<Polytempo_IPAddress>& result)
 {
 	in_addr_t addr = addr_in->sin_addr.s_addr;
-
-	if (addr != INADDR_NONE)
-		result.addIfNotAlreadyThere(Polytempo_IPAddress(IPAddress(ntohl(addr)), nullptr);
+    in_addr_t subnet = subnet_in->sin_addr.s_addr;
+    if (addr != INADDR_NONE)
+		result.addIfNotAlreadyThere(Polytempo_IPAddress(IPAddress(ntohl(addr)), IPAddress(ntohl(subnet))));
 }
 
 static void findIPAddresses(int sock, Array<Polytempo_IPAddress>& result)
 {
 	ifconf cfg;
+    struct ifreq conf;
 	HeapBlock<char> buffer;
 	int bufferSize = 1024;
 
@@ -158,8 +169,18 @@ static void findIPAddresses(int sock, Array<Polytempo_IPAddress>& result)
 	while (cfg.ifc_len >= (int)(IFNAMSIZ + sizeof(struct sockaddr_in)))
 	{
 		if (cfg.ifc_req->ifr_addr.sa_family == AF_INET) // Skip non-internet addresses
-			addAddress((const sockaddr_in*)&cfg.ifc_req->ifr_addr, result);
-
+        {
+            memset(&conf, 0, sizeof(conf)); // fill confs with zero's
+            strncpy(conf.ifr_name, cfg.ifc_req->ifr_name, IFNAMSIZ - 1);
+            conf.ifr_addr.sa_family = cfg.ifc_req->ifr_addr.sa_family;
+            
+            if (ioctl(sock, SIOCGIFNETMASK, &conf) < 0) {
+                printf("Could not get the subnet mask. Errorcode : %d %s\n", errno,
+                       strerror(errno));
+            }
+        
+			addAddress((const sockaddr_in*)&cfg.ifc_req->ifr_addr, (const sockaddr_in*)&conf.ifr_addr, result);
+        }
 		cfg.ifc_len -= IFNAMSIZ + cfg.ifc_req->ifr_addr.sa_len;
 		cfg.ifc_buf += IFNAMSIZ + cfg.ifc_req->ifr_addr.sa_len;
 	}
