@@ -183,5 +183,25 @@ void Polytempo_AuxiliaryView::buttonClicked(Button *button)
 void Polytempo_AuxiliaryView::buttonStateChanged(Button*)
 {}
 
+/*
+void Polytempo_AuxiliaryView::comboBoxChanged(ComboBox* cb)
+{
+	int selectedId = cb->getSelectedId();
+	if (selectedId < availableIpAddresses.size())
+		Polytempo_NetworkInterfaceManager::getInstance()->setSelectedIpAddress(availableIpAddresses[selectedId]);
+}
+
+void Polytempo_AuxiliaryView::updateIPs()
+{
+	Array<Polytempo_IPAddress> availableIpAddresses;
 
 
+	Polytempo_NetworkInterfaceManager::getInstance()->getAvailableIpAddresses(availableIpAddresses);
+	ipList->clear();
+	for (int i = 0; i < availableIpAddresses.size(); i++)
+	{
+		ipList->addItem(availableIpAddresses[i].getName() + availableIpAddresses[i].ipAddress.toString, i);
+	}
+}
+
+*/

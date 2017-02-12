@@ -67,6 +67,14 @@
             file="../Source/Misc/Polytempo_Textbox.h"/>
     </GROUP>
     <GROUP id="{20871079-D757-6FAE-C7D7-6B4E6D796F76}" name="Network">
+      <FILE id="XmhERo" name="Polytempo_IPAddress.cpp" compile="1" resource="0"
+            file="../Source/Network/Polytempo_IPAddress.cpp"/>
+      <FILE id="wU56a8" name="Polytempo_IPAddress.h" compile="0" resource="0"
+            file="../Source/Network/Polytempo_IPAddress.h"/>
+      <FILE id="ln7waA" name="Polytempo_NetworkInterfaceManager.cpp" compile="1"
+            resource="0" file="../Source/Network/Polytempo_NetworkInterfaceManager.cpp"/>
+      <FILE id="h8EXf9" name="Polytempo_NetworkInterfaceManager.h" compile="0"
+            resource="0" file="../Source/Network/Polytempo_NetworkInterfaceManager.h"/>
       <FILE id="z9n1rK" name="Polytempo_NetworkSupervisor.cpp" compile="1"
             resource="0" file="../Source/Network/Polytempo_NetworkSupervisor.cpp"/>
       <FILE id="l8U2XX" name="Polytempo_NetworkSupervisor.h" compile="0"

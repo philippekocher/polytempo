@@ -19,7 +19,7 @@ public:
 	Polytempo_Socket(const String& hostName_, int port_, bool ticks_ = false);
 	~Polytempo_Socket();
 
-	void renew();
+	void renewBroadcaster();
 	void write(OSCMessage oscMessage);
 	bool transmitsTicks();
 

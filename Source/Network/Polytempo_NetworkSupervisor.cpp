@@ -24,21 +24,24 @@
 
 
 #include "Polytempo_NetworkSupervisor.h"
+#include "Polytempo_IPAddress.h"
 #include "../Preferences/Polytempo_StoredPreferences.h"
+#include "Polytempo_NetworkInterfaceManager.h"
 
 Polytempo_NetworkSupervisor::Polytempo_NetworkSupervisor()
 {
-    startTimer(1000);
-
     connectedPeersMap = new HashMap < String, String >();
     tempConnectedPeersMap = new HashMap < String, String >();
     
     socket = nullptr;
+
+	Polytempo_NetworkInterfaceManager::getInstance()->addChangeListener(this);
+
+	startTimer(1000);
 }
 
 Polytempo_NetworkSupervisor::~Polytempo_NetworkSupervisor()
 {
-    localAddress = nullptr;
     localName = nullptr;
     connectedPeersMap = nullptr;
     tempConnectedPeersMap = nullptr;
@@ -53,31 +56,15 @@ void Polytempo_NetworkSupervisor::timerCallback()
     if(socket == nullptr) return;
     // nothing to do, if there is no socket
     
-    Array<IPAddress> ip;
-    IPAddress::findAllAddresses(ip);
-    String addr = "0.0.0.0";
-    
-    // find local ip address
-    for(int i=0; i<ip.size(); i++)
-    {
-        if(ip[i].address[0] == 169) // inside a zeroconf network
-        {
-            addr = ip[i].toString();
-        }
-    }
-    
-    if(addr != *localAddress)
-    {
-        localAddress = new String(addr);
-    }
-    socket->renew();
+    Polytempo_NetworkInterfaceManager::getInstance()->getSelectedIpAddress().ipAddress.toString();
+    socket->renewBroadcaster();
     
     // broadcast a heartbeat
     ScopedPointer<String> name;
     if(localName == nullptr) name = new String("Unnamed");
     else                     name = localName;
     
-	socket->write(OSCMessage(OSCAddressPattern("/node"), OSCArgument(getUniqueId().toString()), OSCArgument(*localAddress), OSCArgument(*name)));
+	socket->write(OSCMessage(OSCAddressPattern("/node"), OSCArgument(getUniqueId().toString()), OSCArgument(Polytempo_NetworkInterfaceManager::getInstance()->getSelectedIpAddress().ipAddress.toString()), OSCArgument(*name)));
 	
     // update hash maps
     connectedPeersMap->clear();
@@ -91,9 +78,14 @@ void Polytempo_NetworkSupervisor::timerCallback()
     if(component) component->repaint();
 }
 
+void Polytempo_NetworkSupervisor::changeListenerCallback(ChangeBroadcaster *)
+{
+	connectedPeersMap->clear();
+}
+
 String Polytempo_NetworkSupervisor::getLocalAddress()
 {
-    return *localAddress;
+    return Polytempo_NetworkInterfaceManager::getInstance()->getSelectedIpAddress().ipAddress.toString();
 }
 
 Uuid Polytempo_NetworkSupervisor::getUniqueId()

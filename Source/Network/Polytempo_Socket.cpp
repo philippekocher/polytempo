@@ -9,13 +9,13 @@
 */
 
 #include "Polytempo_Socket.h"
-#include "Polytempo_NetworkSupervisor.h"
+#include "Polytempo_NetworkInterfaceManager.h"
 
 Polytempo_Socket::Polytempo_Socket(const String& hostName_, int port_, bool ticks_)
 {
 	oscSender = new OSCSender();
 	port = port_;
-	oscSender->connect(Polytempo_NetworkSupervisor::getInstance()->getLocalAddress(), 0);
+	oscSender->connect(Polytempo_NetworkInterfaceManager::getInstance()->getSelectedIpAddress().ipAddress.toString(), 0);
 	hostName = new String(hostName_);
 	ticks = ticks_;
 }
@@ -26,9 +26,10 @@ Polytempo_Socket::~Polytempo_Socket()
 	hostName = nullptr;
 }
 
-void Polytempo_Socket::renew()
+void Polytempo_Socket::renewBroadcaster()
 {
-	oscSender->connect(Polytempo_NetworkSupervisor::getInstance()->getLocalAddress(), 0);
+	oscSender->connect(Polytempo_NetworkInterfaceManager::getInstance()->getSelectedIpAddress().ipAddress.toString(), 0);
+	hostName = new String(Polytempo_NetworkInterfaceManager::getInstance()->getSelectedIpAddress().getBroadcastAddress().toString());
 }
 
 void Polytempo_Socket::write(OSCMessage oscMessage)
