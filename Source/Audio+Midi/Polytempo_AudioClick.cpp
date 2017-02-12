@@ -33,8 +33,8 @@ public:
     {
     }
     
-    bool appliesToNote (const int /*midiNoteNumber*/)           { return true; }
-    bool appliesToChannel (const int /*midiChannel*/)           { return true; }
+    bool appliesToNote (int /*midiNoteNumber*/)           { return true; }
+    bool appliesToChannel (int /*midiChannel*/)           { return true; }
 };
 
 
@@ -60,8 +60,8 @@ public:
         audioCh1 = ch;
     }
     
-    void startNote(const int midiNoteNumber, const float velocity,
-                    SynthesiserSound* /*sound*/, const int /*currentPitchWheelPosition*/)
+    void startNote(int midiNoteNumber, float velocity,
+                    SynthesiserSound* /*sound*/, int /*currentPitchWheelPosition*/)
     {
         currentAngle = 0.0;
         level = velocity * 0.15;
@@ -73,7 +73,7 @@ public:
         angleDelta = cyclesPerSample * 2.0 * double_Pi;
     }
     
-    void stopNote (float velocity, const bool allowTailOff)
+    void stopNote (float velocity, bool allowTailOff)
     {
         if(true)//allowTailOff)
         {
@@ -93,10 +93,10 @@ public:
         }
     }
     
-    void pitchWheelMoved (const int /*newValue*/)
+    void pitchWheelMoved (int /*newValue*/)
     {}
     
-    void controllerMoved (const int /*controllerNumber*/, const int /*newValue*/)
+    void controllerMoved (int /*controllerNumber*/, int /*newValue*/)
     {}
     
     void renderNextBlock(AudioSampleBuffer& outputBuffer, int startSample, int numSamples)
