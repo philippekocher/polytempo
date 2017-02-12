@@ -28,7 +28,7 @@
 #include "../Audio+Midi/Polytempo_AudioDeviceManager.h"
 #include "../Audio+Midi/Polytempo_AudioClick.h"
 #include "../Audio+Midi/Polytempo_MidiClick.h"
-
+#include "../Network/Polytempo_NetworkInterfaceManager.h"
 
 /** A TextButton that pops up a colour chooser to change its colours. */
 class ColourChangeButton : public TextButton,
@@ -927,13 +927,119 @@ public:
     
 };
 
+//------------------------------------------------------------------------------
+#pragma mark -
+#pragma mark Network Preferences Page
+
+class NetworkPreferencesPage : public Component, Button::Listener, ComboBox::Listener
+{
+	Label*  ipListLabel;
+	ComboBox* ipList;
+	Button* refreshButton;
+	Label*	adapterInfoLabel;
+	Array <Polytempo_IPAddress> ipAddresses;
+
+public:
+	NetworkPreferencesPage()
+	{
+		addAndMakeVisible(ipListLabel = new Label(String::empty, L"IP-Address"));
+		ipListLabel->setFont(Font(15.0000f, Font::plain));
+		ipListLabel->setJustificationType(Justification::centredLeft);
+		ipListLabel->setEditable(false, false, false);
+		
+		addAndMakeVisible(ipList = new ComboBox(String::empty));
+		ipList->addListener(this);
+		updateIpList();
+
+		addAndMakeVisible(refreshButton = new TextButton(String::empty));
+		refreshButton->setButtonText(L"Refresh");
+		refreshButton->addListener(this);
+
+		addAndMakeVisible(adapterInfoLabel = new Label(String::empty, String::empty));
+		adapterInfoLabel->setFont(Font(15.0000f, Font::plain));
+		adapterInfoLabel->setJustificationType(Justification::centredLeft);
+		adapterInfoLabel->setEditable(false, false, false);
+
+		updateIpList();
+	}
+
+	~NetworkPreferencesPage()
+	{
+		deleteAllChildren();
+	}
+
+	void updateIpList()
+	{		
+		ipList->clear();
+		Polytempo_NetworkInterfaceManager::getInstance()->getAvailableIpAddresses(ipAddresses);
+		for (int i = 0; i < ipAddresses.size(); i++)
+			ipList->addItem(ipAddresses[i].addressDescription() + ": " + ipAddresses[i].ipAddress.toString(), i+1);
+
+		int index = ipAddresses.indexOf(Polytempo_NetworkInterfaceManager::getInstance()->getSelectedIpAddress());
+		if (index >= 0)
+			ipList->setSelectedId(index+1);
+		else
+			ipList->setSelectedId(0);
+	}
+
+	void resized()
+	{
+		ipListLabel->setBounds(20, 50, proportionOfWidth(0.9f), 24);
+		ipList->setBounds(20, 80, proportionOfWidth(0.9f), 24);
+		refreshButton->setBounds(20, 110, proportionOfWidth(0.9f), 24);
+		adapterInfoLabel->setBounds(20, 140, proportionOfWidth(0.9f), 144);
+	}
+
+	/* combobox & button listener
+	--------------------------------------- */
+	void buttonClicked(Button* button)
+	{
+		if (button == refreshButton)
+		{
+			updateIpList();
+		}
+	}
+
+	void comboBoxChanged(ComboBox* box) override
+	{
+		if (box == ipList)
+		{
+			Polytempo_IPAddress selectedAddress = ipAddresses[ipList->getSelectedId() - 1];
+			Polytempo_NetworkInterfaceManager::getInstance()->setSelectedIpAddress(ipAddresses[ipList->getSelectedId()-1]);
+
+			adapterInfoLabel->setText(
+				"Network type: "
+				+ selectedAddress.addressDescription()
+				+ "\r\n"
+				+ "IP Address: "
+				+ selectedAddress.ipAddress.toString()
+				+ "\r\n"
+				+ "Network address: "
+				+ selectedAddress.getNetworkAddress().toString()
+				+ "\r\n"
+				+ "Subnet mask: "
+				+ selectedAddress.subnetMask.toString()
+				+ "\r\n"
+				+ "Broadcast address: "
+				+ selectedAddress.getBroadcastAddress().toString()
+				+ "\r\n"
+				+ "IP range: "
+				+ selectedAddress.getFirstNetworkAddress().toString()
+				+ " - "
+				+ selectedAddress.getLastNetworkAddress().toString()
+				+ "\r\n"
+			, NotificationType::sendNotification);
+		}
+	}
+};
+
 
 //==============================================================================
 static const char* generalPreferencesPage = "General";
 static const char* visualPreferencesPage = "Visual";
 static const char* audioPreferencesPage = "Audio";
 static const char* midiPreferencesPage = "Midi";
-
+static const char* networkPreferencesPage = "Network";
 
 Polytempo_NetworkPreferencesPanel::Polytempo_NetworkPreferencesPanel()
 {
@@ -943,7 +1049,8 @@ Polytempo_NetworkPreferencesPanel::Polytempo_NetworkPreferencesPanel()
     addSettingsPage(visualPreferencesPage, 0, 0);
     addSettingsPage(audioPreferencesPage, 0, 0);
     addSettingsPage(midiPreferencesPage, 0, 0);
-    
+	addSettingsPage(networkPreferencesPage, 0, 0);
+
     if(preferencePage == String::empty) preferencePage = generalPreferencesPage;
     setCurrentPage(preferencePage);
 }
@@ -966,6 +1073,8 @@ Component* Polytempo_NetworkPreferencesPanel::createComponentForPage(const Strin
         return new AudioPreferencesPage();
     else if(pageName == midiPreferencesPage)
         return new MidiPreferencesPage();
+	else if (pageName == networkPreferencesPage)
+		return new NetworkPreferencesPage();
 
     return new Component();
 }

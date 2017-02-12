@@ -71,6 +71,17 @@ IPAddress Polytempo_IPAddress::getNetworkAddress()
 	return IPAddress(networkAddress[0], networkAddress[1], networkAddress[2], networkAddress[3]);
 }
 
+IPAddress Polytempo_IPAddress::getFirstNetworkAddress()
+{
+	IPAddress networkAddress = getNetworkAddress();
+	return IPAddress(networkAddress.address[0], networkAddress.address[1], networkAddress.address[2], networkAddress.address[3] + 1);
+}
+
+IPAddress Polytempo_IPAddress::getLastNetworkAddress()
+{
+	IPAddress broadcastAddress = getBroadcastAddress();
+	return IPAddress(broadcastAddress.address[0], broadcastAddress.address[1], broadcastAddress.address[2], broadcastAddress.address[3] - 1);
+}
 
 #if JUCE_WINDOWS
 struct GetAdaptersInfoHelper

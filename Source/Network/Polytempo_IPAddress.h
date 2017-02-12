@@ -23,6 +23,8 @@ public:
 	String addressDescription();
 	IPAddress getBroadcastAddress();
 	IPAddress getNetworkAddress();
+	IPAddress getFirstNetworkAddress();
+	IPAddress getLastNetworkAddress();
 
 	Polytempo_IPAddress(IPAddress address, IPAddress mask);
 	Polytempo_IPAddress() noexcept;
