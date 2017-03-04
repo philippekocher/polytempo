@@ -50,7 +50,9 @@ Polytempo_ComposerWindow::Polytempo_ComposerWindow()
 
     // create and manage a MenuBarComponent
 	menuBarModel = new Polytempo_ComposerMenuBarModel();
-    setMenuBar(menuBarModel);
+#if !JUCE_MAC
+    setMenuBar(MenuBarModel);
+#endif
     
     // use keypresses that arrive in this window to send out commands
     ApplicationCommandManager* commandManager = &Polytempo_ComposerApplication::getCommandManager();
