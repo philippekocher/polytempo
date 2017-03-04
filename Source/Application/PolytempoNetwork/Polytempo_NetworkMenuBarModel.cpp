@@ -92,13 +92,16 @@ PopupMenu Polytempo_MenuBarModel::getMenuForIndex(int menuIndex, const String& m
 {
     PopupMenu menu;
     
-//    if (menuName == "PolytempoNetwork")
-//    {
-//        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::aboutWindow);
-//        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::preferencesWindow);
-//        menu.addSeparator();
-//        menu.addCommandItem(&commandManager, StandardApplicationCommandIDs::quit);
-//    }
+#ifdef WIN32
+    if (menuName == "PolytempoNetwork")
+    {
+        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::aboutWindow);
+        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::preferencesWindow);
+        menu.addSeparator();
+        menu.addCommandItem(&commandManager, StandardApplicationCommandIDs::quit);
+    }
+#endif
+
     if (menuName == "File")
     {
         menu.addCommandItem(&commandManager, Polytempo_CommandIDs::open);

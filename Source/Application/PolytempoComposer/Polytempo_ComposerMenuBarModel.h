@@ -44,8 +44,8 @@ public:
     void getCommandInfo (CommandID commandID, ApplicationCommandInfo& result);
 	bool perform (const InvocationInfo& info);
     
+
 private:
-    
 #if JUCE_MAC
     ScopedPointer<PopupMenu> extraAppleMenuItems;
 #endif

@@ -1,3 +1,5 @@
+#ifndef WIN32
+
 /*
 	oscpack -- Open Sound Control (OSC) packet manipulation library
 	http://www.rossbencina.com/code/oscpack
@@ -35,8 +37,6 @@
 	above license is reproduced.
 */
 #include "../UdpSocket.h"
-
-#ifndef WIN32
 
 #include <pthread.h>
 #include <unistd.h>

@@ -31,6 +31,8 @@
 
 Polytempo_ImageEditorComponent::Polytempo_ImageEditorComponent()
 {
+	image = nullptr;
+
     for (int i=0;i<4;i++)
     {
         DragHandle* dh = new DragHandle(this);
@@ -76,7 +78,7 @@ void Polytempo_ImageEditorComponent::paint(Graphics& g)
 
 void Polytempo_ImageEditorComponent::resized()
 {
-    if(image)
+    if(image && image->isValid())
     {
         setBounds(0, 0, image->getWidth() * zoomFactor, image->getHeight() * zoomFactor);
     

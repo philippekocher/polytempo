@@ -1,3 +1,5 @@
+#ifdef WIN32
+
 /*
 	oscpack -- Open Sound Control (OSC) packet manipulation library
     http://www.rossbencina.com/code/oscpack
@@ -35,8 +37,6 @@
 	above license is reproduced.
 */
 #include "../NetworkingUtils.h"
-
-#ifdef WIN32
 
 #include <winsock2.h>   // this must come first to prevent errors with MSVC7
 #include <windows.h>

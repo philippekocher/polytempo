@@ -34,7 +34,7 @@
 
 Polytempo_ComposerMenuBarModel::Polytempo_ComposerMenuBarModel()
 {
-    ApplicationCommandManager* commandManager = &Polytempo_ComposerApplication::getCommandManager();
+	ApplicationCommandManager* commandManager = &Polytempo_ComposerApplication::getCommandManager();
 
     commandManager->registerAllCommandsForTarget(this);
     commandManager->setFirstCommandTarget(this);
