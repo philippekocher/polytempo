@@ -54,13 +54,12 @@ void Polytempo_NetworkSupervisor::timerCallback()
     if(socket == nullptr) return;
     // nothing to do, if there is no socket
     
-    Polytempo_NetworkInterfaceManager::getInstance()->getSelectedIpAddress().ipAddress.toString();
     socket->renewBroadcaster();
     
     // broadcast a heartbeat
     ScopedPointer<String> name;
     if(localName == nullptr) name = new String("Unnamed");
-    else                     name = localName;
+    else                     name = new String(getLocalName());
     
 	socket->write(OSCMessage(OSCAddressPattern("/node"), OSCArgument(getUniqueId().toString()), OSCArgument(Polytempo_NetworkInterfaceManager::getInstance()->getSelectedIpAddress().ipAddress.toString()), OSCArgument(*name)));
 	
