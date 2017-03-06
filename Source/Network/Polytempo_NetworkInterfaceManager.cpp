@@ -62,6 +62,7 @@ juce_ImplementSingleton(Polytempo_NetworkInterfaceManager);
 int Polytempo_NetworkInterfaceManager::getAvailableIpAddresses(Array<Polytempo_IPAddress>& ipAdresses)
 {
 	ipAdresses.clear();
+	updateAddresses();
 	ipAdresses.addArray(availableIpAddresses);
 	return ipAdresses.size();
 }
