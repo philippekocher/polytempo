@@ -13,11 +13,11 @@
 #if JUCE_WINDOWS
 #include "../JuceLibraryCode/modules/juce_core/native/juce_BasicNativeHeaders.h"
 #else
-#include "/usr/include/sys/socket.h"
-#include "/usr/include/sys/sockio.h"
-#include "/usr/include/sys/ioctl.h"
-#include "/usr/include/net/if.h"
-#include "/usr/include/netinet/in.h"
+#include "sys/socket.h"
+#include "sys/sockio.h"
+#include "sys/ioctl.h"
+#include "net/if.h"
+#include "netinet/in.h"
 #endif
 
 Polytempo_IPAddress::Polytempo_IPAddress() noexcept
