@@ -40,10 +40,10 @@ void Polytempo_Progressbar::paint(Graphics &g)
     Rectangle<int>bounds = getLocalBounds();
     
     // text above
-    bounds.setHeight(bounds.getHeight() * 0.5);
+    bounds.setHeight(bounds.getHeight() / 2);
     g.setFont(24.0f);
     g.setColour(Colours::black);
-    g.drawFittedText(text->toRawUTF8(),
+    g.drawFittedText(*text,
                      bounds,  // inset rect
                      Justification::topLeft, 1);
     
@@ -58,14 +58,14 @@ void Polytempo_Progressbar::paint(Graphics &g)
     g.setColour(Colours::grey);
     g.drawRect(bounds);
     
-    bounds.setWidth(bounds.getWidth() * elapsedTime);
+    bounds.setWidth((int)(bounds.getWidth() * elapsedTime));
     g.setColour(Colours::blue.withAlpha(0.2f));
     g.fillRect(bounds);
 }
 
 void Polytempo_Progressbar::setText(String text_)       { text = new String(text_); }
 void Polytempo_Progressbar::setTime(float time_)        { time = time_; }
-void Polytempo_Progressbar::setDuration(int duration_)  { duration = duration_; }
+void Polytempo_Progressbar::setDuration(int duration_)  { duration = (float)duration_; }
 
 
 void Polytempo_Progressbar::eventNotification(Polytempo_Event *event)

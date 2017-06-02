@@ -88,7 +88,7 @@ StringArray Polytempo_MenuBarModel::getMenuBarNames()
 
 
 
-PopupMenu Polytempo_MenuBarModel::getMenuForIndex(int menuIndex, const String& menuName)
+PopupMenu Polytempo_MenuBarModel::getMenuForIndex(int, const String& menuName)
 {
     PopupMenu menu;
     
@@ -170,7 +170,7 @@ PopupMenu Polytempo_MenuBarModel::getMenuForIndex(int menuIndex, const String& m
     return menu;
 }
 
-void Polytempo_MenuBarModel::menuItemSelected(int menuID, int topLevelMenuIndex)
+void Polytempo_MenuBarModel::menuItemSelected(int menuID, int)
 {
     int fileIndex = menuID - Polytempo_CommandIDs::openRecent;
     if(fileIndex >= 0)

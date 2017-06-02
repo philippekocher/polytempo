@@ -27,43 +27,17 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-
-class OSCMessage : public Message
-{
-public:
-    ~OSCMessage()
-    {
-        data = nullptr;
-    }
-    
-    void setData(int l, MemoryBlock* d)
-    {
-        length = l;
-        data = d;
-    }
-    
-    int length;
-    ScopedPointer<MemoryBlock> data;    
-};
-
-
-class Polytempo_OSCListener : public Thread, private MessageListener
+class Polytempo_OSCListener : private OSCReceiver, private OSCReceiver::Listener<OSCReceiver::MessageLoopCallback>
 {
 public:
     Polytempo_OSCListener(int port);
     ~Polytempo_OSCListener();
     
-    void handleMessage(const Message& message);
-    
-    void run();
-    
-protected:
-    
 private:
+	void oscMessageReceived(const OSCMessage& message) override;
     int m_Port;
     
-    ScopedPointer < MemoryBlock > messageData;
-    ScopedPointer < DatagramSocket > socket;
+    ScopedPointer < OSCReceiver > oscReceiver;
         
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_OSCListener);
 };

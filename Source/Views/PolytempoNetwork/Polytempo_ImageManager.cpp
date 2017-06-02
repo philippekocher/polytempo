@@ -87,7 +87,7 @@ void Polytempo_ImageManager::loadImage(Polytempo_Event *event)
         Polytempo_Alert::show("Error", "Can't open file:\n" + directory.getChildFile(url).getFullPathName());
     }
     
-    Image* image1 = new Image(image->rescaled(image->getWidth()* 0.5, image->getHeight()*0.5));
+    Image* image1 = new Image(image->rescaled(image->getWidth() / 2, image->getHeight() / 2));
     images.add(image1);
     delete image;
 }
@@ -103,7 +103,7 @@ void Polytempo_ImageManager::replaceImage(var imageID, var url)
     }
     else
     {
-        Image* image1 = new Image(image->rescaled(image->getWidth()* 0.5, image->getHeight()*0.5));
+        Image* image1 = new Image(image->rescaled(image->getWidth() / 2, image->getHeight() / 2));
         for(int i=0;i<loadImageEvents.size();i++)
         {
             if(loadImageEvents[i]->getProperty(eventPropertyString_ImageID) == imageID)

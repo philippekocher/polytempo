@@ -25,9 +25,8 @@
 #ifndef __Polytempo_NetworkSupervisor__
 #define __Polytempo_NetworkSupervisor__
 
-//#include "../../JuceLibraryCode/JuceHeader.h"
 #include "../Scheduler/Polytempo_EventObserver.h"
-
+#include "Polytempo_Socket.h"
 #include "Polytempo_OSCSender.h"
 
 
@@ -35,33 +34,33 @@ class Polytempo_NetworkSupervisor : public Timer,
                                     public Polytempo_EventObserver
 {
 public:
-    Polytempo_NetworkSupervisor();
+	juce_DeclareSingleton(Polytempo_NetworkSupervisor, false);
+
+	Polytempo_NetworkSupervisor();
     ~Polytempo_NetworkSupervisor();
     
-    juce_DeclareSingleton(Polytempo_NetworkSupervisor, false);
-    
     void timerCallback();
-    
-    String getLocalAddress();
+
+    String getAdapterInfo();
     String getLocalName();
     HashMap <String, String>* getPeers();
     void setSocket(Polytempo_Socket *aSocket);
     void setComponent(Component *aComponent);
 
-    void addPeer(String name, String ip);
+    void addPeer(String ip, String name);
 
     void eventNotification(Polytempo_Event *event);
+	Uuid getUniqueId();
 
 private:
+	Uuid uniqueId = nullptr;
     Polytempo_Socket *socket;
     Component *component;
     
-    ScopedPointer <String> localAddress = new String("0.0.0.0"); // this computer's ip address
     ScopedPointer < String > localName;
 
     ScopedPointer < HashMap < String, String > > connectedPeersMap;
     ScopedPointer < HashMap < String, String > > tempConnectedPeersMap;
-
 };
 
 

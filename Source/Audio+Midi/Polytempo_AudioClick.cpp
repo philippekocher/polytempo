@@ -33,8 +33,8 @@ public:
     {
     }
     
-    bool appliesToNote (const int /*midiNoteNumber*/)           { return true; }
-    bool appliesToChannel (const int /*midiChannel*/)           { return true; }
+    bool appliesToNote (int /*midiNoteNumber*/)           { return true; }
+    bool appliesToChannel (int /*midiChannel*/)           { return true; }
 };
 
 
@@ -60,8 +60,8 @@ public:
         audioCh1 = ch;
     }
     
-    void startNote(const int midiNoteNumber, const float velocity,
-                    SynthesiserSound* /*sound*/, const int /*currentPitchWheelPosition*/)
+    void startNote(int midiNoteNumber, float velocity,
+                    SynthesiserSound* /*sound*/, int /*currentPitchWheelPosition*/)
     {
         currentAngle = 0.0;
         level = velocity * 0.15;
@@ -73,7 +73,7 @@ public:
         angleDelta = cyclesPerSample * 2.0 * double_Pi;
     }
     
-    void stopNote (float velocity, const bool allowTailOff)
+    void stopNote (float velocity, bool allowTailOff)
     {
         if(true)//allowTailOff)
         {
@@ -93,10 +93,10 @@ public:
         }
     }
     
-    void pitchWheelMoved (const int /*newValue*/)
+    void pitchWheelMoved (int /*newValue*/)
     {}
     
-    void controllerMoved (const int /*controllerNumber*/, const int /*newValue*/)
+    void controllerMoved (int /*controllerNumber*/, int /*newValue*/)
     {}
     
     void renderNextBlock(AudioSampleBuffer& outputBuffer, int startSample, int numSamples)
@@ -146,7 +146,8 @@ public:
     }
     
 private:
-    double currentAngle, angleDelta, level, tailOff, audioCh0 = 0, audioCh1 = 1;
+	double currentAngle, angleDelta, level, tailOff;
+	int audioCh0 = 0, audioCh1 = 1;
 };
 
 
@@ -213,9 +214,9 @@ Polytempo_AudioClick::Polytempo_AudioClick()
     downbeatPitch = Polytempo_StoredPreferences::getInstance()->getProps().getIntValue("audioDownbeatPitch");
     beatPitch = Polytempo_StoredPreferences::getInstance()->getProps().getIntValue("audioBeatPitch");
     cuePitch = Polytempo_StoredPreferences::getInstance()->getProps().getIntValue("audioCuePitch");
-    downbeatVolume = Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("audioDownbeatVolume");
-    beatVolume = Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("audioBeatVolume");
-    cueVolume = Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("audioCueVolume");
+    downbeatVolume = (float)Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("audioDownbeatVolume");
+    beatVolume = (float)Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("audioBeatVolume");
+    cueVolume = (float)Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("audioCueVolume");
 }
 
 Polytempo_AudioClick::~Polytempo_AudioClick()

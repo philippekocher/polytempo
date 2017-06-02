@@ -206,7 +206,7 @@ float Polytempo_Event::getTime()
 
 int Polytempo_Event::getMilisecondTime()
 {
-    return time * 1000 + 0.5;
+    return (int)(time * 1000.0f + 0.5f);
 }
 
 void Polytempo_Event::setPosition(Rational pos)
@@ -248,12 +248,11 @@ NamedValueSet* Polytempo_Event::getProperties()
 #pragma mark -
 #pragma mark event to message conversion
 
-const char* Polytempo_Event::getOscAddressFromType()
+String Polytempo_Event::getOscAddressFromType()
 {
     String address = getTypeString();
-    
-    address = "/"+address;
-    return address.toRawUTF8();
+    address = "/" + address;
+    return address;
 }
 
 Array<var> Polytempo_Event::getOscMessageFromParameters()
@@ -286,10 +285,10 @@ Array<var> Polytempo_Event::getOscMessageFromParameters()
     return *messages;
 }
 
-Polytempo_Event* Polytempo_Event::makeEvent(const char *address, Array<var> messages)
+Polytempo_Event* Polytempo_Event::makeEvent(String address, Array<var> messages)
 {
     Polytempo_Event *event = new Polytempo_Event();
-    event->setType(address+1);
+    event->setType(address.substring(1));
     
     if(messages.size()>0 && !messages[0].isString())
     {

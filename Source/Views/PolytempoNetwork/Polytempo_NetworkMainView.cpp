@@ -60,7 +60,7 @@ void Polytempo_NetworkMainView::resized()
         auxiliaryViewHeight = auxiliaryViewWidth = 0;
     else
     {
-        auxiliaryViewWidth = getWidth() * 0.12;
+        auxiliaryViewWidth = (int)(getWidth() * 0.12);
         auxiliaryViewWidth = auxiliaryViewWidth < 120 ? 120 : auxiliaryViewWidth > 200 ? 200 : auxiliaryViewWidth;
         
         auxiliaryViewHeight = 0;
@@ -82,7 +82,7 @@ void Polytempo_NetworkMainView::resized()
     
     
         visualMetro->setBounds(0, 0, stripLength, stripLength);
-        visualMetro->setWidth(stripWidth);
+        visualMetro->setWidth((float)stripWidth);
     }
     
     graphicsView->setBounds(stripWidth,
@@ -92,7 +92,7 @@ void Polytempo_NetworkMainView::resized()
     
 }
 
-void Polytempo_NetworkMainView::changeListenerCallback (ChangeBroadcaster* source)
+void Polytempo_NetworkMainView::changeListenerCallback (ChangeBroadcaster*)
 {
     // settings have changed
     

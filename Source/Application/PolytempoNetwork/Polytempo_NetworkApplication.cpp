@@ -34,15 +34,10 @@
 #include "../../Network/Polytempo_NetworkSupervisor.h"
 #include "../../Misc/Polytempo_Alerts.h"
 
-#include "../../../Resources/OscPackLibrary/osc/OscReceivedElements.h"
-#include "../../../Resources/OscPackLibrary/osc/OscPacketListener.h"
-#include "../../../Resources/OscPackLibrary/ip/UdpSocket.h"
-
-
 Polytempo_NetworkApplication::Polytempo_NetworkApplication()
 {}
 
-void Polytempo_NetworkApplication::initialise(const String& commandLine)
+void Polytempo_NetworkApplication::initialise(const String&)
 {
     // GUI
     mainWindow = new Polytempo_NetworkWindow();
@@ -60,7 +55,6 @@ void Polytempo_NetworkApplication::initialise(const String& commandLine)
     
     // create network connection
     oscListener = new Polytempo_OSCListener(47522);
-    oscListener->startThread();
     oscSender   = new Polytempo_OSCSender();
     oscSender->addBroadcastSender(47522);
     Polytempo_EventDispatcher::getInstance()->setBroadcastSender(oscSender);
@@ -195,7 +189,7 @@ void Polytempo_NetworkApplication::applicationShouldQuit()
     quit();
 }
 
-void Polytempo_NetworkApplication::anotherInstanceStarted (const String& commandLine)
+void Polytempo_NetworkApplication::anotherInstanceStarted (const String&)
 {
     // When another instance of the app is launched while this one is running,
     // this method is invoked, and the commandLine parameter tells you what

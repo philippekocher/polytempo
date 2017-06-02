@@ -54,7 +54,7 @@ public:
     void setImage(Image *img, var);
     void setText(String);
     void setProgressbar(String text,
-                        int    time,
+                        float    time,
                         int    duration = 0);
 
 private:

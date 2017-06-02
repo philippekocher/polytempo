@@ -74,8 +74,8 @@ void Polytempo_GraphicsSplitViewRegion::paint(Graphics& g)
             //if(img == nullptr) break;
          
             g.drawImage(*img,
-                        0, yOffset, imageRect.getWidth() * imageZoom, imageRect.getHeight() * imageZoom,
-                        imageRect.getX(), imageRect.getY(), imageRect.getWidth(), imageRect.getHeight());
+                        0, (int)yOffset, (int)(imageRect.getWidth() * imageZoom), (int)(imageRect.getHeight() * imageZoom),
+                        (int)imageRect.getX(), (int)imageRect.getY(), (int)imageRect.getWidth(), (int)imageRect.getHeight());
             
         }
         else if((*types)[i] == contentType_Text)
@@ -86,7 +86,7 @@ void Polytempo_GraphicsSplitViewRegion::paint(Graphics& g)
             g.setColour(Colours::black);
             g.setFont(24);
             g.drawFittedText(text,
-                             getLocalBounds().withHeight(getHeight()/numSplitViews).withY(yOffset),
+                             getLocalBounds().withHeight(getHeight()/numSplitViews).withY((int)yOffset),
                              Justification::horizontallyCentred | Justification::verticallyCentred,
                              5);
         }
@@ -104,10 +104,10 @@ void Polytempo_GraphicsSplitViewRegion::resized()
     //DBG("region resized");
     Rectangle <int> parentBounds = getParentComponent()->getBounds();
     
-    setBounds(parentBounds.getWidth()   * relativeBounds.getX(),
-              parentBounds.getHeight()  * relativeBounds.getY(),
-              parentBounds.getWidth()   * relativeBounds.getWidth(),
-              parentBounds.getHeight()  * relativeBounds.getHeight());
+    setBounds((int)(parentBounds.getWidth()   * relativeBounds.getX()),
+              (int)(parentBounds.getHeight()  * relativeBounds.getY()),
+              (int)(parentBounds.getWidth()   * relativeBounds.getWidth()),
+              (int)(parentBounds.getHeight()  * relativeBounds.getHeight()));
 
     
     if((*types)[0] == contentType_Image)
@@ -205,7 +205,7 @@ void Polytempo_GraphicsSplitViewRegion::setText(String text)
     if(getHeight() == 0) resized();
 }
 
-void Polytempo_GraphicsSplitViewRegion::setProgressbar(String text, int time, int duration)
+void Polytempo_GraphicsSplitViewRegion::setProgressbar(String text, float time, int duration)
 {
     types->set(splitRegionIndex, contentType_Progressbar);
     progressbar = new Polytempo_Progressbar();

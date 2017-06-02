@@ -60,7 +60,7 @@ public:
     void saveScoreFile(bool showFileDialog);
     
 private:
-    ScopedPointer<Polytempo_NetworkWindow> mainWindow;
+	ScopedPointer<Polytempo_NetworkWindow> mainWindow;
     ScopedPointer<Polytempo_MenuBarModel> menuBarModel;
     ScopedPointer<Polytempo_OSCSender> oscSender;
     ScopedPointer<Polytempo_OSCListener> oscListener;

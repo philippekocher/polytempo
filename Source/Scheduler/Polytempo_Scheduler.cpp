@@ -55,11 +55,11 @@ bool Polytempo_Scheduler::isRunning()
 
 // ----------------------------------------------------
 
-void Polytempo_Scheduler::handleEvent(Polytempo_Event *event, int deferTime)
+void Polytempo_Scheduler::handleEvent(Polytempo_Event *event, float deferTime)
 {
     if(event == nullptr) return;
     
-    if(deferTime > 0) DBG("schedule event...");
+    if(deferTime > 0.0f) DBG("schedule event...");
         
     // events handled by the scheduler
 

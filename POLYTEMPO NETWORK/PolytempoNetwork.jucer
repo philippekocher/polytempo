@@ -6,53 +6,6 @@
               includeBinaryInAppConfig="1" companyWebsite="www.icst.net" defines="POLYTEMPO_NETWORK=1">
   <MAINGROUP id="AdMxtt" name="PolytempoNetwork">
     <GROUP id="{380F2332-7EED-CAEF-0B98-BEC0BC16E53A}" name="Resources">
-      <GROUP id="{FD053D41-9B6B-00B6-836D-C43B3D3E8BDD}" name="OscPackLibrary">
-        <GROUP id="{D38E7D29-796B-14F5-1A72-D17F4974CAB8}" name="ip">
-          <GROUP id="{6B2428E9-5B1B-CDAB-BFD5-4F18BAA3A449}" name="posix">
-            <FILE id="Io7g1G" name="NetworkingUtils.cpp" compile="1" resource="0"
-                  file="../Resources/OscPackLibrary/ip/posix/NetworkingUtils.cpp"/>
-            <FILE id="cwqGlm" name="UdpSocket.cpp" compile="1" resource="0" file="../Resources/OscPackLibrary/ip/posix/UdpSocket.cpp"/>
-          </GROUP>
-          <GROUP id="{9F1AD134-62B9-04F6-C487-5D00EC002E25}" name="win32">
-            <FILE id="Zlg4dJ" name="NetworkingUtils.cpp" compile="1" resource="0"
-                  file="../Resources/OscPackLibrary/ip/win32/NetworkingUtils.cpp"/>
-            <FILE id="xO8It4" name="UdpSocket.cpp" compile="1" resource="0" file="../Resources/OscPackLibrary/ip/win32/UdpSocket.cpp"/>
-          </GROUP>
-          <FILE id="IucsCT" name="IpEndpointName.cpp" compile="1" resource="0"
-                file="../Resources/OscPackLibrary/ip/IpEndpointName.cpp"/>
-          <FILE id="XjHSSP" name="IpEndpointName.h" compile="0" resource="0"
-                file="../Resources/OscPackLibrary/ip/IpEndpointName.h"/>
-          <FILE id="R2q6er" name="NetworkingUtils.h" compile="0" resource="0"
-                file="../Resources/OscPackLibrary/ip/NetworkingUtils.h"/>
-          <FILE id="zAe0rt" name="PacketListener.h" compile="0" resource="0"
-                file="../Resources/OscPackLibrary/ip/PacketListener.h"/>
-          <FILE id="vahfOB" name="TimerListener.h" compile="0" resource="0" file="../Resources/OscPackLibrary/ip/TimerListener.h"/>
-          <FILE id="K21vR1" name="UdpSocket.h" compile="0" resource="0" file="../Resources/OscPackLibrary/ip/UdpSocket.h"/>
-        </GROUP>
-        <GROUP id="{917949A6-1288-94C9-9BEF-EA99EF33C8E9}" name="osc">
-          <FILE id="LYJgjL" name="MessageMappingOscPacketListener.h" compile="0"
-                resource="0" file="../Resources/OscPackLibrary/osc/MessageMappingOscPacketListener.h"/>
-          <FILE id="zxhdsl" name="OscException.h" compile="0" resource="0" file="../Resources/OscPackLibrary/osc/OscException.h"/>
-          <FILE id="b1WZNL" name="OscHostEndianness.h" compile="0" resource="0"
-                file="../Resources/OscPackLibrary/osc/OscHostEndianness.h"/>
-          <FILE id="hoB7Fe" name="OscOutboundPacketStream.cpp" compile="1" resource="0"
-                file="../Resources/OscPackLibrary/osc/OscOutboundPacketStream.cpp"/>
-          <FILE id="OQekuo" name="OscOutboundPacketStream.h" compile="0" resource="0"
-                file="../Resources/OscPackLibrary/osc/OscOutboundPacketStream.h"/>
-          <FILE id="Der5NW" name="OscPacketListener.h" compile="0" resource="0"
-                file="../Resources/OscPackLibrary/osc/OscPacketListener.h"/>
-          <FILE id="ucbHiV" name="OscPrintReceivedElements.cpp" compile="1" resource="0"
-                file="../Resources/OscPackLibrary/osc/OscPrintReceivedElements.cpp"/>
-          <FILE id="Fqzvqv" name="OscPrintReceivedElements.h" compile="0" resource="0"
-                file="../Resources/OscPackLibrary/osc/OscPrintReceivedElements.h"/>
-          <FILE id="HWp9pZ" name="OscReceivedElements.cpp" compile="1" resource="0"
-                file="../Resources/OscPackLibrary/osc/OscReceivedElements.cpp"/>
-          <FILE id="eiPNjm" name="OscReceivedElements.h" compile="0" resource="0"
-                file="../Resources/OscPackLibrary/osc/OscReceivedElements.h"/>
-          <FILE id="dH9STd" name="OscTypes.cpp" compile="1" resource="0" file="../Resources/OscPackLibrary/osc/OscTypes.cpp"/>
-          <FILE id="GesVZl" name="OscTypes.h" compile="0" resource="0" file="../Resources/OscPackLibrary/osc/OscTypes.h"/>
-        </GROUP>
-      </GROUP>
       <FILE id="KOwPbh" name="icon.png" compile="0" resource="1" file="../Resources/icon.png"/>
     </GROUP>
     <FILE id="wwqCqe" name="Polytempo_NetworkMain.cpp" compile="1" resource="0"
@@ -114,6 +67,14 @@
             file="../Source/Misc/Polytempo_Textbox.h"/>
     </GROUP>
     <GROUP id="{20871079-D757-6FAE-C7D7-6B4E6D796F76}" name="Network">
+      <FILE id="XmhERo" name="Polytempo_IPAddress.cpp" compile="1" resource="0"
+            file="../Source/Network/Polytempo_IPAddress.cpp"/>
+      <FILE id="wU56a8" name="Polytempo_IPAddress.h" compile="0" resource="0"
+            file="../Source/Network/Polytempo_IPAddress.h"/>
+      <FILE id="ln7waA" name="Polytempo_NetworkInterfaceManager.cpp" compile="1"
+            resource="0" file="../Source/Network/Polytempo_NetworkInterfaceManager.cpp"/>
+      <FILE id="h8EXf9" name="Polytempo_NetworkInterfaceManager.h" compile="0"
+            resource="0" file="../Source/Network/Polytempo_NetworkInterfaceManager.h"/>
       <FILE id="z9n1rK" name="Polytempo_NetworkSupervisor.cpp" compile="1"
             resource="0" file="../Source/Network/Polytempo_NetworkSupervisor.cpp"/>
       <FILE id="l8U2XX" name="Polytempo_NetworkSupervisor.h" compile="0"
@@ -126,6 +87,10 @@
             file="../Source/Network/Polytempo_OSCSender.cpp"/>
       <FILE id="ZIpQiM" name="Polytempo_OSCSender.h" compile="0" resource="0"
             file="../Source/Network/Polytempo_OSCSender.h"/>
+      <FILE id="jfY0wO" name="Polytempo_Socket.cpp" compile="1" resource="0"
+            file="../Source/Network/Polytempo_Socket.cpp"/>
+      <FILE id="ExXKRM" name="Polytempo_Socket.h" compile="0" resource="0"
+            file="../Source/Network/Polytempo_Socket.h"/>
     </GROUP>
     <GROUP id="{47AC34E2-55B8-0A83-90F9-17E330BE25A4}" name="Preferences">
       <FILE id="TtP3Vf" name="Polytempo_DefaultPreferences.cpp" compile="1"
@@ -222,6 +187,7 @@
     <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="1"/>
     <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="1"/>
     <MODULE id="juce_opengl" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_osc" showAllCode="1" useLocalCopy="1"/>
     <MODULE id="juce_video" showAllCode="1" useLocalCopy="1"/>
   </MODULES>
   <EXPORTFORMATS>
@@ -249,9 +215,10 @@
         <MODULEPATH id="juce_audio_formats" path="../../../../../Documents/JUCE/modules"/>
         <MODULEPATH id="juce_audio_devices" path="../../../../../Documents/JUCE/modules"/>
         <MODULEPATH id="juce_audio_basics" path="../../../../../Documents/JUCE/modules"/>
+        <MODULEPATH id="juce_osc" path="../../../../../Documents/JUCE/modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
-    <VS2015 targetFolder="Builds/VisualStudio2015">
+    <VS2015 targetFolder="Builds/VisualStudio2015" extraCompilerFlags="/wd&quot;4068&quot;">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
                        isDebug="1" optimisation="1" targetName="PolytempoNetwork"/>
@@ -273,6 +240,7 @@
         <MODULEPATH id="juce_audio_formats" path="..\..\JUCE\modules"/>
         <MODULEPATH id="juce_audio_devices" path="..\..\JUCE\modules"/>
         <MODULEPATH id="juce_audio_basics" path="..\..\JUCE\modules"/>
+        <MODULEPATH id="juce_osc" path="..\..\JUCE\modules"/>
       </MODULEPATHS>
     </VS2015>
   </EXPORTFORMATS>

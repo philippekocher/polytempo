@@ -6,53 +6,6 @@
               companyWebsite="www.icst.net" defines="POLYTEMPO_COMPOSER=1">
   <MAINGROUP id="cYhNWq" name="PolytempoComposer">
     <GROUP id="{6A675542-C9E9-872F-C795-8AC67F3B5B9D}" name="Resources">
-      <GROUP id="{1A68AE1F-8DD0-974D-7C13-A840CCC6E1DD}" name="OscPackLibrary">
-        <GROUP id="{797D735E-8B22-3244-12B6-197C779753B5}" name="ip">
-          <GROUP id="{B451F6A5-68CD-0425-32AC-358E392E5B50}" name="posix">
-            <FILE id="JiJ2Vt" name="NetworkingUtils.cpp" compile="1" resource="0"
-                  file="../Resources/OscPackLibrary/ip/posix/NetworkingUtils.cpp"/>
-            <FILE id="nvbqiC" name="UdpSocket.cpp" compile="1" resource="0" file="../Resources/OscPackLibrary/ip/posix/UdpSocket.cpp"/>
-          </GROUP>
-          <GROUP id="{F7837AD4-D4E8-DB87-2F66-FA8F8D9BCA26}" name="win32">
-            <FILE id="su2fzm" name="NetworkingUtils.cpp" compile="1" resource="0"
-                  file="../Resources/OscPackLibrary/ip/win32/NetworkingUtils.cpp"/>
-            <FILE id="ImyCWv" name="UdpSocket.cpp" compile="1" resource="0" file="../Resources/OscPackLibrary/ip/win32/UdpSocket.cpp"/>
-          </GROUP>
-          <FILE id="sOyViV" name="IpEndpointName.cpp" compile="1" resource="0"
-                file="../Resources/OscPackLibrary/ip/IpEndpointName.cpp"/>
-          <FILE id="pa7F76" name="IpEndpointName.h" compile="0" resource="0"
-                file="../Resources/OscPackLibrary/ip/IpEndpointName.h"/>
-          <FILE id="mytHgh" name="NetworkingUtils.h" compile="0" resource="0"
-                file="../Resources/OscPackLibrary/ip/NetworkingUtils.h"/>
-          <FILE id="nKoBCr" name="PacketListener.h" compile="0" resource="0"
-                file="../Resources/OscPackLibrary/ip/PacketListener.h"/>
-          <FILE id="SXSIMx" name="TimerListener.h" compile="0" resource="0" file="../Resources/OscPackLibrary/ip/TimerListener.h"/>
-          <FILE id="O1h7Vo" name="UdpSocket.h" compile="0" resource="0" file="../Resources/OscPackLibrary/ip/UdpSocket.h"/>
-        </GROUP>
-        <GROUP id="{2AD378EF-B0AA-8BAB-C842-6D1DA4D23804}" name="osc">
-          <FILE id="WcdBqH" name="MessageMappingOscPacketListener.h" compile="0"
-                resource="0" file="../Resources/OscPackLibrary/osc/MessageMappingOscPacketListener.h"/>
-          <FILE id="jQ9cPa" name="OscException.h" compile="0" resource="0" file="../Resources/OscPackLibrary/osc/OscException.h"/>
-          <FILE id="cWDWvD" name="OscHostEndianness.h" compile="0" resource="0"
-                file="../Resources/OscPackLibrary/osc/OscHostEndianness.h"/>
-          <FILE id="NV6ae7" name="OscOutboundPacketStream.cpp" compile="1" resource="0"
-                file="../Resources/OscPackLibrary/osc/OscOutboundPacketStream.cpp"/>
-          <FILE id="dKZwQD" name="OscOutboundPacketStream.h" compile="0" resource="0"
-                file="../Resources/OscPackLibrary/osc/OscOutboundPacketStream.h"/>
-          <FILE id="rN0Ap8" name="OscPacketListener.h" compile="0" resource="0"
-                file="../Resources/OscPackLibrary/osc/OscPacketListener.h"/>
-          <FILE id="BzNiLh" name="OscPrintReceivedElements.cpp" compile="1" resource="0"
-                file="../Resources/OscPackLibrary/osc/OscPrintReceivedElements.cpp"/>
-          <FILE id="CAKEMq" name="OscPrintReceivedElements.h" compile="0" resource="0"
-                file="../Resources/OscPackLibrary/osc/OscPrintReceivedElements.h"/>
-          <FILE id="fE9r5S" name="OscReceivedElements.cpp" compile="1" resource="0"
-                file="../Resources/OscPackLibrary/osc/OscReceivedElements.cpp"/>
-          <FILE id="rc918e" name="OscReceivedElements.h" compile="0" resource="0"
-                file="../Resources/OscPackLibrary/osc/OscReceivedElements.h"/>
-          <FILE id="ldfIaY" name="OscTypes.cpp" compile="1" resource="0" file="../Resources/OscPackLibrary/osc/OscTypes.cpp"/>
-          <FILE id="DhbuwN" name="OscTypes.h" compile="0" resource="0" file="../Resources/OscPackLibrary/osc/OscTypes.h"/>
-        </GROUP>
-      </GROUP>
       <FILE id="AuXr1H" name="icon.png" compile="0" resource="1" file="../Resources/icon.png"/>
     </GROUP>
     <GROUP id="{3ED74506-B10E-F656-6CD7-5C24346558D8}" name="Source">
@@ -185,6 +138,10 @@
               file="../Source/Network/Polytempo_OSCSender.cpp"/>
         <FILE id="WiX1Bc" name="Polytempo_OSCSender.h" compile="0" resource="0"
               file="../Source/Network/Polytempo_OSCSender.h"/>
+        <FILE id="jJjurB" name="Polytempo_Socket.cpp" compile="1" resource="0"
+              file="../Source/Network/Polytempo_Socket.cpp"/>
+        <FILE id="d3aVSt" name="Polytempo_Socket.h" compile="0" resource="0"
+              file="../Source/Network/Polytempo_Socket.h"/>
       </GROUP>
       <GROUP id="{70D5B0C3-A3BD-0007-7A8F-0EC797B02A2F}" name="Scheduler">
         <FILE id="wSI9vL" name="Polytempo_Event.cpp" compile="1" resource="0"
@@ -255,9 +212,10 @@
         <MODULEPATH id="juce_audio_devices" path="../../../../../Documents/JUCE/modules"/>
         <MODULEPATH id="juce_audio_formats" path="../../../../../Documents/JUCE/modules"/>
         <MODULEPATH id="juce_audio_processors" path="../../../../../Documents/JUCE/modules"/>
+        <MODULEPATH id="juce_osc" path="../../JUCE/modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
-    <VS2015 targetFolder="Builds/VisualStudio2015">
+    <VS2015 targetFolder="Builds/VisualStudio2015" extraCompilerFlags="/wd&quot;4068&quot;">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
                        isDebug="1" optimisation="1" targetName="PolytempoComposer"/>
@@ -278,6 +236,7 @@
         <MODULEPATH id="juce_audio_formats" path="..\..\JUCE\modules"/>
         <MODULEPATH id="juce_audio_devices" path="..\..\JUCE\modules"/>
         <MODULEPATH id="juce_audio_basics" path="..\..\JUCE\modules"/>
+        <MODULEPATH id="juce_osc" path="../../JUCE/modules"/>
       </MODULEPATHS>
     </VS2015>
   </EXPORTFORMATS>
@@ -294,6 +253,7 @@
     <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="1"/>
     <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="1"/>
     <MODULE id="juce_opengl" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_osc" showAllCode="1" useLocalCopy="1"/>
     <MODULE id="juce_video" showAllCode="1" useLocalCopy="1"/>
   </MODULES>
   <JUCEOPTIONS/>

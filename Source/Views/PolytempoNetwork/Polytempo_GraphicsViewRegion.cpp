@@ -53,21 +53,21 @@ void Polytempo_GraphicsViewRegion::paint(Graphics& g)
     {
         imageZoom = imageZoom == INFINITY ? 1 : imageZoom;
         
-        float yOffset = (getHeight() - (imageHeight * imageZoom)) * 0.5;
+        float yOffset = (getHeight() - (imageHeight * imageZoom)) * 0.5f;
         g.drawImage(*image,
-                    0, yOffset, imageWidth * imageZoom, imageHeight * imageZoom,
-                    imageLeft, imageTop, imageWidth, imageHeight);
+                    0, (int)yOffset, (int)(imageWidth * imageZoom), (int)(imageHeight * imageZoom),
+                    (int)imageLeft, (int)imageTop, (int)imageWidth, (int)imageHeight);
         
     }
     else if(contentType == contentType_Text)
     {
         g.setColour(Colours::black);
-        g.setFont(getHeight()); // fit text vertically
+        g.setFont((float)getHeight()); // fit text vertically
         g.drawFittedText(*text,
                          getLocalBounds().reduced(8,0),
                          Justification::left,
                          5,
-                         0.00001);
+                         0.00001f);
     }
     else if(contentType == contentType_Progressbar)
     {
@@ -82,10 +82,10 @@ void Polytempo_GraphicsViewRegion::resized()
     //DBG("region resized");
     Rectangle <int> parentBounds = getParentComponent()->getBounds();
     
-    setBounds(parentBounds.getWidth()   * relativeBounds.getX(),
-              parentBounds.getHeight()  * relativeBounds.getY(),
-              parentBounds.getWidth()   * relativeBounds.getWidth(),
-              parentBounds.getHeight()  * relativeBounds.getHeight());
+    setBounds((int)(parentBounds.getWidth()   * relativeBounds.getX()),
+              (int)(parentBounds.getHeight()  * relativeBounds.getY()),
+              (int)(parentBounds.getWidth()   * relativeBounds.getWidth()),
+              (int)(parentBounds.getHeight()  * relativeBounds.getHeight()));
 
     
     if(contentType == contentType_Image)
@@ -106,20 +106,20 @@ void Polytempo_GraphicsViewRegion::resized()
                 Image* im = Polytempo_ImageManager::getInstance()->getImage(event->getProperty(eventPropertyString_ImageID));
                 if(im == nullptr) continue;
                 
-                float imageWidth, imageHeight;
+                float imgWidth, imgHeight;
                 if(event->hasProperty(eventPropertyString_Rect))
                 {
-                    imageWidth = float(event->getProperty(eventPropertyString_Rect).getArray()->getUnchecked(2)) * im->getWidth();
-                    imageHeight = float(event->getProperty(eventPropertyString_Rect).getArray()->getUnchecked(3)) * im->getHeight();
+					imgWidth = float(event->getProperty(eventPropertyString_Rect).getArray()->getUnchecked(2)) * im->getWidth();
+					imgHeight = float(event->getProperty(eventPropertyString_Rect).getArray()->getUnchecked(3)) * im->getHeight();
                 }
                 else
                 {
-                    imageWidth  = im->getWidth();
-                    imageHeight = im->getHeight();
+					imgWidth = (float)im->getWidth();
+					imgHeight = (float)im->getHeight();
                 }
                 
-                if(imageWidth > maxWidth)   maxWidth = imageWidth;
-                if(imageHeight > maxHeight) maxHeight = imageHeight;
+                if(imgWidth > maxWidth)   maxWidth = imgWidth;
+                if(imgHeight > maxHeight) maxHeight = imgHeight;
             }
         }
         
@@ -179,11 +179,11 @@ void Polytempo_GraphicsViewRegion::setText(String text_)
     resized();
 }
 
-void Polytempo_GraphicsViewRegion::setProgressbar(String text, int time, int duration)
+void Polytempo_GraphicsViewRegion::setProgressbar(String txt, float time, int duration)
 {
     contentType = contentType_Progressbar;
     progressbar = new Polytempo_Progressbar();
-    progressbar->setText(text);
+    progressbar->setText(txt);
     progressbar->setTime(time);
     progressbar->setDuration(duration);
     
