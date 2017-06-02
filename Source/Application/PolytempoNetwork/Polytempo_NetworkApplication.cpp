@@ -42,7 +42,9 @@ void Polytempo_NetworkApplication::initialise(const String&)
     // GUI
     mainWindow = new Polytempo_NetworkWindow();
     
-    LookAndFeel::getDefaultLookAndFeel().setUsingNativeAlertWindows(true);
+    // look and feel
+    lookAndFeelV3.setUsingNativeAlertWindows(true);
+    Desktop::getInstance().setDefaultLookAndFeel(&lookAndFeelV3);
     
     // create and manage a MenuBarComponent
     menuBarModel = new Polytempo_MenuBarModel(mainWindow);

@@ -68,6 +68,7 @@ private:
     ScopedPointer<Polytempo_Score> score;
     
     File scoreFile;
+    LookAndFeel_V3 lookAndFeelV3;
 };
 
 
