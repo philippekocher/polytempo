@@ -2,8 +2,9 @@
 
 <JUCERPROJECT id="OXoF3n" name="PolytempoComposer" projectType="guiapp" version=""
               bundleIdentifier="net.icst.PolytempoComposer" includeBinaryInAppConfig="1"
-              jucerVersion="4.3.0" companyName="Zurich University of the Arts"
-              companyWebsite="www.icst.net" defines="POLYTEMPO_COMPOSER=1">
+              jucerVersion="5.0.2" companyName="Zurich University of the Arts"
+              companyWebsite="www.icst.net" defines="POLYTEMPO_COMPOSER=1"
+              displaySplashScreen="1" reportAppUsage="1" splashScreenColour="Dark">
   <MAINGROUP id="cYhNWq" name="PolytempoComposer">
     <GROUP id="{6A675542-C9E9-872F-C795-8AC67F3B5B9D}" name="Resources">
       <FILE id="AuXr1H" name="icon.png" compile="0" resource="1" file="../Resources/icon.png"/>
@@ -126,6 +127,14 @@
               resource="0" file="../Source/Data/Polytempo_TempoInterpolation.h"/>
       </GROUP>
       <GROUP id="{D87069DD-1863-4062-50B8-DC088D3AC352}" name="Network">
+        <FILE id="dedn0R" name="Polytempo_IPAddress.h" compile="0" resource="0"
+              file="../Source/Network/Polytempo_IPAddress.h"/>
+        <FILE id="KTwlrR" name="Polytempo_IPAddress.cpp" compile="1" resource="0"
+              file="../Source/Network/Polytempo_IPAddress.cpp"/>
+        <FILE id="EABw18" name="Polytempo_NetworkInterfaceManager.h" compile="0"
+              resource="0" file="../Source/Network/Polytempo_NetworkInterfaceManager.h"/>
+        <FILE id="TVOF2R" name="Polytempo_NetworkInterfaceManager.cpp" compile="1"
+              resource="0" file="../Source/Network/Polytempo_NetworkInterfaceManager.cpp"/>
         <FILE id="WyPiu1" name="Polytempo_NetworkSupervisor.cpp" compile="1"
               resource="0" file="../Source/Network/Polytempo_NetworkSupervisor.cpp"/>
         <FILE id="DECI5b" name="Polytempo_NetworkSupervisor.h" compile="0"
@@ -239,6 +248,30 @@
         <MODULEPATH id="juce_osc" path="../../JUCE/modules"/>
       </MODULEPATHS>
     </VS2015>
+    <VS2017 targetFolder="Builds/VisualStudio2017" extraCompilerFlags="/wd&quot;4068&quot;">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
+                       isDebug="1" optimisation="1" targetName="PolytempoComposer"/>
+        <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
+                       isDebug="0" optimisation="3" targetName="PolytempoComposer"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_video" path="..\..\JUCE\modules"/>
+        <MODULEPATH id="juce_osc" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_opengl" path="..\..\JUCE\modules"/>
+        <MODULEPATH id="juce_gui_extra" path="..\..\JUCE\modules"/>
+        <MODULEPATH id="juce_gui_basics" path="..\..\JUCE\modules"/>
+        <MODULEPATH id="juce_graphics" path="..\..\JUCE\modules"/>
+        <MODULEPATH id="juce_events" path="..\..\JUCE\modules"/>
+        <MODULEPATH id="juce_data_structures" path="..\..\JUCE\modules"/>
+        <MODULEPATH id="juce_cryptography" path="..\..\JUCE\modules"/>
+        <MODULEPATH id="juce_core" path="..\..\JUCE\modules"/>
+        <MODULEPATH id="juce_audio_processors" path="..\..\JUCE\modules"/>
+        <MODULEPATH id="juce_audio_formats" path="..\..\JUCE\modules"/>
+        <MODULEPATH id="juce_audio_devices" path="..\..\JUCE\modules"/>
+        <MODULEPATH id="juce_audio_basics" path="..\..\JUCE\modules"/>
+      </MODULEPATHS>
+    </VS2017>
   </EXPORTFORMATS>
   <MODULES>
     <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="1"/>

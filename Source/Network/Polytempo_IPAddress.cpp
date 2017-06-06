@@ -127,7 +127,7 @@ void Polytempo_IPAddress::findAllAddresses(Array<Polytempo_IPAddress>& result)
 	{
 		for (PIP_ADAPTER_INFO adapter = gah.adapterInfo; adapter != nullptr; adapter = adapter->Next)
 		{
-			Polytempo_IPAddress ip(IPAddress(adapter->IpAddressList.IpAddress.String), IPAddress(adapter->IpAddressList.IpMask.String));
+			Polytempo_IPAddress ip(IPAddress(String(adapter->IpAddressList.IpAddress.String)), IPAddress(String(adapter->IpAddressList.IpMask.String)));
 
 			if (ip.ipAddress != IPAddress::any())
 				result.addIfNotAlreadyThere(ip);
