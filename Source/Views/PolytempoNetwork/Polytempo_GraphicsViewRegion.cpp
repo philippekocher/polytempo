@@ -43,7 +43,7 @@ Polytempo_GraphicsViewRegion::~Polytempo_GraphicsViewRegion()
     progressbar = nullptr;
 }
 
-void Polytempo_GraphicsViewRegion::paint(Graphics& g)
+void Polytempo_GraphicsViewRegion::paintContent(Graphics& g)
 {    
     if(contentType == contentType_Empty)    return;
     

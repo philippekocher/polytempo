@@ -28,6 +28,7 @@
 //#include "../../JuceLibraryCode/JuceHeader.h"
 
 #include "Polytempo_Progressbar.h"
+#include "Polytempo_GraphicsEditableRegion.h"
 
 
 enum Polytempo_ViewContentType
@@ -38,14 +39,14 @@ enum Polytempo_ViewContentType
     contentType_Progressbar
 };
 
-class Polytempo_GraphicsViewRegion : public Component
+class Polytempo_GraphicsViewRegion : public Polytempo_GraphicsEditableRegion
 {
 public:
     Polytempo_GraphicsViewRegion(var = var::null);
     ~Polytempo_GraphicsViewRegion();
 
-    void paint(Graphics& g);
-    void resized();
+    void paintContent(Graphics& g) override;
+    void resized() override;
     
     void setRelativeBounds(const Rectangle <float> &newBounds);
     
