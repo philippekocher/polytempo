@@ -59,11 +59,13 @@ Polytempo_GraphicsEditableRegion::Polytempo_GraphicsEditableRegion()
 	buttonCancel->addListener(this);
 	addChildComponent(buttonCancel);
 
-	colorSelector = new ColourSelector(ColourSelector::ColourSelectorOptions::showAlphaChannel | ColourSelector::ColourSelectorOptions::showColourspace);
+	colorSelector = new ColourSelector(ColourSelector::ColourSelectorOptions::showAlphaChannel | ColourSelector::ColourSelectorOptions::showColourspace | ColourSelector::ColourSelectorOptions::showSliders);
 	colorSelector->setBounds(0, 0, 200, 200);
 	colorSelector->setCurrentColour(Colours::red);
 	colorSelector->addChangeListener(this);
 	addChildComponent(colorSelector);
+
+	addKeyListener(this);
 
 	startTimer(MIN_INTERVAL_BETWEEN_REPAINTS_MS);
 }
@@ -72,26 +74,35 @@ Polytempo_GraphicsEditableRegion::~Polytempo_GraphicsEditableRegion()
 {
 }
 
+void Polytempo_GraphicsEditableRegion::paintAnnotation(Graphics& g, const Polytempo_GraphicsAnnotation& annotation)
+{
+	PathStrokeType strokeType(PathStrokeType::rounded);
+
+	g.setColour(annotation.color);
+	if (!annotation.freeHandPath.isEmpty())
+		g.strokePath(annotation.freeHandPath, strokeType);
+	
+	if (!annotation.text.isEmpty())
+	{
+		g.setFont(14);
+		g.drawSingleLineText(annotation.text, annotation.referencePoint.getX() + 5, annotation.referencePoint.getY());
+	}
+}
+
 void Polytempo_GraphicsEditableRegion::paint (Graphics& g)
 {
 	paintContent(g);
-
-	PathStrokeType type(PathStrokeType::rounded);
 	
 	if (status == FreehandEditing)
 	{
-		g.drawArrow(Line<int>(referencePoint.translated(0, buttonsAboveReferencePoint ? -50 : 50), referencePoint).toFloat(), 4, 8, 8);
+		g.drawArrow(Line<float>(temporaryAnnotation.referencePoint.translated(0, buttonsAboveReferencePoint ? -50 : 50), temporaryAnnotation.referencePoint).toFloat(), 4, 8, 8);
 
-		g.setColour(temporaryAnnotation.color);
-
-		if(!temporaryAnnotation.freeHandPath.isEmpty())
-			g.strokePath(temporaryAnnotation.freeHandPath, type);
+		paintAnnotation(g, temporaryAnnotation);
 	}
 
 	for (Polytempo_GraphicsAnnotation annotation : annotations)
 	{
-		g.setColour(annotation.color);
-		g.strokePath(annotation.freeHandPath, type);
+		paintAnnotation(g, annotation);
 	}
 }
 
@@ -167,28 +178,30 @@ void Polytempo_GraphicsEditableRegion::mouseEnter(const MouseEvent& e)
 
 void Polytempo_GraphicsEditableRegion::handleStartEditing(Point<int> mousePosition)
 {
-	referencePoint = mousePosition;
-	temporaryAnnotation.referencePoint = mousePosition.toFloat();	// todo transform!
 	temporaryAnnotation.clear();
+	temporaryAnnotation.referencePoint = mousePosition.toFloat();	// todo transform!
 	temporaryAnnotation.color = colorSelector->getCurrentColour();
 	status = FreehandEditing;
 	setMouseCursor(MouseCursor::CrosshairCursor);
 
-	buttonsAboveReferencePoint = (referencePoint.getY() > getHeight() - 65);
+	buttonsAboveReferencePoint = (mousePosition.getY() > getHeight() - 65);
 
-	buttonOk->setCentrePosition(referencePoint.translated(15, buttonsAboveReferencePoint ? -50 : 50));
+	buttonOk->setCentrePosition(mousePosition.translated(15, buttonsAboveReferencePoint ? -50 : 50));
 	buttonOk->setVisible(true);
-	buttonCancel->setCentrePosition(referencePoint.translated(45, buttonsAboveReferencePoint ? -50 : 50));
+	buttonCancel->setCentrePosition(mousePosition.translated(45, buttonsAboveReferencePoint ? -50 : 50));
 	buttonCancel->setVisible(true);
 
-	colorSelector->setCentrePosition(referencePoint.getX() - 150, referencePoint.getY());
+	colorSelector->setTopLeftPosition(mousePosition.getX() > getBounds().getWidth() / 2 ? 0 : getBounds().getWidth() - colorSelector->getWidth(), getBounds().getHeight() - colorSelector->getHeight());
 	colorSelector->setVisible(true);
+
+	grabKeyboardFocus();
+
 	repaintRequired = true;
 }
 
 void Polytempo_GraphicsEditableRegion::handleEndEditAccept()
 {
-	if (!temporaryAnnotation.freeHandPath.isEmpty())
+	if (!temporaryAnnotation.freeHandPath.isEmpty() || !temporaryAnnotation.text.isEmpty())
 		annotations.add(temporaryAnnotation);
 	handleEndEdit();
 }
@@ -238,4 +251,21 @@ void Polytempo_GraphicsEditableRegion::changeListenerCallback(ChangeBroadcaster*
 	{
 		temporaryAnnotation.color = colorSelector->getCurrentColour();
 	}
+}
+
+bool Polytempo_GraphicsEditableRegion::keyPressed(const KeyPress& key, Component* originatingComponent)
+{
+	if(status != Default && key.isValid())
+	{
+		juce_wchar character = key.getTextCharacter();
+		String str;
+		str += character;
+		if (!str.isEmpty())
+			temporaryAnnotation.text.append(str, 1);
+		repaintRequired = true;
+
+		return true;
+	}
+
+	return false;
 }

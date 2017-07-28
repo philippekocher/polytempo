@@ -21,4 +21,5 @@ void Polytempo_GraphicsAnnotation::clear()
 	freeHandPath.clear();
 	imageId = String::empty;
 	referencePoint = Point<float>();
+	text = String::empty;
 }

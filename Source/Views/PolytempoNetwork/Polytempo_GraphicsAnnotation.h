@@ -21,4 +21,5 @@ public:
 	Point<float> referencePoint;
 	Colour color;
 	Path freeHandPath;
+	String text;
 };

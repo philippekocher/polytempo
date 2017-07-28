@@ -20,14 +20,15 @@
 //==============================================================================
 /*
 */
-class Polytempo_GraphicsEditableRegion    : public Component, Timer, ButtonListener, ChangeListener
+class Polytempo_GraphicsEditableRegion : public Component, Timer, ButtonListener, KeyListener, ChangeListener
 {
 public:
     Polytempo_GraphicsEditableRegion();
     ~Polytempo_GraphicsEditableRegion();
 
 	virtual void paintContent(Graphics& g) = 0;
-	
+
+	static void paintAnnotation(Graphics& g, const Polytempo_GraphicsAnnotation& annotation);
     void paint (Graphics&) override;
 	
 	void setImage(Image *img, var rect, String imageId);
@@ -39,6 +40,7 @@ public:
 	void timerCallback() override;
 	void buttonClicked(Button* source) override;
 	void changeListenerCallback(ChangeBroadcaster* source) override;
+	bool keyPressed(const KeyPress& key, Component* originatingComponent) override;
 
 private:
 	virtual void setViewImage(Image *img, var) = 0;
@@ -51,7 +53,6 @@ private:
 	enum Status { Default, FreehandEditing } status;
 	Array<Polytempo_GraphicsAnnotation> annotations;
 	Polytempo_GraphicsAnnotation temporaryAnnotation;
-	Point<int> referencePoint;
 	Point<int> lastPathPoint;
 	bool repaintRequired;
 	
@@ -63,7 +64,6 @@ private:
 	String currentImageId;
 
 	ScopedPointer<ColourSelector> colorSelector;
-
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_GraphicsEditableRegion)
 	
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_GraphicsEditableRegion)
 };
