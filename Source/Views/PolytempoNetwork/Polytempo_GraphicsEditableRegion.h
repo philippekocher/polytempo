@@ -27,10 +27,12 @@ public:
     ~Polytempo_GraphicsEditableRegion();
 
 	virtual void paintContent(Graphics& g) = 0;
+	virtual void resizeContent() = 0;
 
 	static void paintAnnotation(Graphics& g, const Polytempo_GraphicsAnnotation& annotation);
     void paint (Graphics&) override;
-	
+	void resized() override;
+
 	void setImage(Image *img, var rect, String imageId);
 	void mouseUp(const MouseEvent& e) override;
 	void mouseDown(const MouseEvent& e) override;
@@ -60,10 +62,12 @@ private:
 	ScopedPointer<ImageButton> buttonCancel;
 	bool buttonsAboveReferencePoint;
 
-	Rectangle<float> currentViewRectangle;
+	Rectangle<float> currentImageRectangle;
 	String currentImageId;
 
 	ScopedPointer<ColourSelector> colorSelector;
-	
+	AffineTransform imageToScreen;
+	AffineTransform screenToImage;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_GraphicsEditableRegion)
 };

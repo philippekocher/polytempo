@@ -46,7 +46,7 @@ public:
     ~Polytempo_GraphicsViewRegion();
 
     void paintContent(Graphics& g) override;
-    void resized() override;
+    void resizeContent() override;
     
     void setRelativeBounds(const Rectangle <float> &newBounds);
     

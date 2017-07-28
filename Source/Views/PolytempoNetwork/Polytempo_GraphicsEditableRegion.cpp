@@ -72,6 +72,7 @@ Polytempo_GraphicsEditableRegion::Polytempo_GraphicsEditableRegion()
 
 Polytempo_GraphicsEditableRegion::~Polytempo_GraphicsEditableRegion()
 {
+	stopTimer();
 }
 
 void Polytempo_GraphicsEditableRegion::paintAnnotation(Graphics& g, const Polytempo_GraphicsAnnotation& annotation)
@@ -106,13 +107,22 @@ void Polytempo_GraphicsEditableRegion::paint (Graphics& g)
 	}
 }
 
+void Polytempo_GraphicsEditableRegion::resized()
+{
+	resizeContent();
+}
+
 void Polytempo_GraphicsEditableRegion::setImage(Image* img, var rect, String imageId)
 {
-	Array < var > r = *rect.getArray();
-	currentViewRectangle = Rectangle<float>(Point<float>(r[0], r[1]), Point<float>(r[2], r[3]));
+	Array<var> r = *rect.getArray();
+	currentImageRectangle = Rectangle<float>(
+		Point<float>(img->getWidth() * float(r[0]), img->getHeight() * float(r[1])), 
+		Point<float>(img->getWidth() * float(r[2]), img->getHeight() * float(r[3])));
 	currentImageId = imageId;
 
 	setViewImage(img, rect);
+
+	resized();
 }
 
 void Polytempo_GraphicsEditableRegion::mouseUp(const MouseEvent& e)

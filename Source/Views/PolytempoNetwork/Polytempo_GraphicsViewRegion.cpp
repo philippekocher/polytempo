@@ -77,7 +77,7 @@ void Polytempo_GraphicsViewRegion::paintContent(Graphics& g)
     if(borderSize > 0.0) g.drawRect(getLocalBounds());
 }
 
-void Polytempo_GraphicsViewRegion::resized()
+void Polytempo_GraphicsViewRegion::resizeContent()
 {
     //DBG("region resized");
     Rectangle <int> parentBounds = getParentComponent()->getBounds();
