@@ -94,6 +94,8 @@ void Polytempo_GraphicsEditableRegion::paint (Graphics& g)
 {
 	paintContent(g);
 	
+	g.addTransform(imageToScreen);
+
 	if (status == FreehandEditing)
 	{
 		g.drawArrow(Line<float>(temporaryAnnotation.referencePoint.translated(0, buttonsAboveReferencePoint ? -50 : 50), temporaryAnnotation.referencePoint).toFloat(), 4, 8, 8);
@@ -110,6 +112,11 @@ void Polytempo_GraphicsEditableRegion::paint (Graphics& g)
 void Polytempo_GraphicsEditableRegion::resized()
 {
 	resizeContent();
+
+	screenToImage = AffineTransform::scale(currentImageRectangle.getWidth() / getWidth(), currentImageRectangle.getHeight() / getHeight());
+	screenToImage = screenToImage.translated(currentImageRectangle.getX(), currentImageRectangle.getY());
+
+	imageToScreen = screenToImage.inverted();
 }
 
 void Polytempo_GraphicsEditableRegion::setImage(Image* img, var rect, String imageId)
@@ -155,10 +162,14 @@ void Polytempo_GraphicsEditableRegion::handleFreeHandPainting(const Point<int>& 
 {
 	if (temporaryAnnotation.freeHandPath.isEmpty() || lastPathPoint.getDistanceFrom(mousePosition) > 5)
 	{
+		float x = mousePosition.getX();
+		float y = mousePosition.getY();
+		screenToImage.transformPoint(x, y);
+
 		if (temporaryAnnotation.freeHandPath.isEmpty())
-			temporaryAnnotation.freeHandPath.addLineSegment(Line<float>(mousePosition.toFloat(), mousePosition.toFloat()), FREE_HAND_LINE_THICKNESS);
+			temporaryAnnotation.freeHandPath.addLineSegment(Line<float>(x, y, x, y), FREE_HAND_LINE_THICKNESS);
 		else
-			temporaryAnnotation.freeHandPath.lineTo(mousePosition.toFloat());
+			temporaryAnnotation.freeHandPath.lineTo(x, y);
 
 		lastPathPoint = mousePosition;
 		repaintRequired = true;
@@ -189,7 +200,10 @@ void Polytempo_GraphicsEditableRegion::mouseEnter(const MouseEvent& e)
 void Polytempo_GraphicsEditableRegion::handleStartEditing(Point<int> mousePosition)
 {
 	temporaryAnnotation.clear();
-	temporaryAnnotation.referencePoint = mousePosition.toFloat();	// todo transform!
+	float x = mousePosition.getX();
+	float y = mousePosition.getY();
+	screenToImage.transformPoint<float>(x, y);
+	temporaryAnnotation.referencePoint = Point<float>(x, y);
 	temporaryAnnotation.color = colorSelector->getCurrentColour();
 	status = FreehandEditing;
 	setMouseCursor(MouseCursor::CrosshairCursor);
