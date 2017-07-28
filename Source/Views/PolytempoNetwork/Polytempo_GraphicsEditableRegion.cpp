@@ -153,9 +153,9 @@ void Polytempo_GraphicsEditableRegion::handleStartEditing(Point<int> mousePositi
 
 	buttonsAboveReferencePoint = (referencePoint.getY() > getHeight() - 65);
 
-	buttonOk->setCentrePosition(referencePoint.translated(-15, buttonsAboveReferencePoint ? -50 : 50));
+	buttonOk->setCentrePosition(referencePoint.translated(15, buttonsAboveReferencePoint ? -50 : 50));
 	buttonOk->setVisible(true);
-	buttonCancel->setCentrePosition(referencePoint.translated(15, buttonsAboveReferencePoint ? -50 : 50));
+	buttonCancel->setCentrePosition(referencePoint.translated(45, buttonsAboveReferencePoint ? -50 : 50));
 	buttonCancel->setVisible(true);
 	repaintRequired = true;
 }
