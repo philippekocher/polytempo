@@ -149,7 +149,7 @@ void Polytempo_GraphicsViewRegion::clear()
     setVisible(false);
 }
 
-void Polytempo_GraphicsViewRegion::setImage(Image* img, var rect)
+void Polytempo_GraphicsViewRegion::setViewImage(Image* img, var rect)
 {
     contentType = contentType_Image;
     image = img;

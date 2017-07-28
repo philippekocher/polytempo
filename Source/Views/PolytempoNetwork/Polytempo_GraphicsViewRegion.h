@@ -52,7 +52,6 @@ public:
     
     void clear();
     
-    void setImage(Image *img, var);
     void setText(String text);
     void setProgressbar(String text,
                         float    time,
@@ -61,7 +60,8 @@ public:
     Polytempo_ViewContentType getContentType();
     
 private:
-    //void recalcSize();
+	void setViewImage(Image *img, var) override;
+	//void recalcSize();
     
     var regionID;
     Polytempo_ViewContentType contentType;

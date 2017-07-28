@@ -135,7 +135,8 @@ void Polytempo_GraphicsView::displayImage(Polytempo_Event *event)
         return;
     }
     
-    Image *image = Polytempo_ImageManager::getInstance()->getImage(event->getProperty(eventPropertyString_ImageID));
+	String imageId = event->getProperty(eventPropertyString_ImageID);
+    Image *image = Polytempo_ImageManager::getInstance()->getImage(imageId);
 
     if(image == nullptr) // invalid image ID
     {
@@ -154,7 +155,7 @@ void Polytempo_GraphicsView::displayImage(Polytempo_Event *event)
     
     if(region)
     {
-        region->setImage(image, rect);
+        region->setImage(image, rect, imageId);
         region->setVisible(true);
         region->repaint();
     }
