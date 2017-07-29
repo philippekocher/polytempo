@@ -70,6 +70,6 @@ void Polytempo_GraphicsAnnotationManagerView::buttonClicked(Button* source)
 	}
 	else if(source == btnLoad)
 	{
-		Polytempo_GraphicsAnnotationManager::getInstance()->initialize("", "");	// todo: remove
+		Polytempo_GraphicsAnnotationManager::getInstance()->initialize("C:\\temp", "Viola");	// todo: remove
 	}
 }

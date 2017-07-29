@@ -26,4 +26,5 @@ public:
 
 private:
 	OwnedArray<Polytempo_GraphicsAnnotationSet> annotationSets;
+	ScopedPointer<File> currentDirectory;
 };

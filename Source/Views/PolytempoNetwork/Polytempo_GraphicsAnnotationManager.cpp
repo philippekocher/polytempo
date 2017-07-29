@@ -12,6 +12,7 @@
 
 juce_ImplementSingleton(Polytempo_GraphicsAnnotationManager)
 
+
 void Polytempo_GraphicsAnnotationManager::getAnnotationsForImage(String imageId, OwnedArray<Polytempo_GraphicsAnnotation>* pAnnotations) const
 {
 	for(int iSet = 0; iSet < annotationSets.size(); iSet++)
@@ -39,5 +40,21 @@ void Polytempo_GraphicsAnnotationManager::saveAll() const
 void Polytempo_GraphicsAnnotationManager::initialize(String folder, String scoreName)
 {
 	annotationSets.clear();
-	annotationSets.add(new Polytempo_GraphicsAnnotationSet("C:\\temp\\testAnnotations.xml"));
+
+	currentDirectory = new File(folder);
+	
+	if (!currentDirectory->exists())
+		return;
+
+	Array<File> files;
+	currentDirectory->findChildFiles(files, File::findFiles, false, "*.xml");
+
+	for(File file : files)
+	{
+		Polytempo_GraphicsAnnotationSet* annotationSet = new Polytempo_GraphicsAnnotationSet(file.getFullPathName());
+		if (annotationSet->getScoreName() == scoreName)
+			annotationSets.add(annotationSet);
+		else
+			delete annotationSet;
+	}
 }

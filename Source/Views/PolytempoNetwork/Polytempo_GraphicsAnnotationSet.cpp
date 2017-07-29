@@ -41,11 +41,21 @@ void Polytempo_GraphicsAnnotationSet::LoadFromFile()
 
 	ScopedPointer<XmlDocument> xmlDoc = new XmlDocument(file);
 	ScopedPointer<XmlElement> root = xmlDoc->getDocumentElement();
+	if (root->getTagName() != XML_TAG_ROOT)
+		return;
+		
+	if (!root->hasAttribute(XML_ATTRIBUTE_SCORENAME) || !root->hasAttribute(XML_ATTRIBUTE_LAYERNAME) || !root->hasAttribute(XML_ATTRIBUTE_SHOW))
+		return;
+		
 	scoreName = root->getStringAttribute("ScoreName");
 	annotationLayerName = root->getStringAttribute("AnnotationLayerName");
 	show = root->getBoolAttribute("Show");
 
-	XmlElement* xmlAnnotation = root->getChildByName("Annotations")->getChildByName("Annotation");
+	XmlElement* xmlAnnotationList = root->getChildByName("Annotations");
+	if (xmlAnnotationList == nullptr)
+		return;
+
+	XmlElement* xmlAnnotation = xmlAnnotationList->getChildByName("Annotation");
 	while (xmlAnnotation != nullptr)
 	{
 		Path path;
@@ -67,21 +77,21 @@ void Polytempo_GraphicsAnnotationSet::LoadFromFile()
 void Polytempo_GraphicsAnnotationSet::SaveToFile()
 {
 	File file = File(filename);
-	ScopedPointer<XmlElement> xmlMain = new XmlElement("AnnotationSet");
-	xmlMain->setAttribute("ScoreName", scoreName);
-	xmlMain->setAttribute("AnnotationLayerName", annotationLayerName);
-	xmlMain->setAttribute("Show", show);
+	ScopedPointer<XmlElement> xmlMain = new XmlElement(XML_TAG_ROOT);
+	xmlMain->setAttribute(XML_ATTRIBUTE_SCORENAME, scoreName);
+	xmlMain->setAttribute(XML_ATTRIBUTE_LAYERNAME, annotationLayerName);
+	xmlMain->setAttribute(XML_ATTRIBUTE_SHOW, show);
 
-	XmlElement* xmlAnnotations = new XmlElement("Annotations");
+	XmlElement* xmlAnnotations = new XmlElement(XML_TAG_ANNOTATIONS);
 	for (Polytempo_GraphicsAnnotation* annotation : annotations)
 	{
-		XmlElement* xmlAnnotation = new XmlElement("Annotation");
-		xmlAnnotation->setAttribute("ImageId", annotation->imageId);
-		xmlAnnotation->setAttribute("ReferencePointX", annotation->referencePoint.getX());
-		xmlAnnotation->setAttribute("ReferencePointY", annotation->referencePoint.getY());
-		xmlAnnotation->setAttribute("Text", annotation->text);
-		xmlAnnotation->setAttribute("Path", annotation->freeHandPath.toString());
-		xmlAnnotation->setAttribute("Color", annotation->color.toString());
+		XmlElement* xmlAnnotation = new XmlElement(XML_TAG_ANNOTATION);
+		xmlAnnotation->setAttribute(XML_ATTRIBUTE_IMAGEID, annotation->imageId);
+		xmlAnnotation->setAttribute(XML_ATTRIBUTE_REFERENCEX, annotation->referencePoint.getX());
+		xmlAnnotation->setAttribute(XML_ATTRIBUTE_REFERENCEY, annotation->referencePoint.getY());
+		xmlAnnotation->setAttribute(XML_ATTRIBUTE_TEXT, annotation->text);
+		xmlAnnotation->setAttribute(XML_ATTRIBUTE_PATH, annotation->freeHandPath.toString());
+		xmlAnnotation->setAttribute(XML_ATTRIBUTE_COLOR, annotation->color.toString());
 		xmlAnnotations->addChildElement(xmlAnnotation);
 	}
 	xmlMain->addChildElement(xmlAnnotations);
@@ -92,4 +102,14 @@ void Polytempo_GraphicsAnnotationSet::SaveToFile()
 	file.appendText(xmlDocStr.toWideCharPointer());
 
 	xmlMain->deleteAllChildElements();
+}
+
+String Polytempo_GraphicsAnnotationSet::getScoreName() const
+{
+	return scoreName;
+}
+
+String Polytempo_GraphicsAnnotationSet::getAnnotationLayerName() const
+{
+	return annotationLayerName;
 }
