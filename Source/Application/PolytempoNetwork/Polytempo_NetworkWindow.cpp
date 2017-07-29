@@ -36,10 +36,16 @@ Polytempo_NetworkWindow::Polytempo_NetworkWindow()
                       DocumentWindow::allButtons)
 {
     setUsingNativeTitleBar(true);
+
+#ifdef JUCE_WINDOWS
+	setTitleBarButtonsRequired(allButtons, false);
+#else
     setTitleBarButtonsRequired(5, true); // MAC: green button = maximize instead of fullscreen
-    setResizable(true, false);
+#endif
+
+    setResizable(true, true);
     setResizeLimits(800, 450, 99999, 99999);
-    
+
     mainView = new Polytempo_NetworkMainView();
     imageEditorView = new Polytempo_ImageEditorView();
     
