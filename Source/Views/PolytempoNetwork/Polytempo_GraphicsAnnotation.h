@@ -15,6 +15,18 @@ class Polytempo_GraphicsAnnotation
 {
 public:
 	Polytempo_GraphicsAnnotation();
+
+	Polytempo_GraphicsAnnotation(const String& image_id, const Point<float>& reference_point, const Colour& color, const Path& free_hand_path, const String& text)
+		: imageId(image_id),
+		  referencePoint(reference_point),
+		  color(color),
+		  freeHandPath(free_hand_path),
+		  text(text)
+	{
+	}
+
+	~Polytempo_GraphicsAnnotation();
+
 	void clear();
 
 	String imageId;

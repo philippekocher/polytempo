@@ -139,6 +139,18 @@
               resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_GraphicsAnnotation.cpp"/>
         <FILE id="usZgC3" name="Polytempo_GraphicsAnnotation.h" compile="0"
               resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_GraphicsAnnotation.h"/>
+        <FILE id="x3Gn2n" name="Polytempo_GraphicsAnnotationManager.cpp" compile="1"
+              resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_GraphicsAnnotationManager.cpp"/>
+        <FILE id="yUdlYa" name="Polytempo_GraphicsAnnotationManager.h" compile="0"
+              resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_GraphicsAnnotationManager.h"/>
+        <FILE id="uevSfx" name="Polytempo_GraphicsAnnotationManagerView.cpp"
+              compile="1" resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_GraphicsAnnotationManagerView.cpp"/>
+        <FILE id="tpRz1D" name="Polytempo_GraphicsAnnotationManagerView.h"
+              compile="0" resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_GraphicsAnnotationManagerView.h"/>
+        <FILE id="MfHSHT" name="Polytempo_GraphicsAnnotationSet.cpp" compile="1"
+              resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_GraphicsAnnotationSet.cpp"/>
+        <FILE id="wsH3UF" name="Polytempo_GraphicsAnnotationSet.h" compile="0"
+              resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_GraphicsAnnotationSet.h"/>
         <FILE id="rT6oGU" name="Polytempo_GraphicsEditableRegion.cpp" compile="1"
               resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_GraphicsEditableRegion.cpp"/>
         <FILE id="R8L9s8" name="Polytempo_GraphicsEditableRegion.h" compile="0"

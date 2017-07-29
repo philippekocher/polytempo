@@ -29,7 +29,7 @@ public:
 	virtual void paintContent(Graphics& g) = 0;
 	virtual void resizeContent() = 0;
 
-	static void paintAnnotation(Graphics& g, const Polytempo_GraphicsAnnotation& annotation);
+	static void paintAnnotation(Graphics& g, const Polytempo_GraphicsAnnotation* annotation);
     void paint (Graphics&) override;
 	void resized() override;
 
@@ -53,7 +53,7 @@ private:
 	void handleFreeHandPainting(const Point<int>& mousePosition);
 
 	enum Status { Default, FreehandEditing } status;
-	Array<Polytempo_GraphicsAnnotation> annotations;
+	OwnedArray<Polytempo_GraphicsAnnotation> annotations;
 	Polytempo_GraphicsAnnotation temporaryAnnotation;
 	Point<int> lastPathPoint;
 	bool repaintRequired;

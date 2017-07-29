@@ -64,6 +64,9 @@ Polytempo_AuxiliaryView::Polytempo_AuxiliaryView()
     addAndMakeVisible(peersTextbox = new Label());
     peersTextbox->setEditable(false, false, false);
     peersTextbox->setColour(Label::backgroundColourId, Colours::lightblue);
+
+	addAndMakeVisible(annotationManager = new Polytempo_GraphicsAnnotationManagerView());
+	annotationManager->setSize(100, 100);
 }
 
 Polytempo_AuxiliaryView::~Polytempo_AuxiliaryView()
@@ -117,6 +120,8 @@ void Polytempo_AuxiliaryView::resized()
     
     tempoFactorTextbox->setBounds(10, yPosition, getWidth() - 20, 34);
     
+	annotationManager->setBounds(10, getHeight() - annotationManager->getHeight() - 10, getWidth() - 20, annotationManager->getHeight());
+
     Polytempo_NetworkSupervisor::getInstance()->setComponent(this);
 }
 

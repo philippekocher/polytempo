@@ -10,6 +10,7 @@
 
 #include "../../../POLYTEMPO NETWORK/JuceLibraryCode/JuceHeader.h"
 #include "Polytempo_GraphicsEditableRegion.h"
+#include "Polytempo_GraphicsAnnotationManager.h"
 
 //==============================================================================
 Polytempo_GraphicsEditableRegion::Polytempo_GraphicsEditableRegion()
@@ -75,18 +76,18 @@ Polytempo_GraphicsEditableRegion::~Polytempo_GraphicsEditableRegion()
 	stopTimer();
 }
 
-void Polytempo_GraphicsEditableRegion::paintAnnotation(Graphics& g, const Polytempo_GraphicsAnnotation& annotation)
+void Polytempo_GraphicsEditableRegion::paintAnnotation(Graphics& g, const Polytempo_GraphicsAnnotation* annotation)
 {
 	PathStrokeType strokeType(PathStrokeType::rounded);
 
-	g.setColour(annotation.color);
-	if (!annotation.freeHandPath.isEmpty())
-		g.strokePath(annotation.freeHandPath, strokeType);
+	g.setColour(annotation->color);
+	if (!annotation->freeHandPath.isEmpty())
+		g.strokePath(annotation->freeHandPath, strokeType);
 	
-	if (!annotation.text.isEmpty())
+	if (!annotation->text.isEmpty())
 	{
 		g.setFont(14);
-		g.drawSingleLineText(annotation.text, annotation.referencePoint.getX() + 5, annotation.referencePoint.getY());
+		g.drawSingleLineText(annotation->text, annotation->referencePoint.getX() + 5, annotation->referencePoint.getY());
 	}
 }
 
@@ -100,10 +101,10 @@ void Polytempo_GraphicsEditableRegion::paint (Graphics& g)
 	{
 		g.drawArrow(Line<float>(temporaryAnnotation.referencePoint.translated(0, buttonsAboveReferencePoint ? -50 : 50), temporaryAnnotation.referencePoint).toFloat(), 4, 8, 8);
 
-		paintAnnotation(g, temporaryAnnotation);
+		paintAnnotation(g, &temporaryAnnotation);
 	}
 
-	for (Polytempo_GraphicsAnnotation annotation : annotations)
+	for (Polytempo_GraphicsAnnotation* annotation : annotations)
 	{
 		paintAnnotation(g, annotation);
 	}
@@ -113,7 +114,7 @@ void Polytempo_GraphicsEditableRegion::resized()
 {
 	resizeContent();
 
-	screenToImage = AffineTransform::scale(currentImageRectangle.getWidth() / getWidth(), currentImageRectangle.getHeight() / getHeight());
+	screenToImage = AffineTransform::scale(currentImageRectangle.getWidth() / float(getWidth()), currentImageRectangle.getHeight() / float(getHeight()));
 	screenToImage = screenToImage.translated(currentImageRectangle.getX(), currentImageRectangle.getY());
 
 	imageToScreen = screenToImage.inverted();
@@ -128,6 +129,9 @@ void Polytempo_GraphicsEditableRegion::setImage(Image* img, var rect, String ima
 	currentImageId = imageId;
 
 	setViewImage(img, rect);
+
+	annotations.clear();
+	Polytempo_GraphicsAnnotationManager::getInstance()->getAnnotationsForImage(currentImageId, &annotations);
 
 	resized();
 }
@@ -199,10 +203,12 @@ void Polytempo_GraphicsEditableRegion::mouseEnter(const MouseEvent& e)
 
 void Polytempo_GraphicsEditableRegion::handleStartEditing(Point<int> mousePosition)
 {
-	temporaryAnnotation.clear();
 	float x = mousePosition.getX();
 	float y = mousePosition.getY();
-	screenToImage.transformPoint<float>(x, y);
+	screenToImage.transformPoint<float>(x, y); 
+	
+	temporaryAnnotation.clear();
+	temporaryAnnotation.imageId = currentImageId;
 	temporaryAnnotation.referencePoint = Point<float>(x, y);
 	temporaryAnnotation.color = colorSelector->getCurrentColour();
 	status = FreehandEditing;
@@ -226,7 +232,10 @@ void Polytempo_GraphicsEditableRegion::handleStartEditing(Point<int> mousePositi
 void Polytempo_GraphicsEditableRegion::handleEndEditAccept()
 {
 	if (!temporaryAnnotation.freeHandPath.isEmpty() || !temporaryAnnotation.text.isEmpty())
-		annotations.add(temporaryAnnotation);
+		annotations.add(new Polytempo_GraphicsAnnotation(temporaryAnnotation));
+
+	Polytempo_GraphicsAnnotationManager::getInstance()->addAnnotation(temporaryAnnotation);
+
 	handleEndEdit();
 }
 

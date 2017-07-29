@@ -33,6 +33,7 @@
 #include "../../Views/PolytempoNetwork/Polytempo_ImageManager.h"
 #include "../../Network/Polytempo_NetworkSupervisor.h"
 #include "../../Misc/Polytempo_Alerts.h"
+#include "../../Views/PolytempoNetwork/Polytempo_GraphicsAnnotationManager.h"
 
 Polytempo_NetworkApplication::Polytempo_NetworkApplication()
 {}
@@ -143,6 +144,7 @@ void Polytempo_NetworkApplication::shutdown()
     Polytempo_Scheduler::deleteInstance();
     Polytempo_NetworkSupervisor::deleteInstance();
     Polytempo_ImageManager::deleteInstance();
+	Polytempo_GraphicsAnnotationManager::deleteInstance();
 }
 
 //------------------------------------------------------------------------------
