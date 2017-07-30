@@ -113,3 +113,8 @@ String Polytempo_GraphicsAnnotationSet::getAnnotationLayerName() const
 {
 	return annotationLayerName;
 }
+
+bool Polytempo_GraphicsAnnotationSet::getShow() const
+{
+	return show;
+}

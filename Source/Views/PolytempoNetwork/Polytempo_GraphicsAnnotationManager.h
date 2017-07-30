@@ -14,7 +14,7 @@
 #include "Polytempo_GraphicsAnnotation.h"
 #include "Polytempo_GraphicsAnnotationSet.h"
 
-class Polytempo_GraphicsAnnotationManager
+class Polytempo_GraphicsAnnotationManager : public ChangeBroadcaster
 {
 public:
 	juce_DeclareSingleton(Polytempo_GraphicsAnnotationManager, false)
@@ -27,4 +27,5 @@ public:
 private:
 	OwnedArray<Polytempo_GraphicsAnnotationSet> annotationSets;
 	ScopedPointer<File> currentDirectory;
+	String currentScoreName;
 };

@@ -68,6 +68,8 @@ Polytempo_GraphicsEditableRegion::Polytempo_GraphicsEditableRegion()
 
 	addKeyListener(this);
 
+	Polytempo_GraphicsAnnotationManager::getInstance()->addChangeListener(this);
+
 	startTimer(MIN_INTERVAL_BETWEEN_REPAINTS_MS);
 }
 
@@ -113,8 +115,8 @@ void Polytempo_GraphicsEditableRegion::paint (Graphics& g)
 void Polytempo_GraphicsEditableRegion::resized()
 {
 	resizeContent();
-
-	screenToImage = AffineTransform::scale(currentImageRectangle.getWidth() / float(getWidth()), currentImageRectangle.getHeight() / float(getHeight()));
+	screenToImage = AffineTransform::translation(-getX(), -getY());
+	screenToImage = screenToImage.scale(currentImageRectangle.getWidth() / float(getWidth()), currentImageRectangle.getHeight() / float(getHeight()));
 	screenToImage = screenToImage.translated(currentImageRectangle.getX(), currentImageRectangle.getY());
 
 	imageToScreen = screenToImage.inverted();
@@ -280,9 +282,13 @@ void Polytempo_GraphicsEditableRegion::buttonClicked(Button* source)
 
 void Polytempo_GraphicsEditableRegion::changeListenerCallback(ChangeBroadcaster* source)
 {
-	if(status != Default)
+	if(source == colorSelector && status != Default)
 	{
 		temporaryAnnotation.color = colorSelector->getCurrentColour();
+	}
+	else if(source == Polytempo_GraphicsAnnotationManager::getInstance())
+	{
+		repaintRequired = true;
 	}
 }
 

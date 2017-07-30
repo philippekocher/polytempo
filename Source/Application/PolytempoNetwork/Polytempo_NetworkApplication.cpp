@@ -280,11 +280,25 @@ void Polytempo_NetworkApplication::openScoreFile(File newScoreFile)
     
     if(newScore != nullptr)
     {
-        DBG("set score");
+		// load annotations
+		String name;
+    	for(Polytempo_Event* e : newScore->getInitSection()->events)
+    	{
+			if (e->hasProperty("name"))
+			{
+				name = e->getProperty("name");
+				break;
+			}
+    	}
+
+		Polytempo_GraphicsAnnotationManager::getInstance()->initialize(scoreFile.getParentDirectory().getFullPathName(), name);
+
+		DBG("set score");
         score = newScore;
         Polytempo_Scheduler::getInstance()->setScore(score);
         mainWindow->setName(scoreFile.getFileNameWithoutExtension());
 
+		
         // add to recent files
         Polytempo_StoredPreferences::getInstance()->recentFiles.addFile(scoreFile);
     }    

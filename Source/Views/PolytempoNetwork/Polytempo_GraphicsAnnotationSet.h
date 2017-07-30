@@ -39,6 +39,7 @@ public:
 	void SaveToFile();
 	String getScoreName() const;
 	String getAnnotationLayerName() const;
+	bool getShow() const;
 
 private:
 	void LoadFromFile();

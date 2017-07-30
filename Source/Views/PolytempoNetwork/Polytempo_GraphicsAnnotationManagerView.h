@@ -27,7 +27,7 @@ public:
 	void buttonClicked(Button*source) override;
 
 private:
-	ScopedPointer<ListBox> annotationList;
+	ScopedPointer<TextButton> btnEdit;
 	ScopedPointer<TextButton> btnLoad;
 	ScopedPointer<TextButton> btnSave;
 

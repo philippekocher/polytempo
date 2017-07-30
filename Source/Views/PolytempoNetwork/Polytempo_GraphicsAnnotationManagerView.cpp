@@ -18,7 +18,8 @@ Polytempo_GraphicsAnnotationManagerView::Polytempo_GraphicsAnnotationManagerView
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
 
-	addAndMakeVisible(annotationList = new ListBox());
+	addAndMakeVisible(btnEdit = new TextButton("Edit"));
+	btnEdit->addListener(this);
 
 	addAndMakeVisible(btnLoad = new TextButton("Load"));
 	btnLoad->addListener(this);
@@ -58,8 +59,9 @@ void Polytempo_GraphicsAnnotationManagerView::resized()
 
 	//annotationList->setBounds(getBounds());
 
-	btnLoad->setBounds(0, 0, getLocalBounds().getWidth(), getLocalBounds().getHeight() / 2);
-	btnSave->setBounds(0, getLocalBounds().getHeight() / 2, getLocalBounds().getWidth(), getLocalBounds().getHeight() / 2);
+	btnLoad->setBounds(0, 0, getLocalBounds().getWidth(), getLocalBounds().getHeight() / 4);
+	btnSave->setBounds(0, btnLoad->getBottom(), getLocalBounds().getWidth(), getLocalBounds().getHeight() / 4);
+	btnEdit->setBounds(0, btnSave->getBottom(), getWidth(), getHeight() - btnSave->getBottom());
 }
 
 void Polytempo_GraphicsAnnotationManagerView::buttonClicked(Button* source)
@@ -71,5 +73,9 @@ void Polytempo_GraphicsAnnotationManagerView::buttonClicked(Button* source)
 	else if(source == btnLoad)
 	{
 		Polytempo_GraphicsAnnotationManager::getInstance()->initialize("C:\\temp", "Viola");	// todo: remove
+	}
+	else if(source == btnEdit)
+	{
+		// Todo
 	}
 }
