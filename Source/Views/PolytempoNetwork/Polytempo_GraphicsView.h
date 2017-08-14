@@ -49,14 +49,16 @@ private:
     void clearAll();
     
     void addRegion(Polytempo_Event *event);
-    void addSplitRegion(Polytempo_Event *event);
+    void defineSection(Polytempo_Event *event);
+//    void addSplitRegion(Polytempo_Event *event);
     void displayImage(Polytempo_Event *event);
     void displayText(Polytempo_Event *event);
     void displayProgessbar(Polytempo_Event *event);
 
     HashMap < String, Polytempo_GraphicsViewRegion* > regionsMap;
-    HashMap < String, Polytempo_GraphicsSplitViewRegion* > splitRegionsMap;
-    HashMap < String, Rectangle < float > > regionBoundsMap;
+//    HashMap < String, Polytempo_GraphicsSplitViewRegion* > splitRegionsMap;
+    HashMap < String, var > sectionBoundsMap;
+    HashMap < String, String > sectionImageIDMap;
     
     ScopedPointer < Polytempo_Progressbar > progressbar;
 };

@@ -49,11 +49,7 @@ enum Polytempo_EventType
     
     eventType_LoadImage,
     eventType_AddRegion,
-    eventType_AddSplitRegion,
-    
-    eventType_DeleteAll,  // delete data
-    eventType_ClearAll,   // clear visuals
-    eventType_Ready,
+    eventType_DefineSection,
     
     eventType_Image,
     eventType_Text,
@@ -64,6 +60,9 @@ enum Polytempo_EventType
     
     eventType_Settings,
 
+    eventType_DeleteAll,  // delete data
+    eventType_ClearAll,   // clear visuals
+    eventType_Ready,
 };
 
 /* ------------------------------------------------------
@@ -86,11 +85,7 @@ enum Polytempo_EventType
 
 #define eventTypeString_LoadImage       "loadImage"
 #define eventTypeString_AddRegion       "addRegion"
-#define eventTypeString_AddSplitRegion  "addSplitRegion"
-
-#define eventTypeString_ClearAll        "clearAll"
-//#define eventTypeString_DeleteAll       "deleteAll"  // only local
-//#define eventTypeString_Ready           "ready"  // only local
+#define eventTypeString_DefineSection   "defineSection"
 
 #define eventTypeString_Image           "image"
 #define eventTypeString_Text            "text"
@@ -101,6 +96,11 @@ enum Polytempo_EventType
 
 #define eventTypeString_Settings        "settings"
 
+#define eventTypeString_ClearAll        "clearAll"
+//#define eventTypeString_DeleteAll       "deleteAll"  // only local
+//#define eventTypeString_Ready           "ready"  // only local
+
+
 /* ------------------------------------------------------
    property strings as used in human readable scores
    and in OSC communication */
@@ -109,6 +109,7 @@ enum Polytempo_EventType
 #define eventPropertyString_Duration    "duration"
 #define eventPropertyString_ImageID     "imageID"
 #define eventPropertyString_RegionID    "regionID"
+#define eventPropertyString_SectionID   "sectionID"
 #define eventPropertyString_URL         "url"
 #define eventPropertyString_Rect        "rect"
 #define eventPropertyString_Pattern     "pattern"

@@ -70,9 +70,9 @@ private:
     Image  *image;
     ScopedPointer < String > text;
     ScopedPointer < Polytempo_Progressbar > progressbar;
-    float sectionAspectRatio, imageAspectRatio;
     float imageLeft, imageTop, imageWidth, imageHeight;
     float imageZoom = 1;
+    float maxImageZoom = -1;
 };
     
 
