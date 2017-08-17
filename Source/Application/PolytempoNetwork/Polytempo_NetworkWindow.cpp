@@ -84,7 +84,10 @@ void Polytempo_NetworkWindow::setContentID(contentID newContentID)
         else
         {
             setContentNonOwned(mainView, false);
-            Polytempo_Scheduler::getInstance()->returnToLocator(); // apply all changes that should be visible
+            
+            // apply all changes that should be visible in the main view
+            Polytempo_Scheduler::getInstance()->executeInit();
+            Polytempo_Scheduler::getInstance()->returnToLocator();
         }
     }
 }

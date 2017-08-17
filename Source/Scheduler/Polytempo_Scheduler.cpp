@@ -234,6 +234,15 @@ void Polytempo_Scheduler::setTempoFactor(Polytempo_Event *event)
     notify(event);
 }
 
+void Polytempo_Scheduler::executeInit()
+{
+    OwnedArray < Polytempo_Event >& initEvents = score->getInitEvents();
+    for(int i=0;i<initEvents.size();i++)
+    {
+        notify(initEvents.getUnchecked(i));
+    }
+}
+
 void Polytempo_Scheduler::setScore(Polytempo_Score* theScore)
 {
     // reset / delete everything that belongs to an old score
@@ -244,12 +253,7 @@ void Polytempo_Scheduler::setScore(Polytempo_Score* theScore)
     score = theScore;
     engine->setScore(theScore);
     
-    // execute init section
-    OwnedArray < Polytempo_Event >& initEvents = score->getInitEvents();
-    for(int i=0;i<initEvents.size();i++)
-    {
-        notify(initEvents.getUnchecked(i));
-    }
+    executeInit();
     
     // set default section
     score->setSection();

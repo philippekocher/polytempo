@@ -29,6 +29,7 @@
 
 Polytempo_ImageManager::~Polytempo_ImageManager()
 {
+    deleteAll();
     clearSingletonInstance();
 }
 
@@ -36,86 +37,100 @@ juce_ImplementSingleton(Polytempo_ImageManager);
 
 Image* Polytempo_ImageManager::getImage(var imageID)
 {
-    for(int i=0;i<imageIDs.size();i++)
-    {
-        if(*imageIDs[i] == imageID.toString())
-            return images[i];
-    }
-    return nullptr;
+    if(imageMap.contains(imageID)) return imageMap[imageID];
+    else return nullptr;
 }
 
-OwnedArray < Image >& Polytempo_ImageManager::getImages()
+HashMap < var, Image* >& Polytempo_ImageManager::getImages()
 {
-    return images;
-}
-
-OwnedArray < String >& Polytempo_ImageManager::getImageIDs()
-{
-    return imageIDs;
+    return imageMap;
 }
 
 String Polytempo_ImageManager::getFileName(var imageID)
 {
-    for(int i=0;i<loadImageEvents.size();i++)
-    {
-        if(loadImageEvents[i]->getProperty(eventPropertyString_ImageID) == imageID)
-            return loadImageEvents[i]->getProperty(eventPropertyString_URL);
-    }
-
-    return String::empty;
+    if(loadImageEventMap.contains(imageID)) return loadImageEventMap[imageID]->getProperty(eventPropertyString_URL);
+    else return String::empty;
 }
 
 void Polytempo_ImageManager::deleteAll()
 {
-    images.clear();
-    imageIDs.clear();
-    loadImageEvents.clear();
+    HashMap < var, Image* >::Iterator i (imageMap);
+    while(i.next())
+    {
+        delete i.getValue();
+    }
+    
+    imageMap.clear();
+    loadImageEventMap.clear();
 }
 
-void Polytempo_ImageManager::loadImage(Polytempo_Event *event)
+bool Polytempo_ImageManager::loadImage(Polytempo_Event *event)
 {
-//    loadImageEvents->set(event->getProperty(eventPropertyString_ImageID), event);
-    loadImageEvents.add(event);
-    imageIDs.add(new String(event->getProperty(eventPropertyString_ImageID).toString()));
-    
-    File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("scoreFileDirectory"));
+    var imageID = event->getProperty(eventPropertyString_ImageID);
     String url(event->getProperty(eventPropertyString_URL).toString());
-    
+    File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("scoreFileDirectory"));
     Image* image = new Image(ImageFileFormat::loadFrom(directory.getChildFile(url)));
+    bool success = false;
+    
     if(*image == Image::null)
     {
         Polytempo_Alert::show("Error", "Can't open file:\n" + directory.getChildFile(url).getFullPathName());
     }
-    
-    Image* image1 = new Image(image->rescaled(image->getWidth() / 2, image->getHeight() / 2));
-    images.add(image1);
-    delete image;
-}
-
-void Polytempo_ImageManager::replaceImage(var imageID, var url)
-{
-    File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("scoreFileDirectory"));
-    Image* image = new Image(ImageFileFormat::loadFrom(directory.getChildFile(url.toString())));
-
-    if(*image == Image::null)
-    {
-        Polytempo_Alert::show("Error", "Can't open file:\n" + directory.getChildFile(url.toString()).getFullPathName());
-    }
     else
     {
+        delete imageMap.getReference(imageID); // delete the image previously stored under this ID
+        
         Image* image1 = new Image(image->rescaled(image->getWidth() / 2, image->getHeight() / 2));
-        for(int i=0;i<loadImageEvents.size();i++)
-        {
-            if(loadImageEvents[i]->getProperty(eventPropertyString_ImageID) == imageID)
-            {
-                loadImageEvents[i]->setProperty(eventPropertyString_URL, url);
-                images.set(i, image1);
-                break;
-            }
-        }
+        loadImageEventMap.set(imageID, event);
+        imageMap.set(imageID, image1);
+        
+        success = true;
     }
     delete image;
+    return success;
 }
+
+bool Polytempo_ImageManager::replaceImage(var imageID, String url)
+{
+    if(loadImageEventMap.contains(imageID))
+    {
+        File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("scoreFileDirectory"));
+        Image* image = new Image(ImageFileFormat::loadFrom(directory.getChildFile(url)));
+    
+        if(*image == Image::null)
+        {
+            Polytempo_Alert::show("Error", "Can't open file:\n" + directory.getChildFile(url).getFullPathName());
+            delete image;
+            return false;
+        }
+        else
+        {
+            delete imageMap.getReference(imageID); // delete the image previously stored under this ID
+        
+            Polytempo_Event *event = loadImageEventMap[imageID];
+            event->setProperty(eventPropertyString_URL, url);
+
+            Image* image1 = new Image(image->rescaled(image->getWidth() / 2, image->getHeight() / 2));
+            imageMap.set(imageID, image1);
+  
+            delete image;
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Polytempo_ImageManager::deleteImage(var imageID)
+{
+    if(imageMap.contains(imageID))
+    {
+        delete imageMap.getReference(imageID); // delete the image stored under this ID
+        imageMap.remove(imageID);        
+        return true;
+    }
+    else return false;
+}
+
 
 void Polytempo_ImageManager::eventNotification(Polytempo_Event *event)
 {

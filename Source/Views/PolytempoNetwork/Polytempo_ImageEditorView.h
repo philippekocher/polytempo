@@ -69,7 +69,7 @@ public:
     
     void paintItem(Graphics& g, int width, int height) override
     {
-        Image *image = Polytempo_ImageManager::getInstance()->getImage(tree["image"].toString());
+        Image *image = Polytempo_ImageManager::getInstance()->getImage(tree["imageID"].toString());
         
         if(image == nullptr) return;
         
@@ -85,8 +85,8 @@ public:
         }
         
         String text = "";
-        if(int(tree["section"]) == -1) text << "Image " << tree["image"].toString();
-        else                           text << "Section " << tree["section"].toString();
+        if(tree["sectionID"] == var::null) text << "Image " << tree["imageID"].toString();
+        else                               text << "Section " << tree["sectionID"].toString();
         
         g.drawText(text,
                    10, 0, width - 4, height,
@@ -157,20 +157,27 @@ public:
     void eventNotification(Polytempo_Event *event);
     
 private:
+    int findNewID(String eventPropertyString, Array < Polytempo_Event* > events);
+    
+    
     TreeView *tree;
     ScopedPointer < TreeItem > rootItem;
     TreeItem *selectedItem;
     Polytempo_Event *selectedEvent;
     var imageID;
-    int sectionIndex;
+    var sectionID;
+//    int sectionIndex;
     
     Polytempo_Score *score;
     
-    Array < Polytempo_Event* > imageEvents;
     Array < Polytempo_Event* > addRegionEvents;
+    Array < Polytempo_Event* > defineSectionEvents;
+    Array < Polytempo_Event* > loadImageEvents;
+    Array < Polytempo_Event* > imageEvents;
     
     Polytempo_ImageEditorViewport* imageEditorViewport;
     
+    Label *imageFileLabel;
     Polytempo_Textbox *imageFileTextbox;
     TextButton *chooseImageFile;
     
@@ -178,13 +185,11 @@ private:
     Polytempo_Textbox *timeTextbox;
     Polytempo_Textbox *regionTextbox;
     
-    Label   *relativePositionLabel;
+    Label *relativePositionLabel;
     Polytempo_Textbox *xTextbox;
     Polytempo_Textbox *yTextbox;
     Polytempo_Textbox *wTextbox;
     Polytempo_Textbox *hTextbox;
-    
-    
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_ImageEditorView)
 };
