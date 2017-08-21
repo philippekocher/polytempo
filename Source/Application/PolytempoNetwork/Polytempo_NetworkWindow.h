@@ -25,7 +25,6 @@
 #ifndef __Polytempo_NetworkWindow__
 #define __Polytempo_NetworkWindow__
 
-//#include "../../JuceLibraryCode/JuceHeader.h"
 #include "../../Views/PolytempoNetwork/Polytempo_ImageEditorView.h"
 #include "../../Views/PolytempoNetwork/Polytempo_NetworkMainView.h"
 

@@ -28,8 +28,6 @@
 #include "../../Scheduler/Polytempo_Scheduler.h"
 
 
-static ScopedPointer<ApplicationCommandManager> applicationCommandManager;
-
 Polytempo_NetworkWindow::Polytempo_NetworkWindow()
     : DocumentWindow (JUCEApplication::getInstance()->getApplicationName(),
                       Colours::lightgrey,
@@ -60,7 +58,6 @@ Polytempo_NetworkWindow::~Polytempo_NetworkWindow()
 {
     clearContentComponent();
     mainView = nullptr;
-    applicationCommandManager = nullptr;
 
     openGLContext.detach();
 }

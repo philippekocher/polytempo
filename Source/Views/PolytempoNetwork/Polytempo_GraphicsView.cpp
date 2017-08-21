@@ -81,13 +81,14 @@ void Polytempo_GraphicsView::addRegion(Polytempo_Event *event)
     Polytempo_GraphicsViewRegion *region = new Polytempo_GraphicsViewRegion(event->getProperty(eventPropertyString_RegionID));
     addChildComponent(region);
     
-    Array<var> r = *event->getProperty(eventPropertyString_Rect).getArray();
-    Rectangle<float> bounds = Rectangle<float>::Rectangle(r[0],r[1],r[2],r[3]);
-    
     delete regionsMap[event->getProperty(eventPropertyString_RegionID)]; // old region
     regionsMap.set(event->getProperty(eventPropertyString_RegionID),region);
     
+    Array<var> r = *event->getProperty(eventPropertyString_Rect).getArray();
+    Rectangle<float> bounds = Rectangle<float>::Rectangle(r[0],r[1],r[2],r[3]);
     region->setRelativeBounds(bounds);
+    
+    region->setMaxImageZoom(event->getProperty(eventPropertyString_MaxZoom));
 }
 
 void Polytempo_GraphicsView::addSection(Polytempo_Event *event)

@@ -109,6 +109,7 @@ enum Polytempo_EventType
 #define eventPropertyString_Duration    "duration"
 #define eventPropertyString_ImageID     "imageID"
 #define eventPropertyString_RegionID    "regionID"
+#define eventPropertyString_MaxZoom     "maxZoom"
 #define eventPropertyString_SectionID   "sectionID"
 #define eventPropertyString_URL         "url"
 #define eventPropertyString_Rect        "rect"

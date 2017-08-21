@@ -94,7 +94,7 @@ void Polytempo_GraphicsViewRegion::resized()
         
         imageZoom = widthZoom < heightZoom ? widthZoom : heightZoom;
         
-        if(maxImageZoom > 0 && imageZoom > maxImageZoom) imageZoom = maxImageZoom;
+        if(maxImageZoom > 0.0f && imageZoom > maxImageZoom) imageZoom = maxImageZoom;
     }
     else if(contentType == contentType_Progressbar)
     {
@@ -135,8 +135,8 @@ void Polytempo_GraphicsViewRegion::setImage(Image* img, var rect)
     imageWidth  = image->getWidth()  * float(r[2]); // width
     imageHeight = image->getHeight() * float(r[3]); // height
     
-    //repaint();
-    if(getHeight() == 0) resized();
+    // calculate zoom to fit image section
+    resized();
 }
 
 void Polytempo_GraphicsViewRegion::setText(String text_)
@@ -161,5 +161,12 @@ void Polytempo_GraphicsViewRegion::setProgressbar(String txt, float time, int du
 
     resized();
 }
+
+void Polytempo_GraphicsViewRegion::setMaxImageZoom(float maxZoom)
+{
+    if(maxZoom > 0.0f) maxImageZoom = maxZoom;
+    else               maxImageZoom = -1;
+}
+
 
 Polytempo_ViewContentType Polytempo_GraphicsViewRegion::getContentType() { return contentType; }

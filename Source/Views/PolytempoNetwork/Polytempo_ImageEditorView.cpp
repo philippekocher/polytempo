@@ -192,7 +192,10 @@ void Polytempo_ImageEditorView::update()
     sectionID = selectedItem->getProperty("sectionID");
 
     imageEditorViewport->getComponent()->setImage(Polytempo_ImageManager::getInstance()->getImage(imageID));
-    
+
+    selectedAddSectionEvent = nullptr;
+    selectedImageEvent = nullptr;
+
     if(sectionID == var::null)
     {
         // hide handles
@@ -217,8 +220,6 @@ void Polytempo_ImageEditorView::update()
     }
     else
     {
-        Polytempo_Event *selectedAddSectionEvent = nullptr;
-        
         for(int i=0;i<addSectionEvents.size();i++)
         {
             if(addSectionEvents[i]->getProperty(eventPropertyString_SectionID) == sectionID)
@@ -252,28 +253,41 @@ void Polytempo_ImageEditorView::update()
         wTextbox->setText(String((float)r[2],3), dontSendNotification);
         hTextbox->setText(String((float)r[3],3), dontSendNotification);
 
-//        markerTextbox->setVisible(true);
-//        timeTextbox->setVisible(true);
-//        regionTextbox->setVisible(true);
-
-        int i;
-        for(i=0;i<imageEvents.size();i++)
+        for(int i=0;i<imageEvents.size();i++)
         {
-            if(imageEvents[i]->getProperty(eventPropertyString_SectionID) == selectedAddSectionEvent->getProperty(eventPropertyString_SectionID)) break;
+            if(imageEvents[i]->getProperty(eventPropertyString_SectionID) == sectionID)
+            {
+                selectedImageEvent = imageEvents[i];
+                break;
+            }
         }
         
-        if(i<imageEvents.size())
+        if(selectedImageEvent == nullptr)
         {
+            markerTextbox->setVisible(false);
+            timeTextbox->setVisible(false);
+            regionTextbox->setVisible(false);
+        }
+        else
+        {
+            markerTextbox->setVisible(true);
+            timeTextbox->setVisible(true);
+            regionTextbox->setVisible(true);
+            
             String marker;
-            if(score->getMarkerForLocator(imageEvents[i]->getTime(), &marker))
+            if(score->getMarkerForLocator(selectedImageEvent->getTime(), &marker))
                 markerTextbox->setText(marker, dontSendNotification);
             else
                 markerTextbox->reset();
-            timeTextbox->setText(Polytempo_Textbox::timeToString(imageEvents[i]->getTime()), dontSendNotification);
-            regionTextbox->setText(imageEvents[i]->getProperty(eventPropertyString_RegionID).toString(),dontSendNotification);
+            timeTextbox->setText(Polytempo_Textbox::timeToString(selectedImageEvent->getTime()), dontSendNotification);
+            regionTextbox->setText(selectedImageEvent->getProperty(eventPropertyString_RegionID).toString(),dontSendNotification);
         }
     }
     repaint();
+    
+    // enable / disable menu items
+    Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
+    app->commandStatusChanged();
 }
 
 void Polytempo_ImageEditorView::paint(Graphics& g)
@@ -443,7 +457,7 @@ int Polytempo_ImageEditorView::findNewID(String eventPropertyString, Array < Pol
 }
 
 
-void Polytempo_ImageEditorView::addImage()
+void Polytempo_ImageEditorView::loadImage()
 {
     File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("scoreFileDirectory"));
     FileChooser fileChooser("Open Score File", directory, "*.jpg;*.png", true);
@@ -481,20 +495,55 @@ void Polytempo_ImageEditorView::addSection()
     selectedEvent = event;
     selectedItem = nullptr;
     
-    // add a region if there are none
-//    if(addRegionEvents.size() == 0)
-//    {
-//        event->setProperty(eventPropertyString_RegionID, "1");
-//        
-//        event = Polytempo_Event::makeEvent(eventType_AddRegion);
-//        event->setProperty(eventPropertyString_RegionID, "1");
-//        event->setProperty(eventPropertyString_Rect, r);
-//
-//        score->addEvent(event, true); // add to init
-//    }
-    
     refresh();
 }
+
+void Polytempo_ImageEditorView::addInstance()
+{
+    // we assume for the moment that there is only
+    // one single instance per section.
+    // TODO: this has to be extended to cover
+    // multiple instances.
+    
+    if(selectedImageEvent == nullptr)
+    {
+        Polytempo_Event* event;
+        
+        // add a region if there are none
+        if(addRegionEvents.size() == 0)
+        {
+            Array < var > r;
+            r.set(0,0); r.set(1,0); r.set(2,1); r.set(3,1);
+            
+            event = Polytempo_Event::makeEvent(eventType_AddRegion);
+            event->setProperty(eventPropertyString_RegionID, "1");
+            event->setProperty(eventPropertyString_Rect, r);
+            
+            score->addEvent(event, true); // add to init
+            addRegionEvents.add(event);
+        }
+        
+        event = Polytempo_Event::makeEvent(eventType_Image);
+        event->setTime(0.0f);
+        event->setProperty(eventPropertyString_SectionID, sectionID);
+        event->setProperty(eventPropertyString_RegionID, addRegionEvents[0]->getProperty(eventPropertyString_RegionID));
+        
+        score->addEvent(event);
+        score->setDirty();
+        
+        refresh();
+    }
+}
+
+//------------------------------------------------------------------------------
+#pragma mark -
+#pragma mark retrieve state
+
+bool Polytempo_ImageEditorView::hasSelectedSection()
+{
+    return sectionID != var::null;
+}
+
 
 //------------------------------------------------------------------------------
 #pragma mark -
@@ -509,54 +558,59 @@ void Polytempo_ImageEditorView::labelTextChanged(Label* label)
     {
         if(Polytempo_ImageManager::getInstance()->replaceImage(imageID, label->getTextValue().toString()))
         {
-            
             score->setDirty();
         }
         refresh();
     }
     else if(label == markerTextbox)
     {
-//        float locator;
-//        
-//        if(score->getLocatorForMarker(marker, &locator))
-//        {
-//            defineSectionEvents[sectionIndex]->setTime(locator);
-//            score->sortSection();
-//            score->setDirty();
-//        }
-//
-
+        String marker = label->getTextValue().toString();
+        float locator;
+        
+        if(score->getLocatorForMarker(marker, &locator))
+        {
+            selectedImageEvent->setTime(locator);
+            score->sortSection();
+            score->setDirty();
+        }
         update();
     }
     else if(label == timeTextbox)
     {
-//        
-//        defineSectionEvents[sectionIndex]->setTime(num);
-//        score->sortSection();
-//        score->setDirty();
-//        
-//        update();
-//    }
+        float num = Polytempo_Textbox::stringToTime(label->getText());
+        
+        selectedImageEvent->setTime(num);
+        score->sortSection();
+        score->setDirty();
+        
+        update();
     }
     else if(label == regionTextbox)
     {
+        int num = (label->getText()).getIntValue();
+        // TODO: check if region exists
+        
+        selectedImageEvent->setProperty(eventPropertyString_RegionID, var(num));
+        score->setDirty();
+        
+        update();
     }
     else if(label == xTextbox || label == yTextbox || label == wTextbox || label == hTextbox)
     {
-//        imageEditorViewport->getComponent()->setSectionRect(Rectangle<float>(r[0],r[1],r[2],r[3]));
-//        float num = label->getText().getFloatValue();
-//        num = num < 0.0f ? 0.0f : num > 1.0f ? 1.0f : num;
-//        
-//        if     (label == xTextbox) r.set(0, num);
-//        else if(label == yTextbox) r.set(1, num);
-//        else if(label == wTextbox) r.set(2, num);
-//        else if(label == hTextbox) r.set(3, num);
-//        
-//        defineSectionEvents[sectionIndex]->setProperty(eventPropertyString_Rect, r);
-//        score->setDirty();
-//        
-//        update();
-//    }
+        Array < var > r = *selectedAddSectionEvent->getProperty(eventPropertyString_Rect).getArray();
+        imageEditorViewport->getComponent()->setSectionRect(Rectangle<float>(r[0],r[1],r[2],r[3]));
+        float num = label->getText().getFloatValue();
+        num = num < 0.0f ? 0.0f : num > 1.0f ? 1.0f : num;
+        
+        if     (label == xTextbox) r.set(0, num);
+        else if(label == yTextbox) r.set(1, num);
+        else if(label == wTextbox) r.set(2, num);
+        else if(label == hTextbox) r.set(3, num);
+        
+        selectedAddSectionEvent->setProperty(eventPropertyString_Rect, r);
+        score->setDirty();
+        
+        update();
     }
 }
 

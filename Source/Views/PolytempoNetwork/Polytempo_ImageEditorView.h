@@ -140,8 +140,12 @@ public:
     
     // actions
     void deleteSelected();
-    void addImage();
+    void loadImage();
     void addSection();
+    void addInstance();
+    
+    // retrieve state
+    bool hasSelectedSection();
 
     // Label Listener
     void editorShown(Label* label, TextEditor&);
@@ -166,7 +170,6 @@ private:
     Polytempo_Event *selectedEvent;
     var imageID;
     var sectionID;
-//    int sectionIndex;
     
     Polytempo_Score *score;
     
@@ -174,6 +177,9 @@ private:
     Array < Polytempo_Event* > addSectionEvents;
     Array < Polytempo_Event* > loadImageEvents;
     Array < Polytempo_Event* > imageEvents;
+    
+    Polytempo_Event *selectedAddSectionEvent;
+    Polytempo_Event *selectedImageEvent;
     
     Polytempo_ImageEditorViewport* imageEditorViewport;
     

@@ -56,6 +56,8 @@ public:
                         float    time,
                         int    duration = 0);
     
+    void setMaxImageZoom(float maxZoom);
+    
     Polytempo_ViewContentType getContentType();
     
 private:
