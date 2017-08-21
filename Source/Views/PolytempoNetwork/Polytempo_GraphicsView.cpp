@@ -24,7 +24,6 @@
 
 #include "Polytempo_GraphicsView.h"
 #include "Polytempo_ImageManager.h"
-#include "Polytempo_GraphicsSplitViewRegion.h"
 #include "../../Preferences/Polytempo_StoredPreferences.h"
 #include "../../Misc/Polytempo_Alerts.h"
 

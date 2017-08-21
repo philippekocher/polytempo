@@ -25,7 +25,6 @@
 #ifndef __Polytempo_GraphicsViewRegion__
 #define __Polytempo_GraphicsViewRegion__
 
-//#include "../../JuceLibraryCode/JuceHeader.h"
 
 #include "Polytempo_Progressbar.h"
 
@@ -60,8 +59,6 @@ public:
     Polytempo_ViewContentType getContentType();
     
 private:
-    //void recalcSize();
-    
     var regionID;
     Polytempo_ViewContentType contentType;
     
