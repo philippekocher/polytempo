@@ -171,7 +171,7 @@ private:
     Polytempo_Score *score;
     
     Array < Polytempo_Event* > addRegionEvents;
-    Array < Polytempo_Event* > defineSectionEvents;
+    Array < Polytempo_Event* > addSectionEvents;
     Array < Polytempo_Event* > loadImageEvents;
     Array < Polytempo_Event* > imageEvents;
     

@@ -41,12 +41,11 @@ public:
     void eventNotification(Polytempo_Event *event);
     
 private:
-    
     void deleteAll();
     void clearAll();
     
     void addRegion(Polytempo_Event *event);
-    void defineSection(Polytempo_Event *event);
+    void addSection(Polytempo_Event *event);
     void displayImage(Polytempo_Event *event);
     void displayText(Polytempo_Event *event);
     void displayProgessbar(Polytempo_Event *event);

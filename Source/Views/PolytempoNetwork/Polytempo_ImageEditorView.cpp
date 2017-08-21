@@ -102,7 +102,7 @@ void Polytempo_ImageEditorView::refresh()
     if(score == nullptr) return;
     
     addRegionEvents = score->getEvents(eventType_AddRegion);
-    defineSectionEvents = score->getEvents(eventType_DefineSection);
+    addSectionEvents = score->getEvents(eventType_AddSection);
     loadImageEvents = score->getEvents(eventType_LoadImage);
     imageEvents = score->getEvents(eventType_Image);
     
@@ -110,19 +110,19 @@ void Polytempo_ImageEditorView::refresh()
       check size of image regions
       is there a better place to do it?
     */
-    for(int i=0;i<defineSectionEvents.size();i++)
+    for(int i=0;i<addSectionEvents.size();i++)
     {
-        Array < var > r = *defineSectionEvents[i]->getProperty(eventPropertyString_Rect).getArray();
+        Array < var > r = *addSectionEvents[i]->getProperty(eventPropertyString_Rect).getArray();
         if(float(r[0])+float(r[2]) > 1.0) // too wide
         {
             r.set(2, 1.0f - float(r[0]));
-            defineSectionEvents[i]->setProperty(eventPropertyString_Rect, r);
+            addSectionEvents[i]->setProperty(eventPropertyString_Rect, r);
             score->setDirty();
         }
         if(float(r[1])+float(r[3]) > 1.0) // too high
         {
             r.set(3, 1.0f - float(r[1]));
-            defineSectionEvents[i]->setProperty(eventPropertyString_Rect, r);
+            addSectionEvents[i]->setProperty(eventPropertyString_Rect, r);
             score->setDirty();
         }
     }
@@ -134,12 +134,12 @@ void Polytempo_ImageEditorView::refresh()
         ValueTree item;
         vt.addChild(item = createTree(loadImageEvents[i]->getProperty(eventPropertyString_ImageID), String::empty), -1, nullptr);
 
-        for(int j=0;j<defineSectionEvents.size();j++)
+        for(int j=0;j<addSectionEvents.size();j++)
         {
-            if(defineSectionEvents[j]->getProperty(eventPropertyString_ImageID) == loadImageEvents[i]->getProperty(eventPropertyString_ImageID))
+            if(addSectionEvents[j]->getProperty(eventPropertyString_ImageID) == loadImageEvents[i]->getProperty(eventPropertyString_ImageID))
             {
-                item.addChild(createTree(loadImageEvents[i]->getProperty(eventPropertyString_ImageID), defineSectionEvents[j]->getProperty(eventPropertyString_SectionID)), -1, nullptr);
-                if(selectedEvent && selectedEvent == defineSectionEvents[j])
+                item.addChild(createTree(loadImageEvents[i]->getProperty(eventPropertyString_ImageID), addSectionEvents[j]->getProperty(eventPropertyString_SectionID)), -1, nullptr);
+                if(selectedEvent && selectedEvent == addSectionEvents[j])
                 {
                     imageID      = loadImageEvents[i]->getProperty(eventPropertyString_ImageID);
                     selectedItem = (TreeItem*)tree->getItemOnRow(0);
@@ -217,21 +217,21 @@ void Polytempo_ImageEditorView::update()
     }
     else
     {
-        Polytempo_Event *selectedDefineSectionEvent = nullptr;
+        Polytempo_Event *selectedAddSectionEvent = nullptr;
         
-        for(int i=0;i<defineSectionEvents.size();i++)
+        for(int i=0;i<addSectionEvents.size();i++)
         {
-            if(defineSectionEvents[i]->getProperty(eventPropertyString_SectionID) == sectionID)
+            if(addSectionEvents[i]->getProperty(eventPropertyString_SectionID) == sectionID)
             {
-                selectedDefineSectionEvent = defineSectionEvents[i];
+                selectedAddSectionEvent = addSectionEvents[i];
                 break;
             }
         }
         
-        imageEditorViewport->getComponent()->setEditedEvent(selectedDefineSectionEvent);
+        imageEditorViewport->getComponent()->setEditedEvent(selectedAddSectionEvent);
  
         // show handles
-        Array<var> r = *selectedDefineSectionEvent->getProperty(eventPropertyString_Rect).getArray();
+        Array<var> r = *selectedAddSectionEvent->getProperty(eventPropertyString_Rect).getArray();
         imageEditorViewport->getComponent()->setSectionRect(Rectangle<float>(r[0],r[1],r[2],r[3]));
         
         // hide textboxes
@@ -259,7 +259,7 @@ void Polytempo_ImageEditorView::update()
         int i;
         for(i=0;i<imageEvents.size();i++)
         {
-            if(imageEvents[i]->getProperty(eventPropertyString_SectionID) == selectedDefineSectionEvent->getProperty(eventPropertyString_SectionID)) break;
+            if(imageEvents[i]->getProperty(eventPropertyString_SectionID) == selectedAddSectionEvent->getProperty(eventPropertyString_SectionID)) break;
         }
         
         if(i<imageEvents.size())
@@ -362,11 +362,11 @@ void Polytempo_ImageEditorView::deleteSelected()
                     }
                 }
                 // delete all define section events that refer to this image ID
-                for(int i=0;i<defineSectionEvents.size();i++)
+                for(int i=0;i<addSectionEvents.size();i++)
                 {
-                    if(defineSectionEvents[i]->getProperty(eventPropertyString_ImageID) == imageID)
+                    if(addSectionEvents[i]->getProperty(eventPropertyString_ImageID) == imageID)
                     {
-                        var tempSectionID = defineSectionEvents[i]->getProperty(eventPropertyString_SectionID);
+                        var tempSectionID = addSectionEvents[i]->getProperty(eventPropertyString_SectionID);
                         
                         // delete all image events that refer to this section ID
                         for(int j=0;j<imageEvents.size();j++)
@@ -377,7 +377,7 @@ void Polytempo_ImageEditorView::deleteSelected()
                             }
                         }
                         
-                        score->removeEvent(defineSectionEvents[i], true);
+                        score->removeEvent(addSectionEvents[i], true);
                     }
                 }
                 // delete all image events that refer directly to this image ID
@@ -397,11 +397,11 @@ void Polytempo_ImageEditorView::deleteSelected()
             score->setDirty();
 
             // delete the define section event
-            for(int i=0;i<defineSectionEvents.size();i++)
+            for(int i=0;i<addSectionEvents.size();i++)
             {
-                if(defineSectionEvents[i]->getProperty(eventPropertyString_SectionID) == sectionID)
+                if(addSectionEvents[i]->getProperty(eventPropertyString_SectionID) == sectionID)
                 {
-                    score->removeEvent(defineSectionEvents[i], true);
+                    score->removeEvent(addSectionEvents[i], true);
                     break;
                 }
             }
@@ -466,10 +466,10 @@ void Polytempo_ImageEditorView::addImage()
 
 void Polytempo_ImageEditorView::addSection()
 {
-    Polytempo_Event* event = Polytempo_Event::makeEvent(eventType_DefineSection);
+    Polytempo_Event* event = Polytempo_Event::makeEvent(eventType_AddSection);
     
     event->setProperty(eventPropertyString_ImageID, imageID);
-    event->setProperty(eventPropertyString_SectionID, findNewID(eventPropertyString_SectionID, defineSectionEvents));
+    event->setProperty(eventPropertyString_SectionID, findNewID(eventPropertyString_SectionID, addSectionEvents));
     
     Array < var > r;
     r.set(0,0); r.set(1,0); r.set(2,1); r.set(3,1);

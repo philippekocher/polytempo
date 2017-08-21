@@ -54,7 +54,7 @@ void Polytempo_GraphicsView::eventNotification(Polytempo_Event *event)
     if     (event->getType() == eventType_DeleteAll)      deleteAll();
     else if(event->getType() == eventType_ClearAll)       clearAll();
     else if(event->getType() == eventType_AddRegion)      addRegion(event);
-    else if(event->getType() == eventType_DefineSection)  defineSection(event);
+    else if(event->getType() == eventType_AddSection)     addSection(event);
     else if(event->getType() == eventType_Image)          displayImage(event);
     else if(event->getType() == eventType_Text)           displayText(event);
     else if(event->getType() == eventType_Progressbar)    displayProgessbar(event);
@@ -90,7 +90,7 @@ void Polytempo_GraphicsView::addRegion(Polytempo_Event *event)
     region->setRelativeBounds(bounds);
 }
 
-void Polytempo_GraphicsView::defineSection(Polytempo_Event *event)
+void Polytempo_GraphicsView::addSection(Polytempo_Event *event)
 {
     sectionBoundsMap.set(event->getProperty(eventPropertyString_SectionID), event->getProperty(eventPropertyString_Rect));
     sectionImageIDMap.set(event->getProperty(eventPropertyString_SectionID), event->getProperty(eventPropertyString_ImageID));

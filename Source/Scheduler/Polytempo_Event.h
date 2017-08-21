@@ -49,7 +49,7 @@ enum Polytempo_EventType
     
     eventType_LoadImage,
     eventType_AddRegion,
-    eventType_DefineSection,
+    eventType_AddSection,
     
     eventType_Image,
     eventType_Text,
@@ -85,7 +85,7 @@ enum Polytempo_EventType
 
 #define eventTypeString_LoadImage       "loadImage"
 #define eventTypeString_AddRegion       "addRegion"
-#define eventTypeString_DefineSection   "defineSection"
+#define eventTypeString_AddSection      "addSection"
 
 #define eventTypeString_Image           "image"
 #define eventTypeString_Text            "text"

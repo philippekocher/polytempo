@@ -99,7 +99,7 @@ void Polytempo_Event::setType(String typeString)
     
     else if(typeString == eventTypeString_LoadImage)      type = eventType_LoadImage;
     else if(typeString == eventTypeString_AddRegion)      type = eventType_AddRegion;
-    else if(typeString == eventTypeString_DefineSection)  type = eventType_DefineSection;
+    else if(typeString == eventTypeString_AddSection)  type = eventType_AddSection;
     
     else if(typeString == eventTypeString_ClearAll)       type = eventType_ClearAll;
     
@@ -165,8 +165,8 @@ String Polytempo_Event::getTypeString()
         case eventType_AddRegion:
             return eventTypeString_AddRegion;
             
-        case eventType_DefineSection:
-            return eventTypeString_DefineSection;
+        case eventType_AddSection:
+            return eventTypeString_AddSection;
             
         case eventType_ClearAll:
             return eventTypeString_ClearAll;
