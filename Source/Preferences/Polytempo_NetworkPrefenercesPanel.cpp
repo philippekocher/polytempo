@@ -826,7 +826,7 @@ public:
     {
         int value = 0;
         
-        if(&textEditor == midiDownbeatPitch || &textEditor == midiBeatPitch)
+        if(&textEditor == midiDownbeatPitch || &textEditor == midiBeatPitch || &textEditor == midiCuePitch)
         {
             value = textEditor.getText().getIntValue();
             value = value > 127 ? 127 : value < 0 ? 0 : value;
@@ -849,6 +849,11 @@ public:
             Polytempo_StoredPreferences::getInstance()->getProps().setValue("midiBeatPitch", value);
             Polytempo_MidiClick::getInstance()->setBeatPitch(value);
         }
+        else if(&textEditor == midiCuePitch)
+        {
+            Polytempo_StoredPreferences::getInstance()->getProps().setValue("midiCuePitch", value);
+            Polytempo_MidiClick::getInstance()->setCuePitch(value);
+        }
         else if(&textEditor == midiChannel)
         {
             Polytempo_StoredPreferences::getInstance()->getProps().setValue("midiChannel", value);
@@ -870,6 +875,11 @@ public:
         {
             Polytempo_StoredPreferences::getInstance()->getProps().setValue("midiBeatVelocity", (int)slider->getValue());
             Polytempo_MidiClick::getInstance()->setBeatVelocity((int)slider->getValue());
+        }
+        else if(slider == midiCueVelocitySlider)
+        {
+            Polytempo_StoredPreferences::getInstance()->getProps().setValue("midiCueVelocity", (int)slider->getValue());
+            Polytempo_MidiClick::getInstance()->setCueVelocity((int)slider->getValue());
         }
     }
     
