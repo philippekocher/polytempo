@@ -901,7 +901,10 @@ public:
             midiBeatVelocityLabel->setEnabled(button->getToggleState());
             midiBeatVelocitySlider->setEnabled(button->getToggleState());
             
-            // cue pitch and volume ...
+            midiCuePitchLabel->setEnabled(button->getToggleState());
+            midiCuePitch->setEnabled(button->getToggleState());
+            midiCueVelocityLabel->setEnabled(button->getToggleState());
+            midiCueVelocitySlider->setEnabled(button->getToggleState());
             
             midiOutputDeviceListLabel->setEnabled(button->getToggleState());
             midiOutputDeviceList->setEnabled(button->getToggleState());
@@ -992,7 +995,7 @@ public:
 			ipList->setSelectedId(0);
 	}
 
-	void resized()
+	void resized() override
 	{
 		ipListLabel->setBounds(20, 50, proportionOfWidth(0.9f), 24);
 		ipList->setBounds(20, 80, proportionOfWidth(0.9f), 24);
@@ -1002,7 +1005,7 @@ public:
 
 	/* combobox & button listener
 	--------------------------------------- */
-	void buttonClicked(Button* button)
+	void buttonClicked(Button* button) override
 	{
 		if (button == refreshButton)
 		{
