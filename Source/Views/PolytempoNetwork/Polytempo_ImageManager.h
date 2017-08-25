@@ -36,21 +36,19 @@ public:
     juce_DeclareSingleton(Polytempo_ImageManager, false);
     
     Image* getImage(var imageID);
-    OwnedArray < Image >& getImages();
-    OwnedArray < String >& getImageIDs();
+    HashMap < var, Image* >& getImages();
     String getFileName(var imageID);
     
     void deleteAll();
-    void loadImage(Polytempo_Event*);
-    void replaceImage(var imageID, var url);
+    bool loadImage(Polytempo_Event*);
+    bool replaceImage(var imageID, String url);
+    bool deleteImage(var imageID);
     
     void eventNotification(Polytempo_Event*);
     
 private:
-    Array < Polytempo_Event* > loadImageEvents;
-    OwnedArray < String > imageIDs;
-    OwnedArray < Image > images;
-    
+    HashMap < var, Polytempo_Event* > loadImageEventMap;
+    HashMap < var, Image* > imageMap;
 };
     
 #endif  // __Polytempo_ImageManager__

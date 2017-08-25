@@ -25,7 +25,6 @@
 #ifndef __Polytempo_GraphicsViewRegion__
 #define __Polytempo_GraphicsViewRegion__
 
-//#include "../../JuceLibraryCode/JuceHeader.h"
 
 #include "Polytempo_Progressbar.h"
 
@@ -57,11 +56,11 @@ public:
                         float    time,
                         int    duration = 0);
     
+    void setMaxImageZoom(float maxZoom);
+    
     Polytempo_ViewContentType getContentType();
     
 private:
-    //void recalcSize();
-    
     var regionID;
     Polytempo_ViewContentType contentType;
     
@@ -70,9 +69,9 @@ private:
     Image  *image;
     ScopedPointer < String > text;
     ScopedPointer < Polytempo_Progressbar > progressbar;
-    float sectionAspectRatio, imageAspectRatio;
     float imageLeft, imageTop, imageWidth, imageHeight;
     float imageZoom = 1;
+    float maxImageZoom = -1;
 };
     
 

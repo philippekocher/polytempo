@@ -59,6 +59,8 @@ public:
     void openScoreFile(File newScoreFile = File::nonexistent);
     void saveScoreFile(bool showFileDialog);
     
+    void commandStatusChanged();
+    
 private:
 	ScopedPointer<Polytempo_NetworkWindow> mainWindow;
     ScopedPointer<Polytempo_MenuBarModel> menuBarModel;

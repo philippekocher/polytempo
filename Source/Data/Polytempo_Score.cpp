@@ -130,9 +130,16 @@ void Polytempo_Score::addEvents(OwnedArray < Polytempo_Event >& events)
     sortSection();
 }
 
-void Polytempo_Score::removeEvent(Polytempo_Event *event)
+void Polytempo_Score::removeEvent(Polytempo_Event *event, bool removeFromInit)
 {
-    sections[currentSectionIndex]->events.removeObject(event);
+    if(removeFromInit)
+    {
+        initSection->events.removeObject(event);
+    }
+    else
+    {
+        sections[currentSectionIndex]->events.removeObject(event);
+    }
 }
 
 void Polytempo_Score::setSection(String sectionName)

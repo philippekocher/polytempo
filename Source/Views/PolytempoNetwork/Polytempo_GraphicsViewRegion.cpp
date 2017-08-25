@@ -87,46 +87,14 @@ void Polytempo_GraphicsViewRegion::resized()
               (int)(parentBounds.getWidth()   * relativeBounds.getWidth()),
               (int)(parentBounds.getHeight()  * relativeBounds.getHeight()));
 
-    
     if(contentType == contentType_Image)
     {
-        /* 
-         find the largest image to be shown in this region
-         and calculate the image zoom factor
-         */
-        
-        Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
-        Array < Polytempo_Event* > imageEvents = app->getScore()->getEvents(eventType_Image);
-        float maxWidth=0, maxHeight=0;
-        for(int i=0;i<imageEvents.size();i++)
-        {
-            Polytempo_Event *event = imageEvents[i];
-            if(event->getProperty(eventPropertyString_RegionID) == regionID)
-            {
-                Image* im = Polytempo_ImageManager::getInstance()->getImage(event->getProperty(eventPropertyString_ImageID));
-                if(im == nullptr) continue;
-                
-                float imgWidth, imgHeight;
-                if(event->hasProperty(eventPropertyString_Rect))
-                {
-					imgWidth = float(event->getProperty(eventPropertyString_Rect).getArray()->getUnchecked(2)) * im->getWidth();
-					imgHeight = float(event->getProperty(eventPropertyString_Rect).getArray()->getUnchecked(3)) * im->getHeight();
-                }
-                else
-                {
-					imgWidth = (float)im->getWidth();
-					imgHeight = (float)im->getHeight();
-                }
-                
-                if(imgWidth > maxWidth)   maxWidth = imgWidth;
-                if(imgHeight > maxHeight) maxHeight = imgHeight;
-            }
-        }
-        
-        float widthZoom  = getWidth()/maxWidth;
-        float heightZoom = getHeight()/maxHeight;
+        float widthZoom  = getWidth()/imageWidth;
+        float heightZoom = getHeight()/imageHeight;
         
         imageZoom = widthZoom < heightZoom ? widthZoom : heightZoom;
+        
+        if(maxImageZoom > 0.0f && imageZoom > maxImageZoom) imageZoom = maxImageZoom;
     }
     else if(contentType == contentType_Progressbar)
     {
@@ -167,8 +135,8 @@ void Polytempo_GraphicsViewRegion::setImage(Image* img, var rect)
     imageWidth  = image->getWidth()  * float(r[2]); // width
     imageHeight = image->getHeight() * float(r[3]); // height
     
-    //repaint();
-    if(getHeight() == 0) resized();
+    // calculate zoom to fit image section
+    resized();
 }
 
 void Polytempo_GraphicsViewRegion::setText(String text_)
@@ -193,5 +161,12 @@ void Polytempo_GraphicsViewRegion::setProgressbar(String txt, float time, int du
 
     resized();
 }
+
+void Polytempo_GraphicsViewRegion::setMaxImageZoom(float maxZoom)
+{
+    if(maxZoom > 0.0f) maxImageZoom = maxZoom;
+    else               maxImageZoom = -1;
+}
+
 
 Polytempo_ViewContentType Polytempo_GraphicsViewRegion::getContentType() { return contentType; }

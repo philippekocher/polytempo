@@ -24,7 +24,6 @@
 
 #include "Polytempo_GraphicsView.h"
 #include "Polytempo_ImageManager.h"
-#include "Polytempo_GraphicsSplitViewRegion.h"
 #include "../../Preferences/Polytempo_StoredPreferences.h"
 #include "../../Misc/Polytempo_Alerts.h"
 
@@ -48,9 +47,6 @@ void Polytempo_GraphicsView::resized()
 {
     HashMap < String, Polytempo_GraphicsViewRegion* >::Iterator it1(regionsMap);
     while(it1.next()) { it1.getValue()->resized(); }
-
-    HashMap < String, Polytempo_GraphicsSplitViewRegion* >::Iterator it2(splitRegionsMap);
-    while(it2.next()) { it2.getValue()->resized(); }
 }
 
 void Polytempo_GraphicsView::eventNotification(Polytempo_Event *event)
@@ -58,7 +54,7 @@ void Polytempo_GraphicsView::eventNotification(Polytempo_Event *event)
     if     (event->getType() == eventType_DeleteAll)      deleteAll();
     else if(event->getType() == eventType_ClearAll)       clearAll();
     else if(event->getType() == eventType_AddRegion)      addRegion(event);
-    else if(event->getType() == eventType_AddSplitRegion) addSplitRegion(event);
+    else if(event->getType() == eventType_AddSection)     addSection(event);
     else if(event->getType() == eventType_Image)          displayImage(event);
     else if(event->getType() == eventType_Text)           displayText(event);
     else if(event->getType() == eventType_Progressbar)    displayProgessbar(event);
@@ -67,19 +63,16 @@ void Polytempo_GraphicsView::eventNotification(Polytempo_Event *event)
 void Polytempo_GraphicsView::deleteAll()
 {    
     regionsMap.clear();
-    splitRegionsMap.clear();
     deleteAllChildren();
     
-    regionBoundsMap.clear();
+    sectionBoundsMap.clear();
+    sectionImageIDMap.clear();
 }
 
 void Polytempo_GraphicsView::clearAll()
 {
     HashMap < String, Polytempo_GraphicsViewRegion* >::Iterator it1(regionsMap);
     while(it1.next()) { it1.getValue()->setVisible(false); }
-
-    HashMap < String, Polytempo_GraphicsSplitViewRegion* >::Iterator it2(splitRegionsMap);
-    while(it2.next()) { it2.getValue()->clear(); }
 }
 
 
@@ -88,103 +81,78 @@ void Polytempo_GraphicsView::addRegion(Polytempo_Event *event)
     Polytempo_GraphicsViewRegion *region = new Polytempo_GraphicsViewRegion(event->getProperty(eventPropertyString_RegionID));
     addChildComponent(region);
     
-    Array<var> r = *event->getProperty(eventPropertyString_Rect).getArray();
-    Rectangle<float> bounds = Rectangle<float>::Rectangle(r[0],r[1],r[2],r[3]);
-    
-    regionBoundsMap.set(event->getProperty(eventPropertyString_RegionID), bounds);
-
     delete regionsMap[event->getProperty(eventPropertyString_RegionID)]; // old region
     regionsMap.set(event->getProperty(eventPropertyString_RegionID),region);
     
-    region->setRelativeBounds(bounds);
-}
-
-void Polytempo_GraphicsView::addSplitRegion(Polytempo_Event *event)
-{
-    Polytempo_GraphicsSplitViewRegion *splitRegion = new Polytempo_GraphicsSplitViewRegion(event->getProperty(eventPropertyString_RegionID));
-    addChildComponent(splitRegion);
-    
     Array<var> r = *event->getProperty(eventPropertyString_Rect).getArray();
     Rectangle<float> bounds = Rectangle<float>::Rectangle(r[0],r[1],r[2],r[3]);
+    region->setRelativeBounds(bounds);
     
-    regionBoundsMap.set(event->getProperty(eventPropertyString_RegionID), bounds);
-    splitRegionsMap.set(event->getProperty(eventPropertyString_RegionID), splitRegion);
-    
-    splitRegion->setRelativeBounds(bounds);
+    region->setMaxImageZoom(event->getProperty(eventPropertyString_MaxZoom));
+}
+
+void Polytempo_GraphicsView::addSection(Polytempo_Event *event)
+{
+    sectionBoundsMap.set(event->getProperty(eventPropertyString_SectionID), event->getProperty(eventPropertyString_Rect));
+    sectionImageIDMap.set(event->getProperty(eventPropertyString_SectionID), event->getProperty(eventPropertyString_ImageID));
 }
 
 void Polytempo_GraphicsView::displayImage(Polytempo_Event *event)
 {
     Polytempo_GraphicsViewRegion      *region = nullptr;
-    Polytempo_GraphicsSplitViewRegion *splitRegion = nullptr;
+    Image *image = nullptr;
+    var rect;
     
     if(regionsMap.contains(event->getProperty(eventPropertyString_RegionID)))
     {
         region = regionsMap[event->getProperty(eventPropertyString_RegionID)];
     }
-    else if(splitRegionsMap.contains(event->getProperty(eventPropertyString_RegionID)))
-    {
-        splitRegion = splitRegionsMap[event->getProperty(eventPropertyString_RegionID)];
-    }
-    else return; // invalid region id
     
-    if(event->getProperty(eventPropertyString_ImageID).isVoid())  // no imageID given
-    {
-        if(region)      region->setVisible(false);
-        if(splitRegion) splitRegion->clear();
+    if(region == nullptr) // invalid region ID
         return;
-    }
     
-    Image *image = Polytempo_ImageManager::getInstance()->getImage(event->getProperty(eventPropertyString_ImageID));
+    if(!event->getProperty(eventPropertyString_SectionID).isVoid())    // a section ID is given
+    {
+        image = Polytempo_ImageManager::getInstance()->getImage(sectionImageIDMap[event->getProperty(eventPropertyString_SectionID)]);
+        rect = sectionBoundsMap[event->getProperty(eventPropertyString_SectionID)];
+    }
+    else if(!event->getProperty(eventPropertyString_ImageID).isVoid()) // a image ID is given
+    {
+        image = Polytempo_ImageManager::getInstance()->getImage(event->getProperty(eventPropertyString_ImageID));
+        rect = event->getProperty(eventPropertyString_Rect);
+    }
 
     if(image == nullptr) // invalid image ID
     {
         if(region)      region->setVisible(false);
-        if(splitRegion) splitRegion->clear();
         return;
     }
     
-    var rect = event->getProperty(eventPropertyString_Rect);
-    if(rect == var::null)
-    {
-        Array < var > r;
-        r.set(0,0); r.set(1,0); r.set(2,1); r.set(3,1);
-        rect = r;
-    }
+//    if(rect == var::null)
+//    {
+//        Array < var > r;
+//        r.set(0,0); r.set(1,0); r.set(2,1); r.set(3,1);
+//        rect = r;
+//    }
     
-    if(region)
-    {
-        region->setImage(image, rect);
-        region->setVisible(true);
-        region->repaint();
-    }
-    else if(splitRegion)
-    {
-        splitRegion->setImage(image, rect);
-        splitRegion->setVisible(true);
-        splitRegion->repaint();
-    }
+    region->setImage(image, rect);
+    region->setVisible(true);
+    region->repaint();
 }
 
 void Polytempo_GraphicsView::displayText(Polytempo_Event *event)
 {
     Polytempo_GraphicsViewRegion      *region = nullptr;
-    Polytempo_GraphicsSplitViewRegion *splitRegion = nullptr;
     
     if(regionsMap.contains(event->getProperty(eventPropertyString_RegionID)))
     {
         region = regionsMap[event->getProperty(eventPropertyString_RegionID)];
-    }
-    else if(splitRegionsMap.contains(event->getProperty(eventPropertyString_RegionID)))
-    {
-        splitRegion = splitRegionsMap[event->getProperty(eventPropertyString_RegionID)];
     }
     else return; // invalid region id
     
     if(event->getProperty("value").isVoid())  // no text given
     {
         if(region)      region->setVisible(false);
-        if(splitRegion) splitRegion->clear();
         return;
     }
     
@@ -193,12 +161,6 @@ void Polytempo_GraphicsView::displayText(Polytempo_Event *event)
         region->setText(String(event->getProperty("value").toString()));
         region->setVisible(true);
         region->repaint();
-    }
-    else if(splitRegion)
-    {
-        splitRegion->setText(String(event->getProperty("value").toString()));
-        splitRegion->setVisible(true);
-        splitRegion->repaint();
     }
 }
 

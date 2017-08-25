@@ -66,6 +66,7 @@ public:
     void gotoLocator(Polytempo_Event *event);
     void storeLocator(float loc);
     void setTempoFactor(Polytempo_Event *event);
+    void executeInit();
     
     /* accessors
      --------------------------------------- */

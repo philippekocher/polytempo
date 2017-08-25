@@ -28,8 +28,6 @@
 #include "../../Scheduler/Polytempo_Scheduler.h"
 
 
-static ScopedPointer<ApplicationCommandManager> applicationCommandManager;
-
 Polytempo_NetworkWindow::Polytempo_NetworkWindow()
     : DocumentWindow (JUCEApplication::getInstance()->getApplicationName(),
                       Colours::lightgrey,
@@ -60,7 +58,6 @@ Polytempo_NetworkWindow::~Polytempo_NetworkWindow()
 {
     clearContentComponent();
     mainView = nullptr;
-    applicationCommandManager = nullptr;
 
     openGLContext.detach();
 }
@@ -84,7 +81,10 @@ void Polytempo_NetworkWindow::setContentID(contentID newContentID)
         else
         {
             setContentNonOwned(mainView, false);
-            Polytempo_Scheduler::getInstance()->returnToLocator(); // apply all changes that should be visible
+            
+            // apply all changes that should be visible in the main view
+            Polytempo_Scheduler::getInstance()->executeInit();
+            Polytempo_Scheduler::getInstance()->returnToLocator();
         }
     }
 }
