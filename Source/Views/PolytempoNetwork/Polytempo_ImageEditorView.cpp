@@ -31,11 +31,11 @@
 
 
 
-static ValueTree createTree(const String& image, const int section)
+static ValueTree createTree(const String& imageID, const String& sectionID)
 {
     ValueTree t ("Item");
-    t.setProperty ("image", image, nullptr);
-    t.setProperty ("section", section, nullptr);
+    t.setProperty ("imageID", imageID, nullptr);
+    t.setProperty ("sectionID", sectionID, nullptr);
     return t;
 }
 
@@ -43,9 +43,13 @@ Polytempo_ImageEditorView::Polytempo_ImageEditorView()
 {
     addAndMakeVisible(tree = new TreeView());
     addAndMakeVisible(imageEditorViewport = new Polytempo_ImageEditorViewport());
-        
-    addAndMakeVisible(imageFileTextbox = new Polytempo_Textbox("Image File"));
-    imageFileTextbox->setFont(Font (12.0f, Font::plain));
+    
+    addAndMakeVisible(imageFileLabel = new Label(String::empty, "Image File"));
+    imageFileLabel->setFont(Font (14.0f, Font::plain));
+
+    
+    addAndMakeVisible(imageFileTextbox = new Polytempo_Textbox(String::empty));
+    imageFileTextbox->setFont(Font (14.0f, Font::plain));
     imageFileTextbox->addListener(this);
     
     addAndMakeVisible(chooseImageFile = new TextButton("Choose.."));
@@ -64,6 +68,7 @@ Polytempo_ImageEditorView::Polytempo_ImageEditorView()
     regionTextbox->addListener(this);
     
     addAndMakeVisible(relativePositionLabel = new Label(String::empty, "Relative Bounds"));
+    relativePositionLabel->setFont(Font (14.0f, Font::plain));
 
     addAndMakeVisible(xTextbox = new Polytempo_Textbox("Left"));
     xTextbox->setFont(Font (16.0f, Font::plain));
@@ -96,48 +101,47 @@ void Polytempo_ImageEditorView::refresh()
     
     if(score == nullptr) return;
     
-    imageEvents = score->getEvents(eventType_Image);
     addRegionEvents = score->getEvents(eventType_AddRegion);
+    addSectionEvents = score->getEvents(eventType_AddSection);
+    loadImageEvents = score->getEvents(eventType_LoadImage);
+    imageEvents = score->getEvents(eventType_Image);
     
     /*
       check size of image regions
       is there a better place to do it?
     */
-    for(int i=0;i<imageEvents.size();i++)
+    for(int i=0;i<addSectionEvents.size();i++)
     {
-        Array < var > r = *imageEvents[i]->getProperty(eventPropertyString_Rect).getArray();
+        Array < var > r = *addSectionEvents[i]->getProperty(eventPropertyString_Rect).getArray();
         if(float(r[0])+float(r[2]) > 1.0) // too wide
         {
-            r.set(2, 1.0 - float(r[0]));
-            imageEvents[i]->setProperty(eventPropertyString_Rect, r);
+            r.set(2, 1.0f - float(r[0]));
+            addSectionEvents[i]->setProperty(eventPropertyString_Rect, r);
             score->setDirty();
         }
         if(float(r[1])+float(r[3]) > 1.0) // too high
         {
-            r.set(3, 1.0 - float(r[1]));
-            imageEvents[i]->setProperty(eventPropertyString_Rect, r);
+            r.set(3, 1.0f - float(r[1]));
+            addSectionEvents[i]->setProperty(eventPropertyString_Rect, r);
             score->setDirty();
         }
     }
 
-    ValueTree vt = createTree(String::empty, -1);
+    ValueTree vt = createTree(String::empty, String::empty);
 
-    OwnedArray < Image >&  images   = Polytempo_ImageManager::getInstance()->getImages();
-    OwnedArray < String >& imageIDs = Polytempo_ImageManager::getInstance()->getImageIDs();
-    for(int i=0;i<images.size();i++)
+    for(int i=0;i<loadImageEvents.size();i++)
     {
         ValueTree item;
-        vt.addChild(item = createTree(*imageIDs.getUnchecked(i), -1), -1, nullptr);
+        vt.addChild(item = createTree(loadImageEvents[i]->getProperty(eventPropertyString_ImageID), String::empty), -1, nullptr);
 
-        for(int j=0;j<imageEvents.size();j++)
+        for(int j=0;j<addSectionEvents.size();j++)
         {
-            if(imageEvents[j]->getProperty("imageID") == *imageIDs.getUnchecked(i))
+            if(addSectionEvents[j]->getProperty(eventPropertyString_ImageID) == loadImageEvents[i]->getProperty(eventPropertyString_ImageID))
             {
-                item.addChild(createTree(*imageIDs.getUnchecked(i), j), -1, nullptr);
-                if(selectedEvent && selectedEvent == imageEvents[j])
+                item.addChild(createTree(loadImageEvents[i]->getProperty(eventPropertyString_ImageID), addSectionEvents[j]->getProperty(eventPropertyString_SectionID)), -1, nullptr);
+                if(selectedEvent && selectedEvent == addSectionEvents[j])
                 {
-                    imageID      = *imageIDs.getUnchecked(i);
-                    sectionIndex = j;
+                    imageID      = loadImageEvents[i]->getProperty(eventPropertyString_ImageID);
                     selectedItem = (TreeItem*)tree->getItemOnRow(0);
                     selectedEvent = nullptr;
                 }
@@ -157,18 +161,22 @@ void Polytempo_ImageEditorView::refresh()
         for(int i=0;i<tree->getNumRowsInTree();i++)
         {
             TreeItem* item = (TreeItem*)tree->getItemOnRow(i);
-            if(item->getProperty("image") == imageID &&
-               int(item->getProperty("section")) == sectionIndex)
+            if(item->getProperty(eventPropertyString_ImageID) == imageID)  // imageID matches
             {
                 item->setSelected(true, true);
                 selectedItem = item;
-                update();
-                return;
+
+                if(item->getProperty(eventPropertyString_SectionID) == sectionID)
+                {
+                    // both the imageID and the sectionID match
+                    // it can't get any better
+                    break;
+                }
             }
         }
+        update();
     }
-
-    if(tree->getNumRowsInTree() > 0)
+    else if(tree->getNumRowsInTree() > 0)
     {
         TreeItem* item = (TreeItem*)tree->getItemOnRow(0);
         item->setSelected(true, true);
@@ -180,50 +188,106 @@ void Polytempo_ImageEditorView::refresh()
 void Polytempo_ImageEditorView::update()
 {
     //DBG("update()");
-    imageID = selectedItem->getProperty("image");
-    sectionIndex = selectedItem->getProperty("section");
+    imageID = selectedItem->getProperty("imageID");
+    sectionID = selectedItem->getProperty("sectionID");
 
     imageEditorViewport->getComponent()->setImage(Polytempo_ImageManager::getInstance()->getImage(imageID));
-    
-    imageFileTextbox->setText(Polytempo_ImageManager::getInstance()->getFileName(imageID), dontSendNotification);
-    
-    if(sectionIndex == -1)
+
+    selectedAddSectionEvent = nullptr;
+    selectedImageEvent = nullptr;
+
+    if(sectionID == var::null)
     {
         // hide handles
         imageEditorViewport->getComponent()->setSectionRect(Rectangle<float>(0,0,0,0));
         
-        // reset textboxes
-        markerTextbox->reset();
-        timeTextbox->reset();
-        regionTextbox->reset();
-        xTextbox->reset();
-        yTextbox->reset();
-        wTextbox->reset();
-        hTextbox->reset();
+        // hide textboxes
+        relativePositionLabel->setVisible(false);
+        xTextbox->setVisible(false);
+        yTextbox->setVisible(false);
+        wTextbox->setVisible(false);
+        hTextbox->setVisible(false);
+
+        markerTextbox->setVisible(false);
+        timeTextbox->setVisible(false);
+        regionTextbox->setVisible(false);
+        
+        // show textboxes
+        imageFileLabel->setVisible(true);
+        imageFileTextbox->setVisible(true);
+        imageFileTextbox->setText(Polytempo_ImageManager::getInstance()->getFileName(imageID), dontSendNotification);
+        chooseImageFile->setVisible(true);
     }
     else
     {
-        imageEditorViewport->getComponent()->setEditedEvent(imageEvents[sectionIndex]);
+        for(int i=0;i<addSectionEvents.size();i++)
+        {
+            if(addSectionEvents[i]->getProperty(eventPropertyString_SectionID) == sectionID)
+            {
+                selectedAddSectionEvent = addSectionEvents[i];
+                break;
+            }
+        }
+        
+        imageEditorViewport->getComponent()->setEditedEvent(selectedAddSectionEvent);
  
-        // handles
-        Array<var> r = *imageEvents[sectionIndex]->getProperty(eventPropertyString_Rect).getArray();
+        // show handles
+        Array<var> r = *selectedAddSectionEvent->getProperty(eventPropertyString_Rect).getArray();
         imageEditorViewport->getComponent()->setSectionRect(Rectangle<float>(r[0],r[1],r[2],r[3]));
         
-        // textboxes
-        String marker;
-        if(score->getMarkerForLocator(imageEvents[sectionIndex]->getTime(), &marker))
-            markerTextbox->setText(marker, dontSendNotification);
-        else
-            markerTextbox->reset();
-        timeTextbox->setText(Polytempo_Textbox::timeToString(imageEvents[sectionIndex]->getTime()), dontSendNotification);
-        regionTextbox->setText(imageEvents[sectionIndex]->getProperty(eventPropertyString_RegionID).toString(),dontSendNotification);
+        // hide textboxes
+        imageFileLabel->setVisible(false);
+        imageFileTextbox->setVisible(false);
+        chooseImageFile->setVisible(false);
+        markerTextbox->setVisible(false);
+        timeTextbox->setVisible(false);
+
+        // show textboxes
+        relativePositionLabel->setVisible(true);
+        xTextbox->setVisible(true);
+        yTextbox->setVisible(true);
+        wTextbox->setVisible(true);
+        hTextbox->setVisible(true);
         xTextbox->setText(String((float)r[0],3), dontSendNotification);
         yTextbox->setText(String((float)r[1],3), dontSendNotification);
         wTextbox->setText(String((float)r[2],3), dontSendNotification);
         hTextbox->setText(String((float)r[3],3), dontSendNotification);
+
+        for(int i=0;i<imageEvents.size();i++)
+        {
+            if(imageEvents[i]->getProperty(eventPropertyString_SectionID) == sectionID)
+            {
+                selectedImageEvent = imageEvents[i];
+                break;
+            }
+        }
         
+        if(selectedImageEvent == nullptr)
+        {
+            markerTextbox->setVisible(false);
+            timeTextbox->setVisible(false);
+            regionTextbox->setVisible(false);
+        }
+        else
+        {
+            markerTextbox->setVisible(true);
+            timeTextbox->setVisible(true);
+            regionTextbox->setVisible(true);
+            
+            String marker;
+            if(score->getMarkerForLocator(selectedImageEvent->getTime(), &marker))
+                markerTextbox->setText(marker, dontSendNotification);
+            else
+                markerTextbox->reset();
+            timeTextbox->setText(Polytempo_Textbox::timeToString(selectedImageEvent->getTime()), dontSendNotification);
+            regionTextbox->setText(selectedImageEvent->getProperty(eventPropertyString_RegionID).toString(),dontSendNotification);
+        }
     }
     repaint();
+    
+    // enable / disable menu items
+    Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
+    app->commandStatusChanged();
 }
 
 void Polytempo_ImageEditorView::paint(Graphics& g)
@@ -257,12 +321,18 @@ void Polytempo_ImageEditorView::resized()
     
     int yPosition = 25;
     
-    imageFileTextbox->setBounds(getWidth() - TREE_VIEW_WIDTH + 10, yPosition, TREE_VIEW_WIDTH - 20, 20);
-    yPosition += 25;
- 
-    chooseImageFile->setBounds(getWidth() - TREE_VIEW_WIDTH + 10, yPosition, 50, 16);
-    yPosition += 60;
+    imageFileLabel->setBounds(getWidth() - TREE_VIEW_WIDTH + 5, 0, TREE_VIEW_WIDTH - 20, 34);
+    imageFileTextbox->setBounds(getWidth() - TREE_VIEW_WIDTH + 10, 50, TREE_VIEW_WIDTH - 20, 26);
+    chooseImageFile->setBounds(getWidth() - TREE_VIEW_WIDTH + 10, 80, 50, 16);
     
+    relativePositionLabel->setBounds(getWidth() - TREE_VIEW_WIDTH + 5, 0, TREE_VIEW_WIDTH - 20, 34);
+    
+    xTextbox->setBounds(getWidth() - TREE_VIEW_WIDTH + 10, 50, 55, 26);
+    yTextbox->setBounds((int)(getWidth() - TREE_VIEW_WIDTH * 0.5 + 10), 50, 55, 26);
+    wTextbox->setBounds(getWidth() - TREE_VIEW_WIDTH + 10, 95, 55, 26);
+    hTextbox->setBounds((int)(getWidth() - TREE_VIEW_WIDTH * 0.5 + 10), 95, 55, 26);
+    
+    yPosition = 300;
     markerTextbox->setBounds(getWidth() - TREE_VIEW_WIDTH + 10, yPosition, TREE_VIEW_WIDTH - 20, 34);
     yPosition +=55;
     
@@ -271,16 +341,8 @@ void Polytempo_ImageEditorView::resized()
     
     regionTextbox->setBounds(getWidth() - TREE_VIEW_WIDTH + 10, yPosition, 40, 34);
     yPosition +=50;
-
-    relativePositionLabel->setBounds(getWidth() - TREE_VIEW_WIDTH + 5, yPosition, 100, 34);
-    yPosition += 45;
     
-    xTextbox->setBounds(getWidth() - TREE_VIEW_WIDTH + 10, yPosition, 55, 26);
-    yTextbox->setBounds((int)(getWidth() - TREE_VIEW_WIDTH * 0.5 + 10), yPosition, 55, 26);
-    yPosition +=45;
 
-    wTextbox->setBounds(getWidth() - TREE_VIEW_WIDTH + 10, yPosition, 55, 26);
-    hTextbox->setBounds((int)(getWidth() - TREE_VIEW_WIDTH * 0.5 + 10), yPosition, 55, 26);
 }
 
 //------------------------------------------------------------------------------
@@ -289,31 +351,113 @@ void Polytempo_ImageEditorView::resized()
 
 void Polytempo_ImageEditorView::deleteSelected()
 {
-    imageID = selectedItem->getProperty("image");
-    sectionIndex = selectedItem->getProperty("section");
+    imageID = selectedItem->getProperty("imageID");
+    sectionID = selectedItem->getProperty("sectionID");
     
     String text("Do you want to delete \"");
-    if(sectionIndex == -1) text<<"Image "<<imageID.toString()<<"\"";
-    else                   text<<"Section "<<sectionIndex<<"\"";
+    if(sectionID == var::null) text<<"Image "<<imageID.toString()<<"\"";
+    else                       text<<"Section "<<sectionID.toString()<<"\"";
     
     if(Polytempo_OkCancelAlert::show(text, String::empty))
     {
-        if(sectionIndex == -1)
-        {
-            Polytempo_Alert::show("Sorry...", "\"Delete Image\" is not yet implemented");
+        if(sectionID == var::null)
+        {            
+            if(Polytempo_ImageManager::getInstance()->deleteImage(imageID))
+            {
+                score->setDirty();
+
+                // delete the load image event
+                for(int i=0;i<loadImageEvents.size();i++)
+                {
+                    if(loadImageEvents[i]->getProperty(eventPropertyString_ImageID) == imageID)
+                    {
+                        score->removeEvent(loadImageEvents[i], true);
+                        break;
+                    }
+                }
+                // delete all define section events that refer to this image ID
+                for(int i=0;i<addSectionEvents.size();i++)
+                {
+                    if(addSectionEvents[i]->getProperty(eventPropertyString_ImageID) == imageID)
+                    {
+                        var tempSectionID = addSectionEvents[i]->getProperty(eventPropertyString_SectionID);
+                        
+                        // delete all image events that refer to this section ID
+                        for(int j=0;j<imageEvents.size();j++)
+                        {
+                            if(imageEvents[j]->getProperty(eventPropertyString_SectionID) == tempSectionID)
+                            {
+                                score->removeEvent(imageEvents[j]);
+                            }
+                        }
+                        
+                        score->removeEvent(addSectionEvents[i], true);
+                    }
+                }
+                // delete all image events that refer directly to this image ID
+                for(int i=0;i<imageEvents.size();i++)
+                {
+                    if(imageEvents[i]->getProperty(eventPropertyString_ImageID) == imageID)
+                    {
+                        score->removeEvent(imageEvents[i]);
+                    }
+                }
+                
+                selectedItem = nullptr;
+            }
         }
         else
         {
-            score->removeEvent(imageEvents[sectionIndex]);
             score->setDirty();
+
+            // delete the define section event
+            for(int i=0;i<addSectionEvents.size();i++)
+            {
+                if(addSectionEvents[i]->getProperty(eventPropertyString_SectionID) == sectionID)
+                {
+                    score->removeEvent(addSectionEvents[i], true);
+                    break;
+                }
+            }
+
+            // delete all image events that refer to this section ID
+            for(int j=0;j<imageEvents.size();j++)
+            {
+                if(imageEvents[j]->getProperty(eventPropertyString_SectionID) == sectionID)
+                {
+                    score->removeEvent(imageEvents[j]);
+                }
+            }
         }
         
-        selectedItem = nullptr;
         refresh();
     }
 }
 
-void Polytempo_ImageEditorView::addImage()
+int Polytempo_ImageEditorView::findNewID(String eventPropertyString, Array < Polytempo_Event* > events)
+{
+    int newID = 0;
+    bool success = false;
+    
+    while(!success)
+    {
+        newID++;
+        success = true;
+        for(int i=0;i<events.size();i++)
+        {
+            if(events[i]->getProperty(eventPropertyString).equals(var(newID)))
+            {
+                success = false;
+                break;
+            }
+        }
+    }
+    
+    return newID;
+}
+
+
+void Polytempo_ImageEditorView::loadImage()
 {
     File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("scoreFileDirectory"));
     FileChooser fileChooser("Open Score File", directory, "*.jpg;*.png", true);
@@ -325,15 +469,7 @@ void Polytempo_ImageEditorView::addImage()
         Polytempo_Event *event = Polytempo_Event::makeEvent(eventType_LoadImage);
         event->setProperty(eventPropertyString_URL, url);
         
-        int highestImageIndex = 0;
-        for(int i=0;i<imageEvents.size();i++)
-        {
-            int index = imageEvents[i]->getProperty(eventPropertyString_ImageID);
-            if(index > highestImageIndex)
-                highestImageIndex = index;
-        }
-        
-        event->setProperty(eventPropertyString_ImageID, highestImageIndex + 1);
+        event->setProperty(eventPropertyString_ImageID, findNewID(eventPropertyString_ImageID, loadImageEvents));
         
         score->addEvent(event, true); // add to init
         score->setDirty();
@@ -344,35 +480,70 @@ void Polytempo_ImageEditorView::addImage()
 
 void Polytempo_ImageEditorView::addSection()
 {
-    Polytempo_Event* event = Polytempo_Event::makeEvent(eventType_Image);
+    Polytempo_Event* event = Polytempo_Event::makeEvent(eventType_AddSection);
     
     event->setProperty(eventPropertyString_ImageID, imageID);
+    event->setProperty(eventPropertyString_SectionID, findNewID(eventPropertyString_SectionID, addSectionEvents));
     
     Array < var > r;
     r.set(0,0); r.set(1,0); r.set(2,1); r.set(3,1);
     event->setProperty(eventPropertyString_Rect, r);
     
-    score->addEvent(event);
+    score->addEvent(event, true);
     score->setDirty();
     
     selectedEvent = event;
     selectedItem = nullptr;
     
-    // add a region if there are none
-    if(addRegionEvents.size() == 0)
-    {
-        DBG("add region");
-        event->setProperty(eventPropertyString_RegionID, "1");
-        
-        event = Polytempo_Event::makeEvent(eventType_AddRegion);
-        event->setProperty(eventPropertyString_RegionID, "1");
-        event->setProperty(eventPropertyString_Rect, r);
-
-        score->addEvent(event, true); // add to init
-    }
-    
     refresh();
 }
+
+void Polytempo_ImageEditorView::addInstance()
+{
+    // we assume for the moment that there is only
+    // one single instance per section.
+    // TODO: this has to be extended to cover
+    // multiple instances.
+    
+    if(selectedImageEvent == nullptr)
+    {
+        Polytempo_Event* event;
+        
+        // add a region if there are none
+        if(addRegionEvents.size() == 0)
+        {
+            Array < var > r;
+            r.set(0,0); r.set(1,0); r.set(2,1); r.set(3,1);
+            
+            event = Polytempo_Event::makeEvent(eventType_AddRegion);
+            event->setProperty(eventPropertyString_RegionID, "1");
+            event->setProperty(eventPropertyString_Rect, r);
+            
+            score->addEvent(event, true); // add to init
+            addRegionEvents.add(event);
+        }
+        
+        event = Polytempo_Event::makeEvent(eventType_Image);
+        event->setTime(0.0f);
+        event->setProperty(eventPropertyString_SectionID, sectionID);
+        event->setProperty(eventPropertyString_RegionID, addRegionEvents[0]->getProperty(eventPropertyString_RegionID));
+        
+        score->addEvent(event);
+        score->setDirty();
+        
+        refresh();
+    }
+}
+
+//------------------------------------------------------------------------------
+#pragma mark -
+#pragma mark retrieve state
+
+bool Polytempo_ImageEditorView::hasSelectedSection()
+{
+    return sectionID != var::null;
+}
+
 
 //------------------------------------------------------------------------------
 #pragma mark -
@@ -385,8 +556,10 @@ void Polytempo_ImageEditorView::labelTextChanged(Label* label)
 {
     if(label == imageFileTextbox)
     {
-        Polytempo_ImageManager::getInstance()->replaceImage(imageID, label->getTextValue());
-        score->setDirty();
+        if(Polytempo_ImageManager::getInstance()->replaceImage(imageID, label->getTextValue().toString()))
+        {
+            score->setDirty();
+        }
         refresh();
     }
     else if(label == markerTextbox)
@@ -396,18 +569,17 @@ void Polytempo_ImageEditorView::labelTextChanged(Label* label)
         
         if(score->getLocatorForMarker(marker, &locator))
         {
-            imageEvents[sectionIndex]->setTime(locator);
+            selectedImageEvent->setTime(locator);
             score->sortSection();
             score->setDirty();
         }
-
         update();
     }
     else if(label == timeTextbox)
     {
         float num = Polytempo_Textbox::stringToTime(label->getText());
         
-        imageEvents[sectionIndex]->setTime(num);
+        selectedImageEvent->setTime(num);
         score->sortSection();
         score->setDirty();
         
@@ -418,14 +590,14 @@ void Polytempo_ImageEditorView::labelTextChanged(Label* label)
         int num = (label->getText()).getIntValue();
         // TODO: check if region exists
         
-        imageEvents[sectionIndex]->setProperty(eventPropertyString_RegionID, var(num));
+        selectedImageEvent->setProperty(eventPropertyString_RegionID, var(num));
         score->setDirty();
         
         update();
     }
     else if(label == xTextbox || label == yTextbox || label == wTextbox || label == hTextbox)
     {
-        Array < var > r = *imageEvents[sectionIndex]->getProperty(eventPropertyString_Rect).getArray();
+        Array < var > r = *selectedAddSectionEvent->getProperty(eventPropertyString_Rect).getArray();
         imageEditorViewport->getComponent()->setSectionRect(Rectangle<float>(r[0],r[1],r[2],r[3]));
         float num = label->getText().getFloatValue();
         num = num < 0.0f ? 0.0f : num > 1.0f ? 1.0f : num;
@@ -435,7 +607,7 @@ void Polytempo_ImageEditorView::labelTextChanged(Label* label)
         else if(label == wTextbox) r.set(2, num);
         else if(label == hTextbox) r.set(3, num);
         
-        imageEvents[sectionIndex]->setProperty(eventPropertyString_Rect, r);
+        selectedAddSectionEvent->setProperty(eventPropertyString_Rect, r);
         score->setDirty();
         
         update();
@@ -451,12 +623,14 @@ void Polytempo_ImageEditorView::buttonClicked(Button* button)
     if(button == chooseImageFile)
     {
         File directory (Polytempo_StoredPreferences::getInstance()->getProps().getValue("scoreFileDirectory"));
-        FileChooser fileChooser ("Open Score File", directory, "*.png;*.jpg");
+        FileChooser fileChooser ("Open Image File", directory, "*.png;*.jpg");
         
         if(fileChooser.browseForFileToOpen())
         {
-            Polytempo_ImageManager::getInstance()->replaceImage(imageID, fileChooser.getResult().getRelativePathFrom(directory));
-            score->setDirty();
+            if(Polytempo_ImageManager::getInstance()->replaceImage(imageID, fileChooser.getResult().getRelativePathFrom(directory)))
+            {
+                score->setDirty();
+            }
             refresh();
         }
     }

@@ -57,9 +57,10 @@ namespace Polytempo_CommandIDs
         showImageEditor,
         
         deleteSelected,
-        addImage,
+        loadImage,
         addSection,
-        
+        addInstance,
+
         
         // composer
         zoomInX, zoomOutX,

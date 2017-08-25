@@ -25,10 +25,7 @@
 #ifndef __Polytempo_GraphicsView__
 #define __Polytempo_GraphicsView__
 
-//#include "../../JuceLibraryCode/JuceHeader.h"
-
 #include "Polytempo_GraphicsViewRegion.h"
-class Polytempo_GraphicsSplitViewRegion;
 #include "../../Scheduler/Polytempo_EventObserver.h"
 
 
@@ -44,19 +41,18 @@ public:
     void eventNotification(Polytempo_Event *event);
     
 private:
-    
     void deleteAll();
     void clearAll();
     
     void addRegion(Polytempo_Event *event);
-    void addSplitRegion(Polytempo_Event *event);
+    void addSection(Polytempo_Event *event);
     void displayImage(Polytempo_Event *event);
     void displayText(Polytempo_Event *event);
     void displayProgessbar(Polytempo_Event *event);
 
     HashMap < String, Polytempo_GraphicsViewRegion* > regionsMap;
-    HashMap < String, Polytempo_GraphicsSplitViewRegion* > splitRegionsMap;
-    HashMap < String, Rectangle < float > > regionBoundsMap;
+    HashMap < String, var > sectionBoundsMap;
+    HashMap < String, String > sectionImageIDMap;
     
     ScopedPointer < Polytempo_Progressbar > progressbar;
 };

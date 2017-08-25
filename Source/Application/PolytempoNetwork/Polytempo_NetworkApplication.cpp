@@ -304,4 +304,9 @@ void Polytempo_NetworkApplication::openScoreFile(File newScoreFile)
     }    
 }
 
+void Polytempo_NetworkApplication::commandStatusChanged()
+{
+    menuBarModel->commandManager.commandStatusChanged();
+}
+
 //------------------------------------------------------------------------------

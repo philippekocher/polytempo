@@ -156,10 +156,6 @@
               resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_GraphicsEditableRegion.cpp"/>
         <FILE id="R8L9s8" name="Polytempo_GraphicsEditableRegion.h" compile="0"
               resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_GraphicsEditableRegion.h"/>
-        <FILE id="GkUsnq" name="Polytempo_GraphicsSplitViewRegion.cpp" compile="1"
-              resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_GraphicsSplitViewRegion.cpp"/>
-        <FILE id="I41ADb" name="Polytempo_GraphicsSplitViewRegion.h" compile="0"
-              resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_GraphicsSplitViewRegion.h"/>
         <FILE id="xkX3nw" name="Polytempo_GraphicsView.cpp" compile="1" resource="0"
               file="../Source/Views/PolytempoNetwork/Polytempo_GraphicsView.cpp"/>
         <FILE id="Z6a5Uv" name="Polytempo_GraphicsView.h" compile="0" resource="0"

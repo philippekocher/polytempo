@@ -121,8 +121,10 @@ PopupMenu Polytempo_MenuBarModel::getMenuForIndex(int, const String& menuName)
     else if (menuName == "Edit")
     {
         menu.addCommandItem(&commandManager, Polytempo_CommandIDs::deleteSelected);
+        menu.addSeparator();
+        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::loadImage);
         menu.addCommandItem(&commandManager, Polytempo_CommandIDs::addSection);
-        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::addImage);
+        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::addInstance);
     }
     else if (menuName == "View")
     {
@@ -208,8 +210,9 @@ void Polytempo_MenuBarModel::getAllCommands(Array <CommandID>& commands)
         Polytempo_CommandIDs::close,
         
         Polytempo_CommandIDs::deleteSelected,
+        Polytempo_CommandIDs::loadImage,
         Polytempo_CommandIDs::addSection,
-        Polytempo_CommandIDs::addImage,
+        Polytempo_CommandIDs::addInstance,
         
         Polytempo_CommandIDs::showMainView,
         Polytempo_CommandIDs::showImageEditor,
@@ -295,14 +298,20 @@ void Polytempo_MenuBarModel::getCommandInfo(CommandID commandID, ApplicationComm
             result.setActive(window->getContentID() == Polytempo_NetworkWindow::imageEditorViewID);
             break;
             
+        case Polytempo_CommandIDs::loadImage:
+            result.setInfo("Load Image", "Load an image", infoCategory, 0);
+            result.setActive(window->getContentID() == Polytempo_NetworkWindow::imageEditorViewID);
+            break;
+
         case Polytempo_CommandIDs::addSection:
             result.setInfo("Add Section", "Add a section", infoCategory, 0);
             result.setActive(window->getContentID() == Polytempo_NetworkWindow::imageEditorViewID);
             break;
             
-        case Polytempo_CommandIDs::addImage:
-            result.setInfo("Add Image", "Add a image", infoCategory, 0);
-            result.setActive(window->getContentID() == Polytempo_NetworkWindow::imageEditorViewID);
+        case Polytempo_CommandIDs::addInstance:
+            result.setInfo("Add Instance", "Add an instance of the section", infoCategory, 0);
+            result.setActive(window->getContentID() == Polytempo_NetworkWindow::imageEditorViewID &&
+ ((Polytempo_ImageEditorView*)window->getContentComponent())->hasSelectedSection());
             break;
             
         /* view menu
@@ -455,12 +464,16 @@ bool Polytempo_MenuBarModel::perform(const InvocationInfo& info)
             ((Polytempo_ImageEditorView*)window->getContentComponent())->deleteSelected();
             break;
             
+        case Polytempo_CommandIDs::loadImage:
+            ((Polytempo_ImageEditorView*)window->getContentComponent())->loadImage();
+            break;
+
         case Polytempo_CommandIDs::addSection:
             ((Polytempo_ImageEditorView*)window->getContentComponent())->addSection();
             break;
 
-        case Polytempo_CommandIDs::addImage:
-            ((Polytempo_ImageEditorView*)window->getContentComponent())->addImage();
+        case Polytempo_CommandIDs::addInstance:
+            ((Polytempo_ImageEditorView*)window->getContentComponent())->addInstance();
             break;
 
             

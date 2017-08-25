@@ -122,7 +122,7 @@ void Polytempo_ImageEditorComponent::setSectionRect(Rectangle < float > r)
 
 void Polytempo_ImageEditorComponent::setEditedEvent(Polytempo_Event *event)
 {
-    if(event->getType() == eventType_Image) editedEvent = event;
+    if(event->getType() == eventType_AddSection) editedEvent = event;
     
     Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
     score = app->getScore();
