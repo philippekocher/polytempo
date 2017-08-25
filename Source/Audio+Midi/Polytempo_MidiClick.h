@@ -42,6 +42,8 @@ public:
     void setDownbeatVelocity(int value);
     void setBeatPitch(int value);
     void setBeatVelocity(int value);
+    void setCuePitch(int value);
+    void setCueVelocity(int value);
     void setChannel(int value);
     void setOutputDeviceIndex(int value);
 
