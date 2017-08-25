@@ -30,8 +30,10 @@ Polytempo_MidiClick::Polytempo_MidiClick()
 {
     downbeatPitch = Polytempo_StoredPreferences::getInstance()->getProps().getIntValue("midiDownbeatPitch");
     beatPitch = Polytempo_StoredPreferences::getInstance()->getProps().getIntValue("midiBeatPitch");
+    cuePitch = Polytempo_StoredPreferences::getInstance()->getProps().getIntValue("midiCuePitch");
     downbeatVelocity = Polytempo_StoredPreferences::getInstance()->getProps().getIntValue("midiDownbeatVelocity");
     beatVelocity = Polytempo_StoredPreferences::getInstance()->getProps().getIntValue("midiBeatVelocity");
+    cueVelocity = Polytempo_StoredPreferences::getInstance()->getProps().getIntValue("midiCueVelocity");
     channel = Polytempo_StoredPreferences::getInstance()->getProps().getIntValue("midiChannel");
     
     juce::StringArray midiDevices = MidiOutput::getDevices();
@@ -105,6 +107,8 @@ void Polytempo_MidiClick::setDownbeatPitch(int value) { downbeatPitch = value; }
 void Polytempo_MidiClick::setDownbeatVelocity(int value)  { downbeatVelocity = value; }
 void Polytempo_MidiClick::setBeatPitch(int value)  { beatPitch = value; }
 void Polytempo_MidiClick::setBeatVelocity(int value)  { beatVelocity = value; }
+void Polytempo_MidiClick::setCuePitch(int value)  { cuePitch = value; }
+void Polytempo_MidiClick::setCueVelocity(int value)  { cueVelocity = value; }
 void Polytempo_MidiClick::setChannel(int value)  { channel = value; }
 
 void Polytempo_MidiClick::setOutputDeviceIndex(int value)

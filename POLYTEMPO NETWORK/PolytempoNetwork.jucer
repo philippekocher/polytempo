@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="at55VB" name="PolytempoNetwork" projectType="guiapp" version="0.2.1"
-              bundleIdentifier="net.icst.PolytempoNetwork" jucerVersion="5.0.2"
+<JUCERPROJECT id="at55VB" name="PolytempoNetwork" projectType="guiapp" version="0.3.0"
+              bundleIdentifier="net.icst.PolytempoNetwork" jucerVersion="5.1.1"
               companyName="ICST Institute for Computermusic and Sound Technology, Zurich"
               includeBinaryInAppConfig="1" companyWebsite="www.icst.net" defines="POLYTEMPO_NETWORK=1"
-              displaySplashScreen="1" reportAppUsage="1" splashScreenColour="Dark">
+              displaySplashScreen="1" reportAppUsage="1" splashScreenColour="Dark"
+              cppLanguageStandard="11">
   <MAINGROUP id="AdMxtt" name="PolytempoNetwork">
     <GROUP id="{380F2332-7EED-CAEF-0B98-BEC0BC16E53A}" name="Resources">
       <FILE id="KOwPbh" name="icon.png" compile="0" resource="1" file="../Resources/icon.png"/>

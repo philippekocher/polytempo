@@ -42,7 +42,9 @@ private:
     ScopedPointer<Label> label2;
     ScopedPointer<Label> label3;
     ScopedPointer<Label> label4;
-    ScopedPointer<HyperlinkButton> link;
+    ScopedPointer<ImageComponent> iconComponent;
+    ScopedPointer<HyperlinkButton> link1;
+    ScopedPointer<HyperlinkButton> link2;
 };
 
 

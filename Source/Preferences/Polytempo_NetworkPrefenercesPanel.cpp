@@ -826,7 +826,7 @@ public:
     {
         int value = 0;
         
-        if(&textEditor == midiDownbeatPitch || &textEditor == midiBeatPitch)
+        if(&textEditor == midiDownbeatPitch || &textEditor == midiBeatPitch || &textEditor == midiCuePitch)
         {
             value = textEditor.getText().getIntValue();
             value = value > 127 ? 127 : value < 0 ? 0 : value;
@@ -848,6 +848,11 @@ public:
         {
             Polytempo_StoredPreferences::getInstance()->getProps().setValue("midiBeatPitch", value);
             Polytempo_MidiClick::getInstance()->setBeatPitch(value);
+        }
+        else if(&textEditor == midiCuePitch)
+        {
+            Polytempo_StoredPreferences::getInstance()->getProps().setValue("midiCuePitch", value);
+            Polytempo_MidiClick::getInstance()->setCuePitch(value);
         }
         else if(&textEditor == midiChannel)
         {
@@ -871,6 +876,11 @@ public:
             Polytempo_StoredPreferences::getInstance()->getProps().setValue("midiBeatVelocity", (int)slider->getValue());
             Polytempo_MidiClick::getInstance()->setBeatVelocity((int)slider->getValue());
         }
+        else if(slider == midiCueVelocitySlider)
+        {
+            Polytempo_StoredPreferences::getInstance()->getProps().setValue("midiCueVelocity", (int)slider->getValue());
+            Polytempo_MidiClick::getInstance()->setCueVelocity((int)slider->getValue());
+        }
     }
     
     /* button listener
@@ -891,7 +901,10 @@ public:
             midiBeatVelocityLabel->setEnabled(button->getToggleState());
             midiBeatVelocitySlider->setEnabled(button->getToggleState());
             
-            // cue pitch and volume ...
+            midiCuePitchLabel->setEnabled(button->getToggleState());
+            midiCuePitch->setEnabled(button->getToggleState());
+            midiCueVelocityLabel->setEnabled(button->getToggleState());
+            midiCueVelocitySlider->setEnabled(button->getToggleState());
             
             midiOutputDeviceListLabel->setEnabled(button->getToggleState());
             midiOutputDeviceList->setEnabled(button->getToggleState());
@@ -982,7 +995,7 @@ public:
 			ipList->setSelectedId(0);
 	}
 
-	void resized()
+	void resized() override
 	{
 		ipListLabel->setBounds(20, 50, proportionOfWidth(0.9f), 24);
 		ipList->setBounds(20, 80, proportionOfWidth(0.9f), 24);
@@ -992,7 +1005,7 @@ public:
 
 	/* combobox & button listener
 	--------------------------------------- */
-	void buttonClicked(Button* button)
+	void buttonClicked(Button* button) override
 	{
 		if (button == refreshButton)
 		{

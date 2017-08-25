@@ -43,10 +43,10 @@ Polytempo_AboutWindow::Polytempo_AboutWindow()
     text1 << JUCEApplication::getInstance()->getApplicationName() << newLine;
     text2 << "Version: " << JUCEApplication::getInstance()->getApplicationVersion();
     text3 << "Build Date: " << __DATE__ << " " << __TIME__;
-    text4 << "Copyright (c) "<< _BUILD_YEAR_ << " Zurich University of the Arts";
+    text4 << "Copyright (c) 2014–"<< _BUILD_YEAR_ << " Zurich University of the Arts";
     
     label1 = new Label(String::empty, text1);
-    label1->setFont(Font(76.0f, Font::plain));
+    label1->setFont(Font(64.0f, Font::plain));
     label1->setColour(Label::textColourId, Colours::darkslateblue);
     label1->setJustificationType(Justification::topLeft);
     label1->setBounds(rect);
@@ -54,28 +54,40 @@ Polytempo_AboutWindow::Polytempo_AboutWindow()
     label2 = new Label(String::empty, text2);
     label2->setFont(Font(16.0f, Font::bold));
     label2->setJustificationType(Justification::topLeft);
-    label2->setBounds(4,85,rect.getWidth(),20);
+    label2->setBounds(4,75,rect.getWidth(),20);
     
     label3 = new Label(String::empty, text3);
     label3->setFont(Font(11.0f, Font::plain));
     label3->setJustificationType(Justification::topLeft);
-    label3->setBounds(4,105,rect.getWidth(),20);
+    label3->setBounds(4,95,rect.getWidth(),20);
     
     label4 = new Label(String::empty, text4);
     label4->setFont(Font(12.0f, Font::plain));
     label3->setJustificationType(Justification::topLeft);
     label4->setBounds(4,rect.getHeight()-20,rect.getWidth(),20);
     
-    link = new HyperlinkButton ("ICST Institute for Computermusic and Sound Technology", URL ("http://www.icst.net"));
-    link->setFont(Font (12.0f, Font::bold | Font::underlined), false);
-    link->setBounds(4,120,0, 20);
-    link->changeWidthToFitText();
+    link1 = new HyperlinkButton ("ICST Institute for Computermusic and Sound Technology", URL ("http://www.icst.net"));
+    link1->setFont(Font (12.0f, Font::bold | Font::underlined), false);
+    link1->setBounds(4,130,0, 20);
+    link1->changeWidthToFitText();
     
+    link2 = new HyperlinkButton ("Polytempo Website", URL ("http://polytempo.zhdk.ch"));
+    link2->setFont(Font (12.0f, Font::bold | Font::underlined), false);
+    link2->setBounds(4,145,0, 20);
+    link2->changeWidthToFitText();
+    
+    Image icon = ImageFileFormat::loadFrom(BinaryData::icon_png, (size_t) BinaryData::icon_pngSize);
+    iconComponent = new ImageComponent();
+    iconComponent->setBounds(rect.getWidth() - rect.getHeight() + 15, 10, rect.getHeight() - 20, rect.getHeight() - 20);
+    iconComponent->setImage(icon);
+
     Component *aboutComponent = new Component();
     aboutComponent->setBounds(rect);
+    aboutComponent->addAndMakeVisible(iconComponent);
     aboutComponent->addAndMakeVisible(label1);
     aboutComponent->addAndMakeVisible(label2);
-    aboutComponent->addAndMakeVisible(link);
+    aboutComponent->addAndMakeVisible(link1);
+    aboutComponent->addAndMakeVisible(link2);
     aboutComponent->addAndMakeVisible(label3);
     aboutComponent->addAndMakeVisible(label4);
     
@@ -90,7 +102,8 @@ Polytempo_AboutWindow::~Polytempo_AboutWindow()
 {
     label1 = nullptr;
     label2 = nullptr;
-    link = nullptr;
+    link1 = nullptr;
+    link2 = nullptr;
 }
 
 void Polytempo_AboutWindow::show()
