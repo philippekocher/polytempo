@@ -99,7 +99,7 @@ void Polytempo_Event::setType(String typeString)
     
     else if(typeString == eventTypeString_LoadImage)      type = eventType_LoadImage;
     else if(typeString == eventTypeString_AddRegion)      type = eventType_AddRegion;
-    else if(typeString == eventTypeString_AddSection)  type = eventType_AddSection;
+    else if(typeString == eventTypeString_AddSection)     type = eventType_AddSection;
     
     else if(typeString == eventTypeString_ClearAll)       type = eventType_ClearAll;
     
@@ -196,7 +196,7 @@ String Polytempo_Event::getTypeString()
 void Polytempo_Event::setTime(float t)
 {
     time = t;
-    properties->set("time",t);
+    properties->set(eventPropertyString_Time, t);
 }
 
 float Polytempo_Event::getTime()
@@ -207,6 +207,16 @@ float Polytempo_Event::getTime()
 int Polytempo_Event::getMilisecondTime()
 {
     return (int)(time * 1000.0f + 0.5f);
+}
+
+void  Polytempo_Event::setSyncTime(int t)
+{
+    syncTime = t;
+}
+
+int Polytempo_Event::getSyncTime()
+{
+    return syncTime;
 }
 
 void Polytempo_Event::setPosition(Rational pos)
@@ -221,7 +231,7 @@ Rational Polytempo_Event::getPosition()
 
 void Polytempo_Event::setProperty(String key, var value)
 {
-    if     (key == "time")       time = float(value);
+    if     (key == eventPropertyString_Time)       time = float(value);
     else if(key == "position")   position = value;
     
     properties->set(key,value);
@@ -292,7 +302,7 @@ Polytempo_Event* Polytempo_Event::makeEvent(String address, Array<var> messages)
     
     if(messages.size()>0 && !messages[0].isString())
     {
-        event->setProperty("time",messages[0]);
+        event->setProperty(eventPropertyString_Time,messages[0]);
         if(messages.size()>1 && !messages[1].isString())
             event->setProperty("value",messages[1]);
     }

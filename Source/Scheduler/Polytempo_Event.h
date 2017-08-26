@@ -106,6 +106,8 @@ enum Polytempo_EventType
    and in OSC communication */
 
 
+#define eventPropertyString_Time        "time"
+#define eventPropertyString_Defer       "defer"
 #define eventPropertyString_Duration    "duration"
 #define eventPropertyString_ImageID     "imageID"
 #define eventPropertyString_RegionID    "regionID"
@@ -139,6 +141,9 @@ public:
     float getTime();
     int   getMilisecondTime();
     
+    void  setSyncTime(int t);
+    int   getSyncTime();
+
     void setPosition(Rational pos);
     Rational getPosition();
     
@@ -156,6 +161,7 @@ public:
 private:
     Polytempo_EventType type;
     float               time;
+    int                 syncTime;
     Rational            position;
 
     NamedValueSet *properties;
