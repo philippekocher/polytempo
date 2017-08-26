@@ -25,7 +25,7 @@
 #include "Polytempo_NetworkWindow.h"
 #include "../../Views/PolytempoNetwork/Polytempo_NetworkMainView.h"
 #include "../../Preferences/Polytempo_StoredPreferences.h"
-#include "../../Scheduler/Polytempo_Scheduler.h"
+#include "../../Scheduler/Polytempo_ScoreScheduler.h"
 
 
 Polytempo_NetworkWindow::Polytempo_NetworkWindow()
@@ -83,8 +83,8 @@ void Polytempo_NetworkWindow::setContentID(contentID newContentID)
             setContentNonOwned(mainView, false);
             
             // apply all changes that should be visible in the main view
-            Polytempo_Scheduler::getInstance()->executeInit();
-            Polytempo_Scheduler::getInstance()->returnToLocator();
+            Polytempo_ScoreScheduler::getInstance()->executeInit();
+            Polytempo_ScoreScheduler::getInstance()->returnToLocator();
         }
     }
 }

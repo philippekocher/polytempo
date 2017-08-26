@@ -97,10 +97,10 @@ void Polytempo_NetworkEngine::setLocator(float locator)
 
     Array <class Polytempo_Event*> events; // the events to execute immediately
     score->setLocator(locator, &events, &waitBeforeStart);
-    scheduler->notify(Polytempo_Event::makeEvent(eventType_ClearAll));
+    scoreScheduler->notify(Polytempo_Event::makeEvent(eventType_ClearAll));
     for(int i=0;i<events.size();i++)
     {
-        scheduler->notify(events[i]);
+        scoreScheduler->notify(events[i]);
     }
     
     lastDownbeat = locator;
@@ -126,7 +126,7 @@ void Polytempo_NetworkEngine::run()
         
         while(!shouldStop && !pausing && nextScoreEvent && nextScoreEvent->getMilisecondTime() <= milisecondLocator)
         {
-            scheduler->handleEvent(nextScoreEvent, 0);
+            scoreScheduler->handleEvent(nextScoreEvent, 0);
             if(nextScoreEvent->getType() == eventType_Beat && int(nextScoreEvent->getProperty(eventPropertyString_Pattern)) < 20)
                 lastDownbeat = nextScoreEvent->getTime();
             
@@ -138,7 +138,7 @@ void Polytempo_NetworkEngine::run()
         if(++x > 20 && !shouldStop)
         {
             schedulerTick->setTime(milisecondLocator * 0.001f);
-            scheduler->notify(schedulerTick);
+            scoreScheduler->notify(schedulerTick);
             x=0;
         }
         
@@ -150,7 +150,7 @@ void Polytempo_NetworkEngine::run()
        this must be called here to make sure that the engine thread really
        has finished.
     */
-    if(!killed) scheduler->gotoLocator(Polytempo_Event::makeEvent(eventType_GotoLocator, lastDownbeat));
+    if(!killed) scoreScheduler->gotoLocator(Polytempo_Event::makeEvent(eventType_GotoLocator, lastDownbeat));
 }
 #endif
 

@@ -28,7 +28,7 @@
 #include "../Polytempo_CommandIDs.h"
 #include "../../Preferences/Polytempo_NetworkPreferencesPanel.h"
 #include "../../Preferences/Polytempo_StoredPreferences.h"
-#include "../../Scheduler/Polytempo_Scheduler.h"
+#include "../../Scheduler/Polytempo_ScoreScheduler.h"
 #include "../../Scheduler/Polytempo_EventDispatcher.h"
 
 
@@ -516,34 +516,34 @@ bool Polytempo_MenuBarModel::perform(const InvocationInfo& info)
         /* scheduler menu
          ----------------------------------*/
         case Polytempo_CommandIDs::startStop:
-            if(Polytempo_Scheduler::getInstance()->isRunning())
+            if(Polytempo_ScoreScheduler::getInstance()->isRunning())
                 Polytempo_EventDispatcher::getInstance()->broadcastEvent(Polytempo_Event::makeEvent(eventType_Stop));
             else
                 Polytempo_EventDispatcher::getInstance()->broadcastEvent(Polytempo_Event::makeEvent(eventType_Start));
             break;
             
         case Polytempo_CommandIDs::returnToLoc:
-            Polytempo_Scheduler::getInstance()->returnToLocator();
+            Polytempo_ScoreScheduler::getInstance()->returnToLocator();
             break;
             
         case Polytempo_CommandIDs::returnToBeginning:
-            Polytempo_Scheduler::getInstance()->returnToBeginning();
+            Polytempo_ScoreScheduler::getInstance()->returnToBeginning();
             break;
             
         case Polytempo_CommandIDs::markerFwd:
-            Polytempo_Scheduler::getInstance()->skipToEvent(eventType_Marker);
+            Polytempo_ScoreScheduler::getInstance()->skipToEvent(eventType_Marker);
             break;
             
         case Polytempo_CommandIDs::markerBwd:
-            Polytempo_Scheduler::getInstance()->skipToEvent(eventType_Marker, true);
+            Polytempo_ScoreScheduler::getInstance()->skipToEvent(eventType_Marker, true);
             break;
             
         case Polytempo_CommandIDs::imageFwd:
-            Polytempo_Scheduler::getInstance()->skipToEvent(eventType_Image);
+            Polytempo_ScoreScheduler::getInstance()->skipToEvent(eventType_Image);
             break;
             
         case Polytempo_CommandIDs::imageBwd:
-            Polytempo_Scheduler::getInstance()->skipToEvent(eventType_Image, true);
+            Polytempo_ScoreScheduler::getInstance()->skipToEvent(eventType_Image, true);
             break;
             
         case Polytempo_CommandIDs::gotoLocator:

@@ -24,7 +24,7 @@
 
 #include "Polytempo_OSCListener.h"
 #include "Polytempo_NetworkSupervisor.h"
-#include "../Scheduler/Polytempo_Scheduler.h"
+#include "../Scheduler/Polytempo_ScoreScheduler.h"
 #include "../Misc/Polytempo_Alerts.h"
 #include "../Application/PolytempoNetwork/Polytempo_NetworkApplication.h"
 
@@ -95,6 +95,6 @@ void Polytempo_OSCListener::oscMessageReceived(const OSCMessage & message)
 		}
 
 		ScopedPointer<Polytempo_Event> event = Polytempo_Event::makeEvent(addressPattern, *messages);
-		Polytempo_Scheduler::getInstance()->handleEvent(event, event->getTime());
+		Polytempo_ScoreScheduler::getInstance()->handleEvent(event, event->getTime());
 	}
 }

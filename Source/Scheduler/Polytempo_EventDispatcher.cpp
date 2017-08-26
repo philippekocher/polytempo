@@ -35,7 +35,7 @@ void Polytempo_EventDispatcher::setBroadcastSender(Polytempo_OSCSender *sender)
 void Polytempo_EventDispatcher::broadcastEvent(Polytempo_Event *event)
 {
     // direct connection
-    Polytempo_Scheduler::getInstance()->handleEvent(event, event->getTime());
+    Polytempo_ScoreScheduler::getInstance()->handleEvent(event, event->getTime());
     
     // network broadcast
     if(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("broadcastSchedulerCommands") &&

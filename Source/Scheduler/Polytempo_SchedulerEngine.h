@@ -27,9 +27,9 @@
 
 //#include "../../JuceLibraryCode/JuceHeader.h"
 #include "../Data/Polytempo_Score.h"
-#include "Polytempo_Scheduler.h"
+#include "Polytempo_ScoreScheduler.h"
 
-class Polytempo_Scheduler;
+class Polytempo_ScoreScheduler;
 
 class Polytempo_SchedulerEngine : public Thread
 {
@@ -41,9 +41,9 @@ public:
     {
         return !shouldStop;
     }
-    void setScheduler(Polytempo_Scheduler* theScheduler)
+    void setScheduler(Polytempo_ScoreScheduler* theScheduler)
     {
-        scheduler = theScheduler;
+        scoreScheduler = theScheduler;
     }
     void setScore(Polytempo_Score* theScore)
     {
@@ -85,7 +85,7 @@ protected:
     }
 
     Polytempo_Score *score;
-    Polytempo_Scheduler* scheduler;
+    Polytempo_ScoreScheduler* scoreScheduler;
     float milisecondLocator;
     float tempoFactor = 1;
     bool killed;
