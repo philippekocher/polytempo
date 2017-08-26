@@ -209,12 +209,12 @@ int Polytempo_Event::getMilisecondTime()
     return (int)(time * 1000.0f + 0.5f);
 }
 
-void  Polytempo_Event::setSyncTime(int t)
+void  Polytempo_Event::setSyncTime(uint32 t)
 {
     syncTime = t;
 }
 
-int Polytempo_Event::getSyncTime()
+uint32 Polytempo_Event::getSyncTime()
 {
     return syncTime;
 }

@@ -25,7 +25,6 @@
 #ifndef __Polytempo_NetworkApplication__
 #define __Polytempo_NetworkApplication__
 
-//#include "../../JuceLibraryCode/JuceHeader.h"
 
 #include "Polytempo_NetworkWindow.h"
 #include "Polytempo_NetworkMenuBarModel.h"

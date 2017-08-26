@@ -25,7 +25,7 @@
 #include "Polytempo_Score.h"
 #include "../Preferences/Polytempo_StoredPreferences.h"
 #include "../Misc/Polytempo_Alerts.h"
-#include "../Scheduler/Polytempo_ScoreScheduler.h"
+#include "../Scheduler/Polytempo_EventScheduler.h"
 
 
 class Polytempo_EventComparator
@@ -108,7 +108,7 @@ void Polytempo_Score::addEvent(Polytempo_Event *event, bool addToInit)
     if(addToInit)
     {
         initSection->events.add(event);
-        Polytempo_ScoreScheduler::getInstance()->notify(event);
+        Polytempo_EventScheduler::getInstance()->scheduleEvent(event, true);
     }
     else
     {

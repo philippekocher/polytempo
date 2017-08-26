@@ -22,25 +22,39 @@
  
  ============================================================================== */
 
-#include "Polytempo_EventDispatcher.h"
+#ifndef __Polytempo_EventScheduler__
+#define __Polytempo_EventScheduler__
 
 
-juce_ImplementSingleton(Polytempo_EventDispatcher);
+#include "Polytempo_EventObserver.h"
 
-void Polytempo_EventDispatcher::setBroadcastSender(Polytempo_OSCSender *sender)
+
+class Polytempo_EventScheduler : public Thread
 {
-    oscSender = sender;
-}
-
-void Polytempo_EventDispatcher::broadcastEvent(Polytempo_Event *event)
-{
-    // direct connection
-    Polytempo_EventScheduler::getInstance()->scheduleEvent(event);
+public:
+    Polytempo_EventScheduler();
+    ~Polytempo_EventScheduler();
     
-    // network broadcast
-    if(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("broadcastSchedulerCommands") &&
-       oscSender != nullptr)
-    {
-        oscSender->broadcastEventAsMessage(event);
-    }
-}
+    juce_DeclareSingleton(Polytempo_EventScheduler, false);
+    
+    void scheduleEvent(Polytempo_Event *event, bool useCopy = false);
+    
+    /* thread
+     --------------------------------------- */
+    void run();
+
+    /* notify event observers
+     --------------------------------------- */
+    void registerObserver(Polytempo_EventObserver *obs);
+    void removeObserver(Polytempo_EventObserver *obs);
+private:
+    void notify(Polytempo_Event* event);
+    
+    Array < class Polytempo_EventObserver * > observers;
+    OwnedArray < class Polytempo_Event > scheduledEvents;
+    uint32 currentSyncTime;
+
+};
+
+
+#endif // __Polytempo_EventScheduler__

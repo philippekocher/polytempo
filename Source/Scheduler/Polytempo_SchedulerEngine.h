@@ -25,9 +25,10 @@
 #ifndef __Polytempo_SchedulerEngine__
 #define __Polytempo_SchedulerEngine__
 
-//#include "../../JuceLibraryCode/JuceHeader.h"
+
 #include "../Data/Polytempo_Score.h"
 #include "Polytempo_ScoreScheduler.h"
+
 
 class Polytempo_ScoreScheduler;
 

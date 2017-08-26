@@ -37,21 +37,21 @@ enum Polytempo_EventType
     
     eventType_Tick,
     eventType_Beat,
-    eventType_Marker,
+    eventType_Marker, // 4
     
     eventType_Start,
     eventType_Stop,
     eventType_Pause,
     
     eventType_GotoMarker,
-    eventType_GotoLocator,
+    eventType_GotoLocator,  // 9
     eventType_TempoFactor,
     
     eventType_LoadImage,
     eventType_AddRegion,
     eventType_AddSection,
     
-    eventType_Image,
+    eventType_Image,  // 14
     eventType_Text,
     eventType_Progressbar,
     
@@ -141,8 +141,8 @@ public:
     float getTime();
     int   getMilisecondTime();
     
-    void  setSyncTime(int t);
-    int   getSyncTime();
+    void   setSyncTime(uint32 t);
+    uint32 getSyncTime();
 
     void setPosition(Rational pos);
     Rational getPosition();
@@ -161,7 +161,7 @@ public:
 private:
     Polytempo_EventType type;
     float               time;
-    int                 syncTime;
+    uint32              syncTime;
     Rational            position;
 
     NamedValueSet *properties;

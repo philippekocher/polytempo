@@ -26,6 +26,7 @@
 #include "Polytempo_Event.h"
 #include "../Data/Polytempo_Composition.h"
 #include "Polytempo_EventDispatcher.h"
+#include "Polytempo_EventScheduler.h"
 
 
 #ifdef POLYTEMPO_COMPOSER
@@ -97,10 +98,10 @@ void Polytempo_NetworkEngine::setLocator(float locator)
 
     Array <class Polytempo_Event*> events; // the events to execute immediately
     score->setLocator(locator, &events, &waitBeforeStart);
-    scoreScheduler->notify(Polytempo_Event::makeEvent(eventType_ClearAll));
+    Polytempo_EventScheduler::getInstance()->scheduleEvent(Polytempo_Event::makeEvent(eventType_ClearAll));
     for(int i=0;i<events.size();i++)
     {
-        scoreScheduler->notify(events[i]);
+        Polytempo_EventScheduler::getInstance()->scheduleEvent(events[i], true);
     }
     
     lastDownbeat = locator;
@@ -126,7 +127,7 @@ void Polytempo_NetworkEngine::run()
         
         while(!shouldStop && !pausing && nextScoreEvent && nextScoreEvent->getMilisecondTime() <= milisecondLocator)
         {
-            scoreScheduler->handleEvent(nextScoreEvent, 0);
+            Polytempo_EventScheduler::getInstance()->scheduleEvent(nextScoreEvent, true);
             if(nextScoreEvent->getType() == eventType_Beat && int(nextScoreEvent->getProperty(eventPropertyString_Pattern)) < 20)
                 lastDownbeat = nextScoreEvent->getTime();
             
@@ -138,7 +139,7 @@ void Polytempo_NetworkEngine::run()
         if(++x > 20 && !shouldStop)
         {
             schedulerTick->setTime(milisecondLocator * 0.001f);
-            scoreScheduler->notify(schedulerTick);
+            Polytempo_EventScheduler::getInstance()->scheduleEvent(schedulerTick, true);
             x=0;
         }
         

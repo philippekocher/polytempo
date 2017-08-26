@@ -23,15 +23,15 @@
  ============================================================================== */
 
 #include "Polytempo_EventObserver.h"
-#include "Polytempo_ScoreScheduler.h"
+#include "Polytempo_EventScheduler.h"
 
 Polytempo_EventObserver::Polytempo_EventObserver()
 {
     // observers register themselves with the subject
-    Polytempo_ScoreScheduler::getInstance()->registerObserver(this);
+    Polytempo_EventScheduler::getInstance()->registerObserver(this);
 }
 
 Polytempo_EventObserver::~Polytempo_EventObserver()
 {
-    Polytempo_ScoreScheduler::getInstance()->removeObserver(this);
+    Polytempo_EventScheduler::getInstance()->removeObserver(this);
 }

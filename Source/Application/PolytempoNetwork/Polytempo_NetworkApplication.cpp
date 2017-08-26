@@ -24,9 +24,9 @@
 
 #include "Polytempo_NetworkApplication.h"
 
-//#include "../../JuceLibraryCode/JuceHeader.h"
 #include "../../Preferences/Polytempo_StoredPreferences.h"
 #include "../../Scheduler/Polytempo_ScoreScheduler.h"
+#include "../../Scheduler/Polytempo_EventScheduler.h"
 #include "../../Scheduler/Polytempo_EventDispatcher.h"
 #include "../../Audio+Midi/Polytempo_AudioClick.h"
 #include "../../Audio+Midi/Polytempo_MidiClick.h"
@@ -54,6 +54,7 @@ void Polytempo_NetworkApplication::initialise(const String&)
     
     // scheduler
     Polytempo_ScoreScheduler::getInstance()->setEngine(new Polytempo_NetworkEngine());
+    Polytempo_EventScheduler::getInstance()->startThread(10); // 10 = highest priority
     
     // create network connection
     oscListener = new Polytempo_OSCListener(47522);
@@ -140,9 +141,10 @@ void Polytempo_NetworkApplication::shutdown()
     Polytempo_StoredPreferences::deleteInstance();
     Polytempo_AudioClick::deleteInstance();
     Polytempo_MidiClick::deleteInstance();
-    Polytempo_ScoreScheduler::deleteInstance();
     Polytempo_NetworkSupervisor::deleteInstance();
     Polytempo_ImageManager::deleteInstance();
+    Polytempo_ScoreScheduler::deleteInstance();
+    Polytempo_EventScheduler::deleteInstance();
 }
 
 //------------------------------------------------------------------------------
