@@ -108,7 +108,7 @@ void Polytempo_Score::addEvent(Polytempo_Event *event, bool addToInit)
     if(addToInit)
     {
         initSection->events.add(event);
-        Polytempo_EventScheduler::getInstance()->scheduleEvent(event, true);
+        Polytempo_EventScheduler::getInstance()->scheduleEvent(event);
     }
     else
     {
@@ -160,7 +160,7 @@ void Polytempo_Score::sortSection(int sectionIndex)
         sections[sectionIndex]->sort();
 }
 
-void Polytempo_Score::setLocator(float locator)
+void Polytempo_Score::setTime(int time)
 {
     Polytempo_Event *event;
 
@@ -169,7 +169,7 @@ void Polytempo_Score::setLocator(float locator)
         for(int i=0;i<sections[currentSectionIndex]->events.size();i++)
         {
             event = sections[currentSectionIndex]->events[i];
-            if(event->getTime() >= locator)
+            if(event->getTime() >= time)
             {
                 nextEventIndex = i;
                 return;
@@ -178,12 +178,12 @@ void Polytempo_Score::setLocator(float locator)
     }
 }
 
-bool Polytempo_Score::setLocator(float locator, Array<Polytempo_Event*> *events, float *waitBeforStart)
+bool Polytempo_Score::setTime(int time, Array<Polytempo_Event*> *events, float *waitBeforStart)
 {
     if(currentSectionIndex == -1) return false;
 
     int i,j;
-    float time;
+    float tempTime;
     Polytempo_Event *event = nullptr;
     bool done = false;
     
@@ -192,16 +192,16 @@ bool Polytempo_Score::setLocator(float locator, Array<Polytempo_Event*> *events,
     {
         event = sections[currentSectionIndex]->events[i];
         if(event->getType() == eventType_Beat &&
-           event->getTime() >= locator &&
+           event->getTime() >= time &&
            (int(event->getProperty(eventPropertyString_Pattern)) < 20 ||
             int(event->getProperty(eventPropertyString_Cue)) > 0))
         {
-            time = event->getTime();
-            *waitBeforStart = time - locator;
+            tempTime = event->getTime();
+            *waitBeforStart = tempTime - time;
 
             // find the first event that has the same time as the downbeat
             j=i;
-            while(j>0 && sections[currentSectionIndex]->events[--j]->getTime() == time) i=j;
+            while(j>0 && sections[currentSectionIndex]->events[--j]->getTime() == tempTime) i=j;
             nextEventIndex = i;
 
             done = true;
@@ -215,10 +215,10 @@ bool Polytempo_Score::setLocator(float locator, Array<Polytempo_Event*> *events,
         for(i=0;i<sections[currentSectionIndex]->events.size();i++)
         {
             event = sections[currentSectionIndex]->events[i];
-            if(event->getTime() >= locator)
+            if(event->getTime() >= time)
             {
-                time = event->getTime();
-                *waitBeforStart = time - locator;
+                tempTime = event->getTime();
+                *waitBeforStart = tempTime - time;
                 
                 nextEventIndex = ++i;
 
@@ -235,7 +235,7 @@ bool Polytempo_Score::setLocator(float locator, Array<Polytempo_Event*> *events,
     for(i=0;i<sections[currentSectionIndex]->events.size();i++)
     {
         event = sections[currentSectionIndex]->events[i];
-        if(event->getTime() > locator + *waitBeforStart)
+        if(event->getTime() > time + *waitBeforStart)
             break;
         if(event->getType() != eventType_Beat &&
            event->getType() != eventType_Osc)
@@ -252,7 +252,7 @@ bool Polytempo_Score::setLocator(float locator, Array<Polytempo_Event*> *events,
     return true;
 }
 
-Polytempo_Event* Polytempo_Score::searchEvent(float referenceLocator, Polytempo_EventType type, bool searchBackwards)
+Polytempo_Event* Polytempo_Score::searchEvent(int referenceTime, Polytempo_EventType type, bool searchBackwards)
 {
     if(currentSectionIndex == -1 || currentSectionIndex >= sections.size())
         return nullptr;
@@ -266,7 +266,7 @@ Polytempo_Event* Polytempo_Score::searchEvent(float referenceLocator, Polytempo_
         {
             Polytempo_Event* event = sections[currentSectionIndex]->events[i];
             if(type == eventType_None ||
-               (type == event->getType() && referenceLocator > event->getTime()))
+               (type == event->getType() && referenceTime > event->getTime()))
                 return event;
         }
     }
@@ -276,7 +276,7 @@ Polytempo_Event* Polytempo_Score::searchEvent(float referenceLocator, Polytempo_
         {
             Polytempo_Event* event = sections[currentSectionIndex]->events[i];
             if(type == eventType_None ||
-               (type == event->getType() && referenceLocator < event->getTime()))
+               (type == event->getType() && referenceTime < event->getTime()))
                 return event;
         }
     }
@@ -302,15 +302,14 @@ Polytempo_Event* Polytempo_Score::getFirstEvent()
         return nullptr;
 }
 
-
-bool Polytempo_Score::getLocatorForMarker(String marker, float *locator)
+bool Polytempo_Score::getTimeForMarker(String marker, int *time)
 {
     for(int i=0;i<sections[currentSectionIndex]->events.size();i++)
     {
         Polytempo_Event *event = sections[currentSectionIndex]->events[i];
         if(event->getType() == eventType_Marker && event->getProperty("value").toString() == marker)
         {
-            *locator = event->getTime();
+            *time = event->getTime();
             return true;
         }
     }
@@ -318,12 +317,12 @@ bool Polytempo_Score::getLocatorForMarker(String marker, float *locator)
     return false;
 }
 
-bool Polytempo_Score::getMarkerForLocator(float locator, String* marker)
+bool Polytempo_Score::getMarkerForTime(int time, String* marker)
 {
     for(int i=0;i<sections[currentSectionIndex]->events.size();i++)
     {
         Polytempo_Event *event = sections[currentSectionIndex]->events[i];
-        if(event->getType() == eventType_Marker && event->getTime() == locator)
+        if(event->getType() == eventType_Marker && event->getTime() == time)
         {
             *marker = event->getProperty("value").toString();
             return true;

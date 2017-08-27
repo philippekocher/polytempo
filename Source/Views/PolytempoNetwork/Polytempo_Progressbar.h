@@ -37,7 +37,7 @@ public:
     void paint(Graphics& g);
     
     void setText(String text);
-    void setTime(float time);
+    void setTime(int time);
     void setDuration(int duration);
     
     void eventNotification(Polytempo_Event *event);
@@ -45,8 +45,8 @@ public:
     
 private:
     ScopedPointer < String > text;
-    float  time, duration;
-    float  elapsedTime;
+    int   time, duration;
+    float elapsedTime;
     OwnedArray < class Rectangle<float> > regionBounds;
 };
 

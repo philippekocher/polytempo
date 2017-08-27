@@ -22,7 +22,6 @@
  
  ============================================================================== */
 
- 
 #include "Polytempo_EventScheduler.h"
 
 
@@ -40,7 +39,11 @@ Polytempo_EventScheduler::~Polytempo_EventScheduler()
 juce_ImplementSingleton(Polytempo_EventScheduler);
 
 
-void Polytempo_EventScheduler::scheduleEvent(Polytempo_Event *event, bool useCopy)
+// ----------------------------------------------------
+#pragma mark -
+#pragma mark schedule events
+
+void Polytempo_EventScheduler::scheduleScoreEvent(Polytempo_Event *event, bool useCopy)
 {
     if(event == nullptr) return;
     if(event->getType() == eventType_None) return;
@@ -53,9 +56,19 @@ void Polytempo_EventScheduler::scheduleEvent(Polytempo_Event *event, bool useCop
     {
         if(useCopy) event = new Polytempo_Event(*event); // get a copy
 
-        DBG("schedule event "<<event->getType()<<" syncTime "<<(int)event->getSyncTime());
-        scheduledEvents.add(event);
+        scheduledScoreEvents.add(event);
     }
+    DBG("scheduled score events: "<<scheduledScoreEvents.size());
+}
+
+void Polytempo_EventScheduler::deletePendingScoreEvents()
+{
+    deleteScoreEvents = true;
+}
+
+void Polytempo_EventScheduler::scheduleEvent(Polytempo_Event *event)
+{
+    notify(event);
 }
 
 // ----------------------------------------------------
@@ -71,19 +84,19 @@ void Polytempo_EventScheduler::run()
         // get current sync time
         currentSyncTime = Time::getMillisecondCounter();
         
-        for(int i=0;i<scheduledEvents.size();)
+        if(deleteScoreEvents) scheduledScoreEvents.clear();
+        deleteScoreEvents = false;
+        
+        for(int i=0;i<scheduledScoreEvents.size();)
         {
-            Polytempo_Event *event = scheduledEvents[i];
+            Polytempo_Event *event = scheduledScoreEvents[i];
         
             if(event->getSyncTime() <= currentSyncTime)
             {
                 notify(event);
-                scheduledEvents.remove(i);
+                scheduledScoreEvents.remove(i);
             }
-            else
-            {
-                ++i;
-            }
+            else ++i;
         }
         wait(interval);
     }

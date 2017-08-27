@@ -42,7 +42,7 @@ Polytempo_ScoreScheduler::~Polytempo_ScoreScheduler()
 
 juce_ImplementSingleton (Polytempo_ScoreScheduler);
 
-void Polytempo_ScoreScheduler::setEngine(Polytempo_SchedulerEngine* theEngine)
+void Polytempo_ScoreScheduler::setEngine(Polytempo_ScoreSchedulerEngine* theEngine)
 {
     engine = theEngine;
     engine->setScheduler(this);
@@ -63,13 +63,13 @@ void Polytempo_ScoreScheduler::eventNotification(Polytempo_Event *event)
     else if(event->getType() == eventType_Stop)        stop();
     else if(event->getType() == eventType_Pause)       pause(event);
     else if(event->getType() == eventType_GotoMarker)  gotoMarker(event);
-    else if(event->getType() == eventType_GotoLocator) gotoLocator(event);
+    else if(event->getType() == eventType_GotoTime)    gotoTime(event);
     else if(event->getType() == eventType_TempoFactor) setTempoFactor(event);
 }
 
 // ----------------------------------------------------
 #pragma mark -
-#pragma mark transport
+#pragma mark playback
 
 void Polytempo_ScoreScheduler::startStop()
 {
@@ -86,10 +86,7 @@ void Polytempo_ScoreScheduler::start()
        !engine->isPausing())      return;
     
     if(engine->isPausing()) engine->pause(false);
-    else                    engine->startThread(10);  // 10 = highest priority
-    
-    // notify other components about this event
-    // Polytempo_EventScheduler::getInstance()->scheduleEvent(Polytempo_Event::makeEvent(eventType_Start));
+    else                    engine->startThread(0);  // 0 = lowest priority
 }
 
 void Polytempo_ScoreScheduler::stop()
@@ -97,9 +94,7 @@ void Polytempo_ScoreScheduler::stop()
     DBG("stop");
     engine->stop();
     engine->pause(false);
-
-    // notify other components that the scheduler has stopped
-    // Polytempo_EventScheduler::getInstance()->scheduleEvent(Polytempo_Event::makeEvent(eventType_Stop));
+    Polytempo_EventScheduler::getInstance()->deletePendingScoreEvents();
 }
 
 void Polytempo_ScoreScheduler::pause(Polytempo_Event* event)
@@ -108,17 +103,14 @@ void Polytempo_ScoreScheduler::pause(Polytempo_Event* event)
     engine->pause(true);
   
     if(!event->getProperty("resume").isVoid())
-        gotoLocator(Polytempo_Event::makeEvent(eventType_GotoLocator, event->getProperty("resume")));
-
-    // notify other components about this event
-    Polytempo_EventScheduler::getInstance()->scheduleEvent(event, true);
+        gotoTime(Polytempo_Event::makeEvent(eventType_GotoTime, event->getProperty("resume")));
 }
 
 void Polytempo_ScoreScheduler::returnToLocator()
 {
     if(!score)                     return;
     
-    Polytempo_EventDispatcher::getInstance()->broadcastEvent(Polytempo_Event::makeEvent(eventType_GotoLocator, var(storedLocator)));
+    Polytempo_EventDispatcher::getInstance()->broadcastEvent(Polytempo_Event::makeEvent(eventType_GotoTime, var(storedLocator)));
 }
 
 void Polytempo_ScoreScheduler::returnToBeginning()
@@ -130,20 +122,20 @@ void Polytempo_ScoreScheduler::returnToBeginning()
     if(first_Event) storedLocator = first_Event->getTime();
     else            storedLocator = 0;
     
-    Polytempo_EventDispatcher::getInstance()->broadcastEvent(Polytempo_Event::makeEvent(eventType_GotoLocator, var(storedLocator)));
+    Polytempo_EventDispatcher::getInstance()->broadcastEvent(Polytempo_Event::makeEvent(eventType_GotoTime, var(storedLocator)));
 }
 
 void Polytempo_ScoreScheduler::skipToEvent(Polytempo_EventType type, bool backwards)
 {
     if(!score) return;
 
-    Polytempo_Event *event = score->searchEvent(engine->getLocator(),
+    Polytempo_Event *event = score->searchEvent(engine->getScoreTime(),
                                                 type, backwards);
 
     if(event != nullptr)
     {
         storedLocator = event->getTime();
-        Polytempo_EventDispatcher::getInstance()->broadcastEvent(Polytempo_Event::makeEvent(eventType_GotoLocator, storedLocator));
+        Polytempo_EventDispatcher::getInstance()->broadcastEvent(Polytempo_Event::makeEvent(eventType_GotoTime, storedLocator));
     }
 }
 
@@ -152,16 +144,16 @@ bool Polytempo_ScoreScheduler::gotoMarker(Polytempo_Event *event, bool storeLoca
     if(!score) return false;
     
     //DBG("goto marker "<<event->getProperty("value").toString());
-    float locator;
+    int time;
     
-    if(score->getLocatorForMarker(event->getProperty("value"), &locator))
+    if(score->getTimeForMarker(event->getProperty("value"), &time))
     {
         if(storeLocator)
         {
-            storedLocator = locator;
+            storedLocator = time;
         }
         
-        Polytempo_EventDispatcher::getInstance()->broadcastEvent(Polytempo_Event::makeEvent(eventType_GotoLocator, var(locator)));
+        Polytempo_EventDispatcher::getInstance()->broadcastEvent(Polytempo_Event::makeEvent(eventType_GotoTime, var(time)));
 
         return true;
     }
@@ -169,22 +161,22 @@ bool Polytempo_ScoreScheduler::gotoMarker(Polytempo_Event *event, bool storeLoca
     return false;
 }
 
-void Polytempo_ScoreScheduler::gotoLocator(Polytempo_Event *event)
+void Polytempo_ScoreScheduler::gotoTime(Polytempo_Event *event)
 {
     if(!score) return;
     if(engine->isRunning() && !engine->isPausing())  stop();
     
-    //DBG("goto locator "<<event->getProperty("value").toString());
-    float locator = event->getProperty("value");
-    engine->setLocator(locator);
+    //DBG("goto time "<<event->getProperty("value").toString());
+    int time = event->getProperty("value");
+    engine->setScoreTime(time);
     
     // update locator in all components
     Polytempo_Event *schedulerTick = Polytempo_Event::makeEvent(eventType_Tick);
-    schedulerTick->setTime(locator);
+    schedulerTick->setTime(time);
     Polytempo_EventScheduler::getInstance()->scheduleEvent(schedulerTick);
 }
 
-void Polytempo_ScoreScheduler::storeLocator(float loc)
+void Polytempo_ScoreScheduler::storeLocator(int loc)
 {
     storedLocator = loc;
 }
@@ -192,9 +184,6 @@ void Polytempo_ScoreScheduler::storeLocator(float loc)
 void Polytempo_ScoreScheduler::setTempoFactor(Polytempo_Event *event)
 {
     engine->setTempoFactor(event->getProperty("value"));
-    
-    // notify other components about this event
-    Polytempo_EventScheduler::getInstance()->scheduleEvent(event);
 }
 
 void Polytempo_ScoreScheduler::executeInit()
@@ -202,7 +191,7 @@ void Polytempo_ScoreScheduler::executeInit()
     OwnedArray < Polytempo_Event >& initEvents = score->getInitEvents();
     for(int i=0;i<initEvents.size();i++)
     {
-        Polytempo_EventScheduler::getInstance()->scheduleEvent(initEvents.getUnchecked(i), true);
+        Polytempo_EventScheduler::getInstance()->scheduleEvent(initEvents.getUnchecked(i));
     }
 }
 
@@ -220,17 +209,17 @@ void Polytempo_ScoreScheduler::setScore(Polytempo_Score* theScore)
     
     // set default section
     score->setSection();
-    Polytempo_EventScheduler::getInstance()->scheduleEvent(Polytempo_Event::makeEvent(eventType_Ready));
+    Polytempo_EventScheduler::getInstance()->scheduleScoreEvent(Polytempo_Event::makeEvent(eventType_Ready));
 
     // goto beginning of score (only local);
     if(score->getFirstEvent())
     {
         storeLocator(score->getFirstEvent()->getTime());
-        gotoLocator(Polytempo_Event::makeEvent(eventType_GotoLocator, score->getFirstEvent()->getTime()));
+        gotoTime(Polytempo_Event::makeEvent(eventType_GotoTime, score->getFirstEvent()->getTime()));
     }
     else
     {
         storeLocator(0);
-        gotoLocator(Polytempo_Event::makeEvent(eventType_GotoLocator, 0));
+        gotoTime(Polytempo_Event::makeEvent(eventType_GotoTime, 0));
     }
 }

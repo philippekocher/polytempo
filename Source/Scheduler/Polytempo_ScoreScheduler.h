@@ -26,10 +26,11 @@
 #define __Polytempo_ScoreScheduler__
 
 #include "../Data/Polytempo_Score.h"
-#include "Polytempo_SchedulerEngine.h"
+#include "Polytempo_ScoreSchedulerEngine.h"
 #include "../Scheduler/Polytempo_EventObserver.h"
 
-class Polytempo_SchedulerEngine;
+
+class Polytempo_ScoreSchedulerEngine;
 
 class Polytempo_ScoreScheduler : public Polytempo_EventObserver
 {
@@ -37,9 +38,9 @@ public:
     Polytempo_ScoreScheduler();
     ~Polytempo_ScoreScheduler();
     
-    juce_DeclareSingleton (Polytempo_ScoreScheduler, false);
+    juce_DeclareSingleton(Polytempo_ScoreScheduler, false);
     
-    void setEngine(Polytempo_SchedulerEngine*);
+    void setEngine(Polytempo_ScoreSchedulerEngine*);
     bool isRunning();
     
     void eventNotification(Polytempo_Event *event);
@@ -54,8 +55,8 @@ public:
     void returnToBeginning();
     bool gotoMarker(Polytempo_Event *event, bool storeLocator = true);
     void skipToEvent(Polytempo_EventType type, bool backwards = false);
-    void gotoLocator(Polytempo_Event *event);
-    void storeLocator(float loc);
+    void gotoTime(Polytempo_Event *event);
+    void storeLocator(int loc);
     void setTempoFactor(Polytempo_Event *event);
     void executeInit();
     
@@ -64,16 +65,12 @@ public:
     void setScore(Polytempo_Score* score_);
 
 private:
-    ScopedPointer<Polytempo_SchedulerEngine> engine;
+    ScopedPointer < Polytempo_ScoreSchedulerEngine > engine;
     Array < class Polytempo_EventObserver * > observers;
     
-    float storedLocator;
+    int storedLocator; // milliseconds
     
     Polytempo_Score *score = nullptr;
-    Polytempo_Score *tempScore; // to hold scheduled messages
-
-    //int  realTime;
-    int  scoreTimeOffset, realTimeOffset;
 };
 
 

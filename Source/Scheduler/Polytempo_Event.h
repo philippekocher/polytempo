@@ -22,12 +22,11 @@
  
  ============================================================================== */
 
-
 #ifndef __Polytempo_Event__
 #define __Polytempo_Event__
 
-//#include "../../JuceLibraryCode/JuceHeader.h"
 #include "../Misc/Rational.h"
+
 
 enum Polytempo_EventType
 {
@@ -44,7 +43,7 @@ enum Polytempo_EventType
     eventType_Pause,
     
     eventType_GotoMarker,
-    eventType_GotoLocator,  // 9
+    eventType_GotoTime,  // 9
     eventType_TempoFactor,
     
     eventType_LoadImage,
@@ -80,7 +79,7 @@ enum Polytempo_EventType
 #define eventTypeString_Pause           "pause"
 
 #define eventTypeString_GotoMarker      "gotoMarker"
-#define eventTypeString_GotoLocator     "gotoLocator"
+#define eventTypeString_GotoTime        "gotoTime"
 #define eventTypeString_TempoFactor     "tempoFactor"
 
 #define eventTypeString_LoadImage       "loadImage"
@@ -106,6 +105,7 @@ enum Polytempo_EventType
    and in OSC communication */
 
 
+#define eventPropertyString_TimeTag     "timeTag"
 #define eventPropertyString_Time        "time"
 #define eventPropertyString_Defer       "defer"
 #define eventPropertyString_Duration    "duration"
@@ -126,23 +126,30 @@ public:
     Polytempo_Event(const Polytempo_Event&);
     ~Polytempo_Event();
     
-    // factories
-    static Polytempo_Event* makeEvent(String typeString);   // initialize from osc message
+    /* factories
+     --------------------------------------- */
+    static Polytempo_Event* makeEvent(String typeString);
     static Polytempo_Event* makeEvent(Polytempo_EventType type);
     static Polytempo_Event* makeEvent(Polytempo_EventType type, var value);
-    
+    static Polytempo_Event* makeEvent(String oscAddress, Array<var> values);
 
-    // accessors
+    /* event to OSC conversion
+     --------------------------------------- */
+
+    String getOscAddressFromType();
+    Array<var> getOscMessageFromParameters();
+    
+    /* accessors
+     --------------------------------------- */
     void setType(String);
     Polytempo_EventType getType();
     String getTypeString();
     
-    void  setTime(float t);
-    float getTime();
-    int   getMilisecondTime();
+    void setTime(int t);
+    int  getTime();
     
-    void   setSyncTime(uint32 t);
-    uint32 getSyncTime();
+    void  setSyncTime(int t);
+    int   getSyncTime();
 
     void setPosition(Rational pos);
     Rational getPosition();
@@ -152,16 +159,11 @@ public:
     bool hasProperty(String key);
     NamedValueSet* getProperties();
     
-    // event to message conversion
-	String getOscAddressFromType();
-    Array<var> getOscMessageFromParameters();
-    static Polytempo_Event* makeEvent(String address, Array<var> values);
-
-
+    
 private:
     Polytempo_EventType type;
-    float               time;
-    uint32              syncTime;
+    int                 time;      // in miliseconds
+    int                 syncTime;  // in miliseconds
     Rational            position;
 
     NamedValueSet *properties;

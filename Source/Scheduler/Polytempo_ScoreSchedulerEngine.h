@@ -22,8 +22,8 @@
  
  ============================================================================== */
 
-#ifndef __Polytempo_SchedulerEngine__
-#define __Polytempo_SchedulerEngine__
+#ifndef __Polytempo_ScoreSchedulerEngine__
+#define __Polytempo_ScoreSchedulerEngine__
 
 
 #include "../Data/Polytempo_Score.h"
@@ -32,10 +32,10 @@
 
 class Polytempo_ScoreScheduler;
 
-class Polytempo_SchedulerEngine : public Thread
+class Polytempo_ScoreSchedulerEngine : public Thread
 {
 public:
-    Polytempo_SchedulerEngine() : Thread("Polytempo_Scheduler_Thread") {};
+    Polytempo_ScoreSchedulerEngine() : Thread("Polytempo_ScoreScheduler_Thread") {};
     
     void run() = 0;
     bool isRunning()
@@ -67,10 +67,10 @@ public:
     {
         return pausing;
     }
-    virtual void setLocator(float locator) = 0;
-    float getLocator()
+    virtual void setScoreTime(int time) = 0;
+    int getScoreTime()
     {
-        return milisecondLocator * 0.001f;
+        return scoreTime;
     }
     void setTempoFactor(float factor)
     {
@@ -78,7 +78,7 @@ public:
     }
 
 protected:
-    int timerIncrement()
+    int scoreTimeIncrement()
     {
         int increment = pausing ? 0 : Time::getMillisecondCounter() - scoreTimeOffset;
         scoreTimeOffset = Time::getMillisecondCounter();
@@ -87,7 +87,7 @@ protected:
 
     Polytempo_Score *score;
     Polytempo_ScoreScheduler* scoreScheduler;
-    float milisecondLocator;
+    int scoreTime; // the current time in the score
     float tempoFactor = 1;
     bool killed;
     bool shouldStop;
@@ -101,7 +101,7 @@ private:
    Both programmes need different schedulers.
 */
 
-class Polytempo_ComposerEngine : public Polytempo_SchedulerEngine
+class Polytempo_ComposerEngine : public Polytempo_ScoreSchedulerEngine
 {
 public:
     void stop();
@@ -109,11 +109,11 @@ public:
     void run();
 };
 
-class Polytempo_NetworkEngine : public Polytempo_SchedulerEngine
+class Polytempo_NetworkEngine : public Polytempo_ScoreSchedulerEngine
 {
 public:
     void stop();
-    void setLocator(float locator);
+    void setScoreTime(int time);
     void run();
     
 private:
@@ -123,4 +123,4 @@ private:
 };
 
 
-#endif  // __Polytempo_SchedulerEngine__
+#endif  // __Polytempo_ScoreSchedulerEngine__

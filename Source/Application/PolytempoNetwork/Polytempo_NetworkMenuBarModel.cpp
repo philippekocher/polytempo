@@ -153,7 +153,7 @@ PopupMenu Polytempo_MenuBarModel::getMenuForIndex(int, const String& menuName)
 
         menu.addSeparator();
         
-        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::gotoLocator);
+        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::gotoTime);
     }
     else if (menuName == "Window")
     {
@@ -226,7 +226,7 @@ void Polytempo_MenuBarModel::getAllCommands(Array <CommandID>& commands)
         Polytempo_CommandIDs::markerBwd,
         Polytempo_CommandIDs::imageFwd,
         Polytempo_CommandIDs::imageBwd,
-        //Polytempo_CommandIDs::gotoLocator,
+        //Polytempo_CommandIDs::gotoTime,
         Polytempo_CommandIDs::aboutWindow,
         Polytempo_CommandIDs::preferencesWindow,
         Polytempo_CommandIDs::help,
@@ -392,7 +392,7 @@ void Polytempo_MenuBarModel::getCommandInfo(CommandID commandID, ApplicationComm
             result.setActive(window->getContentID() == Polytempo_NetworkWindow::mainViewID);
             break;
             
-        case Polytempo_CommandIDs::gotoLocator:
+        case Polytempo_CommandIDs::gotoTime:
             result.setInfo("Goto...", "Set a locator", infoCategory, 0);
             result.addDefaultKeypress('j', ModifierKeys::commandModifier);
             result.setActive(window->getContentID() == Polytempo_NetworkWindow::mainViewID);
@@ -546,7 +546,7 @@ bool Polytempo_MenuBarModel::perform(const InvocationInfo& info)
             Polytempo_ScoreScheduler::getInstance()->skipToEvent(eventType_Image, true);
             break;
             
-        case Polytempo_CommandIDs::gotoLocator:
+        case Polytempo_CommandIDs::gotoTime:
             break;
 
         

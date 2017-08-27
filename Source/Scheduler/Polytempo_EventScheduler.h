@@ -25,7 +25,6 @@
 #ifndef __Polytempo_EventScheduler__
 #define __Polytempo_EventScheduler__
 
-
 #include "Polytempo_EventObserver.h"
 
 
@@ -37,8 +36,14 @@ public:
     
     juce_DeclareSingleton(Polytempo_EventScheduler, false);
     
-    void scheduleEvent(Polytempo_Event *event, bool useCopy = false);
-    
+    /* schedule events
+     --------------------------------------- */
+
+    void scheduleScoreEvent(Polytempo_Event *event, bool useCopy = false);
+    void deletePendingScoreEvents();
+
+    void scheduleEvent(Polytempo_Event *event);
+
     /* thread
      --------------------------------------- */
     void run();
@@ -51,8 +56,9 @@ private:
     void notify(Polytempo_Event* event);
     
     Array < class Polytempo_EventObserver * > observers;
-    OwnedArray < class Polytempo_Event > scheduledEvents;
-    uint32 currentSyncTime;
+    OwnedArray < class Polytempo_Event > scheduledScoreEvents;
+    int currentSyncTime;
+    bool deleteScoreEvents = false;
 
 };
 

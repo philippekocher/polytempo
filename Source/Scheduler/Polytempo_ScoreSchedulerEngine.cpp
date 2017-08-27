@@ -22,7 +22,7 @@
  
  ============================================================================== */
 
-#include "Polytempo_SchedulerEngine.h"
+#include "Polytempo_ScoreSchedulerEngine.h"
 #include "Polytempo_Event.h"
 #include "../Data/Polytempo_Composition.h"
 #include "Polytempo_EventDispatcher.h"
@@ -91,43 +91,54 @@ void Polytempo_ComposerEngine::run()
 
 //-------------------------------------------------------------------------------------
 #ifdef POLYTEMPO_NETWORK
-void Polytempo_NetworkEngine::setLocator(float locator)
+void Polytempo_NetworkEngine::setScoreTime(int time)
 {
-    //DBG("set "<<locator);
-    milisecondLocator = locator * 1000;
+    scoreTime = time;
 
     Array <class Polytempo_Event*> events; // the events to execute immediately
-    score->setLocator(locator, &events, &waitBeforeStart);
+    score->setTime(time, &events, &waitBeforeStart);
     Polytempo_EventScheduler::getInstance()->scheduleEvent(Polytempo_Event::makeEvent(eventType_ClearAll));
     for(int i=0;i<events.size();i++)
     {
-        Polytempo_EventScheduler::getInstance()->scheduleEvent(events[i], true);
+        Polytempo_EventScheduler::getInstance()->scheduleEvent(events[i]);
     }
     
-    lastDownbeat = locator;
+    lastDownbeat = time;
 }
 
 void Polytempo_NetworkEngine::run()
 {
     //DBG("run");
-    int x=0;
-    int interval = 5;
+    int interval = 200;
+    int lookAhead = 2000;
+    int syncTime;
     
     Polytempo_Event *nextScoreEvent = score->getNextEvent();
     Polytempo_Event *schedulerTick  = Polytempo_Event::makeEvent(eventType_Tick);
     
-    timerIncrement(); // reset timer
+    scoreTimeIncrement(); // reset timer
     killed = false;
     shouldStop = false;
     pausing = false;
     
-    while(!threadShouldExit() && !shouldStop && nextScoreEvent)
+    while(!threadShouldExit() && !shouldStop)
     {
-        milisecondLocator += timerIncrement() * tempoFactor;
+        scoreTime += scoreTimeIncrement() * tempoFactor;
         
-        while(!shouldStop && !pausing && nextScoreEvent && nextScoreEvent->getMilisecondTime() <= milisecondLocator)
+        while(!shouldStop && !pausing && nextScoreEvent && nextScoreEvent->getTime() <= scoreTime + lookAhead)
         {
-            Polytempo_EventScheduler::getInstance()->scheduleEvent(nextScoreEvent, true);
+            // calculate syncTime
+            
+            syncTime = Time::getMillisecondCounter();
+            syncTime += (int)nextScoreEvent->getTime() - scoreTime;
+            
+            if(nextScoreEvent->hasProperty(eventPropertyString_Defer))
+                syncTime += (float)nextScoreEvent->getProperty(eventPropertyString_Defer) * 1000.0f + 0.5f;
+            
+            nextScoreEvent->setSyncTime(syncTime);
+            
+            Polytempo_EventScheduler::getInstance()->scheduleScoreEvent(nextScoreEvent, true);
+            
             if(nextScoreEvent->getType() == eventType_Beat && int(nextScoreEvent->getProperty(eventPropertyString_Pattern)) < 20)
                 lastDownbeat = nextScoreEvent->getTime();
             
@@ -136,12 +147,8 @@ void Polytempo_NetworkEngine::run()
             
         }
         
-        if(++x > 20 && !shouldStop)
-        {
-            schedulerTick->setTime(milisecondLocator * 0.001f);
-            Polytempo_EventScheduler::getInstance()->scheduleEvent(schedulerTick, true);
-            x=0;
-        }
+        schedulerTick->setTime(scoreTime);
+        Polytempo_EventScheduler::getInstance()->scheduleScoreEvent(schedulerTick, true);
         
         wait(interval);
     }
@@ -151,7 +158,7 @@ void Polytempo_NetworkEngine::run()
        this must be called here to make sure that the engine thread really
        has finished.
     */
-    if(!killed) scoreScheduler->gotoLocator(Polytempo_Event::makeEvent(eventType_GotoLocator, lastDownbeat));
+    if(!killed) scoreScheduler->gotoTime(Polytempo_Event::makeEvent(eventType_GotoTime, lastDownbeat));
 }
 #endif
 
