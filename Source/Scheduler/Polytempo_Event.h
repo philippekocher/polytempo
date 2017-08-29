@@ -105,6 +105,7 @@ enum Polytempo_EventType
    and in OSC communication */
 
 
+#define eventPropertyString_Value       "value"
 #define eventPropertyString_TimeTag     "timeTag"
 #define eventPropertyString_Time        "time"
 #define eventPropertyString_Defer       "defer"
@@ -137,13 +138,16 @@ public:
      --------------------------------------- */
 
     String getOscAddressFromType();
-    Array<var> getOscMessageFromParameters();
+    Array<var> getOscMessageFromProperties();
     
     /* accessors
      --------------------------------------- */
     void setType(String);
     Polytempo_EventType getType();
     String getTypeString();
+    
+    void setValue(var val);
+    var  getValue();
     
     void setTime(int t);
     int  getTime();
@@ -162,11 +166,11 @@ public:
     
 private:
     Polytempo_EventType type;
-    int                 time;      // in miliseconds
+    int                 time;      // in miliseconds (NB. the property "time" is in seconds and whenever a time is stored in the property "value" it's in seconds as well!)
     int                 syncTime;  // in miliseconds
     Rational            position;
 
-    NamedValueSet *properties;
+    NamedValueSet *properties;    
 };
 
 

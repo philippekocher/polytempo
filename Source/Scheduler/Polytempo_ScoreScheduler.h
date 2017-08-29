@@ -63,6 +63,7 @@ public:
     /* accessors
      --------------------------------------- */
     void setScore(Polytempo_Score* score_);
+    int getScoreTime();
 
 private:
     ScopedPointer < Polytempo_ScoreSchedulerEngine > engine;

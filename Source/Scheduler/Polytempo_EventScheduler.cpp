@@ -48,17 +48,16 @@ void Polytempo_EventScheduler::scheduleScoreEvent(Polytempo_Event *event, bool u
     if(event == nullptr) return;
     if(event->getType() == eventType_None) return;
     
-    if(event->getSyncTime() <= currentSyncTime)
+    if(event->getSyncTime() <= Time::getMillisecondCounter())
     {
         notify(event);
     }
     else
     {
-        if(useCopy) event = new Polytempo_Event(*event); // get a copy
-
-        scheduledScoreEvents.add(event);
+        if(useCopy) scheduledScoreEvents.add(new Polytempo_Event(*event)); // get a copy
+        else        scheduledScoreEvents.add(event);
     }
-    DBG("scheduled score events: "<<scheduledScoreEvents.size());
+    // DBG("scheduled score events: "<<scheduledScoreEvents.size());
 }
 
 void Polytempo_EventScheduler::deletePendingScoreEvents()
@@ -68,7 +67,16 @@ void Polytempo_EventScheduler::deletePendingScoreEvents()
 
 void Polytempo_EventScheduler::scheduleEvent(Polytempo_Event *event)
 {
-    notify(event);
+    if(event == nullptr) return;
+    if(event->getType() == eventType_None) return;
+    
+    if(event->getSyncTime() <= Time::getMillisecondCounter())
+        notify(event);
+    else
+    {
+        scheduledEvents.add(event);
+    }
+   // DBG("scheduled events: "<<scheduledEvents.size());
 }
 
 // ----------------------------------------------------
@@ -78,6 +86,7 @@ void Polytempo_EventScheduler::scheduleEvent(Polytempo_Event *event)
 void Polytempo_EventScheduler::run()
 {
     int interval = 5;
+    int currentSyncTime;
     
     while(!threadShouldExit())
     {
@@ -90,13 +99,24 @@ void Polytempo_EventScheduler::run()
         for(int i=0;i<scheduledScoreEvents.size();)
         {
             Polytempo_Event *event = scheduledScoreEvents[i];
-        
+            
             if(event->getSyncTime() <= currentSyncTime)
             {
                 notify(event);
                 scheduledScoreEvents.remove(i);
             }
             else ++i;
+        }
+        for(int j=0;j<scheduledEvents.size();)
+        {
+            Polytempo_Event *event = scheduledEvents[j];
+            
+            if(event->getSyncTime() <= currentSyncTime)
+            {
+                notify(event);
+                scheduledEvents.remove(j);
+            }
+            else ++j;
         }
         wait(interval);
     }

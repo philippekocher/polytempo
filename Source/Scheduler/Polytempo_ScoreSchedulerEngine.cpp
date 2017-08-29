@@ -100,10 +100,10 @@ void Polytempo_NetworkEngine::setScoreTime(int time)
     Polytempo_EventScheduler::getInstance()->scheduleEvent(Polytempo_Event::makeEvent(eventType_ClearAll));
     for(int i=0;i<events.size();i++)
     {
-        Polytempo_EventScheduler::getInstance()->scheduleEvent(events[i]);
+        Polytempo_EventScheduler::getInstance()->scheduleScoreEvent(events[i]);
     }
     
-    lastDownbeat = time;
+    lastDownbeat = time * 0.001f;
 }
 
 void Polytempo_NetworkEngine::run()
@@ -130,25 +130,25 @@ void Polytempo_NetworkEngine::run()
             // calculate syncTime
             
             syncTime = Time::getMillisecondCounter();
-            syncTime += (int)nextScoreEvent->getTime() - scoreTime;
+            syncTime += nextScoreEvent->getTime() - scoreTime;
             
             if(nextScoreEvent->hasProperty(eventPropertyString_Defer))
                 syncTime += (float)nextScoreEvent->getProperty(eventPropertyString_Defer) * 1000.0f + 0.5f;
             
             nextScoreEvent->setSyncTime(syncTime);
             
-            Polytempo_EventScheduler::getInstance()->scheduleScoreEvent(nextScoreEvent, true);
+            Polytempo_EventScheduler::getInstance()->scheduleScoreEvent(nextScoreEvent);
             
             if(nextScoreEvent->getType() == eventType_Beat && int(nextScoreEvent->getProperty(eventPropertyString_Pattern)) < 20)
-                lastDownbeat = nextScoreEvent->getTime();
+                lastDownbeat = nextScoreEvent->getTime() * 0.001f;
             
             // get next event
             nextScoreEvent = score->getNextEvent();
             
         }
         
-        schedulerTick->setTime(scoreTime);
-        Polytempo_EventScheduler::getInstance()->scheduleScoreEvent(schedulerTick, true);
+        schedulerTick->setValue(scoreTime * 0.001f);
+        Polytempo_EventScheduler::getInstance()->scheduleScoreEvent(schedulerTick);
         
         wait(interval);
     }

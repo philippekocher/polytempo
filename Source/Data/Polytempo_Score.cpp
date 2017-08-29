@@ -35,7 +35,7 @@ public:
     {
         float t1 = e1->getTime();
         float t2 = e2->getTime();
-
+        
         int result = 0;
         
         if(t1>t2) result = 1;
@@ -70,7 +70,7 @@ Polytempo_Score::Polytempo_Score()
 {
     nextEventIndex = 0;
     currentSectionIndex = -1;
-
+    
     sectionMap = new StringArray();
     
     // every score must have a "init" section
@@ -108,7 +108,7 @@ void Polytempo_Score::addEvent(Polytempo_Event *event, bool addToInit)
     if(addToInit)
     {
         initSection->events.add(event);
-        Polytempo_EventScheduler::getInstance()->scheduleEvent(event);
+        Polytempo_EventScheduler::getInstance()->scheduleScoreEvent(event);
     }
     else
     {
@@ -125,7 +125,7 @@ void Polytempo_Score::addEvents(OwnedArray < Polytempo_Event >& events)
         sections.add(new Polytempo_Score_Section());
         currentSectionIndex = sectionMap->indexOf("default");
     }
-        
+    
     sections[currentSectionIndex]->events.addCopiesOf(events);
     sortSection();
 }
@@ -148,7 +148,7 @@ void Polytempo_Score::setSection(String sectionName)
         currentSectionIndex = 0;
     else
         currentSectionIndex = sectionMap->indexOf(sectionName);
-
+    
     nextEventIndex = 0;
 }
 
@@ -163,7 +163,7 @@ void Polytempo_Score::sortSection(int sectionIndex)
 void Polytempo_Score::setTime(int time)
 {
     Polytempo_Event *event;
-
+    
     if(currentSectionIndex != -1)
     {
         for(int i=0;i<sections[currentSectionIndex]->events.size();i++)
@@ -181,34 +181,37 @@ void Polytempo_Score::setTime(int time)
 bool Polytempo_Score::setTime(int time, Array<Polytempo_Event*> *events, float *waitBeforStart)
 {
     if(currentSectionIndex == -1) return false;
-
+    
     int i,j;
     float tempTime;
     Polytempo_Event *event = nullptr;
     bool done = false;
     
-    // find next downbeat OR next cue in beat
+    // find next marker OR next downbeat OR next cue in beat
     for(i=0;i<sections[currentSectionIndex]->events.size();i++)
     {
         event = sections[currentSectionIndex]->events[i];
-        if(event->getType() == eventType_Beat &&
-           event->getTime() >= time &&
-           (int(event->getProperty(eventPropertyString_Pattern)) < 20 ||
-            int(event->getProperty(eventPropertyString_Cue)) > 0))
+        if((event->getType() == eventType_Marker &&
+            event->getTime() >= time)
+           ||
+           (event->getType() == eventType_Beat &&
+            event->getTime() >= time &&
+            (int(event->getProperty(eventPropertyString_Pattern)) < 20 ||
+             int(event->getProperty(eventPropertyString_Cue)) > 0)))
         {
             tempTime = event->getTime();
             *waitBeforStart = tempTime - time;
-
+            
             // find the first event that has the same time as the downbeat
             j=i;
             while(j>0 && sections[currentSectionIndex]->events[--j]->getTime() == tempTime) i=j;
             nextEventIndex = i;
-
+            
             done = true;
             break;
         }
     }
- 
+    
     // if no downbeat or cue in beat has been found: find any event
     if(!done)
     {
@@ -221,7 +224,7 @@ bool Polytempo_Score::setTime(int time, Array<Polytempo_Event*> *events, float *
                 *waitBeforStart = tempTime - time;
                 
                 nextEventIndex = ++i;
-
+                
                 break;
             }
         }
@@ -243,11 +246,11 @@ bool Polytempo_Score::setTime(int time, Array<Polytempo_Event*> *events, float *
             events->add(event);
         }
         // necessary??
-//        if(event->getType() == eventType_Osc && event->getTime() == time)
-//        {
-//            // TODO: events to be executed upon start
-//            DBG("event..."<< event->getType());
-//        }
+        //        if(event->getType() == eventType_Osc && event->getTime() == time)
+        //        {
+        //            // TODO: events to be executed upon start
+        //            DBG("event..."<< event->getType());
+        //        }
     }
     return true;
 }
@@ -256,7 +259,7 @@ Polytempo_Event* Polytempo_Score::searchEvent(int referenceTime, Polytempo_Event
 {
     if(currentSectionIndex == -1 || currentSectionIndex >= sections.size())
         return nullptr;
-        
+    
     /* search a event of a certain type that does not have the same time as the current event. We assume that the events have been sorted.
      */
     
@@ -313,7 +316,7 @@ bool Polytempo_Score::getTimeForMarker(String marker, int *time)
             return true;
         }
     }
-
+    
     return false;
 }
 
@@ -442,16 +445,16 @@ void Polytempo_Score::parseJSON(File& JSONFile, Polytempo_Score** score)
 
 void Polytempo_Score::writeToFile(File& file)
 {
-//    DynamicObject* obj = new DynamicObject();
-//    obj->setProperty("foo","bar");
-//    obj->setProperty("num",123);
-//    DynamicObject* nestedObj = new DynamicObject();
-//    nestedObj->setProperty("inner","value");
-//    obj->setProperty("nested",nestedObj);
-//    var json (obj); // store the outer object in a var [we could have done this earlier]
-//    String s = JSON::toString(json);
-//    DBG(s);
-
+    //    DynamicObject* obj = new DynamicObject();
+    //    obj->setProperty("foo","bar");
+    //    obj->setProperty("num",123);
+    //    DynamicObject* nestedObj = new DynamicObject();
+    //    nestedObj->setProperty("inner","value");
+    //    obj->setProperty("nested",nestedObj);
+    //    var json (obj); // store the outer object in a var [we could have done this earlier]
+    //    String s = JSON::toString(json);
+    //    DBG(s);
+    
     
     DynamicObject* jsonSections = new DynamicObject();
     
@@ -479,33 +482,33 @@ void Polytempo_Score::writeToFile(File& file)
             }
             
             jsonEvent->setProperty(event->getTypeString(), jsonEventProperties);
-        
+            
             jsonSection.append(jsonEvent);
         }
-    
+        
         if(i == -1) jsonSections->setProperty("init", jsonSection);
         else jsonSections->setProperty(sectionMap->getReference(i), jsonSection);
     }
     var json(jsonSections); // store the outer object in a var
     
-
+    
     String jsonString = JSON::toString(json,true);
     
     /* a semiprofessional formatter:
      not as tight as the "all on one line" option
      not as lose as the standard layout
-    */
+     */
     
     jsonString = jsonString.replaceSection(0,1,"{\n");    // beginning of file
     
     jsonString = jsonString.replace("[{","[\n\t{");       // new section
     jsonString = jsonString.replace("}], ","}\n\t],\r");  // between sections
-
+    
     jsonString = jsonString.replace("}, ","},\n\t");      // indent events
     
     jsonString = jsonString.replace("}]}","}\n\t]\n}");   // end of file
-
-
+    
+    
     // write to file
     
     FileOutputStream stream(file);

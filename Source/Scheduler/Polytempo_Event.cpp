@@ -41,7 +41,7 @@ Polytempo_Event::Polytempo_Event(const Polytempo_Event& event)
     syncTime = event.syncTime;
     position = event.position;
     
-    properties = new NamedValueSet(*event.properties);
+    properties = event.properties;
 }
 
 Polytempo_Event::~Polytempo_Event()
@@ -83,14 +83,16 @@ Polytempo_Event* Polytempo_Event::makeEvent(String oscAddress, Array<var> messag
     Polytempo_Event *event = new Polytempo_Event();
     event->setType(oscAddress.substring(1));
     
-    if(messages.size()>0 && !messages[0].isString())
+    int i = 0;
+    int num = messages.size();
+
+    if(messages.contains("rect")) num++;
+    if(num % 2 == 1)
+        // if there is an odd number of messages, the first one is assigned to the property "value"
     {
-        event->setProperty(eventPropertyString_Time,messages[0]);
-        if(messages.size()>1 && !messages[1].isString())
-            event->setProperty("value",messages[1]);
+        event->setProperty(eventPropertyString_Value, messages[i++]);
     }
     
-    int i = 0;
     while(messages.size() > i+1)
     {
         if(messages[i].isString())
@@ -135,34 +137,23 @@ String Polytempo_Event::getOscAddressFromType()
     return address;
 }
 
-Array<var> Polytempo_Event::getOscMessageFromParameters()
+Array<var> Polytempo_Event::getOscMessageFromProperties()
 {
-    Array<var> *messages = new Array<var>();
+    Array<var> message = Array<var>();
     
-    messages->add(time);
-    messages->add(getProperty("value"));
+    NamedValueSet* properties = getProperties();
     
-    /*
-     ok for the moment...
-     
-     else if(type == eventType_Return)         {}
-     
-     else if(type == eventType_GotoMarker)     {}
-     else if(type == eventType_GotoTime)       {}
-     else if(type == eventType_TempoFactor)    {}
-     
-     else if(type == eventType_Tick)           {}
-     else if(type == eventType_Beat)           {}
-     
-     else if(type == eventType_Marker)         {}
-     
-     else if(type == eventType_LoadImage)      {}
-     else if(type == eventType_ShowImage)      {}
-     else if(type == eventType_AddRegion)      {}
-     
-     */
-    
-    return *messages;
+    for(juce::NamedValueSet::NamedValue val : *properties)
+    {
+        Identifier key = val.name;
+        if(key.toString()[0] != '~')
+        {
+            message.add(key.toString());
+            message.add(val.value);
+        }
+    }
+
+    return message;
 }
 
 // ----------------------------------------------------
@@ -201,6 +192,7 @@ void Polytempo_Event::setType(String typeString)
     
     else if(typeString == eventTypeString_Settings)       type = eventType_Settings;
     
+    else type = eventType_None;
 }
 
 Polytempo_EventType Polytempo_Event::getType()
@@ -280,6 +272,16 @@ String Polytempo_Event::getTypeString()
     }
     
     return String::empty;
+}
+
+void Polytempo_Event::setValue(var val)
+{
+    setProperty(eventPropertyString_Value, val);
+}
+
+var  Polytempo_Event::getValue()
+{
+    return getProperty(eventPropertyString_Value);
 }
 
 void Polytempo_Event::setTime(int t)

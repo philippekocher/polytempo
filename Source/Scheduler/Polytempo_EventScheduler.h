@@ -39,7 +39,7 @@ public:
     /* schedule events
      --------------------------------------- */
 
-    void scheduleScoreEvent(Polytempo_Event *event, bool useCopy = false);
+    void scheduleScoreEvent(Polytempo_Event *event, bool useCopy = true);
     void deletePendingScoreEvents();
 
     void scheduleEvent(Polytempo_Event *event);
@@ -57,7 +57,7 @@ private:
     
     Array < class Polytempo_EventObserver * > observers;
     OwnedArray < class Polytempo_Event > scheduledScoreEvents;
-    int currentSyncTime;
+    OwnedArray < class Polytempo_Event > scheduledEvents;
     bool deleteScoreEvents = false;
 
 };

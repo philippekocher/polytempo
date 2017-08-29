@@ -197,6 +197,7 @@ void Polytempo_VisualMetro::hiResTimerCallback()
     float ictus = 1.0f - increment * 5.0f;
     /* This factor creates a sudden jerk at the end of the movement. The animation of the conductor reaches only a certain amount of the total length (ictus < 1.0, dependent on the tempo) and jumps to the max when the next beat is due.
      */
+    ictus = ictus < 0 ? 0 : ictus; // must not be negative!
     
     if(beatSubdivision > 1)
     {
@@ -242,7 +243,6 @@ void Polytempo_VisualMetro::hiResTimerCallback()
     vComponent->setPosition(y,subpos);
     repaint(0, 0, (int)width, (int)width);
 
-
     // position increment
     if(shouldStop && pos > 0.5)     pos -= increment;
     else                            pos += increment;
@@ -256,7 +256,7 @@ void Polytempo_VisualMetro::eventNotification(Polytempo_Event *event)
 
     if(event->getType() == eventType_Beat)
     {
-        if(event->hasProperty(eventPropertyString_Duration))
+        if(event->hasProperty(eventPropertyString_Duration) && (float)event->getProperty(eventPropertyString_Duration) > 0.0f)
             beatDuration = event->getProperty(eventPropertyString_Duration);
         else
             beatDuration = 1.0f / timeInterval;
@@ -264,7 +264,10 @@ void Polytempo_VisualMetro::eventNotification(Polytempo_Event *event)
         // the subdivision feature is not implemented yet
         beatSubdivision = 0;
         
-        if(!event->getProperty(eventPropertyString_Pattern).isVoid())  pattern = event->getProperty(eventPropertyString_Pattern);
+        if(event->hasProperty(eventPropertyString_Pattern))
+            pattern = event->getProperty(eventPropertyString_Pattern);
+        else
+            pattern = 10;
         
         if(int(event->getProperty(eventPropertyString_Cue)) == 1)
             foregroundColour = cueColour;

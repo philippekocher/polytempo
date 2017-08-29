@@ -24,6 +24,7 @@
 
 #include "Polytempo_OSCListener.h"
 #include "Polytempo_NetworkSupervisor.h"
+#include "../Scheduler/Polytempo_ScoreScheduler.h"
 #include "../Scheduler/Polytempo_EventScheduler.h"
 #include "../Misc/Polytempo_Alerts.h"
 #include "../Application/PolytempoNetwork/Polytempo_NetworkApplication.h"
@@ -48,10 +49,10 @@ void Polytempo_OSCListener::oscMessageReceived(const OSCMessage & message)
 {
 	String addressPattern = message.getAddressPattern().toString();
 	OSCArgument* argumentIterator = message.begin();
-	Uuid senderId = Uuid((argumentIterator++)->getString());
-
-	if (senderId == Polytempo_NetworkSupervisor::getInstance()->getUniqueId())
-		return;
+//	Uuid senderId = Uuid((argumentIterator++)->getString());
+//
+//	if (senderId == Polytempo_NetworkSupervisor::getInstance()->getUniqueId())
+//		return;
 
 	if (addressPattern == "/node")
 	{
@@ -69,7 +70,11 @@ void Polytempo_OSCListener::oscMessageReceived(const OSCMessage & message)
 
 		Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
 		if ((*argumentIterator).isString())
-			app->openScoreFilePath(argumentIterator->getString());
+        {
+            String filePath(argumentIterator->getString());
+            if(filePath.startsWithChar (File::separator))
+                app->openScoreFilePath(argumentIterator->getString());
+        }
 	}
 #endif
 	else
@@ -94,7 +99,38 @@ void Polytempo_OSCListener::oscMessageReceived(const OSCMessage & message)
 			argumentIterator++;
 		}
 
-		ScopedPointer<Polytempo_Event> event = Polytempo_Event::makeEvent(addressPattern, *messages);
+		Polytempo_Event* event = Polytempo_Event::makeEvent(addressPattern, *messages);
+        
+        if(event->getType() == eventType_None)
+        {
+            DBG("--unknown");
+            delete event;
+            return;
+        }
+        
+        // calculate syncTime
+        int syncTime;
+        
+        if(event->hasProperty(eventPropertyString_TimeTag))
+            syncTime = event->getProperty(eventPropertyString_TimeTag);
+        else
+            syncTime = Time::getMillisecondCounter();
+        
+        if(event->hasProperty(eventPropertyString_Time))
+        {
+            Polytempo_ScoreScheduler *scoreScheduler = Polytempo_ScoreScheduler::getInstance();
+            
+            if(!scoreScheduler->isRunning()) return; // ignore an event that has a "time"
+                                                     // when the score scheduler isn't running
+        
+            syncTime += event->getTime() - scoreScheduler->getScoreTime();
+        }
+        
+        if(event->hasProperty(eventPropertyString_Defer))
+            syncTime += (float)event->getProperty(eventPropertyString_Defer) * 1000.0f + 0.5f;
+        
+        event->setSyncTime(syncTime);
+
 		Polytempo_EventScheduler::getInstance()->scheduleEvent(event);
 	}
 }

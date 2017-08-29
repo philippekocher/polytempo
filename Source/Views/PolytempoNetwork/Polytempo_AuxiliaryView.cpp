@@ -135,7 +135,7 @@ void Polytempo_AuxiliaryView::eventNotification(Polytempo_Event *event)
     else if(event->getType() == eventType_Tick)
     {
        // update the time with every tick
-        timeTextbox->setText(Polytempo_Textbox::timeToString(event->getTime() * 0.001), dontSendNotification);
+        timeTextbox->setText(Polytempo_Textbox::timeToString(event->getValue()), dontSendNotification);
     }
 }
 
@@ -155,7 +155,7 @@ void Polytempo_AuxiliaryView::labelTextChanged(Label* label)
     else if(label == timeTextbox)
     {
         Polytempo_ScoreScheduler::getInstance()->storeLocator(Polytempo_Textbox::stringToTime(label->getText()) * 1000.0f);
-        Polytempo_EventDispatcher::getInstance()->broadcastEvent(Polytempo_Event::makeEvent(eventType_GotoTime, Polytempo_Textbox::stringToTime(label->getText()) * 1000.0f));
+        Polytempo_EventDispatcher::getInstance()->broadcastEvent(Polytempo_Event::makeEvent(eventType_GotoTime, Polytempo_Textbox::stringToTime(label->getText())));
     }
     else if(label == tempoFactorTextbox)
     {
