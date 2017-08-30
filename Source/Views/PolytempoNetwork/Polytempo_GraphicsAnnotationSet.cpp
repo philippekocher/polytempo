@@ -47,28 +47,29 @@ void Polytempo_GraphicsAnnotationSet::LoadFromFile()
 	if (!root->hasAttribute(XML_ATTRIBUTE_SCORENAME) || !root->hasAttribute(XML_ATTRIBUTE_LAYERNAME) || !root->hasAttribute(XML_ATTRIBUTE_SHOW))
 		return;
 		
-	scoreName = root->getStringAttribute("ScoreName");
-	annotationLayerName = root->getStringAttribute("AnnotationLayerName");
-	show = root->getBoolAttribute("Show");
+	scoreName = root->getStringAttribute(XML_ATTRIBUTE_SCORENAME);
+	annotationLayerName = root->getStringAttribute(XML_ATTRIBUTE_LAYERNAME);
+	show = root->getBoolAttribute(XML_ATTRIBUTE_SHOW);
 
-	XmlElement* xmlAnnotationList = root->getChildByName("Annotations");
+	XmlElement* xmlAnnotationList = root->getChildByName(XML_TAG_ANNOTATIONS);
 	if (xmlAnnotationList == nullptr)
 		return;
 
-	XmlElement* xmlAnnotation = xmlAnnotationList->getChildByName("Annotation");
+	XmlElement* xmlAnnotation = xmlAnnotationList->getChildByName(XML_TAG_ANNOTATION);
 	while (xmlAnnotation != nullptr)
 	{
 		Path path;
-		path.restoreFromString(xmlAnnotation->getStringAttribute("Path"));
+		path.restoreFromString(xmlAnnotation->getStringAttribute(XML_ATTRIBUTE_PATH));
 
 		annotations.add(new Polytempo_GraphicsAnnotation(
-			xmlAnnotation->getStringAttribute("ImageId"),
+			xmlAnnotation->getStringAttribute(XML_ATTRIBUTE_IMAGEID),
 			Point<float>(
-				float(xmlAnnotation->getDoubleAttribute("ReferencePointX")), 
-				float(xmlAnnotation->getDoubleAttribute("ReferencePointY"))),
-			Colour::fromString(xmlAnnotation->getStringAttribute("Color")),
+				float(xmlAnnotation->getDoubleAttribute(XML_ATTRIBUTE_REFERENCEX)), 
+				float(xmlAnnotation->getDoubleAttribute(XML_ATTRIBUTE_REFERENCEY))),
+			Colour::fromString(xmlAnnotation->getStringAttribute(XML_ATTRIBUTE_COLOR)),
 			path,
-			xmlAnnotation->getStringAttribute("Text")));
+			xmlAnnotation->getStringAttribute(XML_ATTRIBUTE_TEXT),
+			xmlAnnotation->getIntAttribute(XML_ATTRIBUTE_FONTSIZE, 14)));
 
 		xmlAnnotation = xmlAnnotation->getNextElement();
 	}
@@ -92,6 +93,7 @@ void Polytempo_GraphicsAnnotationSet::SaveToFile()
 		xmlAnnotation->setAttribute(XML_ATTRIBUTE_TEXT, annotation->text);
 		xmlAnnotation->setAttribute(XML_ATTRIBUTE_PATH, annotation->freeHandPath.toString());
 		xmlAnnotation->setAttribute(XML_ATTRIBUTE_COLOR, annotation->color.toString());
+		xmlAnnotation->setAttribute(XML_ATTRIBUTE_FONTSIZE, annotation->fontSize);
 		xmlAnnotations->addChildElement(xmlAnnotation);
 	}
 	xmlMain->addChildElement(xmlAnnotations);

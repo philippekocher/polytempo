@@ -25,6 +25,7 @@
 #define XML_ATTRIBUTE_TEXT			"Text"
 #define XML_ATTRIBUTE_PATH			"Path"
 #define XML_ATTRIBUTE_COLOR			"Color"
+#define XML_ATTRIBUTE_FONTSIZE		"FontSize"
 
 
 class Polytempo_GraphicsAnnotationSet
