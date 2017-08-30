@@ -21,32 +21,28 @@ Polytempo_GraphicsEditableRegion::Polytempo_GraphicsEditableRegion()
 	
 	Colour background = Colours::lightgrey;
 	Colour border = Colours::black;
-	int width = 30;
-	int height = 30;
-	float borderThickness = 2.0f;
+	int width = 32;
+	int height = 32;
 	Colour overColour = Colour(Colours::purple.getRed(), Colours::purple.getGreen(), Colours::purple.getBlue(), uint8(80));
 	float overOpacity = 1.0;
 	float downOpacity = 1.0;
-	
-	Image imageBase(Image::RGB, width, height, true);
-	Graphics g(imageBase);
-	g.fillAll(background);
-	g.setColour(border);
-	g.drawRect(0.0f, 0.0f, float(width), float(height), borderThickness);
 
-	Image imageOk(imageBase);
-	imageOk.duplicateIfShared();
-	Graphics gOk(imageOk);
-	gOk.setColour(Colours::green); 
-	gOk.drawLine(25, 5, 15, 25, 4);
-	gOk.drawLine(15, 25, 10, 15, 4);
+	Image imageColorPalette = ImageCache::getFromMemory(BinaryData::colorPalette_png, BinaryData::colorPalette_pngSize);
+	Image imageFontSize = ImageCache::getFromMemory(BinaryData::fontSize_png, BinaryData::fontSize_pngSize);
+	Image imageOk = ImageCache::getFromMemory(BinaryData::yes_png, BinaryData::yes_pngSize);
+	Image imageCancel = ImageCache::getFromMemory(BinaryData::no_png, BinaryData::no_pngSize);
 	
-	Image imageCancel(imageBase);
-	imageCancel.duplicateIfShared();
-	Graphics gCancel(imageCancel);
-	gCancel.setColour(Colours::red);
-	gCancel.drawLine(5, 5, 25, 25, 4);
-	gCancel.drawLine(25, 5, 5, 25, 4);
+	buttonColor = new ImageButton("Color");
+	buttonColor->setImages(false, false, false, imageColorPalette, 1.0f, Colours::transparentWhite, Image::null, overOpacity, overColour, Image::null, downOpacity, Colours::green);
+	buttonColor->setBounds(0, 0, width, height);
+	buttonColor->addListener(this);
+	addChildComponent(buttonColor);
+
+	buttonTextSize = new ImageButton("Size");
+	buttonTextSize->setImages(false, false, false, imageFontSize, 1.0f, Colours::transparentWhite, Image::null, overOpacity, overColour, Image::null, downOpacity, Colours::green);
+	buttonTextSize->setBounds(0, 0, width, height);
+	buttonTextSize->addListener(this);
+	addChildComponent(buttonTextSize);
 
 	buttonOk = new ImageButton("OK");
 	buttonOk->setImages(false, false, false, imageOk, 1.0f, Colours::transparentWhite, Image::null, overOpacity, overColour, Image::null, downOpacity, Colours::green);
@@ -56,7 +52,7 @@ Polytempo_GraphicsEditableRegion::Polytempo_GraphicsEditableRegion()
 	
 	buttonCancel = new ImageButton("Cancel");
 	buttonCancel->setImages(false, false, false, imageCancel, 1.0f, Colours::transparentWhite, Image::null, overOpacity, overColour, Image::null, downOpacity, Colours::red);
-	buttonCancel->setBounds(0, 0, 30, 30);
+	buttonCancel->setBounds(0, 0, width, height);
 	buttonCancel->addListener(this);
 	addChildComponent(buttonCancel);
 
@@ -88,7 +84,7 @@ void Polytempo_GraphicsEditableRegion::paintAnnotation(Graphics& g, const Polyte
 	
 	if (!annotation->text.isEmpty())
 	{
-		g.setFont(14);
+		g.setFont(annotation->fontSize);
 		g.drawSingleLineText(annotation->text, annotation->referencePoint.getX() + 5, annotation->referencePoint.getY());
 	}
 }
@@ -231,10 +227,13 @@ void Polytempo_GraphicsEditableRegion::handleStartEditing(Point<int> mousePositi
 	buttonOk->setVisible(true);
 	buttonCancel->setCentrePosition(mousePosition.translated(45, buttonsAboveReferencePoint ? -50 : 50));
 	buttonCancel->setVisible(true);
+	buttonColor->setCentrePosition(mousePosition.translated(15, buttonsAboveReferencePoint ? -80 : 80));
+	buttonColor->setVisible(true);
+	buttonTextSize->setCentrePosition(mousePosition.translated(45, buttonsAboveReferencePoint ? -80 : 80));
+	buttonTextSize->setVisible(true);
 
 	colorSelector->setTopLeftPosition(mousePosition.getX() > getBounds().getWidth() / 2 ? 0 : getBounds().getWidth() - colorSelector->getWidth(), getBounds().getHeight() - colorSelector->getHeight());
-	colorSelector->setVisible(true);
-
+	
 	grabKeyboardFocus();
 
 	repaintRequired = true;
@@ -262,6 +261,8 @@ void Polytempo_GraphicsEditableRegion::handleEndEdit()
 	setMouseCursor(MouseCursor::NormalCursor);
 	buttonOk->setVisible(false);
 	buttonCancel->setVisible(false);
+	buttonColor->setVisible(false);
+	buttonTextSize->setVisible(false);
 	colorSelector->setVisible(false);
 	repaintRequired = true;
 }
@@ -287,6 +288,10 @@ void Polytempo_GraphicsEditableRegion::buttonClicked(Button* source)
 	{
 		handleEndEditCancel();
 	}
+	else if(source == buttonColor)
+	{
+		colorSelector->setVisible(!colorSelector->isVisible());
+	}
 }
 
 void Polytempo_GraphicsEditableRegion::changeListenerCallback(ChangeBroadcaster* source)
@@ -294,6 +299,7 @@ void Polytempo_GraphicsEditableRegion::changeListenerCallback(ChangeBroadcaster*
 	if(source == colorSelector && status != Default)
 	{
 		temporaryAnnotation.color = colorSelector->getCurrentColour();
+		repaintRequired = true;
 	}
 	else if(source == Polytempo_GraphicsAnnotationManager::getInstance())
 	{

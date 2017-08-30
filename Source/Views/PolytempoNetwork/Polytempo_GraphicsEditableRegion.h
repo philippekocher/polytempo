@@ -60,6 +60,8 @@ private:
 	
 	ScopedPointer<ImageButton> buttonOk;
 	ScopedPointer<ImageButton> buttonCancel;
+	ScopedPointer<ImageButton> buttonColor;
+	ScopedPointer<ImageButton> buttonTextSize;
 	bool buttonsAboveReferencePoint;
 
 	Rectangle<float> currentImageRectangle;
