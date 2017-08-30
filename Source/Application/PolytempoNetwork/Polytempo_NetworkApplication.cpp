@@ -54,7 +54,7 @@ void Polytempo_NetworkApplication::initialise(const String&)
     
     // scheduler
     Polytempo_ScoreScheduler::getInstance()->setEngine(new Polytempo_NetworkEngine());
-    Polytempo_EventScheduler::getInstance()->startThread(10); // 10 = highest priority
+    Polytempo_EventScheduler::getInstance()->startThread(5); // priority between 0 and 10
     
     // create network connection
     oscListener = new Polytempo_OSCListener(47522);
