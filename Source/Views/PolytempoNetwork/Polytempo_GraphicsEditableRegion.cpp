@@ -125,9 +125,18 @@ void Polytempo_GraphicsEditableRegion::resized()
 void Polytempo_GraphicsEditableRegion::setImage(Image* img, var rect, String imageId)
 {
 	Array<var> r = *rect.getArray();
+	float relTopLeftX = float(r[0]);
+	float relTopLeftY = float(r[1]);
+	float relWidth = float(r[2]);
+	float relHeight = float(r[3]);
+	float imgWidth = img->getWidth();
+	float imgHeight = img->getHeight();
 	currentImageRectangle = Rectangle<float>(
-		Point<float>(img->getWidth() * float(r[0]), img->getHeight() * float(r[1])), 
-		Point<float>(img->getWidth() * float(r[2]), img->getHeight() * float(r[3])));
+		imgWidth * relTopLeftX, 
+		imgHeight * relTopLeftY, 
+		imgWidth * relWidth, 
+		imgHeight * relHeight);
+
 	currentImageId = imageId;
 
 	setViewImage(img, rect);
