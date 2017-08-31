@@ -27,7 +27,7 @@
 #include "../Polytempo_AboutWindow.h"
 #include "../../Preferences/Polytempo_StoredPreferences.h"
 #include "../../Data/Polytempo_Composition.h"
-#include "../../Scheduler/Polytempo_Scheduler.h"
+#include "../../Scheduler/Polytempo_ScoreScheduler.h"
 #include "../Polytempo_CommandIDs.h"
 #include "../../Views/PolytempoComposer/Polytempo_DialogWindows.h"
 
@@ -352,7 +352,7 @@ void Polytempo_ComposerMenuBarModel::getCommandInfo(CommandID commandID, Applica
             break;
             
         case Polytempo_CommandIDs::returnToBeginning:
-            result.setInfo ("Return to Zero", "Return to zero", infoCategory, 0);
+            result.setInfo ("Return to beginning", "Return to beginning", infoCategory, 0);
             result.addDefaultKeypress ('\r', ModifierKeys::commandModifier);
             break;
 
@@ -493,15 +493,15 @@ bool Polytempo_ComposerMenuBarModel::perform (const InvocationInfo& info)
          ----------------------------------*/
             
         case Polytempo_CommandIDs::startStop:
-            Polytempo_Scheduler::getInstance()->startStop();
+            Polytempo_ScoreScheduler::getInstance()->startStop();
             break;
             
         case Polytempo_CommandIDs::returnToLoc:
-            Polytempo_Scheduler::getInstance()->returnToLocator();
+            Polytempo_ScoreScheduler::getInstance()->returnToLocator();
             break;
             
         case Polytempo_CommandIDs::returnToBeginning:
-            Polytempo_Scheduler::getInstance()->returnToBeginning();
+            Polytempo_ScoreScheduler::getInstance()->returnToBeginning();
             break;
             
             

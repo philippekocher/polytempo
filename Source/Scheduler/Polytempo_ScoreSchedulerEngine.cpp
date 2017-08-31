@@ -30,62 +30,67 @@
 
 
 #ifdef POLYTEMPO_COMPOSER
-void Polytempo_ComposerEngine::setLocator(float locator)
+void Polytempo_ComposerEngine::setScoreTime(int time)
 {
-    milisecondLocator = locator * 1000 + 0.5;
-    score->setLocator(locator);
+    scoreTime = time;
+    score->setTime(time);
 }
 
 void Polytempo_ComposerEngine::run()
 {
     //DBG("run");
-    int x=0;
-    int interval = 5;
+    int interval = 100;
+    int lookAhead = 2000;
+    int syncTime;
     
     Polytempo_Event *nextScoreEvent = score->getNextEvent();
     Polytempo_Event *nextOscEvent;
     Polytempo_Event *schedulerTick  = Polytempo_Event::makeEvent(eventType_Tick);
     
-    timerIncrement(); // reset timer
+    scoreTimeIncrement(); // reset timer
     shouldStop = false;
     
-    while(!threadShouldExit() && !shouldStop && nextScoreEvent)
+    while(!threadShouldExit() && !shouldStop)
     {
-        milisecondLocator += timerIncrement() * tempoFactor;
-        while(nextScoreEvent && nextScoreEvent->getMilisecondTime() <= milisecondLocator)
+        scoreTime += scoreTimeIncrement() * tempoFactor;
+        
+        while(nextScoreEvent && nextScoreEvent->getTime() <= scoreTime + lookAhead)
         {
-            if(nextScoreEvent != nullptr && nextScoreEvent->getType() == eventType_Beat)
+            // calculate syncTime
+            
+            syncTime = Time::getMillisecondCounter();
+            syncTime += (nextScoreEvent->getTime() - scoreTime) / tempoFactor;
+            
+            if(nextScoreEvent->hasProperty(eventPropertyString_Defer))
+                syncTime += (float)nextScoreEvent->getProperty(eventPropertyString_Defer) * 1000.0f + 0.5f;
+            
+            nextScoreEvent->setSyncTime(syncTime);
+           
+            if(nextScoreEvent->getType() == eventType_Beat)
             {
                 // add playback properties to next event
                 int sequenceIndex = nextScoreEvent->getProperty("~sequence");
-                nextScoreEvent = new Polytempo_Event(*nextScoreEvent); // get a copy
+                //nextScoreEvent = new Polytempo_Event(*nextScoreEvent); // get a copy
                 Polytempo_Sequence* sequence = Polytempo_Composition::getInstance()->getSequence(sequenceIndex);
                 
                 sequence->addPlaybackPropertiesToEvent(nextScoreEvent);
-                
+
                 // next osc event
                 nextOscEvent = sequence->getOscEvent(nextScoreEvent);
-                scheduler->handleEvent(nextOscEvent, 0);
+                Polytempo_EventScheduler::getInstance()->scheduleScoreEvent(nextOscEvent);
             }
- 
-            scheduler->handleEvent(nextScoreEvent, 0);
             
+            Polytempo_EventScheduler::getInstance()->scheduleScoreEvent(nextScoreEvent);
+
             // get next event
             nextScoreEvent = score->getNextEvent();
         }
         
-        if(++x > 20 && !threadShouldExit())
-        {
-            schedulerTick->setTime(milisecondLocator * 0.001);
-            scheduler->notify(schedulerTick);
-            x=0;
-        }
+        schedulerTick->setValue(scoreTime * 0.001f);
+        Polytempo_EventScheduler::getInstance()->scheduleScoreEvent(schedulerTick);
         
         wait(interval);
     }
-    
-    scheduler->handleEvent(Polytempo_Event::makeEvent(eventType_Stop));
-    scheduler->gotoLocator(Polytempo_Event::makeEvent(eventType_GotoLocator, var(milisecondLocator * 0.001)));
 }
 #endif
 

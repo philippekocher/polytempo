@@ -105,7 +105,7 @@ class Polytempo_ComposerEngine : public Polytempo_ScoreSchedulerEngine
 {
 public:
     void stop();
-    void setLocator(float locator);
+    void setScoreTime(int time);
     void run();
 };
 

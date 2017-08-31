@@ -27,7 +27,8 @@
 #include "../../Preferences/Polytempo_StoredPreferences.h"
 #include "../../Audio+Midi/Polytempo_AudioClick.h"
 #include "../../Audio+Midi/Polytempo_MidiClick.h"
-#include "../../Scheduler/Polytempo_Scheduler.h"
+#include "../../Scheduler/Polytempo_ScoreScheduler.h"
+#include "../../Scheduler/Polytempo_EventScheduler.h"
 #include "../../Network/Polytempo_NetworkSupervisor.h"
 
 
@@ -39,7 +40,8 @@ void Polytempo_ComposerApplication::initialise(const String& commandLine)
     commandManager->registerAllCommandsForTarget(this);
     
     // scheduler
-    Polytempo_Scheduler::getInstance()->setEngine(new Polytempo_ComposerEngine);
+    Polytempo_ScoreScheduler::getInstance()->setEngine(new Polytempo_ComposerEngine);
+    Polytempo_EventScheduler::getInstance()->startThread(5); // priority between 0 and 10
     
     // create network connection
     //oscListener = new Polytempo_OSCListener(47522);
@@ -59,7 +61,7 @@ void Polytempo_ComposerApplication::initialise(const String& commandLine)
     Polytempo_Composition::getInstance()->addSequence(); // one sequence to start with
     
     // return to beginning
-    Polytempo_Scheduler::getInstance()->returnToBeginning();
+    Polytempo_ScoreScheduler::getInstance()->returnToBeginning();
 }
     
 void Polytempo_ComposerApplication::shutdown()
@@ -85,7 +87,8 @@ void Polytempo_ComposerApplication::shutdown()
     Polytempo_AudioClick::deleteInstance();
     Polytempo_MidiClick::deleteInstance();
     Polytempo_NetworkSupervisor::deleteInstance();
-    Polytempo_Scheduler::deleteInstance(); // delete after observers!
+    Polytempo_ScoreScheduler::deleteInstance(); // delete after observers!
+    Polytempo_EventScheduler::deleteInstance();
 }
     
 void Polytempo_ComposerApplication::systemRequestedQuit()
