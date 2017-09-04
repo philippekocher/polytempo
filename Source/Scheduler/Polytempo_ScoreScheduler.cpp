@@ -122,7 +122,7 @@ void Polytempo_ScoreScheduler::returnToBeginning()
     if(first_Event) storedLocator = first_Event->getTime();
     else            storedLocator = 0;
     
-    Polytempo_EventDispatcher::getInstance()->broadcastEvent(Polytempo_Event::makeEvent(eventType_GotoTime, var(storedLocator)));
+    Polytempo_EventDispatcher::getInstance()->broadcastEvent(Polytempo_Event::makeEvent(eventType_GotoTime, var(storedLocator * 0.001f)));
 }
 
 void Polytempo_ScoreScheduler::skipToEvent(Polytempo_EventType type, bool backwards)
@@ -167,7 +167,7 @@ void Polytempo_ScoreScheduler::gotoTime(Polytempo_Event *event)
     if(engine->isRunning() && !engine->isPausing())  stop();
     
     //DBG("goto time "<<event->getProperty("value").toString());
-    int time = (float)event->getProperty("value") * 1000.0f + 0.5f;
+    int time = (float)event->getProperty("value") * 1000.0f;
     engine->setScoreTime(time);
     
     // update locator in all components

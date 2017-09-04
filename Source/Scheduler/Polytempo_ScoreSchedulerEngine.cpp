@@ -62,7 +62,7 @@ void Polytempo_ComposerEngine::run()
             syncTime += (nextScoreEvent->getTime() - scoreTime) / tempoFactor;
             
             if(nextScoreEvent->hasProperty(eventPropertyString_Defer))
-                syncTime += (float)nextScoreEvent->getProperty(eventPropertyString_Defer) * 1000.0f + 0.5f;
+                syncTime += (float)nextScoreEvent->getProperty(eventPropertyString_Defer) * 1000.0f;
             
             nextScoreEvent->setSyncTime(syncTime);
            
@@ -138,7 +138,7 @@ void Polytempo_NetworkEngine::run()
             syncTime += (nextScoreEvent->getTime() - scoreTime) / tempoFactor;
             
             if(nextScoreEvent->hasProperty(eventPropertyString_Defer))
-                syncTime += (float)nextScoreEvent->getProperty(eventPropertyString_Defer) * 1000.0f + 0.5f;
+                syncTime += (float)nextScoreEvent->getProperty(eventPropertyString_Defer) * 1000.0f;
             
             nextScoreEvent->setSyncTime(syncTime);
             

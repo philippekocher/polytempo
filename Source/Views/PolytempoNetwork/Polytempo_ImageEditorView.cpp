@@ -577,7 +577,7 @@ void Polytempo_ImageEditorView::labelTextChanged(Label* label)
     }
     else if(label == timeTextbox)
     {
-        int time = Polytempo_Textbox::stringToTime(label->getText()) * 1000.0f + 0.5f;
+        int time = Polytempo_Textbox::stringToTime(label->getText()) * 1000.0f;
         
         selectedImageEvent->setTime(time);
         score->sortSection();

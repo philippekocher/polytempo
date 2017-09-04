@@ -47,7 +47,7 @@ void Polytempo_EventScheduler::scheduleScoreEvent(Polytempo_Event *event, bool u
 {
     if(event == nullptr) return;
     if(event->getType() == eventType_None) return;
-    
+        
     if(event->getSyncTime() <= Time::getMillisecondCounter())
     {
         notify(event);

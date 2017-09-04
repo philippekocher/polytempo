@@ -322,8 +322,16 @@ Rational Polytempo_Event::getPosition()
 
 void Polytempo_Event::setProperty(String key, var value)
 {
-    if     (key == eventPropertyString_Time)  time = float(value) * 1000.0f + 0.5f;
-    else if(key == "position")                position = value;
+    if     (key == eventPropertyString_Time)
+    {
+        float t = float(value);
+        
+        if(t > 0.0f)      time = t * 1000.0f + 0.5f;
+        else if(t < 0.0f) time = t * 1000.0f - 0.5f;
+        else              time = 0;
+    }
+    else if(key == "position")
+        position = value;
     
     properties->set(key,value);
 }

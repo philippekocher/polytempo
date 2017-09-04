@@ -127,7 +127,7 @@ void Polytempo_OSCListener::oscMessageReceived(const OSCMessage & message)
         }
         
         if(event->hasProperty(eventPropertyString_Defer))
-            syncTime += (float)event->getProperty(eventPropertyString_Defer) * 1000.0f + 0.5f;
+            syncTime += (float)event->getProperty(eventPropertyString_Defer) * 1000.0f;
         
         event->setSyncTime(syncTime);
 
