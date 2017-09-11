@@ -88,7 +88,7 @@ protected:
     Polytempo_Score *score;
     Polytempo_ScoreScheduler* scoreScheduler;
     int scoreTime; // the current time in the score
-    float tempoFactor = 1;
+    double tempoFactor = 1;
     bool killed;
     bool shouldStop;
     bool pausing;
