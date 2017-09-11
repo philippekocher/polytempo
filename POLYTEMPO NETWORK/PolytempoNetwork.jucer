@@ -13,6 +13,7 @@
       <FILE id="i2gAFH" name="fontSize.png" compile="0" resource="1" file="../Resources/fontSize.png"/>
       <FILE id="KOwPbh" name="icon.png" compile="0" resource="1" file="../Resources/icon.png"/>
       <FILE id="H1LQCA" name="no.png" compile="0" resource="1" file="../Resources/no.png"/>
+      <FILE id="dXyJSH" name="settings.png" compile="0" resource="1" file="../Resources/settings.png"/>
       <FILE id="crbSPw" name="yes.png" compile="0" resource="1" file="../Resources/yes.png"/>
     </GROUP>
     <FILE id="wwqCqe" name="Polytempo_NetworkMain.cpp" compile="1" resource="0"
@@ -157,6 +158,10 @@
               resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_GraphicsAnnotationSet.cpp"/>
         <FILE id="wsH3UF" name="Polytempo_GraphicsAnnotationSet.h" compile="0"
               resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_GraphicsAnnotationSet.h"/>
+        <FILE id="kWcwI4" name="Polytempo_GraphicsAnnotationSettingsDialog.cpp"
+              compile="1" resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_GraphicsAnnotationSettingsDialog.cpp"/>
+        <FILE id="Qp43GW" name="Polytempo_GraphicsAnnotationSettingsDialog.h"
+              compile="0" resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_GraphicsAnnotationSettingsDialog.h"/>
         <FILE id="rT6oGU" name="Polytempo_GraphicsEditableRegion.cpp" compile="1"
               resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_GraphicsEditableRegion.cpp"/>
         <FILE id="R8L9s8" name="Polytempo_GraphicsEditableRegion.h" compile="0"

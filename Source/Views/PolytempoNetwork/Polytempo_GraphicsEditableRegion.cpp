@@ -11,6 +11,7 @@
 #include "../../../POLYTEMPO NETWORK/JuceLibraryCode/JuceHeader.h"
 #include "Polytempo_GraphicsEditableRegion.h"
 #include "Polytempo_GraphicsAnnotationManager.h"
+#include "Polytempo_GraphicsAnnotationSettingsDialog.h"
 
 //==============================================================================
 Polytempo_GraphicsEditableRegion::Polytempo_GraphicsEditableRegion()
@@ -19,8 +20,6 @@ Polytempo_GraphicsEditableRegion::Polytempo_GraphicsEditableRegion()
     // initialise any special settings that your component needs.
 	status = Default;
 	
-	Colour background = Colours::lightgrey;
-	Colour border = Colours::black;
 	int width = 32;
 	int height = 32;
 	Colour overColour = Colour(Colours::purple.getRed(), Colours::purple.getGreen(), Colours::purple.getBlue(), uint8(80));
@@ -31,7 +30,8 @@ Polytempo_GraphicsEditableRegion::Polytempo_GraphicsEditableRegion()
 	Image imageFontSize = ImageCache::getFromMemory(BinaryData::fontSize_png, BinaryData::fontSize_pngSize);
 	Image imageOk = ImageCache::getFromMemory(BinaryData::yes_png, BinaryData::yes_pngSize);
 	Image imageCancel = ImageCache::getFromMemory(BinaryData::no_png, BinaryData::no_pngSize);
-	
+	Image imageSettings = ImageCache::getFromMemory(BinaryData::settings_png, BinaryData::settings_pngSize);
+
 	buttonColor = new ImageButton("Color");
 	buttonColor->setImages(false, false, false, imageColorPalette, 1.0f, Colours::transparentWhite, Image::null, overOpacity, overColour, Image::null, downOpacity, Colours::green);
 	buttonColor->setBounds(0, 0, width, height);
@@ -43,6 +43,12 @@ Polytempo_GraphicsEditableRegion::Polytempo_GraphicsEditableRegion()
 	buttonTextSize->setBounds(0, 0, width, height);
 	buttonTextSize->addListener(this);
 	addChildComponent(buttonTextSize);
+
+	buttonSettings = new ImageButton("Settings");
+	buttonSettings->setImages(false, false, false, imageSettings, 1.0f, Colours::transparentWhite, Image::null, overOpacity, overColour, Image::null, downOpacity, Colours::green);
+	buttonSettings->setBounds(0, 0, width, height);
+	buttonSettings->addListener(this);
+	addChildComponent(buttonSettings);
 
 	buttonOk = new ImageButton("OK");
 	buttonOk->setImages(false, false, false, imageOk, 1.0f, Colours::transparentWhite, Image::null, overOpacity, overColour, Image::null, downOpacity, Colours::green);
@@ -227,10 +233,12 @@ void Polytempo_GraphicsEditableRegion::handleStartEditing(Point<int> mousePositi
 	buttonOk->setVisible(true);
 	buttonCancel->setCentrePosition(mousePosition.translated(45, buttonsAboveReferencePoint ? -50 : 50));
 	buttonCancel->setVisible(true);
-	buttonColor->setCentrePosition(mousePosition.translated(15, buttonsAboveReferencePoint ? -80 : 80));
+	buttonColor->setCentrePosition(mousePosition.translated(0, buttonsAboveReferencePoint ? -80 : 80));
 	buttonColor->setVisible(true);
-	buttonTextSize->setCentrePosition(mousePosition.translated(45, buttonsAboveReferencePoint ? -80 : 80));
+	buttonTextSize->setCentrePosition(mousePosition.translated(30, buttonsAboveReferencePoint ? -80 : 80));
 	buttonTextSize->setVisible(true);
+	buttonSettings->setCentrePosition(mousePosition.translated(60, buttonsAboveReferencePoint ? -80 : 80));
+	buttonSettings->setVisible(true);
 
 	colorSelector->setTopLeftPosition(mousePosition.getX() > getBounds().getWidth() / 2 ? 0 : getBounds().getWidth() - colorSelector->getWidth(), getBounds().getHeight() - colorSelector->getHeight());
 	
@@ -263,6 +271,7 @@ void Polytempo_GraphicsEditableRegion::handleEndEdit()
 	buttonCancel->setVisible(false);
 	buttonColor->setVisible(false);
 	buttonTextSize->setVisible(false);
+	buttonSettings->setVisible(false);
 	colorSelector->setVisible(false);
 	repaintRequired = true;
 }
@@ -291,6 +300,14 @@ void Polytempo_GraphicsEditableRegion::buttonClicked(Button* source)
 	else if(source == buttonColor)
 	{
 		colorSelector->setVisible(!colorSelector->isVisible());
+	}
+	else if(source == buttonTextSize)
+	{
+		// Todo
+	}
+	else if(source == buttonSettings)
+	{
+		Polytempo_GraphicsAnnotationSettingsDialog::show();
 	}
 }
 
