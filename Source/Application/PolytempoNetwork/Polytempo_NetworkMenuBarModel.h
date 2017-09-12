@@ -25,7 +25,6 @@
 #ifndef __PolytempoPolytempo__Polytempo_MenuBarModel__
 #define __PolytempoPolytempo__Polytempo_MenuBarModel__
 
-//#include "../JuceLibraryCode/JuceHeader.h"
 #include "Polytempo_NetworkWindow.h"
 
 

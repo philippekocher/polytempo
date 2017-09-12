@@ -25,7 +25,6 @@
 #ifndef __Polytempo_Score__
 #define __Polytempo_Score__
 
-//#include "../../JuceLibraryCode/JuceHeader.h"
 #include "../Scheduler/Polytempo_Event.h"
 
 class Polytempo_Score_Section
@@ -53,14 +52,14 @@ public:
     void setSection(String sectionName = String::empty);
     void sortSection(int sectionIndex = -1);
     
-    void setLocator(float locator);
-    bool setLocator(float locator, Array<Polytempo_Event*> *events, float *waitBeforStart);
+    void setTime(int time);
+    bool setTime(int time, Array<Polytempo_Event*> *events, float *waitBeforStart);
 
-    Polytempo_Event* searchEvent(float referenceLocator, Polytempo_EventType = eventType_None, bool searchBackwards = false);
+    Polytempo_Event* searchEvent(int referenceTime, Polytempo_EventType = eventType_None, bool searchBackwards = false);
     Polytempo_Event* getNextEvent();
     Polytempo_Event* getFirstEvent();
-    bool getLocatorForMarker(String marker, float *locator);
-    bool getMarkerForLocator(float locator, String* marker);
+    bool getTimeForMarker(String marker, int *time);
+    bool getMarkerForTime(int time, String* marker);
     
     Polytempo_Score_Section *getInitSection();
     OwnedArray < Polytempo_Event >& getInitEvents();

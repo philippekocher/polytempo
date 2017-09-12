@@ -173,7 +173,7 @@ void Polytempo_GraphicsView::displayProgessbar(Polytempo_Event *event)
         return; // invalid region id
     
     Polytempo_GraphicsViewRegion *region = regionsMap[event->getProperty(eventPropertyString_RegionID)];
-    region->setProgressbar(String(event->getProperty("value").toString()),event->getTime(), event->getProperty("duration"));
+    region->setProgressbar(String(event->getValue().toString()),event->getTime(), event->getProperty("duration"));
     region->setVisible(true);
     region->repaint();
 }

@@ -50,7 +50,7 @@ void Polytempo_Progressbar::paint(Graphics &g)
     // text in progress bar
     bounds.setY(bounds.getHeight());
     g.setFont(16.0f);
-    g.drawFittedText(String(duration*elapsedTime,2) + " s",
+    g.drawFittedText(String(duration * elapsedTime,2) + " s",
                      bounds.reduced(2,2),  // inset rect
                      Justification::centred, 1);
 
@@ -63,9 +63,9 @@ void Polytempo_Progressbar::paint(Graphics &g)
     g.fillRect(bounds);
 }
 
-void Polytempo_Progressbar::setText(String text_)       { text = new String(text_); }
-void Polytempo_Progressbar::setTime(float time_)        { time = time_; }
-void Polytempo_Progressbar::setDuration(int duration_)  { duration = (float)duration_; }
+void Polytempo_Progressbar::setText(String text_)      { text = new String(text_); }
+void Polytempo_Progressbar::setTime(int time_)         { time = time_; }
+void Polytempo_Progressbar::setDuration(float duration_) { duration = duration_; }
 
 
 void Polytempo_Progressbar::eventNotification(Polytempo_Event *event)
@@ -73,15 +73,15 @@ void Polytempo_Progressbar::eventNotification(Polytempo_Event *event)
     // update progress bar on every tick
     if(event->getType() == eventType_Tick)
     {
-        if(event->getTime() == time) elapsedTime = 0;
-        else  elapsedTime = float(event->getTime() - time) / duration;
+        if((float)event->getValue() == time * 0.001f) elapsedTime = 0;
+        else  elapsedTime = ((float)event->getValue() - time * 0.001f) / (float)duration;
         repaint();
     }
-    // update progress bar when jumping to a locator
-    else if(event->getType() == eventType_GotoLocator)
+    // update progress bar when jumping to a point in time
+    else if(event->getType() == eventType_GotoTime)
     {
-        if(int(event->getProperty("value")) == time) elapsedTime = 0;
-        else  elapsedTime = float(int(event->getProperty("value")) - time) / duration;
+        if((float)event->getValue() == time * 0.001f) elapsedTime = 0;
+        else  elapsedTime = ((float)event->getValue() - time * 0.001f) / (float)duration;
         repaint();
     }
     

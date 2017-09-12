@@ -77,7 +77,7 @@ namespace Polytempo_DialogWindows
         void show()
         {
             setWantsKeyboardFocus(false);
-            contentComponent->grabKeyboardFocus();
+            //contentComponent->grabKeyboardFocus();
             runModalLoop();
         }
         

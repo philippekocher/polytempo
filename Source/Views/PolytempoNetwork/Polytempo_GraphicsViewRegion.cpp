@@ -147,7 +147,7 @@ void Polytempo_GraphicsViewRegion::setText(String text_)
     resized();
 }
 
-void Polytempo_GraphicsViewRegion::setProgressbar(String txt, float time, int duration)
+void Polytempo_GraphicsViewRegion::setProgressbar(String txt, float time, float duration)
 {
     contentType = contentType_Progressbar;
     progressbar = new Polytempo_Progressbar();

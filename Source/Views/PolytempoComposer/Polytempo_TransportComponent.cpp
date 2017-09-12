@@ -23,7 +23,7 @@
  ============================================================================== */
 
 #include "Polytempo_TransportComponent.h"
-#include "../../Scheduler/Polytempo_Scheduler.h"
+#include "../../Scheduler/Polytempo_ScoreScheduler.h"
 #include "../../Application/PolytempoComposer/Polytempo_ComposerApplication.h"
 #include "../../Application/Polytempo_CommandIDs.h"
 #include "../../Misc/Polytempo_Textbox.h"
@@ -85,7 +85,7 @@ void Polytempo_TransportComponent::resized()
 
 void Polytempo_TransportComponent::buttonClicked(Button* button)
 {
-    if(button == startButton) Polytempo_Scheduler::getInstance()->startStop();
+    if(button == startButton) Polytempo_ScoreScheduler::getInstance()->startStop();
 }
 
 void Polytempo_TransportComponent::editorShown (Label* label, TextEditor&)
@@ -98,9 +98,9 @@ void Polytempo_TransportComponent::labelTextChanged (Label* label)
 {
     if(label == timeTextbox)
     {
-        Polytempo_Scheduler::getInstance()->storeLocator(Polytempo_Textbox::stringToTime(label->getText()));
-        Polytempo_Scheduler::getInstance()->gotoLocator(
-        Polytempo_Event::makeEvent(eventType_GotoLocator, Polytempo_Textbox::stringToTime(label->getText())));
+        Polytempo_ScoreScheduler::getInstance()->storeLocator(Polytempo_Textbox::stringToTime(label->getText()));
+        Polytempo_ScoreScheduler::getInstance()->gotoTime(
+        Polytempo_Event::makeEvent(eventType_GotoTime, Polytempo_Textbox::stringToTime(label->getText())));
     }
 //    else if(label == tempoFactorTextbox)
 //    {
@@ -125,6 +125,6 @@ void Polytempo_TransportComponent::eventNotification(Polytempo_Event *event)
     else if(event->getType() == eventType_Tick)
     {
         // update the time with every tick
-        timeTextbox->setText(Polytempo_Textbox::timeToString(event->getTime()), dontSendNotification);
+        timeTextbox->setText(Polytempo_Textbox::timeToString(event->getValue()), dontSendNotification);
     }
 }

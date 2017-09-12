@@ -115,26 +115,30 @@
             resource="0" file="../Source/Preferences/Polytempo_StoredPreferences.h"/>
     </GROUP>
     <GROUP id="{84DE8E66-8605-C755-2401-EA93089F693B}" name="Scheduler">
-      <FILE id="NeUVvC" name="Polytempo_EventDispatcher.cpp" compile="1"
-            resource="0" file="../Source/Scheduler/Polytempo_EventDispatcher.cpp"/>
-      <FILE id="qLupYl" name="Polytempo_EventDispatcher.h" compile="0" resource="0"
-            file="../Source/Scheduler/Polytempo_EventDispatcher.h"/>
       <FILE id="aPvR1f" name="Polytempo_Event.cpp" compile="1" resource="0"
             file="../Source/Scheduler/Polytempo_Event.cpp"/>
       <FILE id="T958Xl" name="Polytempo_Event.h" compile="0" resource="0"
             file="../Source/Scheduler/Polytempo_Event.h"/>
+      <FILE id="NeUVvC" name="Polytempo_EventDispatcher.cpp" compile="1"
+            resource="0" file="../Source/Scheduler/Polytempo_EventDispatcher.cpp"/>
+      <FILE id="qLupYl" name="Polytempo_EventDispatcher.h" compile="0" resource="0"
+            file="../Source/Scheduler/Polytempo_EventDispatcher.h"/>
       <FILE id="ViFW90" name="Polytempo_EventObserver.cpp" compile="1" resource="0"
             file="../Source/Scheduler/Polytempo_EventObserver.cpp"/>
       <FILE id="QMlCv4" name="Polytempo_EventObserver.h" compile="0" resource="0"
             file="../Source/Scheduler/Polytempo_EventObserver.h"/>
-      <FILE id="GuAQqg" name="Polytempo_Scheduler.cpp" compile="1" resource="0"
-            file="../Source/Scheduler/Polytempo_Scheduler.cpp"/>
-      <FILE id="U2bY8I" name="Polytempo_Scheduler.h" compile="0" resource="0"
-            file="../Source/Scheduler/Polytempo_Scheduler.h"/>
-      <FILE id="NANk1X" name="Polytempo_SchedulerEngine.cpp" compile="1"
-            resource="0" file="../Source/Scheduler/Polytempo_SchedulerEngine.cpp"/>
-      <FILE id="zk0Cl1" name="Polytempo_SchedulerEngine.h" compile="0" resource="0"
-            file="../Source/Scheduler/Polytempo_SchedulerEngine.h"/>
+      <FILE id="GuAQqg" name="Polytempo_ScoreScheduler.cpp" compile="1" resource="0"
+            file="../Source/Scheduler/Polytempo_ScoreScheduler.cpp"/>
+      <FILE id="U2bY8I" name="Polytempo_ScoreScheduler.h" compile="0" resource="0"
+            file="../Source/Scheduler/Polytempo_ScoreScheduler.h"/>
+      <FILE id="NANk1X" name="Polytempo_ScoreSchedulerEngine.cpp" compile="1"
+            resource="0" file="../Source/Scheduler/Polytempo_ScoreSchedulerEngine.cpp"/>
+      <FILE id="zk0Cl1" name="Polytempo_ScoreSchedulerEngine.h" compile="0"
+            resource="0" file="../Source/Scheduler/Polytempo_ScoreSchedulerEngine.h"/>
+      <FILE id="uThQZF" name="Polytempo_EventScheduler.cpp" compile="1" resource="0"
+            file="../Source/Scheduler/Polytempo_EventScheduler.cpp"/>
+      <FILE id="t7zgbl" name="Polytempo_EventScheduler.h" compile="0" resource="0"
+            file="../Source/Scheduler/Polytempo_EventScheduler.h"/>
     </GROUP>
     <GROUP id="{387130A6-2BE3-19EF-2CB5-6ADE3718BBBC}" name="Views">
       <GROUP id="{59998D8D-099D-1311-792D-74F9D735FAFF}" name="PolytempoNetwork">

@@ -37,16 +37,16 @@ public:
     void paint(Graphics& g);
     
     void setText(String text);
-    void setTime(float time);
-    void setDuration(int duration);
+    void setTime(int time);
+    void setDuration(float duration);
     
     void eventNotification(Polytempo_Event *event);
 
     
 private:
     ScopedPointer < String > text;
-    float  time, duration;
-    float  elapsedTime;
+    int   time;
+    float duration, elapsedTime;
     OwnedArray < class Rectangle<float> > regionBounds;
 };
 
