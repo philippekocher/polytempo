@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="OXoF3n" name="PolytempoComposer" projectType="guiapp" version=""
+<JUCERPROJECT id="OXoF3n" name="PolytempoComposer" projectType="guiapp" version="0.2.0"
               bundleIdentifier="net.icst.PolytempoComposer" includeBinaryInAppConfig="1"
               jucerVersion="5.1.1" companyName="Zurich University of the Arts"
               companyWebsite="www.icst.net" defines="POLYTEMPO_COMPOSER=1"
@@ -166,14 +166,18 @@
               file="../Source/Scheduler/Polytempo_EventObserver.cpp"/>
         <FILE id="TGhfJt" name="Polytempo_EventObserver.h" compile="0" resource="0"
               file="../Source/Scheduler/Polytempo_EventObserver.h"/>
-        <FILE id="opY6Xo" name="Polytempo_Scheduler.cpp" compile="1" resource="0"
-              file="../Source/Scheduler/Polytempo_Scheduler.cpp"/>
-        <FILE id="E2GhBw" name="Polytempo_Scheduler.h" compile="0" resource="0"
-              file="../Source/Scheduler/Polytempo_Scheduler.h"/>
-        <FILE id="Z0fDGh" name="Polytempo_SchedulerEngine.cpp" compile="1"
-              resource="0" file="../Source/Scheduler/Polytempo_SchedulerEngine.cpp"/>
-        <FILE id="gym5kY" name="Polytempo_SchedulerEngine.h" compile="0" resource="0"
-              file="../Source/Scheduler/Polytempo_SchedulerEngine.h"/>
+        <FILE id="bxy3g8" name="Polytempo_EventScheduler.cpp" compile="1" resource="0"
+              file="../Source/Scheduler/Polytempo_EventScheduler.cpp"/>
+        <FILE id="DQyLZ2" name="Polytempo_EventScheduler.h" compile="0" resource="0"
+              file="../Source/Scheduler/Polytempo_EventScheduler.h"/>
+        <FILE id="oLQECC" name="Polytempo_ScoreScheduler.cpp" compile="1" resource="0"
+              file="../Source/Scheduler/Polytempo_ScoreScheduler.cpp"/>
+        <FILE id="mEsejH" name="Polytempo_ScoreScheduler.h" compile="0" resource="0"
+              file="../Source/Scheduler/Polytempo_ScoreScheduler.h"/>
+        <FILE id="NTPi2P" name="Polytempo_ScoreSchedulerEngine.cpp" compile="1"
+              resource="0" file="../Source/Scheduler/Polytempo_ScoreSchedulerEngine.cpp"/>
+        <FILE id="NTZOrM" name="Polytempo_ScoreSchedulerEngine.h" compile="0"
+              resource="0" file="../Source/Scheduler/Polytempo_ScoreSchedulerEngine.h"/>
       </GROUP>
       <GROUP id="{59B7EAC5-AA1A-D0A0-9C5A-1EB601E3E627}" name="Preferences">
         <FILE id="tdLKZW" name="Polytempo_DefaultPreferences.cpp" compile="1"
@@ -189,8 +193,6 @@
         <FILE id="BLx0fG" name="DragHandle.h" compile="0" resource="0" file="../Source/Misc/DragHandle.h"/>
         <FILE id="t5z5E6" name="Polytempo_Button.h" compile="0" resource="0"
               file="../Source/Misc/Polytempo_Button.h"/>
-        <FILE id="ejOKqC" name="Polytempo_DialogWindows.h" compile="0" resource="0"
-              file="../Source/Misc/Polytempo_DialogWindows.h"/>
         <FILE id="rV6mQ9" name="Polytempo_Globals.h" compile="0" resource="0"
               file="../Source/Misc/Polytempo_Globals.h"/>
         <FILE id="oOvAFG" name="Polytempo_Textbox.h" compile="0" resource="0"
@@ -203,26 +205,26 @@
     <XCODE_MAC targetFolder="Builds/MacOSX/PolytempoComposer" bigIcon="af4xJJ"
                smallIcon="AuXr1H">
       <CONFIGURATIONS>
-        <CONFIGURATION name="Debug" osxSDK="default" osxCompatibility="10.6 SDK" osxArchitecture="default"
+        <CONFIGURATION name="Debug" osxSDK="default" osxCompatibility="10.9 SDK" osxArchitecture="default"
                        isDebug="1" optimisation="1" targetName="PolytempoComposer" cppLanguageStandard=""/>
-        <CONFIGURATION name="Release" osxSDK="default" osxCompatibility="10.6 SDK" osxArchitecture="default"
+        <CONFIGURATION name="Release" osxSDK="default" osxCompatibility="10.9 SDK" osxArchitecture="default"
                        isDebug="0" optimisation="3" targetName="PolytempoComposer" customXcodeFlags="COPY_PHASE_STRIP = NO,  GCC_GENERATE_DEBUGGING_SYMBOLS = YES "/>
       </CONFIGURATIONS>
       <MODULEPATHS>
-        <MODULEPATH id="juce_core" path="../../../../../Documents/JUCE/modules"/>
-        <MODULEPATH id="juce_events" path="../../../../../Documents/JUCE/modules"/>
-        <MODULEPATH id="juce_graphics" path="../../../../../Documents/JUCE/modules"/>
-        <MODULEPATH id="juce_data_structures" path="../../../../../Documents/JUCE/modules"/>
-        <MODULEPATH id="juce_gui_basics" path="../../../../../Documents/JUCE/modules"/>
-        <MODULEPATH id="juce_gui_extra" path="../../../../../Documents/JUCE/modules"/>
-        <MODULEPATH id="juce_cryptography" path="../../../../../Documents/JUCE/modules"/>
-        <MODULEPATH id="juce_video" path="../../../../../Documents/JUCE/modules"/>
-        <MODULEPATH id="juce_opengl" path="../../../../../Documents/JUCE/modules"/>
-        <MODULEPATH id="juce_audio_basics" path="../../../../../Documents/JUCE/modules"/>
-        <MODULEPATH id="juce_audio_devices" path="../../../../../Documents/JUCE/modules"/>
-        <MODULEPATH id="juce_audio_formats" path="../../../../../Documents/JUCE/modules"/>
-        <MODULEPATH id="juce_audio_processors" path="../../../../../Documents/JUCE/modules"/>
-        <MODULEPATH id="juce_osc" path="../../JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="~/Documents/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="~/Documents/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="~/Documents/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="~/Documents/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="~/Documents/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="~/Documents/JUCE/modules"/>
+        <MODULEPATH id="juce_cryptography" path="~/Documents/JUCE/modules"/>
+        <MODULEPATH id="juce_video" path="~/Documents/JUCE/modules"/>
+        <MODULEPATH id="juce_opengl" path="~/Documents/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="~/Documents/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="~/Documents/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="~/Documents/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="~/Documents/JUCE/modules"/>
+        <MODULEPATH id="juce_osc" path="~/Documents/JUCE/modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
     <VS2015 targetFolder="Builds/VisualStudio2015" extraCompilerFlags="/wd&quot;4068&quot;">

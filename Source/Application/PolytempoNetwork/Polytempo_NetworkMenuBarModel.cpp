@@ -28,7 +28,7 @@
 #include "../Polytempo_CommandIDs.h"
 #include "../../Preferences/Polytempo_NetworkPreferencesPanel.h"
 #include "../../Preferences/Polytempo_StoredPreferences.h"
-#include "../../Scheduler/Polytempo_Scheduler.h"
+#include "../../Scheduler/Polytempo_ScoreScheduler.h"
 #include "../../Scheduler/Polytempo_EventDispatcher.h"
 
 
@@ -153,7 +153,7 @@ PopupMenu Polytempo_MenuBarModel::getMenuForIndex(int, const String& menuName)
 
         menu.addSeparator();
         
-        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::gotoLocator);
+        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::gotoTime);
     }
     else if (menuName == "Window")
     {
@@ -226,7 +226,7 @@ void Polytempo_MenuBarModel::getAllCommands(Array <CommandID>& commands)
         Polytempo_CommandIDs::markerBwd,
         Polytempo_CommandIDs::imageFwd,
         Polytempo_CommandIDs::imageBwd,
-        //Polytempo_CommandIDs::gotoLocator,
+        //Polytempo_CommandIDs::gotoTime,
         Polytempo_CommandIDs::aboutWindow,
         Polytempo_CommandIDs::preferencesWindow,
         Polytempo_CommandIDs::help,
@@ -392,7 +392,7 @@ void Polytempo_MenuBarModel::getCommandInfo(CommandID commandID, ApplicationComm
             result.setActive(window->getContentID() == Polytempo_NetworkWindow::mainViewID);
             break;
             
-        case Polytempo_CommandIDs::gotoLocator:
+        case Polytempo_CommandIDs::gotoTime:
             result.setInfo("Goto...", "Set a locator", infoCategory, 0);
             result.addDefaultKeypress('j', ModifierKeys::commandModifier);
             result.setActive(window->getContentID() == Polytempo_NetworkWindow::mainViewID);
@@ -516,37 +516,37 @@ bool Polytempo_MenuBarModel::perform(const InvocationInfo& info)
         /* scheduler menu
          ----------------------------------*/
         case Polytempo_CommandIDs::startStop:
-            if(Polytempo_Scheduler::getInstance()->isRunning())
+            if(Polytempo_ScoreScheduler::getInstance()->isRunning())
                 Polytempo_EventDispatcher::getInstance()->broadcastEvent(Polytempo_Event::makeEvent(eventType_Stop));
             else
                 Polytempo_EventDispatcher::getInstance()->broadcastEvent(Polytempo_Event::makeEvent(eventType_Start));
             break;
             
         case Polytempo_CommandIDs::returnToLoc:
-            Polytempo_Scheduler::getInstance()->returnToLocator();
+            Polytempo_ScoreScheduler::getInstance()->returnToLocator();
             break;
             
         case Polytempo_CommandIDs::returnToBeginning:
-            Polytempo_Scheduler::getInstance()->returnToBeginning();
+            Polytempo_ScoreScheduler::getInstance()->returnToBeginning();
             break;
             
         case Polytempo_CommandIDs::markerFwd:
-            Polytempo_Scheduler::getInstance()->skipToEvent(eventType_Marker);
+            Polytempo_ScoreScheduler::getInstance()->skipToEvent(eventType_Marker);
             break;
             
         case Polytempo_CommandIDs::markerBwd:
-            Polytempo_Scheduler::getInstance()->skipToEvent(eventType_Marker, true);
+            Polytempo_ScoreScheduler::getInstance()->skipToEvent(eventType_Marker, true);
             break;
             
         case Polytempo_CommandIDs::imageFwd:
-            Polytempo_Scheduler::getInstance()->skipToEvent(eventType_Image);
+            Polytempo_ScoreScheduler::getInstance()->skipToEvent(eventType_Image);
             break;
             
         case Polytempo_CommandIDs::imageBwd:
-            Polytempo_Scheduler::getInstance()->skipToEvent(eventType_Image, true);
+            Polytempo_ScoreScheduler::getInstance()->skipToEvent(eventType_Image, true);
             break;
             
-        case Polytempo_CommandIDs::gotoLocator:
+        case Polytempo_CommandIDs::gotoTime:
             break;
 
         

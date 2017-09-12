@@ -36,13 +36,13 @@ Polytempo_ComposerWindow::Polytempo_ComposerWindow()
                   DocumentWindow::allButtons)
 {
     setUsingNativeTitleBar(true);
+    setResizable(true,true);
+    setResizeLimits(500, 400, 5000, 5000);
+
     setContentOwned(mainView = new Polytempo_ComposerMainView(), true);
     
-    setVisible(true);
-    setResizable(true,true);
-    
     setBounds(50, 50, 800, 500);
-    setResizeLimits(500, 400, 5000, 5000);
+    setVisible(true);    
 
     // restore the window's properties from the settings file
     restoreWindowStateFromString(Polytempo_StoredPreferences::getInstance()->getProps().getValue("mainWindow"));

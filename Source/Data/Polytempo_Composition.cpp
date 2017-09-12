@@ -22,10 +22,9 @@
  
  ============================================================================== */
 
-//#include "../../JuceLibraryCode/JuceHeader.h"
 #include "Polytempo_Composition.h"
 #include "../Application/PolytempoComposer/Polytempo_ComposerApplication.h"
-#include "../Scheduler/Polytempo_Scheduler.h"
+#include "../Scheduler/Polytempo_ScoreScheduler.h"
 #include "../Preferences/Polytempo_StoredPreferences.h"
 #include "../Views/PolytempoComposer/Polytempo_DialogWindows.h"
 
@@ -33,8 +32,7 @@
 Polytempo_Composition::Polytempo_Composition()
 {
     score = new Polytempo_Score();
-    Polytempo_Scheduler::getInstance()->setScore(score);
-    
+    Polytempo_ScoreScheduler::getInstance()->setScore(score);
 }
 
 Polytempo_Composition::~Polytempo_Composition()

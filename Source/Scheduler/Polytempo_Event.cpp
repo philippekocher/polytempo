@@ -38,9 +38,10 @@ Polytempo_Event::Polytempo_Event(const Polytempo_Event& event)
 {
     type = event.type;
     time = event.time;
+    syncTime = event.syncTime;
     position = event.position;
     
-    properties = new NamedValueSet(*event.properties);
+    properties = event.properties;
 }
 
 Polytempo_Event::~Polytempo_Event()
@@ -48,8 +49,9 @@ Polytempo_Event::~Polytempo_Event()
     if(properties)    properties = nullptr;
 }
 
-// ----------------
-// factories
+// ----------------------------------------------------
+#pragma mark -
+#pragma mark factories
 
 Polytempo_Event* Polytempo_Event::makeEvent(String typeString)
 {
@@ -76,9 +78,87 @@ Polytempo_Event* Polytempo_Event::makeEvent(Polytempo_EventType type, var value)
     return event;
 }
 
+Polytempo_Event* Polytempo_Event::makeEvent(String oscAddress, Array<var> messages)
+{
+    Polytempo_Event *event = new Polytempo_Event();
+    event->setType(oscAddress.substring(1));
+    
+    int i = 0;
+    int num = messages.size();
 
-// ----------------
-// accessors
+    if(messages.contains("rect")) num++;
+    if(num % 2 == 1)
+        // if there is an odd number of messages, the first one is assigned to the property "value"
+    {
+        event->setProperty(eventPropertyString_Value, messages[i++]);
+    }
+    
+    while(messages.size() > i+1)
+    {
+        if(messages[i].isString())
+        {
+            // "rect" is followed by 4 numbers
+            if(messages[i] == eventPropertyString_Rect)
+            {
+                Array < var > r;
+                r.set(0,0); r.set(1,0); r.set(2,1); r.set(3,1);
+                int j = 0;
+                i++;
+                while(messages[i].isDouble() || messages[i].isInt())
+                {
+                    r.set(j++, messages[i++]);
+                }
+                event->setProperty(eventPropertyString_Rect, r);
+            }
+            // other parameters are followed by one value
+            else
+            {
+                event->setProperty(messages[i], messages[i+1]);
+                i = i + 2;
+            }
+        }
+        else
+        {
+            i++;
+        }
+    }
+    
+    return event;
+}
+
+// ----------------------------------------------------
+#pragma mark -
+#pragma mark event to OSC conversion
+
+String Polytempo_Event::getOscAddressFromType()
+{
+    String address = getTypeString();
+    address = "/" + address;
+    return address;
+}
+
+Array<var> Polytempo_Event::getOscMessageFromProperties()
+{
+    Array<var> message = Array<var>();
+    
+    NamedValueSet* properties = getProperties();
+    
+    for(juce::NamedValueSet::NamedValue val : *properties)
+    {
+        Identifier key = val.name;
+        if(key.toString()[0] != '~')
+        {
+            message.add(key.toString());
+            message.add(val.value);
+        }
+    }
+
+    return message;
+}
+
+// ----------------------------------------------------
+#pragma mark -
+#pragma mark accessors
 
 void Polytempo_Event::setType(String typeString)
 {
@@ -89,7 +169,7 @@ void Polytempo_Event::setType(String typeString)
     else if(typeString == eventTypeString_Pause)          type = eventType_Pause;
     
     else if(typeString == eventTypeString_GotoMarker)     type = eventType_GotoMarker;
-    else if(typeString == eventTypeString_GotoLocator)    type = eventType_GotoLocator;
+    else if(typeString == eventTypeString_GotoTime)       type = eventType_GotoTime;
     else if(typeString == eventTypeString_TempoFactor)    type = eventType_TempoFactor;
     
     else if(typeString == eventTypeString_Tick)           type = eventType_Tick;
@@ -99,7 +179,7 @@ void Polytempo_Event::setType(String typeString)
     
     else if(typeString == eventTypeString_LoadImage)      type = eventType_LoadImage;
     else if(typeString == eventTypeString_AddRegion)      type = eventType_AddRegion;
-    else if(typeString == eventTypeString_AddSection)  type = eventType_AddSection;
+    else if(typeString == eventTypeString_AddSection)     type = eventType_AddSection;
     
     else if(typeString == eventTypeString_ClearAll)       type = eventType_ClearAll;
     
@@ -112,6 +192,7 @@ void Polytempo_Event::setType(String typeString)
     
     else if(typeString == eventTypeString_Settings)       type = eventType_Settings;
     
+    else type = eventType_None;
 }
 
 Polytempo_EventType Polytempo_Event::getType()
@@ -144,8 +225,8 @@ String Polytempo_Event::getTypeString()
         case eventType_GotoMarker:
             return eventTypeString_GotoMarker;
             
-        case eventType_GotoLocator:
-            return eventTypeString_GotoLocator;
+        case eventType_GotoTime:
+            return eventTypeString_GotoTime;
             
         case eventType_TempoFactor:
             return eventTypeString_TempoFactor;
@@ -193,20 +274,40 @@ String Polytempo_Event::getTypeString()
     return String::empty;
 }
 
-void Polytempo_Event::setTime(float t)
+void Polytempo_Event::setValue(var val)
 {
-    time = t;
-    properties->set("time",t);
+    setProperty(eventPropertyString_Value, val);
 }
 
-float Polytempo_Event::getTime()
+var  Polytempo_Event::getValue()
+{
+    return getProperty(eventPropertyString_Value);
+}
+
+void Polytempo_Event::setTime(int t)
+{
+    time = t;
+    properties->set(eventPropertyString_Time, t * 0.001);
+}
+
+int Polytempo_Event::getTime()
 {
     return time;
 }
 
-int Polytempo_Event::getMilisecondTime()
+//int Polytempo_Event::getMilisecondTime()
+//{
+//    return (int)(time * 1000.0f + 0.5f);
+//}
+
+void  Polytempo_Event::setSyncTime(int t)
 {
-    return (int)(time * 1000.0f + 0.5f);
+    syncTime = t;
+}
+
+int Polytempo_Event::getSyncTime()
+{
+    return syncTime;
 }
 
 void Polytempo_Event::setPosition(Rational pos)
@@ -221,8 +322,16 @@ Rational Polytempo_Event::getPosition()
 
 void Polytempo_Event::setProperty(String key, var value)
 {
-    if     (key == "time")       time = float(value);
-    else if(key == "position")   position = value;
+    if     (key == eventPropertyString_Time)
+    {
+        float t = float(value);
+        
+        if(t > 0.0f)      time = t * 1000.0f + 0.5f;
+        else if(t < 0.0f) time = t * 1000.0f - 0.5f;
+        else              time = 0;
+    }
+    else if(key == "position")
+        position = value;
     
     properties->set(key,value);
 }
@@ -242,94 +351,3 @@ NamedValueSet* Polytempo_Event::getProperties()
 {
     return properties;
 }
-
-
-// ----------------------------------------------------
-#pragma mark -
-#pragma mark event to message conversion
-
-String Polytempo_Event::getOscAddressFromType()
-{
-    String address = getTypeString();
-    address = "/" + address;
-    return address;
-}
-
-Array<var> Polytempo_Event::getOscMessageFromParameters()
-{
-    Array<var> *messages = new Array<var>();
-    
-    messages->add(time);
-    messages->add(getProperty("value"));
-    
-    /*
-     ok for the moment...
-     
-     else if(type == eventType_Return)         {}
-     
-     else if(type == eventType_GotoMarker)     {}
-     else if(type == eventType_GotoLocator)    {}
-     else if(type == eventType_TempoFactor)    {}
-     
-     else if(type == eventType_Tick)           {}
-     else if(type == eventType_Beat)           {}
-     
-     else if(type == eventType_Marker)         {}
-     
-     else if(type == eventType_LoadImage)      {}
-     else if(type == eventType_ShowImage)      {}
-     else if(type == eventType_AddRegion)      {}
-     
-     */
-    
-    return *messages;
-}
-
-Polytempo_Event* Polytempo_Event::makeEvent(String address, Array<var> messages)
-{
-    Polytempo_Event *event = new Polytempo_Event();
-    event->setType(address.substring(1));
-    
-    if(messages.size()>0 && !messages[0].isString())
-    {
-        event->setProperty("time",messages[0]);
-        if(messages.size()>1 && !messages[1].isString())
-            event->setProperty("value",messages[1]);
-    }
-    
-    int i = 0;
-    while(messages.size() > i+1)
-    {
-        if(messages[i].isString())
-        {
-            // "rect" is followed by 4 numbers
-            if(messages[i] == eventPropertyString_Rect)
-            {
-                Array < var > r;
-                r.set(0,0); r.set(1,0); r.set(2,1); r.set(3,1);
-                int j = 0;
-                i++;
-                while(messages[i].isDouble() || messages[i].isInt())
-                {
-                    r.set(j++, messages[i++]);
-                }
-                event->setProperty(eventPropertyString_Rect, r);
-            }
-            // other parameters are followed by one value
-            else
-            {
-                event->setProperty(messages[i], messages[i+1]);
-                i = i + 2;
-            }
-        }
-        else
-        {
-            i++;
-        }
-    }
-    
-    return event;
-}
-
-
-

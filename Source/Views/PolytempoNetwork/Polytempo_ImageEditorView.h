@@ -25,7 +25,6 @@
 #ifndef __Polytempo_ImageEditorView__
 #define __Polytempo_ImageEditorView__
 
-//#include "../JuceLibraryCode/JuceHeader.h"
 #include "../../Scheduler/Polytempo_EventObserver.h"
 #include "../../Misc/Polytempo_Textbox.h"
 #include "../../Data/Polytempo_Score.h"

@@ -25,7 +25,7 @@
 #ifndef __Polytempo_EventDispatcher__
 #define __Polytempo_EventDispatcher__
 
-#include "Polytempo_Scheduler.h"
+#include "Polytempo_EventScheduler.h"
 #include "../Network/Polytempo_OSCSender.h"
 #include "../Preferences/Polytempo_StoredPreferences.h"
 

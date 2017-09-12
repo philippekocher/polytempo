@@ -54,7 +54,7 @@ public:
     void setText(String text);
     void setProgressbar(String text,
                         float    time,
-                        int    duration = 0);
+                        float    duration = 0);
     
     void setMaxImageZoom(float maxZoom);
     

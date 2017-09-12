@@ -25,7 +25,6 @@
 #ifndef __Polytempo_AuxiliaryView__
 #define __Polytempo_AuxiliaryView__
 
-//#include "../../JuceLibraryCode/JuceHeader.h"
 #include "../../Scheduler/Polytempo_EventObserver.h"
 #include "../../Misc/Polytempo_Textbox.h"
 #include "../../Misc/Polytempo_Button.h"

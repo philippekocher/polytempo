@@ -22,7 +22,6 @@
  
  ============================================================================== */
 
-
 #ifndef __Polytempo_CommandIDs__
 #define __Polytempo_CommandIDs__
 
@@ -42,7 +41,7 @@ namespace Polytempo_CommandIDs
         imageFwd, imageBwd,
         returnToLoc,
         returnToBeginning,
-        gotoLocator,
+        gotoTime,
         aboutWindow,
         preferencesWindow,
         fullScreen,

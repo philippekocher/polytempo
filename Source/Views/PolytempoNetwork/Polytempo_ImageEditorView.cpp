@@ -275,11 +275,11 @@ void Polytempo_ImageEditorView::update()
             regionTextbox->setVisible(true);
             
             String marker;
-            if(score->getMarkerForLocator(selectedImageEvent->getTime(), &marker))
+            if(score->getMarkerForTime(selectedImageEvent->getTime(), &marker))
                 markerTextbox->setText(marker, dontSendNotification);
             else
                 markerTextbox->reset();
-            timeTextbox->setText(Polytempo_Textbox::timeToString(selectedImageEvent->getTime()), dontSendNotification);
+            timeTextbox->setText(Polytempo_Textbox::timeToString(selectedImageEvent->getTime() * 0.001f), dontSendNotification);
             regionTextbox->setText(selectedImageEvent->getProperty(eventPropertyString_RegionID).toString(),dontSendNotification);
         }
     }
@@ -524,7 +524,7 @@ void Polytempo_ImageEditorView::addInstance()
         }
         
         event = Polytempo_Event::makeEvent(eventType_Image);
-        event->setTime(0.0f);
+        event->setTime(0);
         event->setProperty(eventPropertyString_SectionID, sectionID);
         event->setProperty(eventPropertyString_RegionID, addRegionEvents[0]->getProperty(eventPropertyString_RegionID));
         
@@ -565,11 +565,11 @@ void Polytempo_ImageEditorView::labelTextChanged(Label* label)
     else if(label == markerTextbox)
     {
         String marker = label->getTextValue().toString();
-        float locator;
+        int time;
         
-        if(score->getLocatorForMarker(marker, &locator))
+        if(score->getTimeForMarker(marker, &time))
         {
-            selectedImageEvent->setTime(locator);
+            selectedImageEvent->setTime(time);
             score->sortSection();
             score->setDirty();
         }
@@ -577,9 +577,9 @@ void Polytempo_ImageEditorView::labelTextChanged(Label* label)
     }
     else if(label == timeTextbox)
     {
-        float num = Polytempo_Textbox::stringToTime(label->getText());
+        int time = Polytempo_Textbox::stringToTime(label->getText()) * 1000.0f;
         
-        selectedImageEvent->setTime(num);
+        selectedImageEvent->setTime(time);
         score->sortSection();
         score->setDirty();
         

@@ -89,7 +89,7 @@ void Polytempo_CoordinateSystemComponent::eventNotification(Polytempo_Event *eve
 {
     if(event->getType() == eventType_Tick)
     {
-        playhead->setRectangle(Rectangle<float> (TIMEMAP_OFFSET + event->getTime() * zoomX, 0, 2.0f, (float) (getHeight())));
+        playhead->setRectangle(Rectangle<float> (TIMEMAP_OFFSET + (float)event->getValue() * zoomX, 0, 2.0f, (float) (getHeight())));
     }
 }
 

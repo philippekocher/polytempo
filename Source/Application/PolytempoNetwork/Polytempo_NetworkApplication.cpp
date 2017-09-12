@@ -24,9 +24,9 @@
 
 #include "Polytempo_NetworkApplication.h"
 
-//#include "../../JuceLibraryCode/JuceHeader.h"
 #include "../../Preferences/Polytempo_StoredPreferences.h"
-#include "../../Scheduler/Polytempo_Scheduler.h"
+#include "../../Scheduler/Polytempo_ScoreScheduler.h"
+#include "../../Scheduler/Polytempo_EventScheduler.h"
 #include "../../Scheduler/Polytempo_EventDispatcher.h"
 #include "../../Audio+Midi/Polytempo_AudioClick.h"
 #include "../../Audio+Midi/Polytempo_MidiClick.h"
@@ -53,7 +53,8 @@ void Polytempo_NetworkApplication::initialise(const String&)
     mainWindow->addKeyListener(menuBarModel->commandManager.getKeyMappings());
     
     // scheduler
-    Polytempo_Scheduler::getInstance()->setEngine(new Polytempo_NetworkEngine());
+    Polytempo_ScoreScheduler::getInstance()->setEngine(new Polytempo_NetworkEngine());
+    Polytempo_EventScheduler::getInstance()->startThread(5); // priority between 0 and 10
     
     // create network connection
     oscListener = new Polytempo_OSCListener(47522);
@@ -92,7 +93,7 @@ void Polytempo_NetworkApplication::initialise(const String&)
             if(newScore != nullptr)
             {
                 score = newScore;
-                Polytempo_Scheduler::getInstance()->setScore(score);
+                Polytempo_ScoreScheduler::getInstance()->setScore(score);
                 mainWindow->setName(scoreFile.getFileNameWithoutExtension());
     
                 if(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("fullScreen"))
@@ -105,7 +106,7 @@ void Polytempo_NetworkApplication::initialise(const String&)
     else
     {
         score = new Polytempo_Score();
-        Polytempo_Scheduler::getInstance()->setScore(score);
+        Polytempo_ScoreScheduler::getInstance()->setScore(score);
     }
 }
 
@@ -140,9 +141,10 @@ void Polytempo_NetworkApplication::shutdown()
     Polytempo_StoredPreferences::deleteInstance();
     Polytempo_AudioClick::deleteInstance();
     Polytempo_MidiClick::deleteInstance();
-    Polytempo_Scheduler::deleteInstance();
     Polytempo_NetworkSupervisor::deleteInstance();
     Polytempo_ImageManager::deleteInstance();
+    Polytempo_ScoreScheduler::deleteInstance();
+    Polytempo_EventScheduler::deleteInstance();
 }
 
 //------------------------------------------------------------------------------
@@ -167,10 +169,10 @@ static void unsavedChangesCallback(int modalResult, double customValue)
 
 void Polytempo_NetworkApplication::applicationShouldQuit()
 {
-    if(Polytempo_Scheduler::getInstance()->isRunning())
+    if(Polytempo_ScoreScheduler::getInstance()->isRunning())
     {
         quitApplication = true;
-        Polytempo_Scheduler::getInstance()->stop();
+        Polytempo_ScoreScheduler::getInstance()->stop();
         return;
         
         // after the scheduler and the visual metro will have stopped
@@ -280,7 +282,7 @@ void Polytempo_NetworkApplication::openScoreFile(File newScoreFile)
     {
         DBG("set score");
         score = newScore;
-        Polytempo_Scheduler::getInstance()->setScore(score);
+        Polytempo_ScoreScheduler::getInstance()->setScore(score);
         mainWindow->setName(scoreFile.getFileNameWithoutExtension());
 
         // add to recent files

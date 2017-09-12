@@ -345,7 +345,7 @@ void Polytempo_Sequence::buildBeatPattern()
 
 void Polytempo_Sequence::updateEvents()
 {
-    //DBG("sequence: update events");
+    DBG("sequence: update events");
     int cpIndex = 0;
     for(int i=0;i<events.size();i++)
     {
@@ -356,14 +356,14 @@ void Polytempo_Sequence::updateEvents()
         Polytempo_ControlPoint *cp1 = controlPoints[cpIndex];
         Polytempo_ControlPoint *cp2 = controlPoints[cpIndex+1];
         
-        event->setTime(Polytempo_TempoInterpolation::getTime(event->getPosition(), cp1, cp2));
+        event->setProperty(eventPropertyString_Time, Polytempo_TempoInterpolation::getTime(event->getPosition(), cp1, cp2));
         
         if(event->getType() == eventType_Beat)
         {
             event->setProperty("~sequence", sequenceIndex);
             if(event->hasProperty("value"))
             {
-                event->setProperty(eventPropertyString_Duration,Polytempo_TempoInterpolation::getTempo(event->getPosition(), cp1, cp2) / float(event->getProperty("value")));
+                event->setProperty(eventPropertyString_Duration, float(event->getValue()) / Polytempo_TempoInterpolation::getTempo(event->getPosition(), cp1, cp2));
             }
         }
     }
@@ -462,6 +462,8 @@ Polytempo_Event* Polytempo_Sequence::getOscEvent(Polytempo_Event* event)
         for(int i=1;i<tokens.size();i++) message.append(tokens[i]);
         
         oscEvent->setProperty("message", message);
+        
+        oscEvent->setSyncTime(event->getSyncTime());
         
         return oscEvent;
     }

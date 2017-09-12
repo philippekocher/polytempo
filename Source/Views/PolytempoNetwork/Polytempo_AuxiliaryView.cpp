@@ -23,7 +23,7 @@
  ============================================================================== */
 
 #include "Polytempo_AuxiliaryView.h"
-#include "../../Scheduler/Polytempo_Scheduler.h"
+#include "../../Scheduler/Polytempo_ScoreScheduler.h"
 #include "../../Scheduler/Polytempo_EventDispatcher.h"
 #include "../../Preferences/Polytempo_StoredPreferences.h"
 #include "../../Network/Polytempo_NetworkSupervisor.h"
@@ -135,7 +135,7 @@ void Polytempo_AuxiliaryView::eventNotification(Polytempo_Event *event)
     else if(event->getType() == eventType_Tick)
     {
        // update the time with every tick
-        timeTextbox->setText(Polytempo_Textbox::timeToString(event->getTime()), dontSendNotification);
+        timeTextbox->setText(Polytempo_Textbox::timeToString(event->getValue()), dontSendNotification);
     }
 }
 
@@ -149,13 +149,13 @@ void Polytempo_AuxiliaryView::labelTextChanged(Label* label)
 {
     if(label == markerTextbox)
     {
-        if(!Polytempo_Scheduler::getInstance()->gotoMarker(Polytempo_Event::makeEvent(eventType_GotoMarker, label->getTextValue().toString())))
+        if(!Polytempo_ScoreScheduler::getInstance()->gotoMarker(Polytempo_Event::makeEvent(eventType_GotoMarker, label->getTextValue().toString())))
             label->setText(markerString, dontSendNotification);
     }
     else if(label == timeTextbox)
     {
-        Polytempo_Scheduler::getInstance()->storeLocator(Polytempo_Textbox::stringToTime(label->getText())); // store locator
-        Polytempo_EventDispatcher::getInstance()->broadcastEvent(Polytempo_Event::makeEvent(eventType_GotoLocator, Polytempo_Textbox::stringToTime(label->getText())));
+        Polytempo_ScoreScheduler::getInstance()->storeLocator(Polytempo_Textbox::stringToTime(label->getText()) * 1000.0f);
+        Polytempo_EventDispatcher::getInstance()->broadcastEvent(Polytempo_Event::makeEvent(eventType_GotoTime, Polytempo_Textbox::stringToTime(label->getText())));
     }
     else if(label == tempoFactorTextbox)
     {
@@ -171,13 +171,13 @@ void Polytempo_AuxiliaryView::labelTextChanged(Label* label)
 void Polytempo_AuxiliaryView::buttonClicked(Button *button)
 {
     if(button == markerBackwards)
-        Polytempo_Scheduler::getInstance()->skipToEvent(eventType_Marker, true);
+        Polytempo_ScoreScheduler::getInstance()->skipToEvent(eventType_Marker, true);
     if(button == markerForwards)
-        Polytempo_Scheduler::getInstance()->skipToEvent(eventType_Marker, false);
+        Polytempo_ScoreScheduler::getInstance()->skipToEvent(eventType_Marker, false);
     if(button == imageBackwards)
-        Polytempo_Scheduler::getInstance()->skipToEvent(eventType_Image, true);
+        Polytempo_ScoreScheduler::getInstance()->skipToEvent(eventType_Image, true);
     if(button == imageForwards)
-        Polytempo_Scheduler::getInstance()->skipToEvent(eventType_Image, false);
+        Polytempo_ScoreScheduler::getInstance()->skipToEvent(eventType_Image, false);
 }
 
 void Polytempo_AuxiliaryView::buttonStateChanged(Button*)
