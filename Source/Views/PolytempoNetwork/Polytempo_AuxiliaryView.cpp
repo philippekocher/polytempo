@@ -80,15 +80,13 @@ void Polytempo_AuxiliaryView::paint (Graphics& g)
 	attributedPeers.append(Polytempo_NetworkSupervisor::getInstance()->getLocalName(), Font(12.0f, Font::bold));
 	attributedPeers.append(" \n", Font(22.0f, Font::plain));
 	attributedPeers.append(Polytempo_NetworkSupervisor::getInstance()->getAdapterInfo()+"\n", Font(12.0f, Font::bold));
-    
+	attributedPeers.append(" \n", Font(22.0f, Font::plain));
+	attributedPeers.append("Connected peers:\n", Font(12, Font::bold));
     HashMap < String, String >::Iterator it(*Polytempo_NetworkSupervisor::getInstance()->getPeers());
     while(it.next())
     {
 		attributedPeers.append(it.getValue(), Font(12.0f, Font::plain));
-		attributedPeers.append(" \n", Font(22.0f, Font::plain));
-		attributedPeers.append(it.getKey()+"\n", Font(12.0f, Font::plain));
-        
-    }
+	}
     
     g.drawHorizontalLine(320, 0.0f, (float)getWidth());
 	attributedPeers.draw(g, Rectangle<int>(10, 330, getWidth() - 20, 100).toFloat());
