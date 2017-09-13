@@ -11,6 +11,23 @@
 #include "Polytempo_NetworkInterfaceManager.h"
 #include "../Preferences/Polytempo_StoredPreferences.h"
 
+bool Polytempo_NetworkInterfaceManager::TrySelectIpWithFirstNumber(uint8 number)
+{
+	bool found = false;
+
+	for (Polytempo_IPAddress ip : availableIpAddresses)
+	{
+		if (ip.ipAddress.address[0] == number)
+		{
+			selectedIpAddress = ip;
+			found = true;
+			break;
+		}
+	}
+
+	return found;
+}
+
 Polytempo_NetworkInterfaceManager::Polytempo_NetworkInterfaceManager()
 {
 	selectedIpAddress = Polytempo_IPAddress();
@@ -32,23 +49,25 @@ Polytempo_NetworkInterfaceManager::Polytempo_NetworkInterfaceManager()
 		}
 	}
 	
-	if(!found)
+	if (!found)
 	{
-		for (Polytempo_IPAddress ip : availableIpAddresses)
-		{
-			if (ip.ipAddress.address[0] == 192)
-			{
-				selectedIpAddress = ip;
-				found = true;
-				break;
-			}
-		}
+		found = TrySelectIpWithFirstNumber(192);
+	}
+	
+	if (!found)
+	{
+		found = TrySelectIpWithFirstNumber(169);
 	}
 
 	if (!found)
 	{
 		if (availableIpAddresses.size() > 0)
 			selectedIpAddress = availableIpAddresses[0];
+	}
+
+	if(found)
+	{
+		Polytempo_StoredPreferences::getInstance()->getProps().setValue("selectedNetworkAdapter", selectedIpAddress.adapterName);
 	}
 }
 

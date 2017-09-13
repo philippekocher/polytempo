@@ -16,6 +16,7 @@
 class Polytempo_NetworkInterfaceManager
 {
 public:
+	bool TrySelectIpWithFirstNumber(uint8 number);
 	Polytempo_NetworkInterfaceManager();
 	~Polytempo_NetworkInterfaceManager();
 
