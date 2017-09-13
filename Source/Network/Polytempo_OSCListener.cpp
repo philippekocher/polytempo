@@ -49,13 +49,13 @@ void Polytempo_OSCListener::oscMessageReceived(const OSCMessage & message)
 {
 	String addressPattern = message.getAddressPattern().toString();
 	OSCArgument* argumentIterator = message.begin();
-//	Uuid senderId = Uuid((argumentIterator++)->getString());
-//
-//	if (senderId == Polytempo_NetworkSupervisor::getInstance()->getUniqueId())
-//		return;
 
 	if (addressPattern == "/node")
 	{
+		Uuid senderId = Uuid((argumentIterator++)->getString());		
+		if (senderId == Polytempo_NetworkSupervisor::getInstance()->getUniqueId())
+			return;
+
 		String argIp = (argumentIterator++)->getString();
 		String argName = (argumentIterator++)->getString();
 
