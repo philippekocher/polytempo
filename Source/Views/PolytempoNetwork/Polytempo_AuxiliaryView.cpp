@@ -32,10 +32,6 @@
 
 Polytempo_AuxiliaryView::Polytempo_AuxiliaryView()
 {
-    addAndMakeVisible(markerTextbox = new Polytempo_Textbox("Marker", Polytempo_Textbox::textboxType_black));
-    markerTextbox->setFont(Font (56.0f, Font::plain));
-    markerTextbox->addListener(this);
-
     addAndMakeVisible(imageBackwards = new Polytempo_Button("<<", Polytempo_Button::buttonType_black));
     imageBackwards->setConnectedEdges(Button::ConnectedOnTop | Button::ConnectedOnRight);
     imageBackwards->addListener(this);
@@ -52,6 +48,10 @@ Polytempo_AuxiliaryView::Polytempo_AuxiliaryView()
     imageForwards->setConnectedEdges(Button::ConnectedOnTop | Button::ConnectedOnLeft);
     imageForwards->addListener(this);
     
+    addAndMakeVisible(markerTextbox = new Polytempo_Textbox("Marker", Polytempo_Textbox::textboxType_black));
+    markerTextbox->setFont(Font (56.0f, Font::plain));
+    markerTextbox->addListener(this);
+
     addAndMakeVisible(timeTextbox = new Polytempo_Textbox("Time", Polytempo_Textbox::textboxType_black));
     timeTextbox->setFont(Font (24.0f, Font::plain));
     timeTextbox->addListener(this);
@@ -149,7 +149,8 @@ void Polytempo_AuxiliaryView::labelTextChanged(Label* label)
 {
     if(label == markerTextbox)
     {
-        if(!Polytempo_ScoreScheduler::getInstance()->gotoMarker(Polytempo_Event::makeEvent(eventType_GotoMarker, label->getTextValue().toString())))
+        DBG(label->getText());
+        if(!Polytempo_ScoreScheduler::getInstance()->gotoMarker(label->getText()))
             label->setText(markerString, dontSendNotification);
     }
     else if(label == timeTextbox)

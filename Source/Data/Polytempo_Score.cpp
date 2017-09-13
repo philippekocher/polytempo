@@ -308,6 +308,8 @@ Polytempo_Event* Polytempo_Score::getFirstEvent()
 
 bool Polytempo_Score::getTimeForMarker(String marker, int *time)
 {
+    if(currentSectionIndex < 0) return false;
+    
     for(int i=0;i<sections[currentSectionIndex]->events.size();i++)
     {
         Polytempo_Event *event = sections[currentSectionIndex]->events[i];

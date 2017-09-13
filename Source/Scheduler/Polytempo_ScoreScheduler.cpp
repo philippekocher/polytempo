@@ -141,12 +141,17 @@ void Polytempo_ScoreScheduler::skipToEvent(Polytempo_EventType type, bool backwa
 
 bool Polytempo_ScoreScheduler::gotoMarker(Polytempo_Event *event, bool storeLocator)
 {
+    return gotoMarker(event->getProperty("value"), storeLocator);
+}
+
+bool Polytempo_ScoreScheduler::gotoMarker(String marker, bool storeLocator)
+{
     if(!score) return false;
     
     //DBG("goto marker "<<event->getProperty("value").toString());
     int time;
     
-    if(score->getTimeForMarker(event->getProperty("value"), &time))
+    if(score->getTimeForMarker(marker, &time))
     {
         if(storeLocator)
         {
@@ -163,11 +168,14 @@ bool Polytempo_ScoreScheduler::gotoMarker(Polytempo_Event *event, bool storeLoca
 
 void Polytempo_ScoreScheduler::gotoTime(Polytempo_Event *event)
 {
+    gotoTime((float)event->getProperty("value") * 1000.0f);
+}
+
+void Polytempo_ScoreScheduler::gotoTime(int time)
+{
     if(!score) return;
     if(engine->isRunning() && !engine->isPausing())  stop();
     
-    //DBG("goto time "<<event->getProperty("value").toString());
-    int time = (float)event->getProperty("value") * 1000.0f;
     engine->setScoreTime(time);
     
     // update locator in all components
@@ -209,18 +217,18 @@ void Polytempo_ScoreScheduler::setScore(Polytempo_Score* theScore)
     
     // set default section
     score->setSection();
-    Polytempo_EventScheduler::getInstance()->scheduleScoreEvent(Polytempo_Event::makeEvent(eventType_Ready));
+    Polytempo_EventScheduler::getInstance()->scheduleEvent(Polytempo_Event::makeEvent(eventType_Ready));
 
     // goto beginning of score (only local);
     if(score->getFirstEvent())
     {
         storeLocator(score->getFirstEvent()->getTime());
-        gotoTime(Polytempo_Event::makeEvent(eventType_GotoTime, score->getFirstEvent()->getTime() * 0.001f));
+        gotoTime(score->getFirstEvent()->getTime());
     }
     else
     {
         storeLocator(0);
-        gotoTime(Polytempo_Event::makeEvent(eventType_GotoTime, 0));
+        gotoTime(0);
     }
 }
 
