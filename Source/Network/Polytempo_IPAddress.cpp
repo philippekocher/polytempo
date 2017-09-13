@@ -24,12 +24,14 @@ Polytempo_IPAddress::Polytempo_IPAddress() noexcept
 {
 	ipAddress = IPAddress();
 	subnetMask = IPAddress();
+	adapterName = "";
 }
 
-Polytempo_IPAddress::Polytempo_IPAddress(IPAddress address, IPAddress mask)
+Polytempo_IPAddress::Polytempo_IPAddress(IPAddress ipAdress, IPAddress subnetMask, String adapterName)
 {
-	ipAddress = address;
-	subnetMask = mask;
+	this->ipAddress = ipAdress;
+	this->subnetMask = subnetMask;
+	this->adapterName = adapterName;
 }
 
 bool Polytempo_IPAddress::operator== (const Polytempo_IPAddress& other) const noexcept
@@ -42,7 +44,7 @@ bool Polytempo_IPAddress::operator!= (const Polytempo_IPAddress& other) const no
 	return !operator== (other);
 }
 
-Polytempo_IPAddress Polytempo_IPAddress::local() noexcept { return Polytempo_IPAddress(IPAddress::local(), IPAddress(255, 0, 0, 0)); }
+Polytempo_IPAddress Polytempo_IPAddress::local() noexcept { return Polytempo_IPAddress(IPAddress::local(), IPAddress(255, 0, 0, 0), "Localhost"); }
 
 String Polytempo_IPAddress::addressDescription()
 {
@@ -127,7 +129,8 @@ void Polytempo_IPAddress::findAllAddresses(Array<Polytempo_IPAddress>& result)
 	{
 		for (PIP_ADAPTER_INFO adapter = gah.adapterInfo; adapter != nullptr; adapter = adapter->Next)
 		{
-			Polytempo_IPAddress ip(IPAddress(String(adapter->IpAddressList.IpAddress.String)), IPAddress(String(adapter->IpAddressList.IpMask.String)));
+			String name(adapter->AdapterName);
+			Polytempo_IPAddress ip(IPAddress(String(adapter->IpAddressList.IpAddress.String)), IPAddress(String(adapter->IpAddressList.IpMask.String)), name);
 
 			if (ip.ipAddress != IPAddress::any())
 				result.addIfNotAlreadyThere(ip);

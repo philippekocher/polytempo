@@ -17,13 +17,13 @@ Polytempo_NetworkInterfaceManager::Polytempo_NetworkInterfaceManager()
 
 	updateAddresses();
 
-	String lastAddress = Polytempo_StoredPreferences::getInstance()->getProps().getValue("selectedIP", String::empty);
+	String lastNetworkAdapter = Polytempo_StoredPreferences::getInstance()->getProps().getValue("selectedNetworkAdapter", String::empty);
 	bool found = false;
-	if (lastAddress != String::empty)
+	if (lastNetworkAdapter != String::empty)
 	{
 		for (Polytempo_IPAddress ip : availableIpAddresses)
 		{
-			if (ip.ipAddress.toString() == lastAddress)
+			if (ip.adapterName == lastNetworkAdapter)
 			{
 				selectedIpAddress = ip;
 				found = true;
@@ -77,7 +77,7 @@ void Polytempo_NetworkInterfaceManager::setSelectedIpAddress(Polytempo_IPAddress
 	if (availableIpAddresses.contains(ip))
 	{
 		selectedIpAddress = ip;
-		Polytempo_StoredPreferences::getInstance()->getProps().setValue("selectedIP", ip.ipAddress.toString());
+		Polytempo_StoredPreferences::getInstance()->getProps().setValue("selectedNetworkAdapter", ip.adapterName);
 	}
 }
 
