@@ -115,7 +115,7 @@ void Polytempo_NetworkEngine::run()
 {
     //DBG("run");
     int interval = 200;
-    int lookAhead = 2000;
+    int lookAhead = 200;
     int syncTime;
     
     Polytempo_Event *nextScoreEvent = score->getNextEvent();
