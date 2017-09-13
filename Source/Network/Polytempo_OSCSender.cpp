@@ -79,7 +79,6 @@ void Polytempo_OSCSender::broadcastEventAsMessage(Polytempo_Event *event)
 void Polytempo_OSCSender::sendEventAsMessage(Polytempo_Event *event, Polytempo_Socket *socket)
 {
 	OSCMessage oscMessage = OSCMessage(OSCAddressPattern(event->getOscAddressFromType()));
-//	oscMessage.addString(Polytempo_NetworkSupervisor::getInstance()->getUniqueId().toString());
     for (var message : event->getOscMessageFromProperties())
 	{
 		if (message.isInt())          oscMessage.addInt32(int(message));
@@ -93,7 +92,6 @@ void Polytempo_OSCSender::sendEventAsMessage(Polytempo_Event *event, Polytempo_S
 void Polytempo_OSCSender::sendOscEventAsMessage(Polytempo_Event *event)
 {
 	OSCMessage oscMessage = OSCMessage(OSCAddressPattern(event->getProperty("address").toString()));
-//	oscMessage.addString(Polytempo_NetworkSupervisor::getInstance()->getUniqueId().toString());
 	var message = event->getProperty("message");
 	Array < var > *messageArray;
 
