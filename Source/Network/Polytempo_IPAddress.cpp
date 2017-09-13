@@ -140,12 +140,12 @@ void Polytempo_IPAddress::findAllAddresses(Array<Polytempo_IPAddress>& result)
 
 
 #else
-static void addAddress(const sockaddr_in* addr_in, const sockaddr_in* subnet_in, Array<Polytempo_IPAddress>& result)
+static void addAddress(const sockaddr_in* addr_in, const sockaddr_in* subnet_in, String ifName, Array<Polytempo_IPAddress>& result)
 {
 	in_addr_t addr = addr_in->sin_addr.s_addr;
     in_addr_t subnet = subnet_in->sin_addr.s_addr;
     if (addr != INADDR_NONE)
-		result.addIfNotAlreadyThere(Polytempo_IPAddress(IPAddress(ntohl(addr)), IPAddress(ntohl(subnet))));
+		result.addIfNotAlreadyThere(Polytempo_IPAddress(IPAddress(ntohl(addr)), IPAddress(ntohl(subnet)), ifName));
 }
 
 static void findIPAddresses(int sock, Array<Polytempo_IPAddress>& result)
@@ -181,8 +181,9 @@ static void findIPAddresses(int sock, Array<Polytempo_IPAddress>& result)
                 printf("Could not get the subnet mask. Errorcode : %d %s\n", errno,
                        strerror(errno));
             }
-        
-			addAddress((const sockaddr_in*)&cfg.ifc_req->ifr_addr, (const sockaddr_in*)&conf.ifr_addr, result);
+            
+            String ifName = String(conf.ifr_name);
+			addAddress((const sockaddr_in*)&cfg.ifc_req->ifr_addr, (const sockaddr_in*)&conf.ifr_addr, ifName, result);
         }
 		cfg.ifc_len -= IFNAMSIZ + cfg.ifc_req->ifr_addr.sa_len;
 		cfg.ifc_buf += IFNAMSIZ + cfg.ifc_req->ifr_addr.sa_len;
