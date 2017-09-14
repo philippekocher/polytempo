@@ -29,6 +29,7 @@ Polytempo_Event::Polytempo_Event(Polytempo_EventType t)
 {
     type = t;
     time = 0;
+    syncTime = 0;
     position = 0;
     
     properties = new NamedValueSet();
@@ -41,7 +42,7 @@ Polytempo_Event::Polytempo_Event(const Polytempo_Event& event)
     syncTime = event.syncTime;
     position = event.position;
     
-    properties = event.properties;
+    properties = new NamedValueSet(*event.properties);
 }
 
 Polytempo_Event::~Polytempo_Event()
@@ -338,7 +339,7 @@ void Polytempo_Event::setProperty(String key, var value)
 
 var Polytempo_Event::getProperty(String key)
 {
-    if(properties)   return (*properties)[key];
+    if(properties)   return var((*properties)[key]);
     else             return var::null;
 }
 

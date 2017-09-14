@@ -103,12 +103,13 @@ void Polytempo_NetworkEngine::setScoreTime(int time)
     Array <class Polytempo_Event*> events; // the events to execute immediately
     score->setTime(time, &events, &waitBeforeStart);
     Polytempo_EventScheduler::getInstance()->scheduleEvent(Polytempo_Event::makeEvent(eventType_ClearAll));
+    
     for(int i=0;i<events.size();i++)
     {
         Polytempo_EventScheduler::getInstance()->scheduleScoreEvent(events[i]);
     }
     
-    lastDownbeat = time * 0.001f;
+    lastDownbeat = time;
 }
 
 void Polytempo_NetworkEngine::run()
@@ -145,7 +146,7 @@ void Polytempo_NetworkEngine::run()
             Polytempo_EventScheduler::getInstance()->scheduleScoreEvent(nextScoreEvent);
             
             if(nextScoreEvent->getType() == eventType_Beat && int(nextScoreEvent->getProperty(eventPropertyString_Pattern)) < 20)
-                lastDownbeat = nextScoreEvent->getTime() * 0.001f;
+                lastDownbeat = nextScoreEvent->getTime();
             
             // get next event
             nextScoreEvent = score->getNextEvent();
@@ -157,13 +158,15 @@ void Polytempo_NetworkEngine::run()
         
         wait(interval);
     }
+    
+    delete schedulerTick;
 
     /*
        return to beginning of the current bar (last downbeat)
        this must be called here to make sure that the engine thread really
        has finished.
     */
-    if(!killed) scoreScheduler->gotoTime(Polytempo_Event::makeEvent(eventType_GotoTime, lastDownbeat));
+    if(!killed) scoreScheduler->gotoTime(lastDownbeat);
 }
 #endif
 

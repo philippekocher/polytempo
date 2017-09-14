@@ -118,7 +118,7 @@ public:
     
 private:
     float waitBeforeStart;
-    float lastDownbeat;
+    int   lastDownbeat;
 //    Polytempo_Event *currentMarker;
 };
 

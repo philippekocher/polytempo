@@ -34,13 +34,14 @@ void Polytempo_EventDispatcher::setBroadcastSender(Polytempo_OSCSender *sender)
 
 void Polytempo_EventDispatcher::broadcastEvent(Polytempo_Event *event)
 {
-    // direct connection
-    Polytempo_EventScheduler::getInstance()->scheduleEvent(event);
-    
     // network broadcast
     if(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("broadcastSchedulerCommands") &&
        oscSender != nullptr)
     {
         oscSender->broadcastEventAsMessage(event);
     }
+
+    // direct connection
+    Polytempo_EventScheduler::getInstance()->scheduleEvent(event); // the scheduler deletes the event
+    
 }

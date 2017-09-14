@@ -85,6 +85,8 @@ Polytempo_ImageEditorView::Polytempo_ImageEditorView()
     addAndMakeVisible(hTextbox = new Polytempo_Textbox("Height"));
     hTextbox->setFont(Font (16.0f, Font::plain));
     hTextbox->addListener(this);
+    
+    selectedItem = nullptr;
 }
 
 Polytempo_ImageEditorView::~Polytempo_ImageEditorView()
