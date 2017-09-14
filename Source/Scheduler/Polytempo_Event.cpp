@@ -29,6 +29,7 @@ Polytempo_Event::Polytempo_Event(Polytempo_EventType t)
 {
     type = t;
     time = 0;
+    syncTime = 0;
     position = 0;
     
     properties = new NamedValueSet();
