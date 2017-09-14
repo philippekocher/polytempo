@@ -54,11 +54,6 @@ void Polytempo_GraphicsAnnotationManagerView::paint (Graphics& g)
 
 void Polytempo_GraphicsAnnotationManagerView::resized()
 {
-    // This method is where you should set the bounds of any child
-    // components that your component contains..
-
-	//annotationList->setBounds(getBounds());
-
 	btnLoad->setBounds(0, 0, getLocalBounds().getWidth(), getLocalBounds().getHeight() / 4);
 	btnSave->setBounds(0, btnLoad->getBottom(), getLocalBounds().getWidth(), getLocalBounds().getHeight() / 4);
 	btnEdit->setBounds(0, btnSave->getBottom(), getWidth(), getHeight() - btnSave->getBottom());
@@ -76,6 +71,6 @@ void Polytempo_GraphicsAnnotationManagerView::buttonClicked(Button* source)
 	}
 	else if(source == btnEdit)
 	{
-		// Todo
+		Polytempo_GraphicsAnnotationManager::getInstance()->showSettingsDialog();
 	}
 }

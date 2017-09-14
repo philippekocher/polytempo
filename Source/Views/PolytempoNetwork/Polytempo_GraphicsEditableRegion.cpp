@@ -307,7 +307,7 @@ void Polytempo_GraphicsEditableRegion::buttonClicked(Button* source)
 	}
 	else if(source == buttonSettings)
 	{
-		Polytempo_GraphicsAnnotationSettingsDialog::show();
+		Polytempo_GraphicsAnnotationManager::getInstance()->showSettingsDialog();
 	}
 }
 

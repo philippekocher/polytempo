@@ -23,6 +23,7 @@ public:
 	void addAnnotation(Polytempo_GraphicsAnnotation annotation);
 	void saveAll() const;
 	void initialize(String folder, String scoreName);
+	void showSettingsDialog();
 
 private:
 	OwnedArray<Polytempo_GraphicsAnnotationSet> annotationSets;

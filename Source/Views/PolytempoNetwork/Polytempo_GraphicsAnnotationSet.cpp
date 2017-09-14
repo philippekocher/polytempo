@@ -10,9 +10,20 @@
 
 #include "Polytempo_GraphicsAnnotationSet.h"
 
-Polytempo_GraphicsAnnotationSet::Polytempo_GraphicsAnnotationSet(String filename) : filename(filename)
+Polytempo_GraphicsAnnotationSet::Polytempo_GraphicsAnnotationSet(String filename)
 {
-	LoadFromFile();
+	File f = File(filename);
+	filePath = f.getParentDirectory().getFullPathName();
+
+	String fn = f.getFileNameWithoutExtension();
+	int index = fn.lastIndexOf("_");
+	if (index < 0 || index >= fn.length()-1)
+		return;
+	
+	scoreName = fn.substring(0, index);
+	annotationLayerName = fn.substring(index + 1);
+
+	loadFromFile();
 }
 
 Polytempo_GraphicsAnnotationSet::~Polytempo_GraphicsAnnotationSet()
@@ -33,9 +44,9 @@ void Polytempo_GraphicsAnnotationSet::addAnnotation(Polytempo_GraphicsAnnotation
 	annotations.add(new Polytempo_GraphicsAnnotation(annotation));
 }
 
-void Polytempo_GraphicsAnnotationSet::LoadFromFile()
+void Polytempo_GraphicsAnnotationSet::loadFromFile()
 {
-	File file = File(filename);
+	File file = File(getFileName());
 	if (!file.exists())
 		return;
 
@@ -75,9 +86,14 @@ void Polytempo_GraphicsAnnotationSet::LoadFromFile()
 	}
 }
 
-void Polytempo_GraphicsAnnotationSet::SaveToFile()
+String Polytempo_GraphicsAnnotationSet::getFileName(String newLayerName) const
 {
-	File file = File(filename);
+	return filePath + "\\" + scoreName + "_" + (newLayerName.isEmpty()?annotationLayerName:newLayerName) + ".xml";
+}
+
+bool Polytempo_GraphicsAnnotationSet::SaveToFile()
+{
+	File file = File(getFileName());
 	ScopedPointer<XmlElement> xmlMain = new XmlElement(XML_TAG_ROOT);
 	xmlMain->setAttribute(XML_ATTRIBUTE_SCORENAME, scoreName);
 	xmlMain->setAttribute(XML_ATTRIBUTE_LAYERNAME, annotationLayerName);
@@ -100,10 +116,22 @@ void Polytempo_GraphicsAnnotationSet::SaveToFile()
 
 	String xmlDocStr = xmlMain->createDocument("");
 	file.deleteFile();
-	file.create();
-	file.appendText(xmlDocStr.toWideCharPointer());
+	Result result = file.create();
+	if (result.failed())
+	{
+		xmlMain->deleteAllChildElements();
+		return false;
+	}
+
+	bool ok = file.appendText(xmlDocStr.toWideCharPointer());
+	if (!ok)
+	{
+		xmlMain->deleteAllChildElements();
+		return false;
+	}
 
 	xmlMain->deleteAllChildElements();
+	return true;
 }
 
 String Polytempo_GraphicsAnnotationSet::getScoreName() const
@@ -119,4 +147,27 @@ String Polytempo_GraphicsAnnotationSet::getAnnotationLayerName() const
 bool Polytempo_GraphicsAnnotationSet::getShow() const
 {
 	return show;
+}
+
+bool Polytempo_GraphicsAnnotationSet::setAnnotationLayerName(String newLayerName)
+{
+	if (newLayerName.contains("_"))
+		return false;
+
+	String originalFileName = getFileName();
+	String newFileName = getFileName(newLayerName);
+	if(File(newFileName).exists())
+	{
+		return false;
+	}
+
+	annotationLayerName = newLayerName;
+	bool ok = SaveToFile();
+	if (!ok)
+	{
+		return false;
+	}
+
+	File(originalFileName).deleteFile();
+	return true;
 }

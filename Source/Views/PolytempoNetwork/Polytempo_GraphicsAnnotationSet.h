@@ -37,16 +37,17 @@ public:
 	void getAnnotationsForImage(String imageId, OwnedArray<Polytempo_GraphicsAnnotation>* pAnnotations);
 	void addAnnotation(Polytempo_GraphicsAnnotation annotation);
 
-	void SaveToFile();
+	bool SaveToFile();
 	String getScoreName() const;
 	String getAnnotationLayerName() const;
 	bool getShow() const;
+	bool setAnnotationLayerName(String newLayerName);
 
 private:
-	void LoadFromFile();
-	
+	void loadFromFile();
+	String getFileName(String newLayerName = String::empty) const;
 	OwnedArray<Polytempo_GraphicsAnnotation> annotations;
-	String filename;
+	String filePath;
 	String scoreName;
 	String annotationLayerName;
 	bool show;

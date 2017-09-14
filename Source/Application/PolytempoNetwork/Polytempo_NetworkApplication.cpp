@@ -283,16 +283,8 @@ void Polytempo_NetworkApplication::openScoreFile(File newScoreFile)
     if(newScore != nullptr)
     {
 		// load annotations
-		String name;
-    	for(Polytempo_Event* e : newScore->getInitSection()->events)
-    	{
-			if (e->hasProperty("name"))
-			{
-				name = e->getProperty("name");
-				break;
-			}
-    	}
-
+		String name = scoreFile.getFileNameWithoutExtension();
+    	
 		Polytempo_GraphicsAnnotationManager::getInstance()->initialize(scoreFile.getParentDirectory().getFullPathName(), name);
 
 		DBG("set score");

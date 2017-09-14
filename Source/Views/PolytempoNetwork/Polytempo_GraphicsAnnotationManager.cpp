@@ -9,6 +9,7 @@
 */
 
 #include "Polytempo_GraphicsAnnotationManager.h"
+#include "Polytempo_GraphicsAnnotationSettingsDialog.h"
 
 juce_ImplementSingleton(Polytempo_GraphicsAnnotationManager)
 
@@ -26,7 +27,10 @@ void Polytempo_GraphicsAnnotationManager::getAnnotationsForImage(String imageId,
 void Polytempo_GraphicsAnnotationManager::addAnnotation(Polytempo_GraphicsAnnotation annotation)
 {
 	if (annotationSets.isEmpty())
-		annotationSets.add(new Polytempo_GraphicsAnnotationSet(currentDirectory->getFullPathName() + "//" + currentScoreName + "_" + "default.xml"));
+	{
+		Polytempo_GraphicsAnnotationSet* pSet = new Polytempo_GraphicsAnnotationSet(currentDirectory->getFullPathName() + "//" + currentScoreName + "_" + "Default.xml");
+		annotationSets.add(pSet);
+	}
 
 	annotationSets[annotationSets.size()-1]->addAnnotation(annotation);
 }
@@ -62,4 +66,9 @@ void Polytempo_GraphicsAnnotationManager::initialize(String folder, String score
 	}
 
 	sendChangeMessage();
+}
+
+void Polytempo_GraphicsAnnotationManager::showSettingsDialog()
+{
+	Polytempo_GraphicsAnnotationSettingsDialog::show(&annotationSets);
 }
