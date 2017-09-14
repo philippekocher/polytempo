@@ -345,7 +345,6 @@ Polytempo_Score_Section* Polytempo_Score::getInitSection()
 
 OwnedArray < Polytempo_Event >* Polytempo_Score::getInitEvents()
 {
-    //if(currentSectionIndex == -1) return nullptr;
     return &initSection->events;
 }
 

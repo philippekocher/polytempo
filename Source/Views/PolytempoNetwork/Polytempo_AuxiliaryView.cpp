@@ -137,6 +137,11 @@ void Polytempo_AuxiliaryView::eventNotification(Polytempo_Event *event)
        // update the time with every tick
         timeTextbox->setText(Polytempo_Textbox::timeToString(event->getValue()), dontSendNotification);
     }
+    else if(event->getType() == eventType_DeleteAll)
+    {
+        markerTextbox->reset();
+        tempoFactorTextbox->reset();
+    }
 }
 
 void Polytempo_AuxiliaryView::editorShown (Label* label, TextEditor&)
