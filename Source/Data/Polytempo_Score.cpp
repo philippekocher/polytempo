@@ -302,6 +302,8 @@ Polytempo_Event* Polytempo_Score::getFirstEvent()
 
 bool Polytempo_Score::getTimeForMarker(String marker, int *time)
 {
+    if(currentSectionIndex < 0) return false;
+    
     for(int i=0;i<sections[currentSectionIndex]->events.size();i++)
     {
         Polytempo_Event *event = sections[currentSectionIndex]->events[i];
@@ -335,9 +337,9 @@ Polytempo_Score_Section* Polytempo_Score::getInitSection()
     return initSection;
 }
 
-OwnedArray < Polytempo_Event >& Polytempo_Score::getInitEvents()
+OwnedArray < Polytempo_Event >* Polytempo_Score::getInitEvents()
 {
-    return initSection->events;
+    return &initSection->events;
 }
 
 Array<Polytempo_Event*> Polytempo_Score::getEvents(Polytempo_EventType type)

@@ -39,10 +39,10 @@ public:
     /* schedule events
      --------------------------------------- */
 
-    void scheduleScoreEvent(Polytempo_Event *event, bool useCopy = true);
+    void scheduleScoreEvent(Polytempo_Event *event);
     void deletePendingScoreEvents();
 
-    void scheduleEvent(Polytempo_Event *event);
+    void scheduleEvent(Polytempo_Event *event, bool deleteAfterUsage = true);
 
     /* thread
      --------------------------------------- */
@@ -56,8 +56,8 @@ private:
     void notify(Polytempo_Event* event);
     
     Array < class Polytempo_EventObserver * > observers;
-    OwnedArray < class Polytempo_Event > scheduledScoreEvents;
-    OwnedArray < class Polytempo_Event > scheduledEvents;
+    Array < Polytempo_Event* > scheduledScoreEvents;
+    Array < Polytempo_Event* > scheduledEvents;
     bool deleteScoreEvents = false;
 
 };

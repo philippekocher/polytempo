@@ -54,8 +54,10 @@ public:
     void returnToLocator();
     void returnToBeginning();
     bool gotoMarker(Polytempo_Event *event, bool storeLocator = true);
+    bool gotoMarker(String marker, bool storeLocator = true);
     void skipToEvent(Polytempo_EventType type, bool backwards = false);
     void gotoTime(Polytempo_Event *event);
+    void gotoTime(int time);
     void storeLocator(int loc);
     void setTempoFactor(Polytempo_Event *event);
     void executeInit();

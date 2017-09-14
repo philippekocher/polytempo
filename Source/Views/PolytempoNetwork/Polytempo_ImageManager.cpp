@@ -70,24 +70,23 @@ bool Polytempo_ImageManager::loadImage(Polytempo_Event *event)
     String url(event->getProperty(eventPropertyString_URL).toString());
     File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("scoreFileDirectory"));
     Image* image = new Image(ImageFileFormat::loadFrom(directory.getChildFile(url)));
-    bool success = false;
     
     if(*image == Image::null)
     {
         Polytempo_Alert::show("Error", "Can't open file:\n" + directory.getChildFile(url).getFullPathName());
+        delete image;
+        return false;
     }
     else
     {
         delete imageMap.getReference(imageID); // delete the image previously stored under this ID
         
-        Image* image1 = new Image(image->rescaled(image->getWidth() / 2, image->getHeight() / 2));
         loadImageEventMap.set(imageID, event);
-        imageMap.set(imageID, image1);
+        imageMap.set(imageID, image);
         
-        success = true;
+        return true;
     }
-    delete image;
-    return success;
+    return false;
 }
 
 bool Polytempo_ImageManager::replaceImage(var imageID, String url)
@@ -110,8 +109,7 @@ bool Polytempo_ImageManager::replaceImage(var imageID, String url)
             Polytempo_Event *event = loadImageEventMap[imageID];
             event->setProperty(eventPropertyString_URL, url);
 
-            Image* image1 = new Image(image->rescaled(image->getWidth() / 2, image->getHeight() / 2));
-            imageMap.set(imageID, image1);
+            imageMap.set(imageID, image);
   
             delete image;
             return true;

@@ -170,7 +170,7 @@ private:
     int                 syncTime;  // in miliseconds
     Rational            position;
 
-    NamedValueSet *properties;    
+    ScopedPointer < NamedValueSet > properties;
 };
 
 

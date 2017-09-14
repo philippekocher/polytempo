@@ -43,7 +43,7 @@ juce_ImplementSingleton(Polytempo_EventScheduler);
 #pragma mark -
 #pragma mark schedule events
 
-void Polytempo_EventScheduler::scheduleScoreEvent(Polytempo_Event *event, bool useCopy)
+void Polytempo_EventScheduler::scheduleScoreEvent(Polytempo_Event *event)
 {
     if(event == nullptr) return;
     if(event->getType() == eventType_None) return;
@@ -54,8 +54,7 @@ void Polytempo_EventScheduler::scheduleScoreEvent(Polytempo_Event *event, bool u
     }
     else
     {
-        if(useCopy) scheduledScoreEvents.add(new Polytempo_Event(*event)); // get a copy
-        else        scheduledScoreEvents.add(event);
+        scheduledScoreEvents.add(event);
     }
     // DBG("scheduled score events: "<<scheduledScoreEvents.size());
 }
@@ -65,13 +64,16 @@ void Polytempo_EventScheduler::deletePendingScoreEvents()
     deleteScoreEvents = true;
 }
 
-void Polytempo_EventScheduler::scheduleEvent(Polytempo_Event *event)
+void Polytempo_EventScheduler::scheduleEvent(Polytempo_Event *event, bool deleteAfterUsage)
 {
     if(event == nullptr) return;
     if(event->getType() == eventType_None) return;
     
     if(event->getSyncTime() <= Time::getMillisecondCounter())
+    {
         notify(event);
+        delete event;
+    }
     else
     {
         scheduledEvents.add(event);
@@ -114,6 +116,7 @@ void Polytempo_EventScheduler::run()
             if(event->getSyncTime() <= currentSyncTime)
             {
                 notify(event);
+                delete event;
                 scheduledEvents.remove(j);
             }
             else ++j;
