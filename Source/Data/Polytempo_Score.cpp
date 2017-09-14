@@ -343,9 +343,10 @@ Polytempo_Score_Section* Polytempo_Score::getInitSection()
     return initSection;
 }
 
-OwnedArray < Polytempo_Event >& Polytempo_Score::getInitEvents()
+OwnedArray < Polytempo_Event >* Polytempo_Score::getInitEvents()
 {
-    return initSection->events;
+    //if(currentSectionIndex == -1) return nullptr;
+    return &initSection->events;
 }
 
 Array<Polytempo_Event*> Polytempo_Score::getEvents(Polytempo_EventType type)

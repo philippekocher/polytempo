@@ -196,10 +196,15 @@ void Polytempo_ScoreScheduler::setTempoFactor(Polytempo_Event *event)
 
 void Polytempo_ScoreScheduler::executeInit()
 {
-    OwnedArray < Polytempo_Event >& initEvents = score->getInitEvents();
-    for(int i=0;i<initEvents.size();i++)
+    if(!score) return;
+    
+    OwnedArray < Polytempo_Event >* initEvents = score->getInitEvents();
+    if(initEvents != nullptr)
     {
-        Polytempo_EventScheduler::getInstance()->scheduleScoreEvent(initEvents.getUnchecked(i));
+        for(int i=0;i<initEvents->size();i++)
+        {
+            Polytempo_EventScheduler::getInstance()->scheduleScoreEvent(initEvents->getUnchecked(i));
+        }
     }
 }
 
