@@ -78,6 +78,7 @@ public:
         setJustificationType(Justification::centredLeft);
         setEditable(true, true, false);
         setMinimumHorizontalScale(0.1f);
+        inputRestriction = String();
         reset();
         
         switch(type)
@@ -152,10 +153,10 @@ public:
     }
     
 private:
-    String inputRestriction = String::empty;
+    String inputRestriction = String();
     Label *textboxLabel;
-    float numericalRangeMin;
-    float numericalRangeMax;
+    float numericalRangeMin = 0.0f;
+    float numericalRangeMax = 0.0f;
 };
 
 
