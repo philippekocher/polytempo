@@ -72,10 +72,23 @@ void Polytempo_OSCListener::oscMessageReceived(const OSCMessage & message)
 		if ((*argumentIterator).isString())
         {
             String filePath(argumentIterator->getString());
-            if(filePath.startsWithChar (File::separator))
+            if(filePath.startsWithChar(File::separator) ||
+               filePath.startsWithChar('~'))
                 app->openScoreFilePath(argumentIterator->getString());
         }
 	}
+    else if (addressPattern == "/fullScreen")
+    {
+        Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
+
+        Polytempo_NetworkWindow *window = app->getMainWindow();
+        if (argumentIterator != message.end() && (*argumentIterator).isInt32())
+        {
+            if (argumentIterator->getInt32() > 0) window->setFullScreen(true);
+            else                                  window->setFullScreen(false);
+        }
+        else window->setFullScreen(true);
+    }
 #endif
 	else
 	{

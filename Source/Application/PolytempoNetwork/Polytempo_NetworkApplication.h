@@ -51,6 +51,7 @@ public:
     void anotherInstanceStarted(const String& commandLine);
     
     Polytempo_Score* getScore() { return score; };
+    Polytempo_NetworkWindow* getMainWindow() { return mainWindow; }
 
     void openFileDialog();
 
