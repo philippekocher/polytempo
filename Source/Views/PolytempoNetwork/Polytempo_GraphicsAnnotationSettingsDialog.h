@@ -19,6 +19,8 @@
 class Polytempo_GraphicsAnnotationSettingsDialog    : public Component, public TableListBoxModel
 {
 public:
+	static void show(OwnedArray < Polytempo_GraphicsAnnotationSet>* pAnnotationSet);
+
 	Polytempo_GraphicsAnnotationSettingsDialog(OwnedArray<Polytempo_GraphicsAnnotationSet>* pAnnotationSet);
     ~Polytempo_GraphicsAnnotationSettingsDialog();
 
@@ -31,20 +33,13 @@ public:
 	bool setShowInfo(int row, bool state);
 	bool getEditInfo(int row) const;
 	bool setEditInfo(int row, bool state) const;
-	Component* refreshComponentForCell(int rowNumber, int columnId, bool, Component* existingComponentToUpdate) override;
-
-	// This is overloaded from TableListBoxModel, and should fill in the background of the whole row
-	void paintRowBackground(Graphics& g, int rowNumber, int /*width*/, int /*height*/, bool rowIsSelected) override;
-
-	// This is overloaded from TableListBoxModel, and must paint any cells that aren't using custom
-	// components.
-	void paintCell(Graphics& g, int rowNumber, int columnId,
-		int width, int height, bool /*rowIsSelected*/) override;
-	
-	static void show(OwnedArray < Polytempo_GraphicsAnnotationSet>* pAnnotationSet);
 	TableListBox* getTable();
 
-	private:
+	Component* refreshComponentForCell(int rowNumber, int columnId, bool, Component* existingComponentToUpdate) override;
+	void paintRowBackground(Graphics& g, int rowNumber, int /*width*/, int /*height*/, bool rowIsSelected) override;
+	void paintCell(Graphics& g, int /*rowNumber*/, int /*columnId*/, int width, int height, bool /*rowIsSelected*/) override;
+		
+private:
 	int GetNumberOfEditableLayers(int exceptIndex) const;
 
 private:

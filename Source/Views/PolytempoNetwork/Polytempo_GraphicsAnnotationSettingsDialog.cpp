@@ -15,18 +15,14 @@
 #define COLUMN_ID_SHOW 1
 #define COLUMN_ID_EDIT 2
 
-//==============================================================================
-// This is a custom Label component, which we use for the table's editable text columns.
+
 class ToggleColumnCustomComponent : public Component,
 	private ButtonListener
 {
 public:
 	ToggleColumnCustomComponent(Polytempo_GraphicsAnnotationSettingsDialog& td) : owner(td)
 	{
-		// just put a combo box inside this component
 		addAndMakeVisible(checkBox);
-		
-		// when the combo is changed, we'll get a callback.
 		checkBox.addListener(this);
 		checkBox.setWantsKeyboardFocus(false);
 	}
@@ -36,7 +32,6 @@ public:
 		checkBox.setBoundsInset(BorderSize<int>(2));
 	}
 
-	// Our demo code will call this when we may need to update our contents
 	void setRowAndColumn(int newRow, int newColumn)
 	{
 		row = newRow;
@@ -49,7 +44,7 @@ public:
 		checkBox.repaint();
 	}
 
-	void buttonClicked(Button* btn) override
+	void buttonClicked(Button*) override
 	{
 		if(columnId == COLUMN_ID_SHOW)
 			owner.setShowInfo(row, checkBox.getToggleState());
@@ -70,15 +65,12 @@ class EditableTextCustomComponent : public Label
 public:
 	EditableTextCustomComponent(Polytempo_GraphicsAnnotationSettingsDialog& td) : owner(td)
 	{
-		// double click to edit the label text; single click handled below
 		setEditable(false, true, false);
 	}
 
 	void mouseDown(const MouseEvent& event) override
 	{
-		// single click on the label should simply select the row
 		owner.getTable()->selectRowsBasedOnModifierKeys(row, event.mods, false);
-
 		Label::mouseDown(event);
 	}
 
@@ -89,7 +81,6 @@ public:
 			setText(owner.getText(row), sendNotificationAsync);
 	}
 
-	// Our demo code will call this when we may need to update our contents
 	void setRowAndColumn(const int newRow, const int newColumn)
 	{
 		row = newRow;
@@ -115,10 +106,7 @@ private:
 //==============================================================================
 Polytempo_GraphicsAnnotationSettingsDialog::Polytempo_GraphicsAnnotationSettingsDialog(OwnedArray < Polytempo_GraphicsAnnotationSet>* pAnnotationSet)
 {
-    // In your constructor, you should add any child components, and
-    // initialise any special settings that your component needs.
-	numRows = 0;
-	addAndMakeVisible(table);
+    addAndMakeVisible(table);
 	table.setModel(this);
 	table.getHeader().addColumn("Show", COLUMN_ID_SHOW, 35);
 	table.getHeader().addColumn("Edit", COLUMN_ID_EDIT, 35);
@@ -243,10 +231,7 @@ Component* Polytempo_GraphicsAnnotationSettingsDialog::refreshComponentForCell(i
 		return toggleComponent;
 	}
 
-	// The other columns are editable text columns, for which we use the custom Label component
 	EditableTextCustomComponent* textLabel = static_cast<EditableTextCustomComponent*> (existingComponentToUpdate);
-
-	// same as above...
 	if (textLabel == nullptr)
 		textLabel = new EditableTextCustomComponent(*this);
 
@@ -254,7 +239,6 @@ Component* Polytempo_GraphicsAnnotationSettingsDialog::refreshComponentForCell(i
 	return textLabel;
 }
 
-// This is overloaded from TableListBoxModel, and should fill in the background of the whole row
 void Polytempo_GraphicsAnnotationSettingsDialog::paintRowBackground(Graphics& g, int rowNumber, int /*width*/, int /*height*/, bool rowIsSelected)
 {
 	const Colour alternateColour(getLookAndFeel().findColour(ListBox::backgroundColourId)
@@ -265,21 +249,10 @@ void Polytempo_GraphicsAnnotationSettingsDialog::paintRowBackground(Graphics& g,
 		g.fillAll(alternateColour);
 }
 
-// This is overloaded from TableListBoxModel, and must paint any cells that aren't using custom
-// components.
-void Polytempo_GraphicsAnnotationSettingsDialog::paintCell(Graphics& g, int rowNumber, int columnId,
+void Polytempo_GraphicsAnnotationSettingsDialog::paintCell(Graphics& g, int /*rowNumber*/, int /*columnId*/,
 	int width, int height, bool /*rowIsSelected*/)
 {
 	g.setColour(getLookAndFeel().findColour(ListBox::textColourId));
-	//g.setFont(font);
-
-	//if (const XmlElement* rowElement = dataList->getChildElement(rowNumber))
-	//{
-	//	const String text(rowElement->getStringAttribute(getAttributeNameForColumnId(columnId)));
-
-	//	g.drawText(text, 2, 0, width - 4, height, Justification::centredLeft, true);
-	//}
-
 	g.setColour(getLookAndFeel().findColour(ListBox::backgroundColourId));
 	g.fillRect(width - 1, 0, 1, height);
 }

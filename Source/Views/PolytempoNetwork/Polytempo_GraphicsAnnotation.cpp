@@ -27,4 +27,5 @@ void Polytempo_GraphicsAnnotation::clear()
 	imageId = String::empty;
 	referencePoint = Point<float>();
 	text = String::empty;
+	fontSize = STANDARD_FONT_SIZE;
 }

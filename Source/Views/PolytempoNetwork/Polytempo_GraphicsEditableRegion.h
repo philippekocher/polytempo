@@ -16,7 +16,6 @@
 #define MIN_MOUSE_DOWN_TIME_MS 500
 #define MIN_INTERVAL_BETWEEN_REPAINTS_MS 100
 #define FREE_HAND_LINE_THICKNESS 2
-#define STANDARD_FONT_SIZE 14
 
 //==============================================================================
 /*
@@ -39,11 +38,10 @@ public:
 	void mouseDown(const MouseEvent& e) override;
 	void mouseDrag(const MouseEvent& e) override;
 	void mouseDoubleClick(const MouseEvent& e) override;
-	void mouseEnter(const MouseEvent& e) override;
 	void timerCallback() override;
 	void buttonClicked(Button* source) override;
 	void changeListenerCallback(ChangeBroadcaster* source) override;
-	bool keyPressed(const KeyPress& key, Component* originatingComponent) override;
+	bool keyPressed(const KeyPress& key, Component* /*originatingComponent*/) override;
 
 private:
 	virtual void setViewImage(Image *img, var) = 0;

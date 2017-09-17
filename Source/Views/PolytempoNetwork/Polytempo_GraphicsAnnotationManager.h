@@ -25,7 +25,7 @@ public:
 	void initialize(String folder, String scoreName);
 	void showSettingsDialog();
 	
-	void changeListenerCallback(ChangeBroadcaster* source) override;
+	void changeListenerCallback(ChangeBroadcaster*) override;
 
 private:
 	OwnedArray<Polytempo_GraphicsAnnotationSet> annotationSets;

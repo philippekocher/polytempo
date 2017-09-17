@@ -74,7 +74,7 @@ void Polytempo_GraphicsAnnotationManager::showSettingsDialog()
 	Polytempo_GraphicsAnnotationSettingsDialog::show(&annotationSets);
 }
 
-void Polytempo_GraphicsAnnotationManager::changeListenerCallback(ChangeBroadcaster* source)
+void Polytempo_GraphicsAnnotationManager::changeListenerCallback(ChangeBroadcaster*)
 {
 	sendChangeMessage();
 }

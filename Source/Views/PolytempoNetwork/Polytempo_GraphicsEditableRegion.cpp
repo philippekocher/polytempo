@@ -91,7 +91,7 @@ void Polytempo_GraphicsEditableRegion::paintAnnotation(Graphics& g, const Polyte
 	if (!annotation->text.isEmpty())
 	{
 		g.setFont(annotation->fontSize);
-		g.drawSingleLineText(annotation->text, annotation->referencePoint.getX() + 5, annotation->referencePoint.getY());
+		g.drawSingleLineText(annotation->text, int(annotation->referencePoint.getX()) + 5, int(annotation->referencePoint.getY()));
 	}
 }
 
@@ -103,7 +103,7 @@ void Polytempo_GraphicsEditableRegion::paint (Graphics& g)
 
 	if (status == FreehandEditing)
 	{
-		g.drawArrow(Line<float>(temporaryAnnotation.referencePoint.translated(0, buttonsAboveReferencePoint ? -50 : 50), temporaryAnnotation.referencePoint).toFloat(), 4, 8, 8);
+		g.drawArrow(Line<float>(temporaryAnnotation.referencePoint.translated(0.0f, buttonsAboveReferencePoint ? -50.0f : 50.0f), temporaryAnnotation.referencePoint).toFloat(), 4.0f, 8.0f, 8.0f);
 
 		paintAnnotation(g, &temporaryAnnotation);
 	}
@@ -117,7 +117,7 @@ void Polytempo_GraphicsEditableRegion::paint (Graphics& g)
 void Polytempo_GraphicsEditableRegion::resized()
 {
 	resizeContent();
-	screenToImage = AffineTransform::translation(-getX(), -getY());
+	screenToImage = AffineTransform::translation(-float(getX()), -float(getY()));
 	screenToImage = screenToImage.scale(currentImageRectangle.getWidth() / float(getWidth()), currentImageRectangle.getHeight() / float(getHeight()));
 	screenToImage = screenToImage.translated(currentImageRectangle.getX(), currentImageRectangle.getY());
 
@@ -131,8 +131,8 @@ void Polytempo_GraphicsEditableRegion::setImage(Image* img, var rect, String ima
 	float relTopLeftY = float(r[1]);
 	float relWidth = float(r[2]);
 	float relHeight = float(r[3]);
-	float imgWidth = img->getWidth();
-	float imgHeight = img->getHeight();
+	float imgWidth = float(img->getWidth());
+	float imgHeight = float(img->getHeight());
 	currentImageRectangle = Rectangle<float>(
 		imgWidth * relTopLeftX, 
 		imgHeight * relTopLeftY, 
@@ -178,8 +178,8 @@ void Polytempo_GraphicsEditableRegion::handleFreeHandPainting(const Point<int>& 
 {
 	if (temporaryAnnotation.freeHandPath.isEmpty() || lastPathPoint.getDistanceFrom(mousePosition) > 5)
 	{
-		float x = mousePosition.getX();
-		float y = mousePosition.getY();
+		float x = float(mousePosition.getX());
+		float y = float(mousePosition.getY());
 		screenToImage.transformPoint(x, y);
 
 		if (temporaryAnnotation.freeHandPath.isEmpty())
@@ -208,15 +208,10 @@ void Polytempo_GraphicsEditableRegion::mouseDoubleClick(const MouseEvent& e)
 	}
 }
 
-void Polytempo_GraphicsEditableRegion::mouseEnter(const MouseEvent& e)
-{
-	
-}
-
 void Polytempo_GraphicsEditableRegion::handleStartEditing(Point<int> mousePosition)
 {
-	float x = mousePosition.getX();
-	float y = mousePosition.getY();
+	float x = float(mousePosition.getX());
+	float y = float(mousePosition.getY());
 	screenToImage.transformPoint<float>(x, y); 
 	
 	temporaryAnnotation.clear();
@@ -325,7 +320,7 @@ void Polytempo_GraphicsEditableRegion::changeListenerCallback(ChangeBroadcaster*
 	}
 }
 
-bool Polytempo_GraphicsEditableRegion::keyPressed(const KeyPress& key, Component* originatingComponent)
+bool Polytempo_GraphicsEditableRegion::keyPressed(const KeyPress& key, Component* /*originatingComponent*/)
 {
 	if(status != Default && key.isValid())
 	{

@@ -84,7 +84,7 @@ void Polytempo_GraphicsAnnotationSet::loadFromFile()
 			Colour::fromString(xmlAnnotation->getStringAttribute(XML_ATTRIBUTE_COLOR)),
 			path,
 			xmlAnnotation->getStringAttribute(XML_ATTRIBUTE_TEXT),
-			xmlAnnotation->getIntAttribute(XML_ATTRIBUTE_FONTSIZE, 14)));
+			float(xmlAnnotation->getDoubleAttribute(XML_ATTRIBUTE_FONTSIZE, STANDARD_FONT_SIZE))));
 
 		xmlAnnotation = xmlAnnotation->getNextElement();
 	}
