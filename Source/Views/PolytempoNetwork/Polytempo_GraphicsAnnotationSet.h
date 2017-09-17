@@ -19,6 +19,7 @@
 #define XML_ATTRIBUTE_SCORENAME		"ScoreName"
 #define XML_ATTRIBUTE_LAYERNAME		"AnnotationLayerName"
 #define XML_ATTRIBUTE_SHOW			"Show"
+#define XML_ATTRIBUTE_EDIT			"Edit"
 #define XML_ATTRIBUTE_IMAGEID		"ImageId"
 #define XML_ATTRIBUTE_REFERENCEX	"ReferencePointX"
 #define XML_ATTRIBUTE_REFERENCEY	"ReferencePointY"
@@ -27,11 +28,10 @@
 #define XML_ATTRIBUTE_COLOR			"Color"
 #define XML_ATTRIBUTE_FONTSIZE		"FontSize"
 
-
-class Polytempo_GraphicsAnnotationSet
+class Polytempo_GraphicsAnnotationSet : ChangeBroadcaster
 {
 public:
-	Polytempo_GraphicsAnnotationSet(String filename);
+	Polytempo_GraphicsAnnotationSet(String filename, ChangeListener* pListener);
 	~Polytempo_GraphicsAnnotationSet();
 
 	void getAnnotationsForImage(String imageId, OwnedArray<Polytempo_GraphicsAnnotation>* pAnnotations);
@@ -42,6 +42,9 @@ public:
 	String getAnnotationLayerName() const;
 	bool getShow() const;
 	bool setAnnotationLayerName(String newLayerName);
+	bool setShow(bool state);
+	bool getEdit() const;
+	bool setEdit(bool state);
 
 private:
 	void loadFromFile();
@@ -51,4 +54,5 @@ private:
 	String scoreName;
 	String annotationLayerName;
 	bool show;
+	bool edit;
 };

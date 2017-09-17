@@ -10,7 +10,7 @@
 
 #include "Polytempo_GraphicsAnnotationSet.h"
 
-Polytempo_GraphicsAnnotationSet::Polytempo_GraphicsAnnotationSet(String filename)
+Polytempo_GraphicsAnnotationSet::Polytempo_GraphicsAnnotationSet(String filename, ChangeListener* pListener)
 {
 	File f = File(filename);
 	filePath = f.getParentDirectory().getFullPathName();
@@ -24,10 +24,13 @@ Polytempo_GraphicsAnnotationSet::Polytempo_GraphicsAnnotationSet(String filename
 	annotationLayerName = fn.substring(index + 1);
 
 	loadFromFile();
+
+	addChangeListener(pListener);
 }
 
 Polytempo_GraphicsAnnotationSet::~Polytempo_GraphicsAnnotationSet()
 {
+	removeAllChangeListeners();
 }
 
 void Polytempo_GraphicsAnnotationSet::getAnnotationsForImage(String imageId, OwnedArray<Polytempo_GraphicsAnnotation>* pAnnotations)
@@ -61,6 +64,7 @@ void Polytempo_GraphicsAnnotationSet::loadFromFile()
 	scoreName = root->getStringAttribute(XML_ATTRIBUTE_SCORENAME);
 	annotationLayerName = root->getStringAttribute(XML_ATTRIBUTE_LAYERNAME);
 	show = root->getBoolAttribute(XML_ATTRIBUTE_SHOW);
+	edit = root->getBoolAttribute(XML_ATTRIBUTE_EDIT);
 
 	XmlElement* xmlAnnotationList = root->getChildByName(XML_TAG_ANNOTATIONS);
 	if (xmlAnnotationList == nullptr)
@@ -98,6 +102,7 @@ bool Polytempo_GraphicsAnnotationSet::SaveToFile()
 	xmlMain->setAttribute(XML_ATTRIBUTE_SCORENAME, scoreName);
 	xmlMain->setAttribute(XML_ATTRIBUTE_LAYERNAME, annotationLayerName);
 	xmlMain->setAttribute(XML_ATTRIBUTE_SHOW, show);
+	xmlMain->setAttribute(XML_ATTRIBUTE_EDIT, edit);
 
 	XmlElement* xmlAnnotations = new XmlElement(XML_TAG_ANNOTATIONS);
 	for (Polytempo_GraphicsAnnotation* annotation : annotations)
@@ -169,5 +174,27 @@ bool Polytempo_GraphicsAnnotationSet::setAnnotationLayerName(String newLayerName
 	}
 
 	File(originalFileName).deleteFile();
+	return true;
+}
+
+bool Polytempo_GraphicsAnnotationSet::setShow(bool state)
+{
+	show = state;
+	bool ok = SaveToFile();
+	sendChangeMessage();
+
+	return ok;
+}
+
+bool Polytempo_GraphicsAnnotationSet::getEdit() const
+{
+	return edit;
+}
+
+bool Polytempo_GraphicsAnnotationSet::setEdit(bool state)
+{
+	edit = state;
+	sendChangeMessage();
+
 	return true;
 }

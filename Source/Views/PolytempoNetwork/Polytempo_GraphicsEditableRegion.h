@@ -10,12 +10,13 @@
 
 #pragma once
 
-#include "../../../POLYTEMPO NETWORK/JuceLibraryCode/JuceHeader.h"
+#include "JuceHeader.h"
 #include "Polytempo_GraphicsAnnotation.h"
 
 #define MIN_MOUSE_DOWN_TIME_MS 500
 #define MIN_INTERVAL_BETWEEN_REPAINTS_MS 100
 #define FREE_HAND_LINE_THICKNESS 2
+#define STANDARD_FONT_SIZE 14
 
 //==============================================================================
 /*

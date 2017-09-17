@@ -12,8 +12,59 @@
 #include "Polytempo_GraphicsAnnotationSettingsDialog.h"
 #include "Polytempo_GraphicsAnnotationSet.h"
 
+#define COLUMN_ID_SHOW 1
+#define COLUMN_ID_EDIT 2
+
 //==============================================================================
 // This is a custom Label component, which we use for the table's editable text columns.
+class ToggleColumnCustomComponent : public Component,
+	private ButtonListener
+{
+public:
+	ToggleColumnCustomComponent(Polytempo_GraphicsAnnotationSettingsDialog& td) : owner(td)
+	{
+		// just put a combo box inside this component
+		addAndMakeVisible(checkBox);
+		
+		// when the combo is changed, we'll get a callback.
+		checkBox.addListener(this);
+		checkBox.setWantsKeyboardFocus(false);
+	}
+
+	void resized() override
+	{
+		checkBox.setBoundsInset(BorderSize<int>(2));
+	}
+
+	// Our demo code will call this when we may need to update our contents
+	void setRowAndColumn(int newRow, int newColumn)
+	{
+		row = newRow;
+		columnId = newColumn;
+		if (columnId == COLUMN_ID_SHOW)
+			checkBox.setToggleState(owner.getShowInfo(row), dontSendNotification);
+		else if (columnId == COLUMN_ID_EDIT)
+			checkBox.setToggleState(owner.getEditInfo(row), dontSendNotification);
+
+		checkBox.repaint();
+	}
+
+	void buttonClicked(Button* btn) override
+	{
+		if(columnId == COLUMN_ID_SHOW)
+			owner.setShowInfo(row, checkBox.getToggleState());
+		else if(columnId == COLUMN_ID_EDIT)
+			owner.setEditInfo(row, checkBox.getToggleState());
+
+		setRowAndColumn(row, columnId);
+	}
+
+private:
+	Polytempo_GraphicsAnnotationSettingsDialog& owner;
+	ToggleButton checkBox;
+	int row, columnId;
+};
+
 class EditableTextCustomComponent : public Label
 {
 public:
@@ -69,8 +120,8 @@ Polytempo_GraphicsAnnotationSettingsDialog::Polytempo_GraphicsAnnotationSettings
 	numRows = 0;
 	addAndMakeVisible(table);
 	table.setModel(this);
-	table.getHeader().addColumn("Show", 1, 35);
-	table.getHeader().addColumn("Edit", 2, 35);
+	table.getHeader().addColumn("Show", COLUMN_ID_SHOW, 35);
+	table.getHeader().addColumn("Edit", COLUMN_ID_EDIT, 35);
 	table.getHeader().addColumn("Name", 3, 200);
 	table.getHeader().resizeAllColumnsToFit(getWidth());
 	numRows = pAnnotationSet->size();
@@ -115,18 +166,81 @@ bool Polytempo_GraphicsAnnotationSettingsDialog::setText(const int rowNumber, St
 	return true;
 }
 
-String Polytempo_GraphicsAnnotationSettingsDialog::getText(int row)
+String Polytempo_GraphicsAnnotationSettingsDialog::getText(int row) const
 {
 	return pAnnotationSet->getUnchecked(row)->getAnnotationLayerName();
+}
+
+bool Polytempo_GraphicsAnnotationSettingsDialog::getShowInfo(int row) const
+{
+	return pAnnotationSet->getUnchecked(row)->getShow();
+}
+
+bool Polytempo_GraphicsAnnotationSettingsDialog::setShowInfo(int row, bool state)
+{
+	bool ok = pAnnotationSet->getUnchecked(row)->setShow(state);
+	if (!ok)
+	{
+		AlertWindow::showMessageBox(AlertWindow::WarningIcon, "Set visibility state", "Setting visibility state failed");
+		return false;
+	}
+
+	return true;
+}
+
+bool Polytempo_GraphicsAnnotationSettingsDialog::getEditInfo(int row) const
+{
+	return pAnnotationSet->getUnchecked(row)->getEdit();
+}
+
+int Polytempo_GraphicsAnnotationSettingsDialog::GetNumberOfEditableLayers(int exceptIndex) const
+{
+	int count = 0;
+	for(int i = 0; i < pAnnotationSet->size(); i++)
+	{
+		if(i != exceptIndex && pAnnotationSet->getUnchecked(i)->getEdit())
+		{
+			count++;
+		}
+	}
+
+	return count;
+}
+
+bool Polytempo_GraphicsAnnotationSettingsDialog::setEditInfo(int row, bool state) const
+{
+	int numberOfEditableLayers = GetNumberOfEditableLayers(row);
+	if(numberOfEditableLayers == 0 && state == false)
+	{
+		AlertWindow::showMessageBox(AlertWindow::WarningIcon, "Set edit state", "Setting edit state failed, at least one layer must be editable!");
+		return false;
+	}
+	if(numberOfEditableLayers + (state ? 1 : 0) > 1)
+	{
+		//Todo	warning
+	}
+
+	bool ok = pAnnotationSet->getUnchecked(row)->setEdit(state);
+	if (!ok)
+	{
+		AlertWindow::showMessageBox(AlertWindow::WarningIcon, "Set edit state", "Setting edit state failed");
+		return false;
+	}
+
+	return true;
 }
 
 Component* Polytempo_GraphicsAnnotationSettingsDialog::refreshComponentForCell(int rowNumber, int columnId, bool /*isRowSelected*/,
 	Component* existingComponentToUpdate)
 {
-	if (columnId == 1 || columnId == 2)
+	if (columnId == COLUMN_ID_SHOW || columnId == COLUMN_ID_EDIT)
 	{
-		jassert(existingComponentToUpdate == nullptr);
-		return nullptr;
+		ToggleColumnCustomComponent* toggleComponent = static_cast<ToggleColumnCustomComponent*> (existingComponentToUpdate);
+		if (toggleComponent == nullptr)
+			toggleComponent = new ToggleColumnCustomComponent(*this);
+
+		toggleComponent->setRowAndColumn(rowNumber, columnId);
+		return toggleComponent;
 	}
 
 	// The other columns are editable text columns, for which we use the custom Label component

@@ -26,7 +26,11 @@ public:
     void resized() override;
 	int getNumRows() override;
 	bool setText(const int rowNumber, String newText) const;
-	String getText(int row);
+	String getText(int row) const;
+	bool getShowInfo(int row) const;
+	bool setShowInfo(int row, bool state);
+	bool getEditInfo(int row) const;
+	bool setEditInfo(int row, bool state) const;
 	Component* refreshComponentForCell(int rowNumber, int columnId, bool, Component* existingComponentToUpdate) override;
 
 	// This is overloaded from TableListBoxModel, and should fill in the background of the whole row
@@ -36,8 +40,12 @@ public:
 	// components.
 	void paintCell(Graphics& g, int rowNumber, int columnId,
 		int width, int height, bool /*rowIsSelected*/) override;
+	
 	static void show(OwnedArray < Polytempo_GraphicsAnnotationSet>* pAnnotationSet);
 	TableListBox* getTable();
+
+	private:
+	int GetNumberOfEditableLayers(int exceptIndex) const;
 
 private:
 	TableListBox table;

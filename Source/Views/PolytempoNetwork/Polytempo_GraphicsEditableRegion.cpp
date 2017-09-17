@@ -143,7 +143,6 @@ void Polytempo_GraphicsEditableRegion::setImage(Image* img, var rect, String ima
 
 	setViewImage(img, rect);
 
-	annotations.clear();
 	Polytempo_GraphicsAnnotationManager::getInstance()->getAnnotationsForImage(currentImageId, &annotations);
 
 	resized();
@@ -224,6 +223,7 @@ void Polytempo_GraphicsEditableRegion::handleStartEditing(Point<int> mousePositi
 	temporaryAnnotation.imageId = currentImageId;
 	temporaryAnnotation.referencePoint = Point<float>(x, y);
 	temporaryAnnotation.color = colorSelector->getCurrentColour();
+	temporaryAnnotation.fontSize = STANDARD_FONT_SIZE;
 	status = FreehandEditing;
 	setMouseCursor(MouseCursor::CrosshairCursor);
 
@@ -320,6 +320,7 @@ void Polytempo_GraphicsEditableRegion::changeListenerCallback(ChangeBroadcaster*
 	}
 	else if(source == Polytempo_GraphicsAnnotationManager::getInstance())
 	{
+		Polytempo_GraphicsAnnotationManager::getInstance()->getAnnotationsForImage(currentImageId, &annotations);
 		repaintRequired = true;
 	}
 }

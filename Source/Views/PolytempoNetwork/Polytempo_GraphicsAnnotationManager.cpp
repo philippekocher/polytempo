@@ -15,6 +15,7 @@ juce_ImplementSingleton(Polytempo_GraphicsAnnotationManager)
 
 void Polytempo_GraphicsAnnotationManager::getAnnotationsForImage(String imageId, OwnedArray<Polytempo_GraphicsAnnotation>* pAnnotations) const
 {
+	pAnnotations->clear();
 	for(int iSet = 0; iSet < annotationSets.size(); iSet++)
 	{
 		if (annotationSets[iSet]->getShow())
@@ -28,7 +29,7 @@ void Polytempo_GraphicsAnnotationManager::addAnnotation(Polytempo_GraphicsAnnota
 {
 	if (annotationSets.isEmpty())
 	{
-		Polytempo_GraphicsAnnotationSet* pSet = new Polytempo_GraphicsAnnotationSet(currentDirectory->getFullPathName() + "//" + currentScoreName + "_" + "Default.xml");
+		Polytempo_GraphicsAnnotationSet* pSet = new Polytempo_GraphicsAnnotationSet(currentDirectory->getFullPathName() + "//" + currentScoreName + "_" + "Default.xml", this);
 		annotationSets.add(pSet);
 	}
 
@@ -58,7 +59,7 @@ void Polytempo_GraphicsAnnotationManager::initialize(String folder, String score
 
 	for(File file : files)
 	{
-		Polytempo_GraphicsAnnotationSet* annotationSet = new Polytempo_GraphicsAnnotationSet(file.getFullPathName());
+		Polytempo_GraphicsAnnotationSet* annotationSet = new Polytempo_GraphicsAnnotationSet(file.getFullPathName(), this);
 		if (annotationSet->getScoreName() == scoreName)
 			annotationSets.add(annotationSet);
 		else
@@ -71,4 +72,9 @@ void Polytempo_GraphicsAnnotationManager::initialize(String folder, String score
 void Polytempo_GraphicsAnnotationManager::showSettingsDialog()
 {
 	Polytempo_GraphicsAnnotationSettingsDialog::show(&annotationSets);
+}
+
+void Polytempo_GraphicsAnnotationManager::changeListenerCallback(ChangeBroadcaster* source)
+{
+	sendChangeMessage();
 }

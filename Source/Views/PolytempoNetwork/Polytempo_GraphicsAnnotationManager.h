@@ -14,7 +14,7 @@
 #include "Polytempo_GraphicsAnnotation.h"
 #include "Polytempo_GraphicsAnnotationSet.h"
 
-class Polytempo_GraphicsAnnotationManager : public ChangeBroadcaster
+class Polytempo_GraphicsAnnotationManager : public ChangeBroadcaster, public ChangeListener
 {
 public:
 	juce_DeclareSingleton(Polytempo_GraphicsAnnotationManager, false)
@@ -24,6 +24,8 @@ public:
 	void saveAll() const;
 	void initialize(String folder, String scoreName);
 	void showSettingsDialog();
+	
+	void changeListenerCallback(ChangeBroadcaster* source) override;
 
 private:
 	OwnedArray<Polytempo_GraphicsAnnotationSet> annotationSets;
