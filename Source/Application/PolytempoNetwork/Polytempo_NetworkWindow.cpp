@@ -34,8 +34,8 @@ Polytempo_NetworkWindow::Polytempo_NetworkWindow()
                       DocumentWindow::allButtons)
 {
     setUsingNativeTitleBar(true);
-    setTitleBarButtonsRequired(5, true); // MAC: green button = maximize instead of fullscreen
-    setResizable(true, false);
+    setTitleBarButtonsRequired(7, true);
+    setResizable(true, true);
     setResizeLimits(800, 450, 99999, 99999);
     
     mainView = new Polytempo_NetworkMainView();
