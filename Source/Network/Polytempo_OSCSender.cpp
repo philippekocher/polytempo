@@ -38,7 +38,7 @@ Polytempo_OSCSender::~Polytempo_OSCSender()
 
 void Polytempo_OSCSender::addBroadcastSender(int port)
 {
-    broadcastSocket = new Polytempo_Socket("169.254.255.255", port); // as well: 255.255.255.255
+    broadcastSocket = new Polytempo_Socket("255.255.255.255", port); // dummy broadcaster, will be overwritten by renewBroadcaster()
     Polytempo_NetworkSupervisor::getInstance()->setSocket(broadcastSocket);
 }
 
