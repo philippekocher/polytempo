@@ -13,18 +13,20 @@
 
 #include "Polytempo_IPAddress.h"
 
-class Polytempo_NetworkInterfaceManager
+class Polytempo_NetworkInterfaceManager : public Timer
 {
 public:
-	bool TrySelectIpWithFirstNumber(uint8 number);
 	Polytempo_NetworkInterfaceManager();
 	~Polytempo_NetworkInterfaceManager();
 
 	juce_DeclareSingleton(Polytempo_NetworkInterfaceManager, false);
 
 	int getAvailableIpAddresses(Array<Polytempo_IPAddress>& ipAdresses);
-	Polytempo_IPAddress getSelectedIpAddress();
+	Polytempo_IPAddress getSelectedIpAddress() const;
 	void setSelectedIpAddress(Polytempo_IPAddress ip);
+	bool TrySelectIpWithFirstNumber(uint8 number);
+	bool TrySelectLastUsedAdapter();
+	void timerCallback() override;
 
 private:
 	bool updateAddresses();

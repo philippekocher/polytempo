@@ -28,14 +28,13 @@ bool Polytempo_NetworkInterfaceManager::TrySelectIpWithFirstNumber(uint8 number)
 	return found;
 }
 
-Polytempo_NetworkInterfaceManager::Polytempo_NetworkInterfaceManager()
+bool Polytempo_NetworkInterfaceManager::TrySelectLastUsedAdapter()
 {
-	selectedIpAddress = Polytempo_IPAddress();
+	bool found = false;
 
 	updateAddresses();
 
 	String lastNetworkAdapter = Polytempo_StoredPreferences::getInstance()->getProps().getValue("selectedNetworkAdapter", String::empty);
-	bool found = false;
 	if (lastNetworkAdapter != String::empty)
 	{
 		for (Polytempo_IPAddress ip : availableIpAddresses)
@@ -48,7 +47,28 @@ Polytempo_NetworkInterfaceManager::Polytempo_NetworkInterfaceManager()
 			}
 		}
 	}
-	
+
+	return found;
+}
+
+void Polytempo_NetworkInterfaceManager::timerCallback()
+{
+	bool found = TrySelectLastUsedAdapter();
+	if (found)
+		stopTimer();
+}
+
+Polytempo_NetworkInterfaceManager::Polytempo_NetworkInterfaceManager()
+{
+	selectedIpAddress = Polytempo_IPAddress();
+
+	bool adapterLock = Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("networkAdapterLock", false);
+	bool found = TrySelectLastUsedAdapter();
+	if(!found && adapterLock)
+	{
+		startTimer(1000);
+	}
+		
 	if (!found)
 	{
 		found = TrySelectIpWithFirstNumber(192);
@@ -67,7 +87,10 @@ Polytempo_NetworkInterfaceManager::Polytempo_NetworkInterfaceManager()
 
 	if(found)
 	{
-		Polytempo_StoredPreferences::getInstance()->getProps().setValue("selectedNetworkAdapter", selectedIpAddress.adapterName);
+		if (!adapterLock)
+		{
+			Polytempo_StoredPreferences::getInstance()->getProps().setValue("selectedNetworkAdapter", selectedIpAddress.adapterName);
+		}
 	}
 }
 
@@ -86,7 +109,7 @@ int Polytempo_NetworkInterfaceManager::getAvailableIpAddresses(Array<Polytempo_I
 	return ipAdresses.size();
 }
 
-Polytempo_IPAddress Polytempo_NetworkInterfaceManager::getSelectedIpAddress()
+Polytempo_IPAddress Polytempo_NetworkInterfaceManager::getSelectedIpAddress() const
 {
 	return selectedIpAddress;
 }
