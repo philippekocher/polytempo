@@ -38,6 +38,7 @@ public:
 	void mouseDown(const MouseEvent& e) override;
 	void mouseDrag(const MouseEvent& e) override;
 	void mouseDoubleClick(const MouseEvent& e) override;
+	bool TryGetExistingAnnotation(float x, float y);
 	void timerCallback() override;
 	void buttonClicked(Button* source) override;
 	void changeListenerCallback(ChangeBroadcaster* source) override;

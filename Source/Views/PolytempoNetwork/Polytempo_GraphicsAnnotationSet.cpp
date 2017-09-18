@@ -47,6 +47,21 @@ void Polytempo_GraphicsAnnotationSet::addAnnotation(Polytempo_GraphicsAnnotation
 	annotations.add(new Polytempo_GraphicsAnnotation(annotation));
 }
 
+bool Polytempo_GraphicsAnnotationSet::removeAnnotation(Uuid id, Polytempo_GraphicsAnnotation* pAnnotation)
+{
+	for(int i = 0; i < annotations.size(); i++)
+	{
+		if(annotations[i]->id == id)
+		{
+			*pAnnotation = *(annotations[i]);
+			annotations.remove(i);
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void Polytempo_GraphicsAnnotationSet::loadFromFile()
 {
 	File file = File(getFileName());
@@ -77,6 +92,7 @@ void Polytempo_GraphicsAnnotationSet::loadFromFile()
 		path.restoreFromString(xmlAnnotation->getStringAttribute(XML_ATTRIBUTE_PATH));
 
 		annotations.add(new Polytempo_GraphicsAnnotation(
+			Uuid(xmlAnnotation->getStringAttribute(XML_ATTRIBUTE_UUID)),
 			xmlAnnotation->getStringAttribute(XML_ATTRIBUTE_IMAGEID),
 			Point<float>(
 				float(xmlAnnotation->getDoubleAttribute(XML_ATTRIBUTE_REFERENCEX)), 
@@ -108,6 +124,7 @@ bool Polytempo_GraphicsAnnotationSet::SaveToFile()
 	for (Polytempo_GraphicsAnnotation* annotation : annotations)
 	{
 		XmlElement* xmlAnnotation = new XmlElement(XML_TAG_ANNOTATION);
+		xmlAnnotation->setAttribute(XML_ATTRIBUTE_UUID, annotation->id.toString());
 		xmlAnnotation->setAttribute(XML_ATTRIBUTE_IMAGEID, annotation->imageId);
 		xmlAnnotation->setAttribute(XML_ATTRIBUTE_REFERENCEX, annotation->referencePoint.getX());
 		xmlAnnotation->setAttribute(XML_ATTRIBUTE_REFERENCEY, annotation->referencePoint.getY());

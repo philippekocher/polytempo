@@ -20,6 +20,7 @@
 #define XML_ATTRIBUTE_LAYERNAME		"AnnotationLayerName"
 #define XML_ATTRIBUTE_SHOW			"Show"
 #define XML_ATTRIBUTE_EDIT			"Edit"
+#define XML_ATTRIBUTE_UUID			"Uuid"
 #define XML_ATTRIBUTE_IMAGEID		"ImageId"
 #define XML_ATTRIBUTE_REFERENCEX	"ReferencePointX"
 #define XML_ATTRIBUTE_REFERENCEY	"ReferencePointY"
@@ -36,6 +37,7 @@ public:
 
 	void getAnnotationsForImage(String imageId, OwnedArray<Polytempo_GraphicsAnnotation>* pAnnotations);
 	void addAnnotation(Polytempo_GraphicsAnnotation annotation);
+	bool removeAnnotation(Uuid id, Polytempo_GraphicsAnnotation* pAnnotation);
 
 	bool SaveToFile();
 	String getScoreName() const;
@@ -45,7 +47,7 @@ public:
 	bool setShow(bool state);
 	bool getEdit() const;
 	bool setEdit(bool state);
-
+	
 private:
 	void loadFromFile();
 	String getFileName(String newLayerName = String::empty) const;

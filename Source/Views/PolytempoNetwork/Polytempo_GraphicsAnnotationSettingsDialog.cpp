@@ -11,6 +11,7 @@
 #include "JuceHeader.h"
 #include "Polytempo_GraphicsAnnotationSettingsDialog.h"
 #include "Polytempo_GraphicsAnnotationSet.h"
+#include "Polytempo_GraphicsAnnotationManager.h"
 
 #define COLUMN_ID_SHOW 1
 #define COLUMN_ID_EDIT 2
@@ -106,14 +107,25 @@ private:
 //==============================================================================
 Polytempo_GraphicsAnnotationSettingsDialog::Polytempo_GraphicsAnnotationSettingsDialog(OwnedArray < Polytempo_GraphicsAnnotationSet>* pAnnotationSet)
 {
-    addAndMakeVisible(table);
+	this->pAnnotationSet = pAnnotationSet;
+
+	addAndMakeVisible(table);
 	table.setModel(this);
 	table.getHeader().addColumn("Show", COLUMN_ID_SHOW, 35);
 	table.getHeader().addColumn("Edit", COLUMN_ID_EDIT, 35);
 	table.getHeader().addColumn("Name", 3, 200);
 	table.getHeader().resizeAllColumnsToFit(getWidth());
 	numRows = pAnnotationSet->size();
-	this->pAnnotationSet = pAnnotationSet;
+	
+	addAndMakeVisible(addLayerBtn = new TextButton("Add layer"));
+	addLayerBtn->addListener(this);
+
+	addAndMakeVisible(showAnchorPointsToggle = new ToggleButton("Show anchor points"));
+	showAnchorPointsToggle->setToggleState(Polytempo_GraphicsAnnotationManager::getInstance()->getAnchorFlag(), dontSendNotification);
+	showAnchorPointsToggle->addListener(this);
+
+	addAndMakeVisible(infoLabel = new Label());
+	updateInfoLabel();
 }
 
 Polytempo_GraphicsAnnotationSettingsDialog::~Polytempo_GraphicsAnnotationSettingsDialog()
@@ -130,11 +142,13 @@ void Polytempo_GraphicsAnnotationSettingsDialog::paint (Graphics& g)
 
 void Polytempo_GraphicsAnnotationSettingsDialog::resized()
 {
-    // This method is where you should set the bounds of any child
-    // components that your component contains..
-	
-	// position our table with a gap around its edge
-	table.setBoundsInset(BorderSize<int>(8));
+    int left = getBounds().getX() + 2;
+	int width = getWidth() - 4;
+
+	table.setBounds(left, getBounds().getY() + 2, width, getBounds().getHeight() - 60);
+	addLayerBtn->setBounds(left, getHeight() - 60, width, 20);
+	showAnchorPointsToggle->setBounds(left, getHeight() - 40, width, 20);
+	infoLabel->setBounds(left, getHeight() - 20, width, 20);
 }
 
 int Polytempo_GraphicsAnnotationSettingsDialog::getNumRows()
@@ -181,6 +195,24 @@ bool Polytempo_GraphicsAnnotationSettingsDialog::getEditInfo(int row) const
 	return pAnnotationSet->getUnchecked(row)->getEdit();
 }
 
+void Polytempo_GraphicsAnnotationSettingsDialog::setInfoLabel(String str) const
+{
+	infoLabel->setText(str, dontSendNotification);
+	infoLabel->setColour(infoLabel->backgroundColourId, str.isEmpty() ? Colours::grey : Colours::red);
+}
+
+void Polytempo_GraphicsAnnotationSettingsDialog::updateInfoLabel() const
+{
+	if (GetNumberOfEditableLayers() > 1)
+	{
+		setInfoLabel("More than one layer marked as editable.");
+	}
+	else
+	{
+		setInfoLabel("");
+	}
+}
+
 int Polytempo_GraphicsAnnotationSettingsDialog::GetNumberOfEditableLayers(int exceptIndex) const
 {
 	int count = 0;
@@ -203,12 +235,11 @@ bool Polytempo_GraphicsAnnotationSettingsDialog::setEditInfo(int row, bool state
 		AlertWindow::showMessageBox(AlertWindow::WarningIcon, "Set edit state", "Setting edit state failed, at least one layer must be editable!");
 		return false;
 	}
-	if(numberOfEditableLayers + (state ? 1 : 0) > 1)
-	{
-		//Todo	warning
-	}
-
+	
 	bool ok = pAnnotationSet->getUnchecked(row)->setEdit(state);
+	updateInfoLabel();
+
+
 	if (!ok)
 	{
 		AlertWindow::showMessageBox(AlertWindow::WarningIcon, "Set edit state", "Setting edit state failed");
@@ -255,6 +286,20 @@ void Polytempo_GraphicsAnnotationSettingsDialog::paintCell(Graphics& g, int /*ro
 	g.setColour(getLookAndFeel().findColour(ListBox::textColourId));
 	g.setColour(getLookAndFeel().findColour(ListBox::backgroundColourId));
 	g.fillRect(width - 1, 0, 1, height);
+}
+
+void Polytempo_GraphicsAnnotationSettingsDialog::buttonClicked(Button* btn)
+{
+	if(btn == addLayerBtn)
+	{
+		Polytempo_GraphicsAnnotationManager::getInstance()->createAndAddNewLayer(false);
+		numRows = pAnnotationSet->size();
+		table.updateContent();
+	}
+	if(btn == showAnchorPointsToggle)
+	{
+		Polytempo_GraphicsAnnotationManager::getInstance()->setAnchorFlag(showAnchorPointsToggle->getToggleState());
+	}
 }
 
 void Polytempo_GraphicsAnnotationSettingsDialog::show(OwnedArray < Polytempo_GraphicsAnnotationSet>* pAnnotationSet)

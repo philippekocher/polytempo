@@ -10,6 +10,7 @@
 
 #include "Polytempo_GraphicsAnnotationManager.h"
 #include "Polytempo_GraphicsAnnotationSettingsDialog.h"
+#include <string>
 
 juce_ImplementSingleton(Polytempo_GraphicsAnnotationManager)
 
@@ -25,15 +26,35 @@ void Polytempo_GraphicsAnnotationManager::getAnnotationsForImage(String imageId,
 	}
 }
 
+void Polytempo_GraphicsAnnotationManager::createAndAddNewLayer(bool editable)
+{
+	String filename;
+	int index = 1;
+
+	do
+	{
+		filename = currentDirectory->getFullPathName() + "//" + currentScoreName + "_" + "Layer" + std::to_string(index++) + ".xml";
+	} while (File(filename).exists());
+
+	Polytempo_GraphicsAnnotationSet* pSet = new Polytempo_GraphicsAnnotationSet(filename, this);
+	pSet->setEdit(editable);
+	pSet->SaveToFile();
+
+	annotationSets.add(pSet);
+}
+
 void Polytempo_GraphicsAnnotationManager::addAnnotation(Polytempo_GraphicsAnnotation annotation)
 {
 	if (annotationSets.isEmpty())
 	{
-		Polytempo_GraphicsAnnotationSet* pSet = new Polytempo_GraphicsAnnotationSet(currentDirectory->getFullPathName() + "//" + currentScoreName + "_" + "Default.xml", this);
-		annotationSets.add(pSet);
+		createAndAddNewLayer(true);
 	}
 
-	annotationSets[annotationSets.size()-1]->addAnnotation(annotation);
+	for (int i = 0; i < annotationSets.size(); i++)
+	{
+		if (annotationSets[i]->getEdit())
+			annotationSets[i]->addAnnotation(annotation);
+	}
 }
 
 void Polytempo_GraphicsAnnotationManager::saveAll() const
@@ -42,6 +63,17 @@ void Polytempo_GraphicsAnnotationManager::saveAll() const
 	{
 		annotationSets[i]->SaveToFile();
 	}
+}
+
+bool Polytempo_GraphicsAnnotationManager::getAnchorFlag() const
+{
+	return showAnchorPoints;
+}
+
+void Polytempo_GraphicsAnnotationManager::setAnchorFlag(bool anchorFlag)
+{
+	showAnchorPoints = anchorFlag;
+	sendChangeMessage();
 }
 
 void Polytempo_GraphicsAnnotationManager::initialize(String folder, String scoreName)
@@ -77,4 +109,21 @@ void Polytempo_GraphicsAnnotationManager::showSettingsDialog()
 void Polytempo_GraphicsAnnotationManager::changeListenerCallback(ChangeBroadcaster*)
 {
 	sendChangeMessage();
+}
+
+bool Polytempo_GraphicsAnnotationManager::removeAnnotation(Uuid id, Polytempo_GraphicsAnnotation* pAnnotation)
+{
+	for(int iSet = 0; iSet < annotationSets.size(); iSet++)
+	{
+		if (annotationSets[iSet]->getEdit())
+		{
+			if (annotationSets[iSet]->removeAnnotation(id, pAnnotation))
+			{
+				sendChangeMessage();
+				return true;
+			}
+		}
+	}
+
+	return false;
 }

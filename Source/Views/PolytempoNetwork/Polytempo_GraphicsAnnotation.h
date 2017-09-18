@@ -17,8 +17,9 @@ class Polytempo_GraphicsAnnotation
 public:
 	Polytempo_GraphicsAnnotation();
 
-	Polytempo_GraphicsAnnotation(const String& image_id, const Point<float>& reference_point, const Colour& color, const Path& free_hand_path, const String& text, float fontSize)
-		: imageId(image_id),
+	Polytempo_GraphicsAnnotation(const Uuid& id, const String& image_id, const Point<float>& reference_point, const Colour& color, const Path& free_hand_path, const String& text, float fontSize)
+		: id(id),
+		  imageId(image_id),
 		  referencePoint(reference_point),
 		  color(color),
 		  freeHandPath(free_hand_path),
@@ -31,6 +32,7 @@ public:
 
 	void clear();
 
+	Uuid id;
 	String imageId;
 	Point<float> referencePoint;
 	Colour color;

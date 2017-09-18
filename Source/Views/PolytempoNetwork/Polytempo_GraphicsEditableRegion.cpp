@@ -91,7 +91,13 @@ void Polytempo_GraphicsEditableRegion::paintAnnotation(Graphics& g, const Polyte
 	if (!annotation->text.isEmpty())
 	{
 		g.setFont(annotation->fontSize);
-		g.drawSingleLineText(annotation->text, int(annotation->referencePoint.getX()) + 5, int(annotation->referencePoint.getY()));
+		g.drawSingleLineText(annotation->text, int(annotation->referencePoint.getX()) + 10, int(annotation->referencePoint.getY()));
+	}
+
+	if(Polytempo_GraphicsAnnotationManager::getInstance()->getAnchorFlag())
+	{
+		g.setColour(Colours::blue);
+		g.fillRoundedRectangle(annotation->referencePoint.getX() - 8.0f, annotation->referencePoint.getY() - 8.0f, 16.0f, 16.0f, 4.0f);
 	}
 }
 
@@ -170,7 +176,11 @@ void Polytempo_GraphicsEditableRegion::mouseDown(const MouseEvent& e)
 	}
 	if(status == FreehandEditing)
 	{
-		temporaryAnnotation.freeHandPath.startNewSubPath(e.getPosition().toFloat());
+		float x = float(e.getPosition().getX());
+		float y = float(e.getPosition().getY());
+		screenToImage.transformPoint(x, y);
+
+		temporaryAnnotation.freeHandPath.startNewSubPath(Point<float>(x, y));
 	}
 }
 
@@ -183,9 +193,13 @@ void Polytempo_GraphicsEditableRegion::handleFreeHandPainting(const Point<int>& 
 		screenToImage.transformPoint(x, y);
 
 		if (temporaryAnnotation.freeHandPath.isEmpty())
+		{
 			temporaryAnnotation.freeHandPath.addLineSegment(Line<float>(x, y, x, y), FREE_HAND_LINE_THICKNESS);
+		}
 		else
+		{
 			temporaryAnnotation.freeHandPath.lineTo(x, y);
+		}
 
 		lastPathPoint = mousePosition;
 		repaintRequired = true;
@@ -208,17 +222,58 @@ void Polytempo_GraphicsEditableRegion::mouseDoubleClick(const MouseEvent& e)
 	}
 }
 
+bool Polytempo_GraphicsEditableRegion::TryGetExistingAnnotation(float x, float y)
+{
+	if(Polytempo_GraphicsAnnotationManager::getInstance()->getAnchorFlag())
+	{
+		Polytempo_GraphicsAnnotation* nearestAnnotation = nullptr;
+		float nearestAnnotationDistance = FLT_MAX;
+		
+		// find nearest annotation in anchor mode
+		for(int i = 0; i < annotations.size(); i++)
+		{
+			float dist = annotations[i]->referencePoint.getDistanceFrom(Point<float>(x, y));
+			if(dist < nearestAnnotationDistance)
+			{
+				nearestAnnotation = annotations[i];
+				nearestAnnotationDistance = dist;
+			}
+		}
+
+		if(nearestAnnotationDistance < 15.0f)
+		{
+			if(Polytempo_GraphicsAnnotationManager::getInstance()->removeAnnotation(nearestAnnotation->id, &temporaryAnnotation))
+				return true;
+
+			return false;
+		}
+
+		return false;
+	}
+
+	return false;
+}
+
 void Polytempo_GraphicsEditableRegion::handleStartEditing(Point<int> mousePosition)
 {
 	float x = float(mousePosition.getX());
 	float y = float(mousePosition.getY());
 	screenToImage.transformPoint<float>(x, y); 
 	
-	temporaryAnnotation.clear();
-	temporaryAnnotation.imageId = currentImageId;
-	temporaryAnnotation.referencePoint = Point<float>(x, y);
-	temporaryAnnotation.color = colorSelector->getCurrentColour();
-	temporaryAnnotation.fontSize = STANDARD_FONT_SIZE;
+
+	if (!TryGetExistingAnnotation(x, y))
+	{
+		temporaryAnnotation.clear();
+		temporaryAnnotation.id = Uuid();
+		temporaryAnnotation.imageId = currentImageId;
+		temporaryAnnotation.referencePoint = Point<float>(x, y);
+		temporaryAnnotation.color = colorSelector->getCurrentColour();
+		temporaryAnnotation.fontSize = STANDARD_FONT_SIZE;
+	}
+	
+	if (!temporaryAnnotation.freeHandPath.isEmpty())
+		temporaryAnnotation.freeHandPath.startNewSubPath(Point<float>(x, y));
+
 	status = FreehandEditing;
 	setMouseCursor(MouseCursor::CrosshairCursor);
 
