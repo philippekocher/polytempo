@@ -125,7 +125,7 @@ void Polytempo_GraphicsEditableRegion::resized()
 {
 	resizeContent();
 	screenToImage = AffineTransform::translation(-float(getX()), -float(getY()));
-	screenToImage = screenToImage.scale(currentImageRectangle.getWidth() / float(getWidth()), currentImageRectangle.getHeight() / float(getHeight()));
+	screenToImage = screenToImage.scale(currentImageRectangle.getWidth() / float(targetArea.getWidth()), currentImageRectangle.getHeight() / float(targetArea.getHeight()));
 	screenToImage = screenToImage.translated(currentImageRectangle.getX(), currentImageRectangle.getY());
 
 	imageToScreen = screenToImage.inverted();

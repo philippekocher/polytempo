@@ -57,6 +57,9 @@ private:
 	PopupMenu getTextSizePopupMenu() const;
 	void AddFontSizeToMenu(PopupMenu* m, int fontSize) const;
 
+protected:
+	Rectangle<int> targetArea;
+
 	enum Status { Default, FreehandEditing } status;
 	OwnedArray<Polytempo_GraphicsAnnotation> annotations;
 	Polytempo_GraphicsAnnotation temporaryAnnotation;
