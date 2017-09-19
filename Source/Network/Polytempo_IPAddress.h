@@ -25,7 +25,7 @@ public:
 	IPAddress getFirstNetworkAddress();
 	IPAddress getLastNetworkAddress();
 
-	Polytempo_IPAddress(IPAddress address, IPAddress mask);
+	Polytempo_IPAddress(IPAddress ipAdress, IPAddress subnetMask, String adapterName);
 	Polytempo_IPAddress() noexcept;
 
 	bool operator== (const Polytempo_IPAddress& other) const noexcept;
@@ -33,6 +33,7 @@ public:
 
 	IPAddress ipAddress;
 	IPAddress subnetMask;
+	String adapterName;
 };
 
 

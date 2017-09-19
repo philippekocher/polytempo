@@ -950,6 +950,7 @@ class NetworkPreferencesPage : public Component, Button::Listener, ComboBox::Lis
 	ComboBox* ipList;
 	Button* refreshButton;
 	Label*	adapterInfoLabel;
+	ToggleButton* adapterLock;
 	Array <Polytempo_IPAddress> ipAddresses;
 
 public:
@@ -963,6 +964,10 @@ public:
 		addAndMakeVisible(ipList = new ComboBox(String::empty));
 		ipList->addListener(this);
 		updateIpList();
+
+		addAndMakeVisible(adapterLock = new ToggleButton("Lock to this adapter"));
+		adapterLock->setToggleState(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("networkAdapterLock", false), dontSendNotification);
+		adapterLock->addListener(this);
 
 		addAndMakeVisible(refreshButton = new TextButton(String::empty));
 		refreshButton->setButtonText(L"Refresh");
@@ -999,8 +1004,9 @@ public:
 	{
 		ipListLabel->setBounds(20, 50, proportionOfWidth(0.9f), 24);
 		ipList->setBounds(20, 80, proportionOfWidth(0.9f), 24);
-		refreshButton->setBounds(20, 110, proportionOfWidth(0.9f), 24);
-		adapterInfoLabel->setBounds(20, 140, proportionOfWidth(0.9f), 144);
+		adapterLock->setBounds(20, 110, proportionOfWidth(0.9f), 24);
+		refreshButton->setBounds(20, 140, proportionOfWidth(0.9f), 24);
+		adapterInfoLabel->setBounds(20, 170, proportionOfWidth(0.9f), 144);
 	}
 
 	/* combobox & button listener
@@ -1010,6 +1016,10 @@ public:
 		if (button == refreshButton)
 		{
 			updateIpList();
+		}
+		else if (button == adapterLock)
+		{
+			Polytempo_StoredPreferences::getInstance()->getProps().setValue("networkAdapterLock", adapterLock->getToggleState());
 		}
 	}
 
