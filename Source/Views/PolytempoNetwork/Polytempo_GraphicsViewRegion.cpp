@@ -51,11 +51,8 @@ void Polytempo_GraphicsViewRegion::paintContent(Graphics& g)
         
     if(contentType == contentType_Image && image != nullptr)
     {
-        imageZoom = imageZoom == INFINITY ? 1 : imageZoom;
-        
-        float yOffset = (getHeight() - (imageHeight * imageZoom)) * 0.5f;
         g.drawImage(*image,
-                    0, (int)yOffset, (int)(imageWidth * imageZoom), (int)(imageHeight * imageZoom),
+                    targetArea.getX(), targetArea.getY(), targetArea.getWidth(), targetArea.getHeight(),
                     (int)imageLeft, (int)imageTop, (int)imageWidth, (int)imageHeight);
         
     }
@@ -95,6 +92,11 @@ void Polytempo_GraphicsViewRegion::resizeContent()
         imageZoom = widthZoom < heightZoom ? widthZoom : heightZoom;
         
         if(maxImageZoom > 0.0f && imageZoom > maxImageZoom) imageZoom = maxImageZoom;
+
+		if(imageZoom == INFINITY) imageZoom = 1;
+
+		float yOffset = (getHeight() - (imageHeight * imageZoom)) * 0.5f;
+		targetArea = Rectangle<int>(0, yOffset, imageWidth* imageZoom, imageHeight*imageZoom);
     }
     else if(contentType == contentType_Progressbar)
     {
