@@ -10,7 +10,7 @@
 
 #pragma once
 #include "JuceHeader.h"
-#define STANDARD_FONT_SIZE 16.0f
+#define STANDARD_FONT_SIZE 40.0f
 
 class Polytempo_GraphicsAnnotation
 {

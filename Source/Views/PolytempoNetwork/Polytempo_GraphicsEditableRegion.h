@@ -17,6 +17,8 @@
 #define MIN_INTERVAL_BETWEEN_REPAINTS_MS 100
 #define FREE_HAND_LINE_THICKNESS 2
 
+class FontSizeCallback;
+
 //==============================================================================
 /*
 */
@@ -43,6 +45,7 @@ public:
 	void buttonClicked(Button* source) override;
 	void changeListenerCallback(ChangeBroadcaster* source) override;
 	bool keyPressed(const KeyPress& key, Component* /*originatingComponent*/) override;
+	void setTemporaryFontSize(int fontSize);
 
 private:
 	virtual void setViewImage(Image *img, var) = 0;
@@ -51,6 +54,8 @@ private:
 	void handleEndEditCancel();
 	void handleEndEdit();
 	void handleFreeHandPainting(const Point<int>& mousePosition);
+	PopupMenu getTextSizePopupMenu() const;
+	void AddFontSizeToMenu(PopupMenu* m, int fontSize) const;
 
 	enum Status { Default, FreehandEditing } status;
 	OwnedArray<Polytempo_GraphicsAnnotation> annotations;
@@ -72,5 +77,16 @@ private:
 	AffineTransform imageToScreen;
 	AffineTransform screenToImage;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_GraphicsEditableRegion)
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_GraphicsEditableRegion)
+};
+
+
+class FontSizeCallback : public ModalComponentManager::Callback
+{
+public:
+	FontSizeCallback(Polytempo_GraphicsEditableRegion* pParent) :pParent(pParent) {};
+	void modalStateFinished(int returnValue) override { pParent->setTemporaryFontSize(returnValue); };
+
+private:
+	Polytempo_GraphicsEditableRegion* pParent;
 };

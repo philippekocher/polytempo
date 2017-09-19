@@ -52,8 +52,10 @@ void Polytempo_GraphicsAnnotationManager::addAnnotation(Polytempo_GraphicsAnnota
 
 	for (int i = 0; i < annotationSets.size(); i++)
 	{
-		if (annotationSets[i]->getEdit())
+		if (annotationSets[i]->getEdit()) {
 			annotationSets[i]->addAnnotation(annotation);
+			annotationSets[i]->SaveToFile();
+		}
 	}
 }
 

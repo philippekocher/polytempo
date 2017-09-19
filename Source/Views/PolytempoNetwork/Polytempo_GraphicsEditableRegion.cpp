@@ -11,7 +11,7 @@
 #include "../../../POLYTEMPO NETWORK/JuceLibraryCode/JuceHeader.h"
 #include "Polytempo_GraphicsEditableRegion.h"
 #include "Polytempo_GraphicsAnnotationManager.h"
-#include "Polytempo_GraphicsAnnotationSettingsDialog.h"
+#include <string>
 
 //==============================================================================
 Polytempo_GraphicsEditableRegion::Polytempo_GraphicsEditableRegion()
@@ -41,6 +41,7 @@ Polytempo_GraphicsEditableRegion::Polytempo_GraphicsEditableRegion()
 	buttonTextSize = new ImageButton("Size");
 	buttonTextSize->setImages(false, false, false, imageFontSize, 1.0f, Colours::transparentWhite, Image::null, overOpacity, overColour, Image::null, downOpacity, Colours::green);
 	buttonTextSize->setBounds(0, 0, width, height);
+	buttonTextSize->setTriggeredOnMouseDown(true);
 	buttonTextSize->addListener(this);
 	addChildComponent(buttonTextSize);
 
@@ -337,6 +338,28 @@ void Polytempo_GraphicsEditableRegion::timerCallback()
 	}
 }
 
+void Polytempo_GraphicsEditableRegion::AddFontSizeToMenu(PopupMenu* m, int fontSize) const
+{
+	m->addItem(fontSize, std::to_string(fontSize), true, temporaryAnnotation.fontSize == fontSize);
+}
+
+PopupMenu Polytempo_GraphicsEditableRegion::getTextSizePopupMenu() const
+{
+	PopupMenu m;
+	AddFontSizeToMenu(&m, 10);
+	AddFontSizeToMenu(&m, 20);
+	AddFontSizeToMenu(&m, 30);
+	AddFontSizeToMenu(&m, 40);
+	AddFontSizeToMenu(&m, 50);
+	AddFontSizeToMenu(&m, 60);
+	AddFontSizeToMenu(&m, 70);
+	AddFontSizeToMenu(&m, 80);
+	AddFontSizeToMenu(&m, 90);
+	AddFontSizeToMenu(&m, 100);
+
+	return m;
+}
+
 void Polytempo_GraphicsEditableRegion::buttonClicked(Button* source)
 {
 	if(source == buttonOk)
@@ -353,7 +376,7 @@ void Polytempo_GraphicsEditableRegion::buttonClicked(Button* source)
 	}
 	else if(source == buttonTextSize)
 	{
-		// Todo
+		getTextSizePopupMenu().showMenuAsync(PopupMenu::Options().withTargetComponent(buttonTextSize), new FontSizeCallback(this));
 	}
 	else if(source == buttonSettings)
 	{
@@ -390,4 +413,10 @@ bool Polytempo_GraphicsEditableRegion::keyPressed(const KeyPress& key, Component
 	}
 
 	return false;
+}
+
+void Polytempo_GraphicsEditableRegion::setTemporaryFontSize(int fontSize)
+{
+	temporaryAnnotation.fontSize = fontSize;
+	repaintRequired = true;
 }
