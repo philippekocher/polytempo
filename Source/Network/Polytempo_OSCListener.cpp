@@ -69,7 +69,7 @@ void Polytempo_OSCListener::oscMessageReceived(const OSCMessage & message)
 		// "Open Score": only PolytempoNetwork
 
 		Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
-		if ((*argumentIterator).isString())
+		if (argumentIterator != message.end() && (*argumentIterator).isString())
         {
             String filePath(argumentIterator->getString());
             if(filePath.startsWithChar(File::separator) ||
