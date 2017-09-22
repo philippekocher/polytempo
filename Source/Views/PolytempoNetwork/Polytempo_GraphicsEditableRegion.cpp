@@ -125,7 +125,8 @@ void Polytempo_GraphicsEditableRegion::paint (Graphics& g)
 	bool anchorFlag = Polytempo_GraphicsAnnotationManager::getInstance()->getAnchorFlag();
 	for (Polytempo_GraphicsAnnotation* annotation : annotations)
 	{
-		paintAnnotation(g, annotation, anchorFlag, Colours::blue);
+		if(currentImageRectangle.contains(annotation->referencePoint))
+			paintAnnotation(g, annotation, anchorFlag, Colours::blue);
 	}
 }
 
