@@ -154,10 +154,6 @@
               resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_GraphicsAnnotationManager.cpp"/>
         <FILE id="yUdlYa" name="Polytempo_GraphicsAnnotationManager.h" compile="0"
               resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_GraphicsAnnotationManager.h"/>
-        <FILE id="uevSfx" name="Polytempo_GraphicsAnnotationManagerView.cpp"
-              compile="1" resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_GraphicsAnnotationManagerView.cpp"/>
-        <FILE id="tpRz1D" name="Polytempo_GraphicsAnnotationManagerView.h"
-              compile="0" resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_GraphicsAnnotationManagerView.h"/>
         <FILE id="MfHSHT" name="Polytempo_GraphicsAnnotationSet.cpp" compile="1"
               resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_GraphicsAnnotationSet.cpp"/>
         <FILE id="wsH3UF" name="Polytempo_GraphicsAnnotationSet.h" compile="0"

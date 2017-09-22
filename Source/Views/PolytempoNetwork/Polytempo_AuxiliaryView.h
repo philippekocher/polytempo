@@ -28,7 +28,6 @@
 #include "../../Scheduler/Polytempo_EventObserver.h"
 #include "../../Misc/Polytempo_Textbox.h"
 #include "../../Misc/Polytempo_Button.h"
-#include "Polytempo_GraphicsAnnotationManagerView.h"
 
 
 class Polytempo_AuxiliaryView : public Component,
@@ -69,9 +68,7 @@ private:
     AttributedString peers;
     Label       *peersTextbox;
     
-	Polytempo_GraphicsAnnotationManagerView *annotationManager;
-
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_AuxiliaryView)
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_AuxiliaryView)
 };
 
 
