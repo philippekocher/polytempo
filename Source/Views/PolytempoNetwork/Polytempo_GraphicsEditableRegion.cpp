@@ -20,46 +20,44 @@ Polytempo_GraphicsEditableRegion::Polytempo_GraphicsEditableRegion()
     // initialise any special settings that your component needs.
 	status = Default;
 	
-	int width = 32;
-	int height = 32;
 	Colour overColour = Colour(Colours::purple.getRed(), Colours::purple.getGreen(), Colours::purple.getBlue(), uint8(80));
 	float overOpacity = 1.0;
 	float downOpacity = 1.0;
 
-	Image imageColorPalette = ImageCache::getFromMemory(BinaryData::colorPalette_png, BinaryData::colorPalette_pngSize);
-	Image imageFontSize = ImageCache::getFromMemory(BinaryData::fontSize_png, BinaryData::fontSize_pngSize);
-	Image imageOk = ImageCache::getFromMemory(BinaryData::yes_png, BinaryData::yes_pngSize);
-	Image imageCancel = ImageCache::getFromMemory(BinaryData::no_png, BinaryData::no_pngSize);
-	Image imageSettings = ImageCache::getFromMemory(BinaryData::settings_png, BinaryData::settings_pngSize);
+	Image imageColorPalette = CreateImageWithSolidBackground(ImageCache::getFromMemory(BinaryData::colorPalette_png, BinaryData::colorPalette_pngSize), BUTTON_SIZE, BUTTON_SIZE);
+	Image imageFontSize = CreateImageWithSolidBackground(ImageCache::getFromMemory(BinaryData::fontSize_png, BinaryData::fontSize_pngSize), BUTTON_SIZE, BUTTON_SIZE);
+	Image imageOk = CreateImageWithSolidBackground(ImageCache::getFromMemory(BinaryData::yes_png, BinaryData::yes_pngSize), BUTTON_SIZE, BUTTON_SIZE);
+	Image imageCancel = CreateImageWithSolidBackground(ImageCache::getFromMemory(BinaryData::no_png, BinaryData::no_pngSize), BUTTON_SIZE, BUTTON_SIZE);
+	Image imageSettings = CreateImageWithSolidBackground(ImageCache::getFromMemory(BinaryData::settings_png, BinaryData::settings_pngSize), BUTTON_SIZE, BUTTON_SIZE);
 
 	buttonColor = new ImageButton("Color");
 	buttonColor->setImages(false, false, false, imageColorPalette, 1.0f, Colours::transparentWhite, Image::null, overOpacity, overColour, Image::null, downOpacity, Colours::green);
-	buttonColor->setBounds(0, 0, width, height);
+	buttonColor->setBounds(0, 0, BUTTON_SIZE, BUTTON_SIZE);
 	buttonColor->addListener(this);
 	addChildComponent(buttonColor);
 
 	buttonTextSize = new ImageButton("Size");
 	buttonTextSize->setImages(false, false, false, imageFontSize, 1.0f, Colours::transparentWhite, Image::null, overOpacity, overColour, Image::null, downOpacity, Colours::green);
-	buttonTextSize->setBounds(0, 0, width, height);
+	buttonTextSize->setBounds(0, 0, BUTTON_SIZE, BUTTON_SIZE);
 	buttonTextSize->setTriggeredOnMouseDown(true);
 	buttonTextSize->addListener(this);
 	addChildComponent(buttonTextSize);
 
 	buttonSettings = new ImageButton("Settings");
 	buttonSettings->setImages(false, false, false, imageSettings, 1.0f, Colours::transparentWhite, Image::null, overOpacity, overColour, Image::null, downOpacity, Colours::green);
-	buttonSettings->setBounds(0, 0, width, height);
+	buttonSettings->setBounds(0, 0, BUTTON_SIZE, BUTTON_SIZE);
 	buttonSettings->addListener(this);
 	addChildComponent(buttonSettings);
 
 	buttonOk = new ImageButton("OK");
 	buttonOk->setImages(false, false, false, imageOk, 1.0f, Colours::transparentWhite, Image::null, overOpacity, overColour, Image::null, downOpacity, Colours::green);
-	buttonOk->setBounds(0, 0, width, height);
+	buttonOk->setBounds(0, 0, BUTTON_SIZE, BUTTON_SIZE);
 	buttonOk->addListener(this);
 	addChildComponent(buttonOk);
 	
 	buttonCancel = new ImageButton("Cancel");
 	buttonCancel->setImages(false, false, false, imageCancel, 1.0f, Colours::transparentWhite, Image::null, overOpacity, overColour, Image::null, downOpacity, Colours::red);
-	buttonCancel->setBounds(0, 0, width, height);
+	buttonCancel->setBounds(0, 0, BUTTON_SIZE, BUTTON_SIZE);
 	buttonCancel->addListener(this);
 	addChildComponent(buttonCancel);
 
@@ -81,7 +79,18 @@ Polytempo_GraphicsEditableRegion::~Polytempo_GraphicsEditableRegion()
 	stopTimer();
 }
 
-void Polytempo_GraphicsEditableRegion::paintAnnotation(Graphics& g, const Polytempo_GraphicsAnnotation* annotation)
+Image Polytempo_GraphicsEditableRegion::CreateImageWithSolidBackground(Image image, int targetWidth, int targetHeight) const
+{
+	Image newImage = Image(Image::RGB, targetWidth, targetHeight, false);
+	newImage.clear(newImage.getBounds(), Colours::lightyellow);
+
+	Graphics gFontSize(newImage);
+	gFontSize.drawImage(image, 0, 0, targetWidth, targetHeight, 0, 0, image.getWidth(), image.getHeight());
+
+	return newImage;
+}
+
+void Polytempo_GraphicsEditableRegion::paintAnnotation(Graphics& g, const Polytempo_GraphicsAnnotation* annotation, bool anchorFlag, Colour anchorColor)
 {
 	PathStrokeType strokeType(PathStrokeType::rounded);
 
@@ -95,9 +104,9 @@ void Polytempo_GraphicsEditableRegion::paintAnnotation(Graphics& g, const Polyte
 		g.drawSingleLineText(annotation->text, int(annotation->referencePoint.getX()) + 10, int(annotation->referencePoint.getY()));
 	}
 
-	if(Polytempo_GraphicsAnnotationManager::getInstance()->getAnchorFlag())
+	if(anchorFlag)
 	{
-		g.setColour(Colours::blue);
+		g.setColour(anchorColor);
 		g.fillRoundedRectangle(annotation->referencePoint.getX() - 8.0f, annotation->referencePoint.getY() - 8.0f, 16.0f, 16.0f, 4.0f);
 	}
 }
@@ -110,14 +119,13 @@ void Polytempo_GraphicsEditableRegion::paint (Graphics& g)
 
 	if (status == FreehandEditing)
 	{
-		g.drawArrow(Line<float>(temporaryAnnotation.referencePoint.translated(0.0f, buttonsAboveReferencePoint ? -50.0f : 50.0f), temporaryAnnotation.referencePoint).toFloat(), 4.0f, 8.0f, 8.0f);
-
-		paintAnnotation(g, &temporaryAnnotation);
+		paintAnnotation(g, &temporaryAnnotation, true, Colours::red);
 	}
 
+	bool anchorFlag = Polytempo_GraphicsAnnotationManager::getInstance()->getAnchorFlag();
 	for (Polytempo_GraphicsAnnotation* annotation : annotations)
 	{
-		paintAnnotation(g, annotation);
+		paintAnnotation(g, annotation, anchorFlag, Colours::blue);
 	}
 }
 
@@ -278,17 +286,19 @@ void Polytempo_GraphicsEditableRegion::handleStartEditing(Point<int> mousePositi
 	status = FreehandEditing;
 	setMouseCursor(MouseCursor::CrosshairCursor);
 
-	buttonsAboveReferencePoint = (mousePosition.getY() > getHeight() - 65);
+	buttonsAboveReferencePoint = (mousePosition.getY() > getHeight() - (DISTANCE_REFERENCEPOINT_TO_BUTTONS + 2 * BUTTON_SIZE));
+	int yFirstButtonLine = DISTANCE_REFERENCEPOINT_TO_BUTTONS * (buttonsAboveReferencePoint ? -1 : 1);
+	int ySecondButtonLine = (DISTANCE_REFERENCEPOINT_TO_BUTTONS + BUTTON_SIZE) * (buttonsAboveReferencePoint ? -1 : 1);
 
-	buttonOk->setCentrePosition(mousePosition.translated(15, buttonsAboveReferencePoint ? -50 : 50));
+	buttonOk->setCentrePosition(mousePosition.translated(BUTTON_SIZE / 2, yFirstButtonLine));
 	buttonOk->setVisible(true);
-	buttonCancel->setCentrePosition(mousePosition.translated(45, buttonsAboveReferencePoint ? -50 : 50));
+	buttonCancel->setCentrePosition(mousePosition.translated(int(BUTTON_SIZE * 1.5), yFirstButtonLine));
 	buttonCancel->setVisible(true);
-	buttonColor->setCentrePosition(mousePosition.translated(0, buttonsAboveReferencePoint ? -80 : 80));
+	buttonColor->setCentrePosition(mousePosition.translated(0, ySecondButtonLine));
 	buttonColor->setVisible(true);
-	buttonTextSize->setCentrePosition(mousePosition.translated(30, buttonsAboveReferencePoint ? -80 : 80));
+	buttonTextSize->setCentrePosition(mousePosition.translated(BUTTON_SIZE, ySecondButtonLine));
 	buttonTextSize->setVisible(true);
-	buttonSettings->setCentrePosition(mousePosition.translated(60, buttonsAboveReferencePoint ? -80 : 80));
+	buttonSettings->setCentrePosition(mousePosition.translated(BUTTON_SIZE * 2, ySecondButtonLine));
 	buttonSettings->setVisible(true);
 
 	colorSelector->setTopLeftPosition(mousePosition.getX() > getBounds().getWidth() / 2 ? 0 : getBounds().getWidth() - colorSelector->getWidth(), getBounds().getHeight() - colorSelector->getHeight());
@@ -415,7 +425,7 @@ bool Polytempo_GraphicsEditableRegion::keyPressed(const KeyPress& key, Component
 	return false;
 }
 
-void Polytempo_GraphicsEditableRegion::setTemporaryFontSize(int fontSize)
+void Polytempo_GraphicsEditableRegion::setTemporaryFontSize(float fontSize)
 {
 	temporaryAnnotation.fontSize = fontSize;
 	repaintRequired = true;

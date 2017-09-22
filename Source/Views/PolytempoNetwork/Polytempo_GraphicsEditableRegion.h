@@ -16,6 +16,8 @@
 #define MIN_MOUSE_DOWN_TIME_MS 500
 #define MIN_INTERVAL_BETWEEN_REPAINTS_MS 100
 #define FREE_HAND_LINE_THICKNESS 2
+#define BUTTON_SIZE 32
+#define DISTANCE_REFERENCEPOINT_TO_BUTTONS 50
 
 class FontSizeCallback;
 
@@ -25,15 +27,15 @@ class FontSizeCallback;
 class Polytempo_GraphicsEditableRegion : public Component, Timer, ButtonListener, KeyListener, ChangeListener
 {
 public:
-    Polytempo_GraphicsEditableRegion();
+	Polytempo_GraphicsEditableRegion();
     ~Polytempo_GraphicsEditableRegion();
-
+	
 	virtual void paintContent(Graphics& g) = 0;
 	virtual void resizeContent() = 0;
 
-	static void paintAnnotation(Graphics& g, const Polytempo_GraphicsAnnotation* annotation);
-    void paint (Graphics&) override;
+	void paint (Graphics&) override;
 	void resized() override;
+	void paintAnnotation(Graphics& g, const Polytempo_GraphicsAnnotation* annotation, bool anchorFlag, Colour anchorColor);
 
 	void setImage(Image *img, var rect, String imageId);
 	void mouseUp(const MouseEvent& e) override;
@@ -45,7 +47,7 @@ public:
 	void buttonClicked(Button* source) override;
 	void changeListenerCallback(ChangeBroadcaster* source) override;
 	bool keyPressed(const KeyPress& key, Component* /*originatingComponent*/) override;
-	void setTemporaryFontSize(int fontSize);
+	void setTemporaryFontSize(float fontSize);
 
 private:
 	virtual void setViewImage(Image *img, var) = 0;
@@ -56,6 +58,7 @@ private:
 	void handleFreeHandPainting(const Point<int>& mousePosition);
 	PopupMenu getTextSizePopupMenu() const;
 	void AddFontSizeToMenu(PopupMenu* m, int fontSize) const;
+	Image CreateImageWithSolidBackground(Image image, int targetWidth, int targetHeight) const;
 
 protected:
 	Rectangle<int> targetArea;
