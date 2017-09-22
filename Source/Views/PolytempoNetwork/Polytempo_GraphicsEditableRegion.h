@@ -91,7 +91,7 @@ class FontSizeCallback : public ModalComponentManager::Callback
 {
 public:
 	FontSizeCallback(Polytempo_GraphicsEditableRegion* pParent) :pParent(pParent) {};
-	void modalStateFinished(int returnValue) override { pParent->setTemporaryFontSize(returnValue); };
+	void modalStateFinished(int returnValue) override { pParent->setTemporaryFontSize(float(returnValue)); };
 
 private:
 	Polytempo_GraphicsEditableRegion* pParent;

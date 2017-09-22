@@ -95,8 +95,8 @@ void Polytempo_GraphicsViewRegion::resizeContent()
 
 		if(imageZoom == INFINITY) imageZoom = 1;
 
-		float yOffset = (getHeight() - (imageHeight * imageZoom)) * 0.5f;
-		targetArea = Rectangle<int>(0, yOffset, imageWidth* imageZoom, imageHeight*imageZoom);
+		int yOffset = int((getHeight() - (imageHeight * imageZoom)) * 0.5f);
+		targetArea = Rectangle<int>(0, yOffset, int(imageWidth * imageZoom), int(imageHeight*imageZoom));
     }
     else if(contentType == contentType_Progressbar)
     {
