@@ -249,20 +249,16 @@ void Polytempo_NetworkApplication::openScoreFilePath(String filePath)
     if(file.existsAsFile() == 1) openScoreFile(file);
 }
 
-void Polytempo_NetworkApplication::openScoreFile(File newScoreFile)
+void Polytempo_NetworkApplication::openScoreFile(File aFile)
 {
-    if(newScoreFile != File::nonexistent)
+    if(aFile != File::nonexistent) newScoreFile = aFile;
+    
+    if(newScoreFile == scoreFile) return; // file already open
+    if(!newScoreFile.existsAsFile())
     {
-        if(newScoreFile.existsAsFile())
-            scoreFile = newScoreFile;
-        else
-        {
-            Polytempo_Alert::show("Error", "File does not exist:\n" + newScoreFile.getFullPathName());
-            return;
-        }
-        
+        Polytempo_Alert::show("Error", "File does not exist:\n" + newScoreFile.getFullPathName());
+        return;
     }
-    else if(newScoreFile == scoreFile) return; // file already open
 
     if(score && score->isDirty())
     {
@@ -272,22 +268,22 @@ void Polytempo_NetworkApplication::openScoreFile(File newScoreFile)
         return;
     }
     
-    Polytempo_StoredPreferences::getInstance()->getProps().setValue("scoreFileDirectory", scoreFile.getParentDirectory().getFullPathName());
+    Polytempo_StoredPreferences::getInstance()->getProps().setValue("scoreFileDirectory", newScoreFile.getParentDirectory().getFullPathName());
     
     Polytempo_Score *newScore = nullptr;
  
-    Polytempo_Score::parse(scoreFile, &newScore);
+    Polytempo_Score::parse(newScoreFile, &newScore);
     // TODO: validate score
     //  - has section "init"?
     
     if(newScore != nullptr)
     {
 		// load annotations
-		String name = scoreFile.getFileNameWithoutExtension();
-    	
-		Polytempo_GraphicsAnnotationManager::getInstance()->initialize(scoreFile.getParentDirectory().getFullPathName(), name);
+		String name = newScoreFile.getFileNameWithoutExtension();    	
+		Polytempo_GraphicsAnnotationManager::getInstance()->initialize(newScoreFile.getParentDirectory().getFullPathName(), name);
 
-		DBG("set score");
+        DBG("set score");
+        scoreFile = newScoreFile;
         score = newScore;
         Polytempo_ScoreScheduler::getInstance()->setScore(score);
         mainWindow->setName(scoreFile.getFileNameWithoutExtension());

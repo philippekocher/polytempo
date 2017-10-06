@@ -56,7 +56,7 @@ public:
     void openFileDialog();
 
     void openScoreFilePath(String filePath = String::empty);
-    void openScoreFile(File newScoreFile = File::nonexistent);
+    void openScoreFile(File aFile = File::nonexistent);
     void saveScoreFile(bool showFileDialog);
     
     void commandStatusChanged();
@@ -69,7 +69,7 @@ private:
     ScopedPointer<Polytempo_MidiInput> midiInput;
     ScopedPointer<Polytempo_Score> score;
     
-    File scoreFile;
+    File scoreFile, newScoreFile;
     LookAndFeel_V3 lookAndFeelV3;
 };
 

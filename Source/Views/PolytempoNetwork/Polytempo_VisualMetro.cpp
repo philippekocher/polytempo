@@ -248,6 +248,10 @@ void Polytempo_VisualMetro::hiResTimerCallback()
     else                            pos += increment;
     
     if(holdMax) holdMax-- ;
+    
+    // cue colour changes to normal colour on downbeat
+    if(pos > 0.5 && (pattern == 11 || pattern == 21))
+        foregroundColour = normalColour;
 }
 
 void Polytempo_VisualMetro::eventNotification(Polytempo_Event *event)
