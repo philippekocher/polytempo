@@ -128,12 +128,13 @@ void Polytempo_GraphicsView::displayImage(Polytempo_Event *event)
         return;
     }
     
-//    if(rect == var::null)
-//    {
-//        Array < var > r;
-//        r.set(0,0); r.set(1,0); r.set(2,1); r.set(3,1);
-//        rect = r;
-//    }
+    // default rectangle [0,0,1,1]
+    if(rect == var::null)
+    {
+        Array < var > r;
+        r.set(0,0); r.set(1,0); r.set(2,1); r.set(3,1);
+        rect = r;
+    }
     
     region->setImage(image, rect);
     region->setVisible(true);
