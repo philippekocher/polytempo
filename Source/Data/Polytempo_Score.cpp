@@ -187,17 +187,15 @@ bool Polytempo_Score::setTime(int time, Array<Polytempo_Event*> *events, float *
     Polytempo_Event *event = nullptr;
     bool done = false;
     
-    // find next marker OR next downbeat OR next cue in beat
+    // find next downbeat OR next cue-in OR next progressbar
     for(i=0;i<sections[currentSectionIndex]->events.size();i++)
     {
         event = sections[currentSectionIndex]->events[i];
-        if((event->getType() == eventType_Marker &&
-            event->getTime() >= time)
-           ||
-           (event->getType() == eventType_Beat &&
-            event->getTime() >= time &&
+        if(event->getTime() >= time &&
+           ((event->getType() == eventType_Beat &&
             (int(event->getProperty(eventPropertyString_Pattern)) < 20 ||
-             int(event->getProperty(eventPropertyString_Cue)) > 0)))
+             int(event->getProperty(eventPropertyString_Cue)) > 0))
+            || event->getType() == eventType_Progressbar))
         {
             tempTime = event->getTime();
             *waitBeforStart = tempTime - time;
@@ -212,7 +210,7 @@ bool Polytempo_Score::setTime(int time, Array<Polytempo_Event*> *events, float *
         }
     }
     
-    // if no downbeat or cue in beat has been found: find any event
+    // if no downbeat, cue-in or progressbar has been found: find any event
     if(!done)
     {
         for(i=0;i<sections[currentSectionIndex]->events.size();i++)
