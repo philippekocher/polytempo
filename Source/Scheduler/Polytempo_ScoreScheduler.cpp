@@ -222,7 +222,7 @@ void Polytempo_ScoreScheduler::setScore(Polytempo_Score* theScore)
     executeInit();
     
     // set default section
-    score->setSection();
+    score->selectSection();
     Polytempo_EventScheduler::getInstance()->scheduleEvent(Polytempo_Event::makeEvent(eventType_Ready));
 
     // goto beginning of score (only local);

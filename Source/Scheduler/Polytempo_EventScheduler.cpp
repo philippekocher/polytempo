@@ -51,6 +51,7 @@ void Polytempo_EventScheduler::scheduleScoreEvent(Polytempo_Event *event)
     if(event->getSyncTime() <= Time::getMillisecondCounter())
     {
         notify(event);
+        if(!event->isOwned()) delete event;
     }
     else
     {
@@ -72,7 +73,7 @@ void Polytempo_EventScheduler::scheduleEvent(Polytempo_Event *event, bool delete
     if(event->getSyncTime() <= Time::getMillisecondCounter())
     {
         notify(event);
-        delete event;
+        if(!event->isOwned()) delete event;
     }
     else
     {
@@ -105,6 +106,7 @@ void Polytempo_EventScheduler::run()
             if(event->getSyncTime() <= currentSyncTime)
             {
                 notify(event);
+                if(!event->isOwned()) delete event;
                 scheduledScoreEvents.remove(i);
             }
             else ++i;
@@ -116,7 +118,7 @@ void Polytempo_EventScheduler::run()
             if(event->getSyncTime() <= currentSyncTime)
             {
                 notify(event);
-                delete event;
+                if(!event->isOwned()) delete event;
                 scheduledEvents.remove(j);
             }
             else ++j;

@@ -333,6 +333,7 @@ void Polytempo_Sequence::buildBeatPattern()
 
     // add a very last event and adjust the end point
     Polytempo_Event *event = new Polytempo_Event(eventType_Beat);
+    event->setOwned(true);
     event->setPosition(position);
     event->setProperty(eventPropertyString_Pattern, 10);
     
@@ -372,7 +373,7 @@ void Polytempo_Sequence::updateEvents()
 void Polytempo_Sequence::addPlaybackPropertiesToEvent(Polytempo_Event* event)
 {
     int pattern = event->getProperty(eventPropertyString_Pattern);
-
+    
     if(!mute && playAudioClick)
     {
         if(int(event->getProperty("cue")) != 0)

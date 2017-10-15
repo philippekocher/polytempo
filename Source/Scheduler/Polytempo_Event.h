@@ -158,9 +158,13 @@ public:
     void setPosition(Rational pos);
     Rational getPosition();
     
+    void setOwned(bool flag);
+    bool isOwned();
+    
     void setProperty(String key, var value);
     var  getProperty(String key);
     bool hasProperty(String key);
+    void removeProperty(String key);
     NamedValueSet* getProperties();
     
     
@@ -169,6 +173,8 @@ private:
     int                 time;      // in miliseconds (NB. the property "time" is in seconds and whenever a time is stored in the property "value" it's in seconds as well!)
     int                 syncTime;  // in miliseconds
     Rational            position;
+    
+    bool                owned;     // indicate if this event is owned by a another data structure (e.g. a score) 
 
     ScopedPointer < NamedValueSet > properties;
 };
