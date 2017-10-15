@@ -25,8 +25,8 @@
 #ifndef __Polytempo_AudioClick__
 #define __Polytempo_AudioClick__
 
-//#include "../../JuceLibraryCode/JuceHeader.h"
 #include "../Scheduler/Polytempo_EventObserver.h"
+
 
 class SynthAudioSource;
 
@@ -38,6 +38,7 @@ public:
    
     juce_DeclareSingleton(Polytempo_AudioClick, false);
 
+    void setNumVoices(int num);
     void eventNotification(Polytempo_Event *event);
     
     int downbeatPitch, beatPitch, cuePitch;
@@ -45,6 +46,7 @@ public:
 
 private:
     MidiKeyboardState keyboardState;
+    Synthesiser synth;
     AudioDeviceManager& audioDeviceManager;
     
     ScopedPointer <AudioSourcePlayer> audioSourcePlayer;
@@ -54,4 +56,4 @@ private:
 };
 
 
-#endif /* defined(__Polytempo_AudioClick__) */
+#endif /* __Polytempo_AudioClick__ */

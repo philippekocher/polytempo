@@ -2,7 +2,7 @@
 
 <JUCERPROJECT id="OXoF3n" name="PolytempoComposer" projectType="guiapp" version="0.2.0"
               bundleIdentifier="net.icst.PolytempoComposer" includeBinaryInAppConfig="1"
-              jucerVersion="5.1.1" companyName="Zurich University of the Arts"
+              jucerVersion="5.1.2" companyName="Zurich University of the Arts"
               companyWebsite="www.icst.net" defines="POLYTEMPO_COMPOSER=1"
               displaySplashScreen="1" reportAppUsage="1" splashScreenColour="Dark"
               cppLanguageStandard="11">

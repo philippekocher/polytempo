@@ -26,19 +26,16 @@
 #include "../Preferences/Polytempo_StoredPreferences.h"
 #include "Polytempo_AudioDeviceManager.h"
 
+
 class SineWaveSound : public SynthesiserSound
 {
 public:
-    SineWaveSound()
-    {
-    }
+    SineWaveSound()     {}
     
-    bool appliesToNote (int /*midiNoteNumber*/)           { return true; }
-    bool appliesToChannel (int /*midiChannel*/)           { return true; }
+    bool appliesToNote (int /*midiNoteNumber*/)     { return true; }
+    bool appliesToChannel (int /*midiChannel*/)     { return true; }
 };
 
-
-//==============================================================================
 
 class SineWaveVoice : public SynthesiserVoice
 {
@@ -46,8 +43,7 @@ public:
     SineWaveVoice()
     : angleDelta (0.0),
     tailOff (0.0)
-    {
-    }
+    {}
     
     bool canPlaySound(SynthesiserSound* sound)
     {
@@ -61,7 +57,7 @@ public:
     }
     
     void startNote(int midiNoteNumber, float velocity,
-                    SynthesiserSound* /*sound*/, int /*currentPitchWheelPosition*/)
+                   SynthesiserSound* /*sound*/, int /*currentPitchWheelPosition*/)
     {
         currentAngle = 0.0;
         level = velocity * 0.15;
@@ -75,22 +71,8 @@ public:
     
     void stopNote (float velocity, bool allowTailOff)
     {
-        if(true)//allowTailOff)
-        {
-            // start a tail-off by setting this flag. The render callback will pick up on
-            // this and do a fade out, calling clearCurrentNote() when it's finished.
-            
-            if (tailOff == 0.0) // we only need to begin a tail-off if it's not already doing so - the
-                // stopNote method could be called more than once.
-                tailOff = 1.0;
-        }
-        else
-        {
-            // we're being told to stop playing immediately, so reset everything..
-            
-            clearCurrentNote();
-            angleDelta = 0.0;
-        }
+        if (tailOff == 0.0) tailOff = 1.0;
+        // we only need to begin a tail-off if it's not already doing so
     }
     
     void pitchWheelMoved (int /*newValue*/)
@@ -146,39 +128,22 @@ public:
     }
     
 private:
-	double currentAngle, angleDelta, level, tailOff;
-	int audioCh0 = 0, audioCh1 = 1;
+    double currentAngle, angleDelta, level, tailOff;
+    int audioCh0 = 0, audioCh1 = 1;
 };
 
-
-// This is an audio source that streams the output of our demo synth.
 class SynthAudioSource : public AudioSource
 {
 public:
-    //==============================================================================
-    // this collects real-time midi messages from the midi input device, and
-    // turns them into blocks that we can process in our audio callback
-    //MidiMessageCollector midiCollector;
-    
-    // this represents the state of which keys on our on-screen keyboard are held
-    // down. When the mouse is clicked on the keyboard component, this object also
-    // generates midi messages for this, which we can pass on to our synth.
     MidiKeyboardState& keyboardState;
+    Synthesiser& synth;
     
-    // the synth itself!
-    Synthesiser synth;
-    
-    
-    //==============================================================================
-    SynthAudioSource(MidiKeyboardState& keyboardState_)
-    : keyboardState(keyboardState_)
+    SynthAudioSource(MidiKeyboardState& aKeyboardState, Synthesiser& aSynth)
+    : keyboardState(aKeyboardState), synth(aSynth)
     {
-        // add one voice to our synth
-        synth.addVoice(new SineWaveVoice());
-        //synth.clearSounds();
         synth.addSound(new SineWaveSound());
     }
-
+    
     void prepareToPlay (int /*samplesPerBlockExpected*/, double sampleRate)
     {
         synth.setCurrentPlaybackSampleRate(sampleRate);
@@ -192,24 +157,24 @@ public:
         // the synth adds its output to the audio buffer, so we have to clear it first
         bufferToFill.clearActiveBufferRegion();
         
-        // fill a midi buffer with incoming messages
         MidiBuffer incomingMidi;
         keyboardState.processNextMidiBuffer(incomingMidi, 0, bufferToFill.numSamples, true);
         
-        // and now get the synth to process the midi events and generate its output.
         synth.renderNextBlock(*bufferToFill.buffer, incomingMidi, 0, bufferToFill.numSamples);
     }
 };
 
-//==============================================================================
 Polytempo_AudioClick::Polytempo_AudioClick()
 :audioDeviceManager(Polytempo_AudioDeviceManager::getSharedAudioDeviceManager())
 {
-    synthAudioSource = new SynthAudioSource(keyboardState);
+    synthAudioSource = new SynthAudioSource(keyboardState, synth);
     audioSourcePlayer = new AudioSourcePlayer();
     audioSourcePlayer->setSource(synthAudioSource);
     
     audioDeviceManager.addAudioCallback(audioSourcePlayer);
+    
+    // add one voice to our synth
+    synth.addVoice(new SineWaveVoice());
     
     downbeatPitch = Polytempo_StoredPreferences::getInstance()->getProps().getIntValue("audioDownbeatPitch");
     beatPitch = Polytempo_StoredPreferences::getInstance()->getProps().getIntValue("audioBeatPitch");
@@ -224,7 +189,7 @@ Polytempo_AudioClick::~Polytempo_AudioClick()
     audioSourcePlayer->setSource(0);
     audioDeviceManager.removeAudioCallback(audioSourcePlayer);
     audioDeviceManager.closeAudioDevice();
-            
+    
     audioSourcePlayer = nullptr;
     synthAudioSource = nullptr;
     
@@ -235,6 +200,12 @@ Polytempo_AudioClick::~Polytempo_AudioClick()
 
 juce_ImplementSingleton(Polytempo_AudioClick);
 
+void Polytempo_AudioClick::setNumVoices(int num)
+{
+    while(num > synth.getNumVoices())
+        synth.addVoice(new SineWaveVoice());
+}
+
 void Polytempo_AudioClick::eventNotification(Polytempo_Event *event)
 {
     if(event->getType() == eventType_Beat)
@@ -244,7 +215,7 @@ void Polytempo_AudioClick::eventNotification(Polytempo_Event *event)
         {
             int pitch = event->getProperty("audioPitch");
             float volume = event->getProperty("audioVolume");
-           
+            
             keyboardState.noteOn(1, pitch, volume);
             keyboardState.noteOff(1, pitch, 0);
         }
@@ -283,4 +254,3 @@ void Polytempo_AudioClick::eventNotification(Polytempo_Event *event)
 #endif
     }
 }
-

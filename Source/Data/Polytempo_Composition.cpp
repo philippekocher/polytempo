@@ -27,6 +27,7 @@
 #include "../Scheduler/Polytempo_ScoreScheduler.h"
 #include "../Preferences/Polytempo_StoredPreferences.h"
 #include "../Views/PolytempoComposer/Polytempo_DialogWindows.h"
+#include "../Audio+Midi/Polytempo_AudioClick.h"
 
 
 Polytempo_Composition::Polytempo_Composition()
@@ -48,6 +49,8 @@ void Polytempo_Composition::setMainWindow(DocumentWindow *w)
     mainWindow = w;
 }
 
+int sequenceCounter = 0;
+
 void Polytempo_Composition::updateContent()
 {
     findCoincidingControlPoints();
@@ -55,11 +58,10 @@ void Polytempo_Composition::updateContent()
     if(mainWindow) mainWindow->repaint();
     
     Polytempo_ComposerApplication::getCommandManager().commandStatusChanged(); // update menubar
+    Polytempo_AudioClick::getInstance()->setNumVoices(sequenceCounter);
     
     updateScore();
 }
-
-int sequenceCounter = 1;
 
 void Polytempo_Composition::addSequence()
 {
@@ -67,7 +69,7 @@ void Polytempo_Composition::addSequence()
     
     sequence = new Polytempo_Sequence();
     
-    sequence->setName("Sequence "+String(sequenceCounter++));
+    sequence->setName("Sequence "+String(++sequenceCounter));
     
     switch(sequences.size() % 3)
     {
