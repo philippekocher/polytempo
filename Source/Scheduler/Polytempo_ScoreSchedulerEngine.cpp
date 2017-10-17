@@ -50,6 +50,7 @@ void Polytempo_ComposerEngine::run()
     schedulerTick->setOwned(true);
     
     scoreTimeIncrement(); // reset timer
+    killed = false;
     shouldStop = false;
     
     while(!threadShouldExit() && !shouldStop)
@@ -99,7 +100,7 @@ void Polytempo_ComposerEngine::run()
          set time in order to set the score's pointer to the next event
          (which is already ahead by the amount of lookahead).
 	*/
-    scoreScheduler->gotoTime(scoreTime);
+    if(!killed) scoreScheduler->gotoTime(scoreTime);
 }
 #endif
 

@@ -298,29 +298,41 @@ void Polytempo_SequencePlaybackSettings::buttonClicked(Button* button)
         oscBroadcastButton->setEnabled(buttonState);
         oscPort->setEnabled(buttonState);
         oscPortDefaultButton->setEnabled(buttonState);
+        
+        if(buttonState) updateOscReceiver();
     }
     else if(button == oscDownbeatDefaultButton)
     {
-        oscDownbeatMessage->setText("/beat pattern #pattern duration #duration", dontSendNotification);
-    }
+        String text = "/beat pattern #pattern duration #duration";
+        oscDownbeatMessage->setText(text, dontSendNotification);
+        sequence->oscDownbeatMessage = text;
+   }
     else if(button == oscBeatDefaultButton)
     {
-        oscBeatMessage->setText("/beat pattern #pattern duration #duration", dontSendNotification);
+        String text = "/beat pattern #pattern duration #duration";
+        oscBeatMessage->setText(text, dontSendNotification);
+        sequence->oscBeatMessage = text;
     }
     else if(button == oscCueDefaultButton)
     {
-        oscCueMessage->setText("/beat pattern #pattern duration #duration cue 1", dontSendNotification);
+        String text = "/beat pattern #pattern duration #duration cue 1";
+        oscCueMessage->setText(text, dontSendNotification);
+        sequence->oscCueMessage = text;
     }
     else if(button == oscBroadcastButton)
     {
-        oscReceiver->setText("#broadcast", dontSendNotification);
+        String text = "#broadcast";
+        oscReceiver->setText(text, dontSendNotification);
+        sequence->oscReceiver = text;
+        updateOscReceiver();
     }
     else if(button == oscPortDefaultButton)
     {
-        oscPort->setText("47522", dontSendNotification);
+        String text = "47522";
+        oscPort->setText(text, dontSendNotification);
+        sequence->oscPort = text;
+        updateOscReceiver();
     }
-    
-    
 }
 
 void Polytempo_SequencePlaybackSettings::labelTextChanged(Label* textbox)
