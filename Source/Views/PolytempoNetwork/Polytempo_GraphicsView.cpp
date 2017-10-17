@@ -102,6 +102,7 @@ void Polytempo_GraphicsView::displayImage(Polytempo_Event *event)
     Polytempo_GraphicsViewRegion      *region = nullptr;
     Image *image = nullptr;
     var rect;
+	String imageId;
     
     if(regionsMap.contains(event->getProperty(eventPropertyString_RegionID)))
     {
@@ -113,12 +114,14 @@ void Polytempo_GraphicsView::displayImage(Polytempo_Event *event)
     
     if(!event->getProperty(eventPropertyString_SectionID).isVoid())    // a section ID is given
     {
-        image = Polytempo_ImageManager::getInstance()->getImage(sectionImageIDMap[event->getProperty(eventPropertyString_SectionID)]);
+		imageId = sectionImageIDMap[event->getProperty(eventPropertyString_SectionID)];
+        image = Polytempo_ImageManager::getInstance()->getImage(imageId);
         rect = sectionBoundsMap[event->getProperty(eventPropertyString_SectionID)];
     }
     else if(!event->getProperty(eventPropertyString_ImageID).isVoid()) // a image ID is given
     {
-        image = Polytempo_ImageManager::getInstance()->getImage(event->getProperty(eventPropertyString_ImageID));
+		imageId = event->getProperty(eventPropertyString_ImageID);
+        image = Polytempo_ImageManager::getInstance()->getImage(imageId);
         rect = event->getProperty(eventPropertyString_Rect);
     }
 
@@ -136,7 +139,7 @@ void Polytempo_GraphicsView::displayImage(Polytempo_Event *event)
         rect = r;
     }
     
-    region->setImage(image, rect);
+    region->setImage(image, rect, imageId);
     region->setVisible(true);
     region->repaint();
 }

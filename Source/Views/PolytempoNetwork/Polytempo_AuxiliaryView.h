@@ -68,8 +68,7 @@ private:
     AttributedString peers;
     Label       *peersTextbox;
     
-    
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_AuxiliaryView)
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_AuxiliaryView)
 };
 
 

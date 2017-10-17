@@ -54,17 +54,11 @@ public:
     }
 };
 
-class Polytempo_Score_Section
+void Polytempo_Score_Section::sort() const
 {
-public:
-    void sort()
-    {
-        Polytempo_EventComparator sorter;
-        events.sort(sorter, true); // true = retain order of equal elements
-    }
-    
-    OwnedArray < Polytempo_Event > events;
-};
+	Polytempo_EventComparator sorter;
+	events.sort(sorter, true); // true = retain order of equal elements
+}
 
 Polytempo_Score::Polytempo_Score()
 {

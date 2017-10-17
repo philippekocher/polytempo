@@ -27,8 +27,12 @@
 
 #include "../Scheduler/Polytempo_Event.h"
 
-
-class Polytempo_Score_Section;
+class Polytempo_Score_Section
+{
+public:
+	void sort() const;
+	OwnedArray < Polytempo_Event > events;
+};
 
 class Polytempo_Score
 {
