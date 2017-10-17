@@ -27,6 +27,7 @@
 
 
 #include "Polytempo_Progressbar.h"
+#include "Polytempo_GraphicsEditableRegion.h"
 
 
 enum Polytempo_ViewContentType
@@ -37,20 +38,19 @@ enum Polytempo_ViewContentType
     contentType_Progressbar
 };
 
-class Polytempo_GraphicsViewRegion : public Component
+class Polytempo_GraphicsViewRegion : public Polytempo_GraphicsEditableRegion
 {
 public:
     Polytempo_GraphicsViewRegion(var = var::null);
     ~Polytempo_GraphicsViewRegion();
 
-    void paint(Graphics& g);
-    void resized();
+    void paintContent(Graphics& g) override;
+    void resizeContent() override;
     
     void setRelativeBounds(const Rectangle <float> &newBounds);
     
     void clear();
     
-    void setImage(Image *img, var);
     void setText(String text);
     void setProgressbar(String text,
                         float    time,
@@ -61,6 +61,8 @@ public:
     Polytempo_ViewContentType getContentType();
     
 private:
+	void setViewImage(Image* img, var rect) override;
+
     var regionID;
     Polytempo_ViewContentType contentType;
     

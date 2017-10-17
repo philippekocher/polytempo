@@ -37,7 +37,7 @@ Polytempo_NetworkWindow::Polytempo_NetworkWindow()
     setTitleBarButtonsRequired(7, true);
     setResizable(true, true);
     setResizeLimits(800, 450, 99999, 99999);
-    
+
     mainView = new Polytempo_NetworkMainView();
     imageEditorView = new Polytempo_ImageEditorView();
     

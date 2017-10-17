@@ -43,7 +43,7 @@ Polytempo_GraphicsViewRegion::~Polytempo_GraphicsViewRegion()
     progressbar = nullptr;
 }
 
-void Polytempo_GraphicsViewRegion::paint(Graphics& g)
+void Polytempo_GraphicsViewRegion::paintContent(Graphics& g)
 {    
     if(contentType == contentType_Empty)    return;
     
@@ -51,11 +51,8 @@ void Polytempo_GraphicsViewRegion::paint(Graphics& g)
         
     if(contentType == contentType_Image && image != nullptr)
     {
-        imageZoom = imageZoom == INFINITY ? 1 : imageZoom;
-        
-        float yOffset = (getHeight() - (imageHeight * imageZoom)) * 0.5f;
         g.drawImage(*image,
-                    0, (int)yOffset, (int)(imageWidth * imageZoom), (int)(imageHeight * imageZoom),
+                    targetArea.getX(), targetArea.getY(), targetArea.getWidth(), targetArea.getHeight(),
                     (int)imageLeft, (int)imageTop, (int)imageWidth, (int)imageHeight);
         
     }
@@ -77,7 +74,7 @@ void Polytempo_GraphicsViewRegion::paint(Graphics& g)
     if(borderSize > 0.0) g.drawRect(getLocalBounds());
 }
 
-void Polytempo_GraphicsViewRegion::resized()
+void Polytempo_GraphicsViewRegion::resizeContent()
 {
     //DBG("region resized");
     Rectangle <int> parentBounds = getParentComponent()->getBounds();
@@ -95,6 +92,11 @@ void Polytempo_GraphicsViewRegion::resized()
         imageZoom = widthZoom < heightZoom ? widthZoom : heightZoom;
         
         if(maxImageZoom > 0.0f && imageZoom > maxImageZoom) imageZoom = maxImageZoom;
+
+		if(imageZoom == INFINITY) imageZoom = 1;
+
+		int yOffset = int((getHeight() - (imageHeight * imageZoom)) * 0.5f);
+		targetArea = Rectangle<int>(0, yOffset, int(imageWidth * imageZoom), int(imageHeight*imageZoom));
     }
     else if(contentType == contentType_Progressbar)
     {
@@ -117,7 +119,7 @@ void Polytempo_GraphicsViewRegion::clear()
     setVisible(false);
 }
 
-void Polytempo_GraphicsViewRegion::setImage(Image* img, var rect)
+void Polytempo_GraphicsViewRegion::setViewImage(Image* img, var rect)
 {
     contentType = contentType_Image;
     image = img;

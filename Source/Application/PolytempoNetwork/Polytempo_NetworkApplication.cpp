@@ -33,6 +33,7 @@
 #include "../../Views/PolytempoNetwork/Polytempo_ImageManager.h"
 #include "../../Network/Polytempo_NetworkSupervisor.h"
 #include "../../Misc/Polytempo_Alerts.h"
+#include "../../Views/PolytempoNetwork/Polytempo_GraphicsAnnotationManager.h"
 
 Polytempo_NetworkApplication::Polytempo_NetworkApplication()
 {}
@@ -145,6 +146,7 @@ void Polytempo_NetworkApplication::shutdown()
     Polytempo_ImageManager::deleteInstance();
     Polytempo_ScoreScheduler::deleteInstance();
     Polytempo_EventScheduler::deleteInstance();
+	Polytempo_GraphicsAnnotationManager::deleteInstance();
 }
 
 //------------------------------------------------------------------------------
@@ -276,12 +278,17 @@ void Polytempo_NetworkApplication::openScoreFile(File aFile)
     
     if(newScore != nullptr)
     {
+		// load annotations
+		String name = newScoreFile.getFileNameWithoutExtension();    	
+		Polytempo_GraphicsAnnotationManager::getInstance()->initialize(newScoreFile.getParentDirectory().getFullPathName(), name);
+
         DBG("set score");
         scoreFile = newScoreFile;
         score = newScore;
         Polytempo_ScoreScheduler::getInstance()->setScore(score);
         mainWindow->setName(scoreFile.getFileNameWithoutExtension());
 
+		
         // add to recent files
         Polytempo_StoredPreferences::getInstance()->recentFiles.addFile(scoreFile);
     }    

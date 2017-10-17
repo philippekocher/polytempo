@@ -117,7 +117,7 @@ void Polytempo_AuxiliaryView::resized()
     
     tempoFactorTextbox->setBounds(10, yPosition, getWidth() - 20, 34);
     
-    Polytempo_NetworkSupervisor::getInstance()->setComponent(this);
+	Polytempo_NetworkSupervisor::getInstance()->setComponent(this);
 }
 
 void Polytempo_AuxiliaryView::eventNotification(Polytempo_Event *event)
