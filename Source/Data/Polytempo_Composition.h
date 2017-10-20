@@ -57,15 +57,17 @@ public:
     void updateScore();
     void findCoincidingControlPoints();
 
-    void exportComposition();
-    void exportCompositionAsPlainText();
-    void exportCompositionAsLispList();
-    void exportCompositionAsCArray();
-    void exportCompositionAsPolytempoScore();
+    void exportSelectedSequence();
+    void exportAllSequences();
+    void exportAsPlainText();
+    void exportAsLispList();
+    void exportAsCArray();
+    void exportAsPolytempoScore();
 
 private:
     int selectedSequenceIndex = -1;
     int selectedControlPointIndex = -1;
+    bool exportAll;
     
     DocumentWindow *mainWindow;
     Component *mainComponent;

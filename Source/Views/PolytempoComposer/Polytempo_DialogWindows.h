@@ -289,12 +289,13 @@ namespace Polytempo_DialogWindows
     };
     
     
-    class ExportComposition : public Basic
+    class ExportSequences : public Basic
     {
     public:
-        ExportComposition()
+        ExportSequences(int num)
         {
-            setName("Export Composition");
+            if(num == 1) setName("Export Selected Sequence");
+            else         setName("Export All Sequences");
             setOkString("Export");
             enableOkButton(true);
             
@@ -340,10 +341,10 @@ namespace Polytempo_DialogWindows
         {
             Polytempo_Composition *composition = Polytempo_Composition::getInstance();
             
-            if     (tbPlain->getToggleState() == true)     composition->exportCompositionAsPlainText();
-            else if(tbLisp->getToggleState() == true)      composition->exportCompositionAsLispList();
-            else if(tbC->getToggleState() == true)         composition->exportCompositionAsCArray();
-            else if(tbPolytempo->getToggleState() == true) composition->exportCompositionAsPolytempoScore();
+            if     (tbPlain->getToggleState() == true)     composition->exportAsPlainText();
+            else if(tbLisp->getToggleState() == true)      composition->exportAsLispList();
+            else if(tbC->getToggleState() == true)         composition->exportAsCArray();
+            else if(tbPolytempo->getToggleState() == true) composition->exportAsPolytempoScore();
         }
         
     private:

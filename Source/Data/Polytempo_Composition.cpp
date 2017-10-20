@@ -198,15 +198,23 @@ void Polytempo_Composition::findCoincidingControlPoints()
 #pragma mark -
 #pragma mark export
 
-void Polytempo_Composition::exportComposition()
+void Polytempo_Composition::exportSelectedSequence()
 {
     if(score == nullptr) return;
  
-    Polytempo_DialogWindows::ExportComposition().show();
+    exportAll = false;
+    Polytempo_DialogWindows::ExportSequences(1).show();
 }
 
+void Polytempo_Composition::exportAllSequences()
+{
+    if(score == nullptr) return;
+    
+    exportAll = true;
+    Polytempo_DialogWindows::ExportSequences(0).show();
+}
 
-void Polytempo_Composition::exportCompositionAsPlainText()
+void Polytempo_Composition::exportAsPlainText()
 {
     File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("scoreFileDirectory"));
     FileChooser fileChooser("Export Composition As Plain List", directory, "*.txt", true);
@@ -214,35 +222,51 @@ void Polytempo_Composition::exportCompositionAsPlainText()
     if(fileChooser.browseForFileToSave(true))
     {
         File file = fileChooser.getResult();
-
-        Polytempo_Sequence *sequence;
-        Polytempo_Event *event;
         bool firstEvent;
-        int i = -1,j;
         
         file.replaceWithText("");
-        while((sequence = getSequence(++i)) != nullptr)
+        
+        if(exportAll)
         {
-            j = -1;
+            for(Polytempo_Sequence *sequence : sequences)
+            {
+                firstEvent = true;
+                
+                for(Polytempo_Event *event : sequence->getEvents())
+                {
+                    if(event->getType() == eventType_Beat)
+                    {
+                        if(firstEvent) firstEvent = false;
+                        else           file.appendText(" ");
+                    
+                        file.appendText(String(event->getTime() * 0.001f));
+                    }
+                }
+                file.appendText("\n\n");
+            }
+        }
+        else
+        {
+            Polytempo_Sequence *sequence = getSelectedSequence();
             firstEvent = true;
-            while((event = sequence->getEvent(++j)) != nullptr)
+            
+            for(Polytempo_Event *event : sequence->getEvents())
             {
                 if(event->getType() == eventType_Beat)
                 {
-                    if(firstEvent) firstEvent=false;
+                    if(firstEvent) firstEvent = false;
                     else           file.appendText(" ");
-
-                    file.appendText(String(event->getTime()));
+                    
+                    file.appendText(String(event->getTime() * 0.001f));
                 }
             }
-            file.appendText("\n");
         }
-            
+
         file.create();
     }
 }
 
-void Polytempo_Composition::exportCompositionAsLispList()
+void Polytempo_Composition::exportAsLispList()
 {
     File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("scoreFileDirectory"));
     FileChooser fileChooser("Export Composition As Plain List", directory, "*.txt", true);
@@ -250,37 +274,56 @@ void Polytempo_Composition::exportCompositionAsLispList()
     if(fileChooser.browseForFileToSave(true))
     {
         File file = fileChooser.getResult();
-        
-        Polytempo_Sequence *sequence;
-        Polytempo_Event *event;
         bool firstEvent;
-        int i = -1,j;
         
         file.replaceWithText("");
-        while((sequence = getSequence(++i)) != nullptr)
+
+        if(exportAll)
         {
             file.appendText("(");
-            
-            j = -1;
+            for(Polytempo_Sequence *sequence : sequences)
+            {
+                firstEvent = true;
+                
+                file.appendText("(");
+                for(Polytempo_Event *event : sequence->getEvents())
+                {
+                    if(event->getType() == eventType_Beat)
+                    {
+                        if(firstEvent) firstEvent = false;
+                        else           file.appendText(" ");
+                        
+                        file.appendText(String(event->getTime() * 0.001f));
+                    }
+                }
+                file.appendText(")");
+            }
+            file.appendText(")");
+        }
+        else
+        {
+            Polytempo_Sequence *sequence = getSelectedSequence();
             firstEvent = true;
-            while((event = sequence->getEvent(++j)) != nullptr)
+            
+            file.appendText("(");
+            for(Polytempo_Event *event : sequence->getEvents())
             {
                 if(event->getType() == eventType_Beat)
                 {
-                    if(firstEvent) firstEvent=false;
+                    if(firstEvent) firstEvent = false;
                     else           file.appendText(" ");
                     
-                    file.appendText(String(event->getTime()));
+                    file.appendText(String(event->getTime() * 0.001f));
                 }
             }
-            file.appendText(")\n");
+            file.appendText(")");
         }
         
         file.create();
     }
 }
 
-void Polytempo_Composition::exportCompositionAsCArray()
+void Polytempo_Composition::exportAsCArray()
 {
     File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("scoreFileDirectory"));
     FileChooser fileChooser("Export Composition As Plain List", directory, "*.txt", true);
@@ -288,48 +331,118 @@ void Polytempo_Composition::exportCompositionAsCArray()
     if(fileChooser.browseForFileToSave(true))
     {
         File file = fileChooser.getResult();
-        
-        Polytempo_Sequence *sequence;
-        Polytempo_Event *event;
-        bool firstEvent;
-        int i = -1,j;
+        bool firstEvent, firstSequence;
         
         file.replaceWithText("");
-        while((sequence = getSequence(++i)) != nullptr)
+        
+        if(exportAll)
         {
+            firstSequence = true;
+
             file.appendText("[ ");
-            
-            j = -1;
+            for(Polytempo_Sequence *sequence : sequences)
+            {
+                firstEvent = true;
+
+                if(firstSequence)   firstSequence = false;
+                else                file.appendText(", ");
+
+                file.appendText("[ ");
+                for(Polytempo_Event *event : sequence->getEvents())
+                {
+                    if(event->getType() == eventType_Beat)
+                    {
+                        if(firstEvent) firstEvent = false;
+                        else           file.appendText(", ");
+                        
+                        file.appendText(String(event->getTime() * 0.001f));
+                    }
+                }
+                file.appendText(" ]");
+            }
+            file.appendText(" ]");
+        }
+        else
+        {
+            Polytempo_Sequence *sequence = getSelectedSequence();
             firstEvent = true;
-            while((event = sequence->getEvent(++j)) != nullptr)
+            
+            file.appendText("[ ");
+            for(Polytempo_Event *event : sequence->getEvents())
             {
                 if(event->getType() == eventType_Beat)
                 {
-                    if(firstEvent) firstEvent=false;
+                    if(firstEvent) firstEvent = false;
                     else           file.appendText(", ");
                     
-                    file.appendText(String(event->getTime()));
+                    file.appendText(String(event->getTime() * 0.001f));
                 }
             }
-            file.appendText(" ]\n");
+            file.appendText(" ]");
         }
         
         file.create();
     }
 }
 
-void Polytempo_Composition::exportCompositionAsPolytempoScore()
+void Polytempo_Composition::exportAsPolytempoScore()
 {
     File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("scoreFileDirectory"));
     FileChooser fileChooser("Export Composition As Polytempo Score", directory, "*.ptsco", true);
 
     if(fileChooser.browseForFileToSave(true))
     {
+        // build a score to export
+        ScopedPointer < Polytempo_Score > tempScore = new Polytempo_Score();
+        Polytempo_Event *tempEvent;
+        
+        if(exportAll)
+        {
+            for(int i=0;i<sequences.size();i++)
+            {
+                tempScore->addSection("sequence"+String(i));
+                
+                for(Polytempo_Event *event : *score->getEvents())
+                {
+                    if(event->hasProperty("~sequence") && (int)event->getProperty("~sequence") == i)
+                    {
+                        tempEvent = new Polytempo_Event(*event);
+                        tempEvent->removeProperty(eventPropertyString_Value);
+                        tempEvent->removeProperty("~sequence");
+                        
+                        tempScore->addEvent(tempEvent);
+                    }
+                }
+
+            }
+        }
+        else
+        {
+            tempScore->addSection("sequence"+String(selectedSequenceIndex));
+            
+            for(Polytempo_Event *event : *score->getEvents())
+            {
+                if(event->hasProperty("~sequence") && (int)event->getProperty("~sequence") == selectedSequenceIndex)
+                {
+                    tempEvent = new Polytempo_Event(*event);
+                    
+                    if(tempEvent->getType() == eventType_Beat)
+                        tempEvent->removeProperty(eventPropertyString_Value);
+                    
+                    tempEvent->removeProperty("~sequence");
+                    
+                    tempScore->addEvent(tempEvent);
+                }
+            }
+        }
+        
+        // save to file
         File scoreFile = fileChooser.getResult();
         String tempurl(scoreFile.getParentDirectory().getFullPathName());
         File tempFile(tempurl<<"/~temp.ptsco");
-        score->writeToFile(tempFile);
+        tempScore->writeToFile(tempFile);
         tempFile.copyFileTo(scoreFile);
         tempFile.deleteFile();
+        tempScore = nullptr;
     }
 }

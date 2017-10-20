@@ -88,7 +88,10 @@ PopupMenu Polytempo_ComposerMenuBarModel::getMenuForIndex (int menuIndex, const 
     if (menuName == "File")
     {
         menu.addCommandItem (commandManager, Polytempo_CommandIDs::close);
-        menu.addCommandItem (commandManager, Polytempo_CommandIDs::exportAs);
+        menu.addSeparator();
+        menu.addCommandItem (commandManager, Polytempo_CommandIDs::save);
+        menu.addCommandItem (commandManager, Polytempo_CommandIDs::exportSelected);
+        menu.addCommandItem (commandManager, Polytempo_CommandIDs::exportAll);
     }
     else if (menuName == "Edit")
     {
@@ -166,8 +169,10 @@ void Polytempo_ComposerMenuBarModel::getAllCommands (Array <CommandID>& commands
     const CommandID ids[] = {
         //openCmd,
         Polytempo_CommandIDs::close,
-        Polytempo_CommandIDs::exportAs,
-        
+        Polytempo_CommandIDs::save,
+        Polytempo_CommandIDs::exportSelected,
+        Polytempo_CommandIDs::exportAll,
+
         Polytempo_CommandIDs::showTimeMap,
         Polytempo_CommandIDs::showTempoMap,
         Polytempo_CommandIDs::showPatternList,
@@ -229,7 +234,6 @@ void Polytempo_ComposerMenuBarModel::getCommandInfo(CommandID commandID, Applica
             
 //        case Polytempo_CommandIDs::open:
 //        case Polytempo_CommandIDs::clearOpenRecent:
-//        case Polytempo_CommandIDs::save:
 //        case Polytempo_CommandIDs::saveAs:
 
         case Polytempo_CommandIDs::close:
@@ -237,11 +241,21 @@ void Polytempo_ComposerMenuBarModel::getCommandInfo(CommandID commandID, Applica
             result.addDefaultKeypress('w', ModifierKeys::commandModifier);
             break;
 
-        case Polytempo_CommandIDs::exportAs:
-            result.setInfo("Export...", String::empty, infoCategory, 0);
+        case Polytempo_CommandIDs::save:
+            result.setInfo("Save", String::empty, infoCategory, 0);
+            result.addDefaultKeypress('s', ModifierKeys::commandModifier);
+            break;
+
+        case Polytempo_CommandIDs::exportSelected:
+            result.setInfo("Export Selected Sequence...", String::empty, infoCategory, 0);
             result.addDefaultKeypress('e', ModifierKeys::commandModifier);
             break;
-            
+
+        case Polytempo_CommandIDs::exportAll:
+            result.setInfo("Export All Sequences...", String::empty, infoCategory, 0);
+            result.addDefaultKeypress('e', ModifierKeys::shiftModifier | ModifierKeys::commandModifier);
+            break;
+
         /* edit menu
          ----------------------------------*/
 
@@ -414,11 +428,19 @@ bool Polytempo_ComposerMenuBarModel::perform (const InvocationInfo& info)
             JUCEApplication::getInstance()->systemRequestedQuit();
             break;
             
-        case Polytempo_CommandIDs::exportAs:
-            Polytempo_Composition::getInstance()->exportComposition();
+        case Polytempo_CommandIDs::save:
+            DBG("TODO: save composition");
             break;
             
+        case Polytempo_CommandIDs::exportSelected:
+            Polytempo_Composition::getInstance()->exportSelectedSequence();
+            break;
             
+        case Polytempo_CommandIDs::exportAll:
+            Polytempo_Composition::getInstance()->exportAllSequences();
+            break;
+            
+
         /* edit menu
          ----------------------------------*/
             

@@ -350,6 +350,11 @@ OwnedArray < Polytempo_Event >* Polytempo_Score::getInitEvents()
     return &initSection->events;
 }
 
+OwnedArray < Polytempo_Event >* Polytempo_Score::getEvents()
+{
+    return &sections[currentSectionIndex]->events;
+}
+
 Array<Polytempo_Event*> Polytempo_Score::getEvents(Polytempo_EventType type)
 {
     Array<Polytempo_Event*> result;

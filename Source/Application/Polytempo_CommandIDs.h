@@ -35,7 +35,7 @@ namespace Polytempo_CommandIDs
         save,
         saveAs,
         close,
-        exportAs,
+        exportSelected, exportAll,
         startStop,
         markerFwd, markerBwd,
         imageFwd, imageBwd,
