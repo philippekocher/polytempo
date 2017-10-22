@@ -146,6 +146,7 @@ Array<Polytempo_Event *> Polytempo_BeatPattern::getEvents(Rational pos)
     {
         DBG("pattern-marker");
         event = new Polytempo_Event(eventType_Marker);
+        event->setOwned(true);
         event->setPosition(pos);
         event->setProperty("value", marker);
         
@@ -158,6 +159,7 @@ Array<Polytempo_Event *> Polytempo_BeatPattern::getEvents(Rational pos)
         {
             // beat events
             event = new Polytempo_Event(eventType_Beat);
+            event->setOwned(true);
             event->setPosition(pos);
             event->setProperty("value", pattern[j]->toFloat());
             
@@ -178,6 +180,7 @@ Array<Polytempo_Event *> Polytempo_BeatPattern::getEvents(Rational pos)
                int(event->getProperty(eventPropertyString_Pattern)) < 20)
             {
                 event = new Polytempo_Event(eventType_Marker);
+                event->setOwned(true);
                 event->setPosition(pos);
                 event->setProperty("value",counter + i);
 

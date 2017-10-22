@@ -31,6 +31,7 @@ Polytempo_Event::Polytempo_Event(Polytempo_EventType t)
     time = 0;
     syncTime = 0;
     position = 0;
+    owned = false;
     
     properties = new NamedValueSet();
 }
@@ -41,6 +42,7 @@ Polytempo_Event::Polytempo_Event(const Polytempo_Event& event)
     time = event.time;
     syncTime = event.syncTime;
     position = event.position;
+    owned = event.owned;
     
     properties = new NamedValueSet(*event.properties);
 }
@@ -321,6 +323,16 @@ Rational Polytempo_Event::getPosition()
     return position;
 }
 
+void Polytempo_Event::setOwned(bool flag)
+{
+    owned = flag;
+}
+
+bool Polytempo_Event::isOwned()
+{
+    return owned;
+}
+
 void Polytempo_Event::setProperty(String key, var value)
 {
     if     (key == eventPropertyString_Time)
@@ -347,6 +359,12 @@ bool Polytempo_Event::hasProperty(String key)
 {
     return properties->contains(key);
 }
+
+void Polytempo_Event::removeProperty(String key)
+{
+    properties->remove(key);
+}
+
 
 NamedValueSet* Polytempo_Event::getProperties()
 {

@@ -49,7 +49,8 @@ public:
     void addEvents(OwnedArray < Polytempo_Event >&);
     void removeEvent(Polytempo_Event*, bool removeFromInit = false);
     
-    void setSection(String sectionName = String::empty);
+    void addSection(String sectionName);
+    void selectSection(String sectionName = String::empty);
     void sortSection(int sectionIndex = -1);
     
     void setTime(int time);

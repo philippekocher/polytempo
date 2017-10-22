@@ -25,7 +25,6 @@
 #ifndef __Polytempo_SequencePlaybackSettings__
 #define __Polytempo_SequencePlaybackSettings__
 
-//#include "../../JuceLibraryCode/JuceHeader.h"
 #include "../../Data/Polytempo_Sequence.h"
 #include "../../Misc/Polytempo_Textbox.h"
 #include "../../Misc/Polytempo_Button.h"

@@ -47,7 +47,7 @@ void Polytempo_ComposerApplication::initialise(const String& commandLine)
     //oscListener = new Polytempo_OSCListener(47522);
     //oscListener->startThread();
     oscSender   = new Polytempo_OSCSender();
-    //oscSender->addBroadcastSender(47522);
+    oscSender->addBroadcastSender(47522);
     //Polytempo_EventDispatcher::getInstance()->setBroadcastSender(oscSender);
     
     // audio and midi

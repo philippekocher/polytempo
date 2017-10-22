@@ -99,6 +99,7 @@ void Polytempo_Score::clear(bool clearInit)
 
 void Polytempo_Score::addEvent(Polytempo_Event *event, bool addToInit)
 {
+    event->setOwned(true);
     if(addToInit)
     {
         initSection->events.add(event);
@@ -136,7 +137,16 @@ void Polytempo_Score::removeEvent(Polytempo_Event *event, bool removeFromInit)
     }
 }
 
-void Polytempo_Score::setSection(String sectionName)
+void Polytempo_Score::addSection(String sectionName)
+{
+    Polytempo_Score_Section *sect = new Polytempo_Score_Section();
+    sections.add(sect);
+    sectionMap->add(sectionName);
+    
+    currentSectionIndex = sectionMap->indexOf(sectionName);
+}
+
+void Polytempo_Score::selectSection(String sectionName)
 {
     if(sectionName == String::empty && sections.size() > 0)
         currentSectionIndex = 0;
@@ -389,7 +399,8 @@ void Polytempo_Score::parseJSON(File& JSONFile, Polytempo_Score** score)
     NamedValueSet jsonSections = jsonVar.getDynamicObject()->getProperties();
     var jsonSection, jsonEvent;
     DynamicObject* jsonObject;
-    Polytempo_Score_Section *score_sect;
+//    Polytempo_Score_Section *score_sect;
+    bool addToInit;
     
     for(int i=0; i < jsonSections.size(); i++)
     {
@@ -397,13 +408,16 @@ void Polytempo_Score::parseJSON(File& JSONFile, Polytempo_Score** score)
         
         if(id.toString() == "init")
         {
-            score_sect = (*score)->initSection;
+//            score_sect = (*score)->initSection;
+            addToInit = true;
         }
         else
         {
-            score_sect = new Polytempo_Score_Section();
-            (*score)->sectionMap->add(id.toString());
-            (*score)->sections.add(score_sect);
+//            score_sect = new Polytempo_Score_Section();
+//            (*score)->sectionMap->add(id.toString());
+//            (*score)->sections.add(score_sect);
+            (*score)->addSection(id.toString());
+            addToInit = false;
         }
         
         jsonSection = jsonVar[id];
@@ -429,12 +443,14 @@ void Polytempo_Score::parseJSON(File& JSONFile, Polytempo_Score** score)
                         event->setProperty(tempProps.getName(l).toString(), tempProps.getValueAt(l));
                     }
                     
-                    score_sect->events.add(event);
+//                    score_sect->events.add(event);
+                    (*score)->addEvent(event, addToInit);
                 }
             }
         }
         
-        score_sect->sort();
+//        score_sect->sort();
+        if(!addToInit)  (*score)->sortSection();
     }
 }
 

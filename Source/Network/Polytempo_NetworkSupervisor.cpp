@@ -34,6 +34,7 @@ Polytempo_NetworkSupervisor::Polytempo_NetworkSupervisor()
     tempConnectedPeersMap = new HashMap < String, String >();
     
     socket = nullptr;
+    component = nullptr;
 
 	startTimer(1000);
 }

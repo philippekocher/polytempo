@@ -51,6 +51,10 @@ void Polytempo_OSCSender::deleteAll()
 
 void Polytempo_OSCSender::addSender(const juce::String &senderID, const juce::String &hostName, int port, bool ticks)
 {
+    // delete the socket previously stored under this senderID
+    if(socketsMap->contains(senderID))
+        delete socketsMap->getReference(senderID);
+
     Polytempo_Socket* socket = new Polytempo_Socket(hostName, port, ticks);
     socketsMap->set(senderID, socket);
 }
@@ -113,7 +117,7 @@ void Polytempo_OSCSender::sendOscEventAsMessage(Polytempo_Event *event)
 	}
 
 	Polytempo_Socket *socket = (*socketsMap)[event->getProperty("senderID")];
-	if (socket != nullptr) socket->write(oscMessage);
+	if (socket != nullptr) socket->write(oscMessage);    
 }
 
 void Polytempo_OSCSender::sendTick(Polytempo_Event *event)

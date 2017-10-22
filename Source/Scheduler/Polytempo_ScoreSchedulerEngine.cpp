@@ -47,7 +47,10 @@ void Polytempo_ComposerEngine::run()
     Polytempo_Event *nextOscEvent;
     Polytempo_Event *schedulerTick  = Polytempo_Event::makeEvent(eventType_Tick);
     
+    schedulerTick->setOwned(true);
+    
     scoreTimeIncrement(); // reset timer
+    killed = false;
     shouldStop = false;
     
     while(!threadShouldExit() && !shouldStop)
@@ -65,14 +68,15 @@ void Polytempo_ComposerEngine::run()
                 syncTime += (float)nextScoreEvent->getProperty(eventPropertyString_Defer) * 1000.0f;
             
             nextScoreEvent->setSyncTime(syncTime);
-           
+            
             if(nextScoreEvent->getType() == eventType_Beat)
             {
                 // add playback properties to next event
                 int sequenceIndex = nextScoreEvent->getProperty("~sequence");
-                //nextScoreEvent = new Polytempo_Event(*nextScoreEvent); // get a copy
                 Polytempo_Sequence* sequence = Polytempo_Composition::getInstance()->getSequence(sequenceIndex);
-                
+ 
+                nextScoreEvent = new Polytempo_Event(*nextScoreEvent); // we need a copy to add the playback properties
+                nextScoreEvent->setOwned(false); // this event can be deleted by the scheduler after its use
                 sequence->addPlaybackPropertiesToEvent(nextScoreEvent);
 
                 // next osc event
@@ -91,6 +95,12 @@ void Polytempo_ComposerEngine::run()
         
         wait(interval);
     }
+    
+	/*
+         set time in order to set the score's pointer to the next event
+         (which is already ahead by the amount of lookahead).
+	*/
+    if(!killed) scoreScheduler->gotoTime(scoreTime);
 }
 #endif
 
@@ -122,6 +132,8 @@ void Polytempo_NetworkEngine::run()
     Polytempo_Event *nextScoreEvent = score->getNextEvent();
     Polytempo_Event *schedulerTick  = Polytempo_Event::makeEvent(eventType_Tick);
     
+    schedulerTick->setOwned(true);
+ 
     scoreTimeIncrement(); // reset timer
     killed = false;
     shouldStop = false;
