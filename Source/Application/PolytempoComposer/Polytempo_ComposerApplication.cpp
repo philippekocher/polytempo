@@ -30,6 +30,7 @@
 #include "../../Scheduler/Polytempo_ScoreScheduler.h"
 #include "../../Scheduler/Polytempo_EventScheduler.h"
 #include "../../Network/Polytempo_NetworkSupervisor.h"
+#include "../../Misc/Polytempo_Alerts.h"
 
 
 Polytempo_ComposerApplication::Polytempo_ComposerApplication() {}
@@ -93,8 +94,25 @@ void Polytempo_ComposerApplication::shutdown()
     
 void Polytempo_ComposerApplication::systemRequestedQuit()
 {
-    // This is called when the app is being asked to quit: you can ignore this
-    // request and let the app carry on running, or call quit() to allow the app to close.
+    applicationShouldQuit();
+}
+
+void Polytempo_ComposerApplication::applicationShouldQuit()
+{
+    if(Polytempo_ScoreScheduler::getInstance()->isRunning())
+    {
+        Polytempo_ScoreScheduler::getInstance()->kill();
+    }
+    
+    if(Polytempo_Composition::getInstance()->isDirty())
+    {
+        Polytempo_Composition::getInstance()->unsavedChangesAlert(0.0);
+        return;
+
+        // after the score will have been saved
+        // applicationShouldQuit() will be called again
+    }
+    
     quit();
 }
     

@@ -64,10 +64,8 @@ void Polytempo_Composition::updateContent()
     updateScore();
 }
 
-void Polytempo_Composition::setDirty(bool flag)
-{
-    dirty = flag;
-}
+void Polytempo_Composition::setDirty(bool flag) { dirty = flag; }
+bool Polytempo_Composition::isDirty() { return dirty; }
 
 void Polytempo_Composition::addSequence()
 {
@@ -212,17 +210,22 @@ static void unsavedChangesCallback(int modalResult, double customValue)
     else if(modalResult == 1) Polytempo_Composition::getInstance()->saveToFile();       // yes
     else if(modalResult == 2) Polytempo_Composition::getInstance()->setDirty(false);    // no
     
-    //if(customValue == 0)      app->applicationShouldQuit();
+    if(customValue == 0) dynamic_cast<Polytempo_ComposerApplication*>(JUCEApplication::getInstance())->applicationShouldQuit();
     if(customValue == 1) Polytempo_Composition::getInstance()->openFile();
     if(customValue == 2) Polytempo_Composition::getInstance()->newComposition();
+}
+
+void Polytempo_Composition::unsavedChangesAlert(double customValue)
+{
+    String title;
+    Polytempo_YesNoCancelAlert::show(title << "Do you want to save the changes to \"" << compositionFile.getFileNameWithoutExtension().toRawUTF8() << "\"?", "If you don't save your changes will be lost.", ModalCallbackFunction::create(unsavedChangesCallback, customValue));
 }
 
 void Polytempo_Composition::newComposition()
 {
     if(dirty)
     {
-        String title;
-        Polytempo_YesNoCancelAlert::show(title << "Do you want to save the changes to \"" << compositionFile.getFileNameWithoutExtension().toRawUTF8() << "\"?", "If you don't save your changes will be lost.", ModalCallbackFunction::create(unsavedChangesCallback, 2.0));
+        unsavedChangesAlert(2.0);
         return;
     }
 
@@ -231,15 +234,13 @@ void Polytempo_Composition::newComposition()
     setDirty(false);
     
     mainWindow->setName("Untitled");
-
 }
 
 void Polytempo_Composition::openFile()
 {
     if(dirty)
     {
-        String title;
-        Polytempo_YesNoCancelAlert::show(title << "Do you want to save the changes to \"" << compositionFile.getFileNameWithoutExtension().toRawUTF8() << "\"?", "If you don't save your changes will be lost.", ModalCallbackFunction::create(unsavedChangesCallback, 1.0));
+        unsavedChangesAlert(1.0);
         return;
     }
        

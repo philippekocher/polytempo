@@ -39,7 +39,9 @@ public:
     
     void setMainWindow(DocumentWindow*);
     void updateContent();
+    
     void setDirty(bool flag);
+    bool isDirty();
     
     void addSequence();
     void removeSequence(int);
@@ -58,6 +60,7 @@ public:
     void updateScore();
     void findCoincidingControlPoints();
     
+    void unsavedChangesAlert(double customValue);
     void newComposition();
     void openFile();
     void openFile(File file);
