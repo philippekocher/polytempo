@@ -214,18 +214,18 @@ void Polytempo_Composition::openFile()
         File file = fileChooser.getResult();
         if(file == File::nonexistent) return;
         
-        readJSONfromFile(file);
-
-        compositionFile = file;
-        mainWindow->setName(file.getFileNameWithoutExtension());
+        if(readJSONfromFile(file))
+        {
+            compositionFile = file;
+        
+            mainWindow->setName(compositionFile.getFileNameWithoutExtension());
+            Polytempo_StoredPreferences::getInstance()->getProps().setValue("compositionFileDirectory", compositionFile.getParentDirectory().getFullPathName());
+        }
     }
 }
 
 void Polytempo_Composition::saveToFile()
 {
-    // composition file exists: save w/out dialog
-    // else show dialog
-
     if(compositionFile == File::nonexistent)
     {
         File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("compositionFileDirectory"));
@@ -234,18 +234,19 @@ void Polytempo_Composition::saveToFile()
         if(fileChooser.browseForFileToSave(true))
         {
             File file = fileChooser.getResult();
-            File tempFile("~/~temp.ptcom");
+            File tempFile(file.getParentDirectory().getFullPathName()+String("/~temp.ptcom"));
             writeJSONtoFile(tempFile);
             tempFile.copyFileTo(file);
             tempFile.deleteFile();
             dirty = false;
             compositionFile = file;
             mainWindow->setName(compositionFile.getFileNameWithoutExtension());
+            Polytempo_StoredPreferences::getInstance()->getProps().setValue("compositionFileDirectory", compositionFile.getParentDirectory().getFullPathName());
         }
     }
     else
     {
-        File tempFile("~/~temp.ptcom");
+        File tempFile(compositionFile.getParentDirectory().getFullPathName()+String("/~temp.ptcom"));
         writeJSONtoFile(tempFile);
         tempFile.copyFileTo(compositionFile);
         tempFile.deleteFile();
@@ -270,21 +271,21 @@ void Polytempo_Composition::writeJSONtoFile(File file)
     stream.writeString(jsonString);
 }
 
-void Polytempo_Composition::readJSONfromFile(File file)
+bool Polytempo_Composition::readJSONfromFile(File file)
 {
     var jsonVar = JSON::parse(file);
     
     if(jsonVar == var::null)
     {
         Polytempo_Alert::show("Error", "Not a valid JSON file:\n" + file.getFileName());
-        return;
+        return false;
     }
 
     NamedValueSet jsonSequences = jsonVar.getDynamicObject()->getProperties();
     if(jsonSequences.size() < 1)
     {
         Polytempo_Alert::show("Error", "No Sequences found in file:\n" + file.getFileName());
-        return;
+        return false;
     }
 
     sequences.clear();
@@ -301,6 +302,7 @@ void Polytempo_Composition::readJSONfromFile(File file)
     selectedSequenceIndex = 0;
     
     updateContent();
+    return true;
 }
 
 

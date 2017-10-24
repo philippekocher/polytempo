@@ -60,7 +60,7 @@ public:
     void openFile();
     void saveToFile();
     void writeJSONtoFile(File file);
-    void readJSONfromFile(File file);
+    bool readJSONfromFile(File file);
 
     void exportSelectedSequence();
     void exportAllSequences();
