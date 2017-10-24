@@ -105,22 +105,29 @@ bool Polytempo_Sequence::isVisible()
 
 void Polytempo_Sequence::setName(String s)
 {
-    name = s;
+    if(name != s)
+    {
+        name = s;
+        Polytempo_Composition::getInstance()->setDirty(true);
+    }
 }
 
 void Polytempo_Sequence::setIndex(int index)
 {
     sequenceIndex = index;
+    Polytempo_Composition::getInstance()->setDirty(true);
 }
 
 void Polytempo_Sequence::setColour(Colour c)
 {
     colour = c;
+    Polytempo_Composition::getInstance()->setDirty(true);
 }
 
 void Polytempo_Sequence::setVisibility(bool value)
 {
     visible = value;
+    Polytempo_Composition::getInstance()->setDirty(true);
 }
 
 bool Polytempo_Sequence::validateNewControlPointPosition(float t, Rational pos)
@@ -181,6 +188,8 @@ void Polytempo_Sequence::setControlPointValues(int index, float t, Rational pos,
         controlPoints[index]->tempoOutWeight = outTempoWeight;
         updateEvents();
     }
+
+    Polytempo_Composition::getInstance()->setDirty(true);
 }
 
 
@@ -214,6 +223,8 @@ void Polytempo_Sequence::setControlPointPosition(int index, float t, Rational po
         controlPoints[index]->position = pos;
         updateEvents();
     }
+
+    Polytempo_Composition::getInstance()->setDirty(true);
 }
 
 void Polytempo_Sequence::setControlPointTempo(int index, float inTempo, float outTempo)
@@ -222,6 +233,8 @@ void Polytempo_Sequence::setControlPointTempo(int index, float inTempo, float ou
     if(outTempo > 0) controlPoints[index]->tempoOut = outTempo;
 
     updateEvents();
+
+    Polytempo_Composition::getInstance()->setDirty(true);
 }
 
 bool Polytempo_Sequence::isTempoConstantAfterPoint(int i)
@@ -245,6 +258,7 @@ void Polytempo_Sequence::adjustTime(int index)
 
     updateEvents();
     Polytempo_Composition::getInstance()->updateContent();
+    Polytempo_Composition::getInstance()->setDirty(true);
 }
 
 void Polytempo_Sequence::adjustPosition(int index)
@@ -257,6 +271,7 @@ void Polytempo_Sequence::adjustPosition(int index)
     
     updateEvents();
     Polytempo_Composition::getInstance()->updateContent();
+    Polytempo_Composition::getInstance()->setDirty(true);
 }
 
 void Polytempo_Sequence::adjustTempo(int index)
@@ -270,6 +285,7 @@ void Polytempo_Sequence::adjustTempo(int index)
     
     updateEvents();
     Polytempo_Composition::getInstance()->updateContent();
+    Polytempo_Composition::getInstance()->setDirty(true);
 }
 
 void Polytempo_Sequence::removeControlPoint(int index)
@@ -278,6 +294,7 @@ void Polytempo_Sequence::removeControlPoint(int index)
 
     updateEvents();
     Polytempo_Composition::getInstance()->updateContent();
+    Polytempo_Composition::getInstance()->setDirty(true);
 }
 
 
@@ -297,6 +314,7 @@ void Polytempo_Sequence::addControlPoint(float t, Rational pos, float tin, float
     controlPoints.sort(sorter, true);
     
     updateEvents();
+    Polytempo_Composition::getInstance()->setDirty(true);
 }
 
 void Polytempo_Sequence::addEventPattern(const String& pattern, int repeats, const String& counter, const String& marker)
@@ -309,6 +327,7 @@ void Polytempo_Sequence::addEventPattern(const String& pattern, int repeats, con
     beatPatterns.add(bp);
     
     buildBeatPattern();
+    Polytempo_Composition::getInstance()->setDirty(true);
 }
 
 int Polytempo_Sequence::getCurrentCounter()

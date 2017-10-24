@@ -64,6 +64,11 @@ void Polytempo_Composition::updateContent()
     updateScore();
 }
 
+void Polytempo_Composition::setDirty(bool flag)
+{
+    dirty = flag;
+}
+
 void Polytempo_Composition::addSequence()
 {
     Polytempo_Sequence *sequence;
@@ -90,6 +95,7 @@ void Polytempo_Composition::addSequence()
     sequence->setIndex(sequences.indexOf(sequence));
     
     updateContent();
+    dirty = true;
 }
 
 void Polytempo_Composition::removeSequence(int index)
@@ -99,6 +105,7 @@ void Polytempo_Composition::removeSequence(int index)
     if(selectedSequenceIndex > sequences.size() - 1) selectedSequenceIndex--;
 
     updateContent();
+    dirty = true;
 }
 
 int  Polytempo_Composition::getNumberOfSequences()
@@ -199,8 +206,25 @@ void Polytempo_Composition::findCoincidingControlPoints()
 #pragma mark -
 #pragma mark file i/o
 
+static void unsavedChangesCallback(int modalResult, double customValue)
+{
+    if(modalResult == 0)      return;                                                   // cancel
+    else if(modalResult == 1) Polytempo_Composition::getInstance()->saveToFile();       // yes
+    else if(modalResult == 2) Polytempo_Composition::getInstance()->setDirty(false);    // no
+    
+    //if(customValue == 0)      app->applicationShouldQuit();
+    if(customValue == 1) Polytempo_Composition::getInstance()->openFile();
+}
+
 void Polytempo_Composition::openFile()
 {
+    if(dirty)
+    {
+        String title;
+        Polytempo_YesNoCancelAlert::show(title << "Do you want to save the changes to \"" << compositionFile.getFileNameWithoutExtension().toRawUTF8() << "\"?", "If you don't save your changes will be lost.", ModalCallbackFunction::create(unsavedChangesCallback, 1.0));
+        return;
+    }
+       
     // if composition dirty: ask whether to save it
     // ok: save and continue
     // no: continue
@@ -217,7 +241,8 @@ void Polytempo_Composition::openFile()
         if(readJSONfromFile(file))
         {
             compositionFile = file;
-        
+            dirty = false;
+
             mainWindow->setName(compositionFile.getFileNameWithoutExtension());
             Polytempo_StoredPreferences::getInstance()->getProps().setValue("compositionFileDirectory", compositionFile.getParentDirectory().getFullPathName());
         }

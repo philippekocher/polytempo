@@ -59,7 +59,8 @@ void Polytempo_ComposerApplication::initialise(const String& commandLine)
     
     Polytempo_Composition::getInstance()->setMainWindow(composerWindow);
     Polytempo_Composition::getInstance()->addSequence(); // one sequence to start with
-    
+    Polytempo_Composition::getInstance()->setDirty(false);
+
     // return to beginning
     Polytempo_ScoreScheduler::getInstance()->returnToBeginning();
 }

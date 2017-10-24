@@ -39,6 +39,7 @@ public:
     
     void setMainWindow(DocumentWindow*);
     void updateContent();
+    void setDirty(bool flag);
     
     void addSequence();
     void removeSequence(int);
