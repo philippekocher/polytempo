@@ -28,6 +28,7 @@
 #include "../Preferences/Polytempo_StoredPreferences.h"
 #include "../Views/PolytempoComposer/Polytempo_DialogWindows.h"
 #include "../Audio+Midi/Polytempo_AudioClick.h"
+#include "../Misc/Polytempo_Alerts.h"
 
 
 Polytempo_Composition::Polytempo_Composition()
@@ -193,6 +194,112 @@ void Polytempo_Composition::findCoincidingControlPoints()
         }
     }
 }
+
+//------------------------------------------------------------------------------
+#pragma mark -
+#pragma mark file i/o
+
+void Polytempo_Composition::openFile()
+{
+    // if composition dirty: ask whether to save it
+    // ok: save and continue
+    // no: continue
+    // cancel: abort
+    
+    File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("compositionFileDirectory"));
+    FileChooser fileChooser("Open Score File", directory, "*.json;*.ptcom", true);
+    
+    if(fileChooser.browseForFileToOpen())
+    {
+        File file = fileChooser.getResult();
+        if(file == File::nonexistent) return;
+        
+        readJSONfromFile(file);
+    }
+}
+
+void Polytempo_Composition::saveToFile(bool showFileDialog)
+{
+    // nothing to save: if(score == nullptr) return;
+    // if(scoreFile == File::nonexistent && !showFileDialog) return;
+    
+    File compositionFile;
+    File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("compositionFileDirectory"));
+    FileChooser fileChooser("Save Composition", directory, "*.ptcom", true);
+    
+    String tempurl(directory.getFullPathName());
+//    File tempFile(tempurl<<"/~temp.ptcom");
+    File tempFile(tempurl<<"~/~temp.ptcom");
+
+    if(showFileDialog)
+    {
+        if(fileChooser.browseForFileToSave(true))
+        {
+            compositionFile = fileChooser.getResult();
+            writeJSONtoFile(tempFile);
+            tempFile.copyFileTo(compositionFile);
+            dirty = false;
+        }
+    }
+    else
+    {
+        writeJSONtoFile(tempFile);
+        tempFile.copyFileTo(compositionFile);
+        dirty = false;
+    }
+    tempFile.deleteFile();
+}
+
+void Polytempo_Composition::writeJSONtoFile(File file)
+{
+    DynamicObject* scoreObject = new DynamicObject();
+    var json(scoreObject); // store the object in a var
+    
+    int i = 0;
+    for(Polytempo_Sequence *seq : sequences)
+    {
+        scoreObject->setProperty(String(i++),seq->getObject());
+    }
+    
+    String jsonString = JSON::toString(json,false,4);
+
+    FileOutputStream stream(file);
+    stream.writeString(jsonString);
+}
+
+void Polytempo_Composition::readJSONfromFile(File file)
+{
+    var jsonVar = JSON::parse(file);
+    
+    if(jsonVar == var::null)
+    {
+        Polytempo_Alert::show("Error", "Not a valid JSON file:\n" + file.getFileName());
+        return;
+    }
+
+    NamedValueSet jsonSequences = jsonVar.getDynamicObject()->getProperties();
+    if(jsonSequences.size() < 1)
+    {
+        Polytempo_Alert::show("Error", "No Sequences found in file:\n" + file.getFileName());
+        return;
+    }
+
+    sequences.clear();
+
+    // iterate and addSequence
+    DynamicObject* jsonObject;
+    for(int i=0; i < jsonSequences.size(); i++)
+    {
+        Polytempo_Sequence *sequence = new Polytempo_Sequence();
+        sequence->setObject(jsonObject = jsonSequences.getValueAt(i).getDynamicObject());
+        sequences.add(sequence);
+    }
+    
+    selectedSequenceIndex = 0;
+    
+    updateContent();
+}
+
 
 //------------------------------------------------------------------------------
 #pragma mark -

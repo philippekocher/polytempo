@@ -56,6 +56,11 @@ public:
 
     void updateScore();
     void findCoincidingControlPoints();
+    
+    void openFile();
+    void saveToFile(bool showFileDialog = true);
+    void writeJSONtoFile(File file);
+    void readJSONfromFile(File file);
 
     void exportSelectedSequence();
     void exportAllSequences();
@@ -74,6 +79,8 @@ private:
     OwnedArray <Polytempo_Sequence> sequences;
 
     ScopedPointer <Polytempo_Score> score;
+    
+    bool dirty = false;
 };
 
 

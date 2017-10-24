@@ -76,6 +76,10 @@ public:
     void addPlaybackPropertiesToEvent(Polytempo_Event*);
     Polytempo_Event* getOscEvent(Polytempo_Event*);
     
+    // serialisation
+    DynamicObject* getObject();
+    void setObject(DynamicObject* object);
+
 private:    
     String name;
     int sequenceIndex = 0;
@@ -105,7 +109,7 @@ private:
     int   midiCuePitch = 90;
     int   midiCueVelocity = 127;
     int   midiChannel = 1;
-    
+  
     bool   sendOsc = false;
     String oscDownbeatMessage = "/beat pattern #pattern duration #duration";
     String oscBeatMessage     = "/beat pattern #pattern duration #duration";
