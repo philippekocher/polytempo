@@ -59,6 +59,7 @@ public:
     void findCoincidingControlPoints();
     
     void openFile();
+    void openFile(File file);
     void saveToFile();
     void writeJSONtoFile(File file);
     bool readJSONfromFile(File file);

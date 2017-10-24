@@ -235,19 +235,25 @@ void Polytempo_Composition::openFile()
     
     if(fileChooser.browseForFileToOpen())
     {
-        File file = fileChooser.getResult();
-        if(file == File::nonexistent) return;
-        
-        if(readJSONfromFile(file))
-        {
-            compositionFile = file;
-            dirty = false;
-
-            mainWindow->setName(compositionFile.getFileNameWithoutExtension());
-            Polytempo_StoredPreferences::getInstance()->getProps().setValue("compositionFileDirectory", compositionFile.getParentDirectory().getFullPathName());
-        }
+        openFile(fileChooser.getResult());
     }
 }
+
+void Polytempo_Composition::openFile(File file)
+{
+    if(file == File::nonexistent) return;
+    
+    if(readJSONfromFile(file))
+    {
+        compositionFile = file;
+        dirty = false;
+        
+        mainWindow->setName(compositionFile.getFileNameWithoutExtension());
+        Polytempo_StoredPreferences::getInstance()->getProps().setValue("compositionFileDirectory", compositionFile.getParentDirectory().getFullPathName());
+        Polytempo_StoredPreferences::getInstance()->recentFiles.addFile(compositionFile);
+    }
+}
+
 
 void Polytempo_Composition::saveToFile()
 {
