@@ -45,7 +45,7 @@ public:
     void anotherInstanceStarted(const String& commandLine) override;
 
     static ApplicationCommandManager& getCommandManager();
-//    static DocumentWindow& getDocumentWindow();
+    static DocumentWindow& getDocumentWindow();
     static Polytempo_ComposerMainView& getMainView();
     
 private:

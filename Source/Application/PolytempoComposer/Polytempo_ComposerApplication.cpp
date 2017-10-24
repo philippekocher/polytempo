@@ -112,12 +112,12 @@ ApplicationCommandManager& Polytempo_ComposerApplication::getCommandManager()
     return *(app->commandManager);
 }
     
-//DocumentWindow& Polytempo_ComposerApplication::getDocumentWindow()
-//{
-//    Polytempo_ComposerApplication* const app = dynamic_cast<Polytempo_ComposerApplication*>(JUCEApplication::getInstance());
-//
-//    return *(app->composerWindow);
-//}
+DocumentWindow& Polytempo_ComposerApplication::getDocumentWindow()
+{
+    Polytempo_ComposerApplication* const app = dynamic_cast<Polytempo_ComposerApplication*>(JUCEApplication::getInstance());
+
+    return *(app->composerWindow);
+}
 
 Polytempo_ComposerMainView& Polytempo_ComposerApplication::getMainView()
 {

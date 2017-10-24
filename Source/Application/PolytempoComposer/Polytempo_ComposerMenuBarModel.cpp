@@ -426,9 +426,7 @@ bool Polytempo_ComposerMenuBarModel::perform (const InvocationInfo& info)
         /* file menu
          ----------------------------------*/
             
-//        case Polytempo_CommandIDs::open:
 //        case Polytempo_CommandIDs::clearOpenRecent:
-//        case Polytempo_CommandIDs::save:
 //        case Polytempo_CommandIDs::saveAs:
  
         case Polytempo_CommandIDs::open:

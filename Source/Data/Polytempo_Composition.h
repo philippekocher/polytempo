@@ -58,7 +58,7 @@ public:
     void findCoincidingControlPoints();
     
     void openFile();
-    void saveToFile(bool showFileDialog = true);
+    void saveToFile();
     void writeJSONtoFile(File file);
     void readJSONfromFile(File file);
 
@@ -80,6 +80,7 @@ private:
 
     ScopedPointer <Polytempo_Score> score;
     
+    File compositionFile = File::nonexistent;
     bool dirty = false;
 };
 

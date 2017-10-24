@@ -215,39 +215,42 @@ void Polytempo_Composition::openFile()
         if(file == File::nonexistent) return;
         
         readJSONfromFile(file);
+
+        compositionFile = file;
+        mainWindow->setName(file.getFileNameWithoutExtension());
     }
 }
 
-void Polytempo_Composition::saveToFile(bool showFileDialog)
+void Polytempo_Composition::saveToFile()
 {
-    // nothing to save: if(score == nullptr) return;
-    // if(scoreFile == File::nonexistent && !showFileDialog) return;
-    
-    File compositionFile;
-    File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("compositionFileDirectory"));
-    FileChooser fileChooser("Save Composition", directory, "*.ptcom", true);
-    
-    String tempurl(directory.getFullPathName());
-//    File tempFile(tempurl<<"/~temp.ptcom");
-    File tempFile(tempurl<<"~/~temp.ptcom");
+    // composition file exists: save w/out dialog
+    // else show dialog
 
-    if(showFileDialog)
+    if(compositionFile == File::nonexistent)
     {
+        File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("compositionFileDirectory"));
+        FileChooser fileChooser("Save Composition", directory, "*.ptcom", true);
+
         if(fileChooser.browseForFileToSave(true))
         {
-            compositionFile = fileChooser.getResult();
+            File file = fileChooser.getResult();
+            File tempFile("~/~temp.ptcom");
             writeJSONtoFile(tempFile);
-            tempFile.copyFileTo(compositionFile);
+            tempFile.copyFileTo(file);
+            tempFile.deleteFile();
             dirty = false;
+            compositionFile = file;
+            mainWindow->setName(compositionFile.getFileNameWithoutExtension());
         }
     }
     else
     {
+        File tempFile("~/~temp.ptcom");
         writeJSONtoFile(tempFile);
         tempFile.copyFileTo(compositionFile);
+        tempFile.deleteFile();
         dirty = false;
     }
-    tempFile.deleteFile();
 }
 
 void Polytempo_Composition::writeJSONtoFile(File file)
