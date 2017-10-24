@@ -19,7 +19,8 @@ Polytempo_GraphicsEditableRegion::Polytempo_GraphicsEditableRegion()
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
 	status = Default;
-	
+	allowAnnotations = false;
+
 	Colour overColour = Colour(Colours::purple.getRed(), Colours::purple.getGreen(), Colours::purple.getBlue(), uint8(80));
 	float overOpacity = 1.0;
 	float downOpacity = 1.0;
@@ -70,12 +71,12 @@ Polytempo_GraphicsEditableRegion::Polytempo_GraphicsEditableRegion()
 	addKeyListener(this);
 
 	Polytempo_GraphicsAnnotationManager::getInstance()->addChangeListener(this);
-
 	startTimer(MIN_INTERVAL_BETWEEN_REPAINTS_MS);
 }
 
 Polytempo_GraphicsEditableRegion::~Polytempo_GraphicsEditableRegion()
 {
+	Polytempo_GraphicsAnnotationManager::getInstance()->removeChangeListener(this);
 	stopTimer();
 }
 
@@ -133,11 +134,18 @@ void Polytempo_GraphicsEditableRegion::paint (Graphics& g)
 void Polytempo_GraphicsEditableRegion::resized()
 {
 	resizeContent();
-	screenToImage = AffineTransform::translation(-float(getX()), -float(getY()));
-	screenToImage = screenToImage.scale(currentImageRectangle.getWidth() / float(targetArea.getWidth()), currentImageRectangle.getHeight() / float(targetArea.getHeight()));
-	screenToImage = screenToImage.translated(currentImageRectangle.getX(), currentImageRectangle.getY() - targetArea.getY() / float(targetArea.getHeight()) * currentImageRectangle.getHeight());
 
-	imageToScreen = screenToImage.inverted();
+	if (currentImageRectangle.isEmpty())
+		allowAnnotations = false;
+	else
+	{
+		screenToImage = AffineTransform::translation(-float(getX()), -float(getY()));
+		screenToImage = screenToImage.scale(currentImageRectangle.getWidth() / float(targetArea.getWidth()), currentImageRectangle.getHeight() / float(targetArea.getHeight()));
+		screenToImage = screenToImage.translated(currentImageRectangle.getX(), currentImageRectangle.getY() - targetArea.getY() / float(targetArea.getHeight()) * currentImageRectangle.getHeight());
+
+		imageToScreen = screenToImage.inverted();
+		allowAnnotations = true;
+	}
 }
 
 void Polytempo_GraphicsEditableRegion::setImage(Image* img, var rect, String imageId)
@@ -266,6 +274,9 @@ bool Polytempo_GraphicsEditableRegion::TryGetExistingAnnotation(float x, float y
 
 void Polytempo_GraphicsEditableRegion::handleStartEditing(Point<int> mousePosition)
 {
+	if (!allowAnnotations)
+		return;
+
 	float x = float(mousePosition.getX());
 	float y = float(mousePosition.getY());
 	screenToImage.transformPoint<float>(x, y); 

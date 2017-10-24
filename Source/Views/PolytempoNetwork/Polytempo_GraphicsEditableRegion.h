@@ -68,7 +68,8 @@ protected:
 	Polytempo_GraphicsAnnotation temporaryAnnotation;
 	Point<int> lastPathPoint;
 	bool repaintRequired;
-	
+	bool allowAnnotations;
+
 	ScopedPointer<ImageButton> buttonOk;
 	ScopedPointer<ImageButton> buttonCancel;
 	ScopedPointer<ImageButton> buttonColor;
