@@ -99,8 +99,6 @@ void Polytempo_GraphicsAnnotationManager::initialize(String folder, String score
 		else
 			delete annotationSet;
 	}
-
-	sendChangeMessage();
 }
 
 void Polytempo_GraphicsAnnotationManager::showSettingsDialog()
