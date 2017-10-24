@@ -87,6 +87,8 @@ PopupMenu Polytempo_ComposerMenuBarModel::getMenuForIndex (int menuIndex, const 
     
     if (menuName == "File")
     {
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::newDocument);
+        menu.addSeparator();
         menu.addCommandItem (commandManager, Polytempo_CommandIDs::open);
         PopupMenu recentFilesMenu;
         Polytempo_StoredPreferences::getInstance()->recentFiles.createPopupMenuItems(recentFilesMenu, Polytempo_CommandIDs::openRecent, false, true);
@@ -182,6 +184,7 @@ void Polytempo_ComposerMenuBarModel::getAllCommands (Array <CommandID>& commands
 {
     // this returns the set of all commands that this target can perform..
     const CommandID ids[] = {
+        Polytempo_CommandIDs::newDocument,
         Polytempo_CommandIDs::open,
         Polytempo_CommandIDs::clearOpenRecent,
         Polytempo_CommandIDs::close,
@@ -248,11 +251,16 @@ void Polytempo_ComposerMenuBarModel::getCommandInfo(CommandID commandID, Applica
         /* file menu
          ----------------------------------*/
             
+        case Polytempo_CommandIDs::newDocument:
+            result.setInfo("New", String::empty, infoCategory, 0);
+            result.addDefaultKeypress('n', ModifierKeys::commandModifier);
+            break;
+            
         case Polytempo_CommandIDs::open:
             result.setInfo("Open...", String::empty, infoCategory, 0);
             result.addDefaultKeypress('o', ModifierKeys::commandModifier);
             break;
-
+            
         case Polytempo_CommandIDs::clearOpenRecent:
             result.setInfo("Clear Menu", String::empty, infoCategory, 0);
             result.setActive(Polytempo_StoredPreferences::getInstance()->recentFiles.getNumFiles() > 0);
@@ -443,8 +451,10 @@ bool Polytempo_ComposerMenuBarModel::perform (const InvocationInfo& info)
         /* file menu
          ----------------------------------*/
             
-//        case Polytempo_CommandIDs::saveAs:
- 
+        case Polytempo_CommandIDs::newDocument:
+            composition->newComposition();
+            break;
+            
         case Polytempo_CommandIDs::open:
             composition->openFile();
             break;
@@ -456,6 +466,8 @@ bool Polytempo_ComposerMenuBarModel::perform (const InvocationInfo& info)
         case Polytempo_CommandIDs::save:
             composition->saveToFile();
             break;
+            
+//        case Polytempo_CommandIDs::saveAs:
             
         case Polytempo_CommandIDs::exportSelected:
             Polytempo_Composition::getInstance()->exportSelectedSequence();

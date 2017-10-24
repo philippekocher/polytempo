@@ -32,6 +32,7 @@ namespace Polytempo_CommandIDs
     {
         open               = 0x2000,
         clearOpenRecent,
+        newDocument,
         save,
         saveAs,
         close,

@@ -31,7 +31,7 @@
 //static ScopedPointer<ApplicationCommandManager> applicationCommandManager;
 
 Polytempo_ComposerWindow::Polytempo_ComposerWindow()
-: DocumentWindow ("Untitled Composition", //JUCEApplication::getInstance()->getApplicationName(),
+: DocumentWindow (String::empty,
                   Colours::lightgrey,
                   DocumentWindow::allButtons)
 {

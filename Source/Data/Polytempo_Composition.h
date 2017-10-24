@@ -58,6 +58,7 @@ public:
     void updateScore();
     void findCoincidingControlPoints();
     
+    void newComposition();
     void openFile();
     void openFile(File file);
     void saveToFile();

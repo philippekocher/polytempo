@@ -214,6 +214,24 @@ static void unsavedChangesCallback(int modalResult, double customValue)
     
     //if(customValue == 0)      app->applicationShouldQuit();
     if(customValue == 1) Polytempo_Composition::getInstance()->openFile();
+    if(customValue == 2) Polytempo_Composition::getInstance()->newComposition();
+}
+
+void Polytempo_Composition::newComposition()
+{
+    if(dirty)
+    {
+        String title;
+        Polytempo_YesNoCancelAlert::show(title << "Do you want to save the changes to \"" << compositionFile.getFileNameWithoutExtension().toRawUTF8() << "\"?", "If you don't save your changes will be lost.", ModalCallbackFunction::create(unsavedChangesCallback, 2.0));
+        return;
+    }
+
+    sequences.clear();
+    Polytempo_Composition::getInstance()->addSequence(); // one sequence to start with
+    setDirty(false);
+    
+    mainWindow->setName("Untitled");
+
 }
 
 void Polytempo_Composition::openFile()
@@ -225,11 +243,6 @@ void Polytempo_Composition::openFile()
         return;
     }
        
-    // if composition dirty: ask whether to save it
-    // ok: save and continue
-    // no: continue
-    // cancel: abort
-    
     File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("compositionFileDirectory"));
     FileChooser fileChooser("Open Score File", directory, "*.json;*.ptcom", true);
     
