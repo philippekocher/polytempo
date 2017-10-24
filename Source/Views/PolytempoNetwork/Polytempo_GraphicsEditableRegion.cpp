@@ -71,12 +71,12 @@ Polytempo_GraphicsEditableRegion::Polytempo_GraphicsEditableRegion()
 	addKeyListener(this);
 
 	Polytempo_GraphicsAnnotationManager::getInstance()->addChangeListener(this);
-
 	startTimer(MIN_INTERVAL_BETWEEN_REPAINTS_MS);
 }
 
 Polytempo_GraphicsEditableRegion::~Polytempo_GraphicsEditableRegion()
 {
+	Polytempo_GraphicsAnnotationManager::getInstance()->removeChangeListener(this);
 	stopTimer();
 }
 
