@@ -2,10 +2,10 @@
 
 <JUCERPROJECT id="OXoF3n" name="PolytempoComposer" projectType="guiapp" version="0.2.0"
               bundleIdentifier="net.icst.PolytempoComposer" includeBinaryInAppConfig="1"
-              jucerVersion="5.1.2" companyName="Zurich University of the Arts"
+              jucerVersion="5.2.0" companyName="Zurich University of the Arts"
               companyWebsite="www.icst.net" defines="POLYTEMPO_COMPOSER=1"
               displaySplashScreen="1" reportAppUsage="1" splashScreenColour="Dark"
-              cppLanguageStandard="11">
+              cppLanguageStandard="11" companyCopyright="Zurich University of the Arts">
   <MAINGROUP id="cYhNWq" name="PolytempoComposer">
     <GROUP id="{6A675542-C9E9-872F-C795-8AC67F3B5B9D}" name="Resources">
       <FILE id="AuXr1H" name="icon.png" compile="0" resource="1" file="../Resources/icon.png"/>
@@ -206,9 +206,11 @@
                smallIcon="AuXr1H">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" osxSDK="default" osxCompatibility="10.9 SDK" osxArchitecture="default"
-                       isDebug="1" optimisation="1" targetName="PolytempoComposer" cppLanguageStandard=""/>
+                       isDebug="1" optimisation="1" targetName="PolytempoComposer" cppLanguageStandard=""
+                       enablePluginBinaryCopyStep="1"/>
         <CONFIGURATION name="Release" osxSDK="default" osxCompatibility="10.9 SDK" osxArchitecture="default"
-                       isDebug="0" optimisation="3" targetName="PolytempoComposer" customXcodeFlags="COPY_PHASE_STRIP = NO,  GCC_GENERATE_DEBUGGING_SYMBOLS = YES "/>
+                       isDebug="0" optimisation="3" targetName="PolytempoComposer" customXcodeFlags="COPY_PHASE_STRIP = NO,  GCC_GENERATE_DEBUGGING_SYMBOLS = YES "
+                       enablePluginBinaryCopyStep="1"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="~/Documents/JUCE/modules"/>
@@ -230,9 +232,11 @@
     <VS2015 targetFolder="Builds/VisualStudio2015" extraCompilerFlags="/wd&quot;4068&quot;">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
-                       isDebug="1" optimisation="1" targetName="PolytempoComposer"/>
+                       isDebug="1" optimisation="1" targetName="PolytempoComposer" debugInformationFormat="ProgramDatabase"
+                       enablePluginBinaryCopyStep="0"/>
         <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
-                       isDebug="0" optimisation="3" targetName="PolytempoComposer"/>
+                       isDebug="0" optimisation="3" targetName="PolytempoComposer" debugInformationFormat="ProgramDatabase"
+                       enablePluginBinaryCopyStep="0" linkTimeOptimisation="1"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_video" path="..\..\JUCE\modules"/>
@@ -254,9 +258,11 @@
     <VS2017 targetFolder="Builds/VisualStudio2017" extraCompilerFlags="/wd&quot;4068&quot;">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
-                       isDebug="1" optimisation="1" targetName="PolytempoComposer"/>
+                       isDebug="1" optimisation="1" targetName="PolytempoComposer" debugInformationFormat="ProgramDatabase"
+                       enablePluginBinaryCopyStep="0"/>
         <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
-                       isDebug="0" optimisation="3" targetName="PolytempoComposer"/>
+                       isDebug="0" optimisation="3" targetName="PolytempoComposer" debugInformationFormat="ProgramDatabase"
+                       enablePluginBinaryCopyStep="0" linkTimeOptimisation="1"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_video" path="..\..\JUCE\modules"/>
