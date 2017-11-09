@@ -106,6 +106,11 @@ void Polytempo_ScoreScheduler::pause(Polytempo_Event* event)
         gotoTime(Polytempo_Event::makeEvent(eventType_GotoTime, event->getProperty("resume")));
 }
 
+void Polytempo_ScoreScheduler::kill()
+{
+    engine->kill();    
+}
+
 void Polytempo_ScoreScheduler::returnToLocator()
 {
     if(!score)                     return;

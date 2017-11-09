@@ -32,10 +32,11 @@ namespace Polytempo_CommandIDs
     {
         open               = 0x2000,
         clearOpenRecent,
+        newDocument,
         save,
         saveAs,
         close,
-        exportAs,
+        exportSelected, exportAll,
         startStop,
         markerFwd, markerBwd,
         imageFwd, imageBwd,

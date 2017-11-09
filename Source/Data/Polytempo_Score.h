@@ -64,6 +64,7 @@ public:
     
     Polytempo_Score_Section *getInitSection();
     OwnedArray < Polytempo_Event >* getInitEvents();
+    OwnedArray < Polytempo_Event >* getEvents();
     Array < Polytempo_Event* > getEvents(Polytempo_EventType);
 
     static void parse(File& file, Polytempo_Score** score);

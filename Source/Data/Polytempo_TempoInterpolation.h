@@ -51,6 +51,31 @@ public:
     bool locked = false;
     
     ScopedPointer < Array < Polytempo_ControlPoint* > > coincidingControlPoints;
+    
+    DynamicObject* getObject()
+    {
+        DynamicObject* object = new DynamicObject();
+        object->setProperty("time", time);
+        object->setProperty("position", position.toString());
+        object->setProperty("tempoIn", tempoIn);
+        object->setProperty("tempoOut", tempoOut);
+        object->setProperty("tempoInWeight", tempoInWeight);
+        object->setProperty("tempoOutWeight", tempoOutWeight);
+        object->setProperty("locked", locked);
+
+        return object;
+    }
+    
+    void setObject(DynamicObject* object)
+    {
+        time = object->getProperty("time");
+        position = Rational((object->getProperty("position")).toString());
+        tempoIn = object->getProperty("tempoIn");
+        tempoOut = object->getProperty("tempoOut");
+        tempoInWeight = object->getProperty("tempoInWeight");
+        tempoOutWeight = object->getProperty("tempoOutWeight");
+        locked = object->getProperty("locked");
+    }
 };
 
 class ControlPointTimeComparator

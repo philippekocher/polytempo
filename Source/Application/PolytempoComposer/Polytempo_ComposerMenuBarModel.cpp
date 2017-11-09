@@ -87,8 +87,20 @@ PopupMenu Polytempo_ComposerMenuBarModel::getMenuForIndex (int menuIndex, const 
     
     if (menuName == "File")
     {
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::newDocument);
+        menu.addSeparator();
+        menu.addCommandItem (commandManager, Polytempo_CommandIDs::open);
+        PopupMenu recentFilesMenu;
+        Polytempo_StoredPreferences::getInstance()->recentFiles.createPopupMenuItems(recentFilesMenu, Polytempo_CommandIDs::openRecent, false, true);
+        recentFilesMenu.addSeparator();
+        recentFilesMenu.addCommandItem(commandManager, Polytempo_CommandIDs::clearOpenRecent);
+        menu.addSubMenu("Open Recent", recentFilesMenu);
+        menu.addSeparator();
+        menu.addCommandItem (commandManager, Polytempo_CommandIDs::save);
+        menu.addCommandItem (commandManager, Polytempo_CommandIDs::exportSelected);
+        menu.addCommandItem (commandManager, Polytempo_CommandIDs::exportAll);
+        menu.addSeparator();
         menu.addCommandItem (commandManager, Polytempo_CommandIDs::close);
-        menu.addCommandItem (commandManager, Polytempo_CommandIDs::exportAs);
     }
     else if (menuName == "Edit")
     {
@@ -143,7 +155,15 @@ PopupMenu Polytempo_ComposerMenuBarModel::getMenuForIndex (int menuIndex, const 
 }
 
 void Polytempo_ComposerMenuBarModel::menuItemSelected (int menuID, int topLevelMenuIndex)
-{}
+{
+    int fileIndex = menuID - Polytempo_CommandIDs::openRecent;
+    if(fileIndex >= 0)
+    {
+        RecentlyOpenedFilesList recentFiles = Polytempo_StoredPreferences::getInstance()->recentFiles;
+        Polytempo_Composition::getInstance()->openFile(recentFiles.getFile(fileIndex));
+        menuItemsChanged(); // refresh the recent files menu
+    }
+}
 
 //------------------------------------------------------------------------------
 #pragma mark -
@@ -164,10 +184,14 @@ void Polytempo_ComposerMenuBarModel::getAllCommands (Array <CommandID>& commands
 {
     // this returns the set of all commands that this target can perform..
     const CommandID ids[] = {
-        //openCmd,
+        Polytempo_CommandIDs::newDocument,
+        Polytempo_CommandIDs::open,
+        Polytempo_CommandIDs::clearOpenRecent,
         Polytempo_CommandIDs::close,
-        Polytempo_CommandIDs::exportAs,
-        
+        Polytempo_CommandIDs::save,
+        Polytempo_CommandIDs::exportSelected,
+        Polytempo_CommandIDs::exportAll,
+
         Polytempo_CommandIDs::showTimeMap,
         Polytempo_CommandIDs::showTempoMap,
         Polytempo_CommandIDs::showPatternList,
@@ -227,19 +251,41 @@ void Polytempo_ComposerMenuBarModel::getCommandInfo(CommandID commandID, Applica
         /* file menu
          ----------------------------------*/
             
-//        case Polytempo_CommandIDs::open:
-//        case Polytempo_CommandIDs::clearOpenRecent:
-//        case Polytempo_CommandIDs::save:
+        case Polytempo_CommandIDs::newDocument:
+            result.setInfo("New", String::empty, infoCategory, 0);
+            result.addDefaultKeypress('n', ModifierKeys::commandModifier);
+            break;
+            
+        case Polytempo_CommandIDs::open:
+            result.setInfo("Open...", String::empty, infoCategory, 0);
+            result.addDefaultKeypress('o', ModifierKeys::commandModifier);
+            break;
+            
+        case Polytempo_CommandIDs::clearOpenRecent:
+            result.setInfo("Clear Menu", String::empty, infoCategory, 0);
+            result.setActive(Polytempo_StoredPreferences::getInstance()->recentFiles.getNumFiles() > 0);
+            break;
+
+        case Polytempo_CommandIDs::save:
+            result.setInfo("Save", String::empty, infoCategory, 0);
+            result.addDefaultKeypress('s', ModifierKeys::commandModifier);
+            break;
+
 //        case Polytempo_CommandIDs::saveAs:
+
+        case Polytempo_CommandIDs::exportSelected:
+            result.setInfo("Export Selected Sequence...", String::empty, infoCategory, 0);
+            result.addDefaultKeypress('e', ModifierKeys::commandModifier);
+            break;
+
+        case Polytempo_CommandIDs::exportAll:
+            result.setInfo("Export All Sequences...", String::empty, infoCategory, 0);
+            result.addDefaultKeypress('e', ModifierKeys::shiftModifier | ModifierKeys::commandModifier);
+            break;
 
         case Polytempo_CommandIDs::close:
             result.setInfo("Close", String::empty, infoCategory, 0);
             result.addDefaultKeypress('w', ModifierKeys::commandModifier);
-            break;
-
-        case Polytempo_CommandIDs::exportAs:
-            result.setInfo("Export...", String::empty, infoCategory, 0);
-            result.addDefaultKeypress('e', ModifierKeys::commandModifier);
             break;
             
         /* edit menu
@@ -390,7 +436,7 @@ bool Polytempo_ComposerMenuBarModel::perform (const InvocationInfo& info)
     
     switch (info.commandID)
     {
-        /* polytempo network menu
+        /* polytempo composer menu
          ----------------------------------*/
             
 //        case Polytempo_CommandIDs::preferencesWindow:
@@ -405,19 +451,35 @@ bool Polytempo_ComposerMenuBarModel::perform (const InvocationInfo& info)
         /* file menu
          ----------------------------------*/
             
-//        case Polytempo_CommandIDs::open:
-//        case Polytempo_CommandIDs::clearOpenRecent:
-//        case Polytempo_CommandIDs::save:
+        case Polytempo_CommandIDs::newDocument:
+            composition->newComposition();
+            break;
+            
+        case Polytempo_CommandIDs::open:
+            composition->openFile();
+            break;
+            
+        case Polytempo_CommandIDs::clearOpenRecent:
+            Polytempo_StoredPreferences::getInstance()->recentFiles.clear();
+            break;
+
+        case Polytempo_CommandIDs::save:
+            composition->saveToFile();
+            break;
+            
 //        case Polytempo_CommandIDs::saveAs:
- 
+            
+        case Polytempo_CommandIDs::exportSelected:
+            Polytempo_Composition::getInstance()->exportSelectedSequence();
+            break;
+            
+        case Polytempo_CommandIDs::exportAll:
+            Polytempo_Composition::getInstance()->exportAllSequences();
+            break;
+            
         case Polytempo_CommandIDs::close:
             JUCEApplication::getInstance()->systemRequestedQuit();
             break;
-            
-        case Polytempo_CommandIDs::exportAs:
-            Polytempo_Composition::getInstance()->exportComposition();
-            break;
-            
             
         /* edit menu
          ----------------------------------*/

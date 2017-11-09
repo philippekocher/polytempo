@@ -42,10 +42,11 @@ public:
     void initialise (const String& commandLine) override;
     void shutdown() override;
     void systemRequestedQuit() override;
+    void applicationShouldQuit();
     void anotherInstanceStarted(const String& commandLine) override;
 
     static ApplicationCommandManager& getCommandManager();
-//    static DocumentWindow& getDocumentWindow();
+    static DocumentWindow& getDocumentWindow();
     static Polytempo_ComposerMainView& getMainView();
     
 private:

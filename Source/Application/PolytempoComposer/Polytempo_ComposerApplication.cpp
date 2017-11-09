@@ -30,6 +30,7 @@
 #include "../../Scheduler/Polytempo_ScoreScheduler.h"
 #include "../../Scheduler/Polytempo_EventScheduler.h"
 #include "../../Network/Polytempo_NetworkSupervisor.h"
+#include "../../Misc/Polytempo_Alerts.h"
 
 
 Polytempo_ComposerApplication::Polytempo_ComposerApplication() {}
@@ -58,8 +59,8 @@ void Polytempo_ComposerApplication::initialise(const String& commandLine)
     composerWindow = new Polytempo_ComposerWindow();
     
     Polytempo_Composition::getInstance()->setMainWindow(composerWindow);
-    Polytempo_Composition::getInstance()->addSequence(); // one sequence to start with
-    
+    Polytempo_Composition::getInstance()->newComposition();
+
     // return to beginning
     Polytempo_ScoreScheduler::getInstance()->returnToBeginning();
 }
@@ -93,8 +94,25 @@ void Polytempo_ComposerApplication::shutdown()
     
 void Polytempo_ComposerApplication::systemRequestedQuit()
 {
-    // This is called when the app is being asked to quit: you can ignore this
-    // request and let the app carry on running, or call quit() to allow the app to close.
+    applicationShouldQuit();
+}
+
+void Polytempo_ComposerApplication::applicationShouldQuit()
+{
+    if(Polytempo_ScoreScheduler::getInstance()->isRunning())
+    {
+        Polytempo_ScoreScheduler::getInstance()->kill();
+    }
+    
+    if(Polytempo_Composition::getInstance()->isDirty())
+    {
+        Polytempo_Composition::getInstance()->unsavedChangesAlert(0.0);
+        return;
+
+        // after the score will have been saved
+        // applicationShouldQuit() will be called again
+    }
+    
     quit();
 }
     
@@ -112,12 +130,12 @@ ApplicationCommandManager& Polytempo_ComposerApplication::getCommandManager()
     return *(app->commandManager);
 }
     
-//DocumentWindow& Polytempo_ComposerApplication::getDocumentWindow()
-//{
-//    Polytempo_ComposerApplication* const app = dynamic_cast<Polytempo_ComposerApplication*>(JUCEApplication::getInstance());
-//
-//    return *(app->composerWindow);
-//}
+DocumentWindow& Polytempo_ComposerApplication::getDocumentWindow()
+{
+    Polytempo_ComposerApplication* const app = dynamic_cast<Polytempo_ComposerApplication*>(JUCEApplication::getInstance());
+
+    return *(app->composerWindow);
+}
 
 Polytempo_ComposerMainView& Polytempo_ComposerApplication::getMainView()
 {

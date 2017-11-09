@@ -40,6 +40,9 @@ public:
     void setMainWindow(DocumentWindow*);
     void updateContent();
     
+    void setDirty(bool flag);
+    bool isDirty();
+    
     void addSequence();
     void removeSequence(int);
     int  getNumberOfSequences();
@@ -56,22 +59,35 @@ public:
 
     void updateScore();
     void findCoincidingControlPoints();
+    
+    void unsavedChangesAlert(double customValue);
+    void newComposition();
+    void openFile();
+    void openFile(File file);
+    void saveToFile();
+    void writeJSONtoFile(File file);
+    bool readJSONfromFile(File file);
 
-    void exportComposition();
-    void exportCompositionAsPlainText();
-    void exportCompositionAsLispList();
-    void exportCompositionAsCArray();
-    void exportCompositionAsPolytempoScore();
+    void exportSelectedSequence();
+    void exportAllSequences();
+    void exportAsPlainText();
+    void exportAsLispList();
+    void exportAsCArray();
+    void exportAsPolytempoScore();
 
 private:
     int selectedSequenceIndex = -1;
     int selectedControlPointIndex = -1;
+    bool exportAll;
     
     DocumentWindow *mainWindow;
     Component *mainComponent;
     OwnedArray <Polytempo_Sequence> sequences;
 
     ScopedPointer <Polytempo_Score> score;
+    
+    File compositionFile = File::nonexistent;
+    bool dirty = false;
 };
 
 

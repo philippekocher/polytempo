@@ -193,3 +193,28 @@ Array<Polytempo_Event *> Polytempo_BeatPattern::getEvents(Rational pos)
 
     return beatEvents;
 }
+
+//------------------------------------------------------------------------------
+#pragma mark -
+#pragma mark serialisation
+
+DynamicObject* Polytempo_BeatPattern::getObject()
+{
+    DynamicObject* object = new DynamicObject();
+    object->setProperty("patternString", patternString);
+    object->setProperty("repeats", repeats);
+    if(marker != String::empty) object->setProperty("marker", marker);
+    object->setProperty("counterString", counterString);
+
+    return object;
+}
+
+void Polytempo_BeatPattern::setObject(DynamicObject* object)
+{
+    setPattern(object->getProperty("patternString"));
+    repeats = object->getProperty("repeats");
+    marker = object->getProperty("marker");
+    counterString = object->getProperty("counterString");
+}
+
+

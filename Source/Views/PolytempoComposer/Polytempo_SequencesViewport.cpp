@@ -77,7 +77,7 @@ void Polytempo_SequencesViewport::resized()
     int width = composition->getNumberOfSequences() * 100 > getWidth() ? composition->getNumberOfSequences() * 100 : getWidth();
     viewedComponent->setBounds(0, 0, width, getHeight());
     
-    int height = getHorizontalScrollBar()->isVisible() ? getHeight()-getScrollBarThickness() : getHeight();
+    int height = getHorizontalScrollBar().isVisible() ? getHeight()-getScrollBarThickness() : getHeight();
     for(int i=0;i<sequenceControls.size();i++)
         sequenceControls[i]->setBounds(i*100, 0, 100, height);
 }

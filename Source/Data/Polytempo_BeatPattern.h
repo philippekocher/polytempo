@@ -56,6 +56,10 @@ public:
     
     // pattern expansion
     Array<Polytempo_Event *> getEvents(Rational pos);
+    
+    // serialisation
+    DynamicObject* getObject();
+    void setObject(DynamicObject* object);
 
 private:
     String patternString;

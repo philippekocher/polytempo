@@ -105,22 +105,29 @@ bool Polytempo_Sequence::isVisible()
 
 void Polytempo_Sequence::setName(String s)
 {
-    name = s;
+    if(name != s)
+    {
+        name = s;
+        Polytempo_Composition::getInstance()->setDirty(true);
+    }
 }
 
 void Polytempo_Sequence::setIndex(int index)
 {
     sequenceIndex = index;
+    Polytempo_Composition::getInstance()->setDirty(true);
 }
 
 void Polytempo_Sequence::setColour(Colour c)
 {
     colour = c;
+    Polytempo_Composition::getInstance()->setDirty(true);
 }
 
 void Polytempo_Sequence::setVisibility(bool value)
 {
     visible = value;
+    Polytempo_Composition::getInstance()->setDirty(true);
 }
 
 bool Polytempo_Sequence::validateNewControlPointPosition(float t, Rational pos)
@@ -181,6 +188,8 @@ void Polytempo_Sequence::setControlPointValues(int index, float t, Rational pos,
         controlPoints[index]->tempoOutWeight = outTempoWeight;
         updateEvents();
     }
+
+    Polytempo_Composition::getInstance()->setDirty(true);
 }
 
 
@@ -214,6 +223,8 @@ void Polytempo_Sequence::setControlPointPosition(int index, float t, Rational po
         controlPoints[index]->position = pos;
         updateEvents();
     }
+
+    Polytempo_Composition::getInstance()->setDirty(true);
 }
 
 void Polytempo_Sequence::setControlPointTempo(int index, float inTempo, float outTempo)
@@ -222,6 +233,8 @@ void Polytempo_Sequence::setControlPointTempo(int index, float inTempo, float ou
     if(outTempo > 0) controlPoints[index]->tempoOut = outTempo;
 
     updateEvents();
+
+    Polytempo_Composition::getInstance()->setDirty(true);
 }
 
 bool Polytempo_Sequence::isTempoConstantAfterPoint(int i)
@@ -245,6 +258,7 @@ void Polytempo_Sequence::adjustTime(int index)
 
     updateEvents();
     Polytempo_Composition::getInstance()->updateContent();
+    Polytempo_Composition::getInstance()->setDirty(true);
 }
 
 void Polytempo_Sequence::adjustPosition(int index)
@@ -257,6 +271,7 @@ void Polytempo_Sequence::adjustPosition(int index)
     
     updateEvents();
     Polytempo_Composition::getInstance()->updateContent();
+    Polytempo_Composition::getInstance()->setDirty(true);
 }
 
 void Polytempo_Sequence::adjustTempo(int index)
@@ -270,6 +285,7 @@ void Polytempo_Sequence::adjustTempo(int index)
     
     updateEvents();
     Polytempo_Composition::getInstance()->updateContent();
+    Polytempo_Composition::getInstance()->setDirty(true);
 }
 
 void Polytempo_Sequence::removeControlPoint(int index)
@@ -278,6 +294,7 @@ void Polytempo_Sequence::removeControlPoint(int index)
 
     updateEvents();
     Polytempo_Composition::getInstance()->updateContent();
+    Polytempo_Composition::getInstance()->setDirty(true);
 }
 
 
@@ -297,6 +314,7 @@ void Polytempo_Sequence::addControlPoint(float t, Rational pos, float tin, float
     controlPoints.sort(sorter, true);
     
     updateEvents();
+    Polytempo_Composition::getInstance()->setDirty(true);
 }
 
 void Polytempo_Sequence::addEventPattern(const String& pattern, int repeats, const String& counter, const String& marker)
@@ -309,6 +327,7 @@ void Polytempo_Sequence::addEventPattern(const String& pattern, int repeats, con
     beatPatterns.add(bp);
     
     buildBeatPattern();
+    Polytempo_Composition::getInstance()->setDirty(true);
 }
 
 int Polytempo_Sequence::getCurrentCounter()
@@ -470,4 +489,123 @@ Polytempo_Event* Polytempo_Sequence::getOscEvent(Polytempo_Event* event)
     }
     
     return nullptr;
+}
+
+//------------------------------------------------------------------------------
+#pragma mark -
+#pragma mark serialisation
+
+DynamicObject* Polytempo_Sequence::getObject()
+{
+    DynamicObject* object = new DynamicObject();
+    
+    var varControlPoints;
+    for(Polytempo_ControlPoint *point : controlPoints)
+        varControlPoints.append(point->getObject());
+    object->setProperty("controlPoints", varControlPoints);
+    
+    var varBeatPatterns;
+    for(Polytempo_BeatPattern *beatPattern : beatPatterns)
+        varBeatPatterns.append(beatPattern->getObject());
+    object->setProperty("beatPatterns", varBeatPatterns);
+    
+    object->setProperty("name", name);
+    object->setProperty("colour", colour.toString());
+    object->setProperty("mute", mute);
+
+    object->setProperty("playAudioClick", playAudioClick);
+    object->setProperty("audioDownbeatPitch", audioDownbeatPitch);
+    object->setProperty("audioDownbeatVolume", audioDownbeatVolume);
+    object->setProperty("audioBeatPitch", audioBeatPitch);
+    object->setProperty("audioBeatVolume", audioBeatVolume);
+    object->setProperty("audioCuePitch", audioCuePitch);
+    object->setProperty("audioCueVolume", audioCueVolume);
+    object->setProperty("audioChannel", audioChannel);
+    
+    object->setProperty("playMidiClick", playMidiClick);
+    object->setProperty("midiDownbeatPitch", midiDownbeatPitch);
+    object->setProperty("midiDownbeatVelocity", midiDownbeatVelocity);
+    object->setProperty("midiBeatPitch", midiBeatPitch);
+    object->setProperty("midiBeatVelocity", midiBeatVelocity);
+    object->setProperty("midiCuePitch", midiCuePitch);
+    object->setProperty("midiCueVelocity", midiCueVelocity);
+    object->setProperty("midiChannel", midiChannel);
+    
+    object->setProperty("sendOsc", sendOsc);
+    object->setProperty("oscDownbeatMessage", oscDownbeatMessage);
+    object->setProperty("oscBeatMessage", oscBeatMessage);
+    object->setProperty("oscCueMessage", oscCueMessage);
+    object->setProperty("oscReceiver", oscReceiver);
+    object->setProperty("oscPort", oscPort);
+    
+    return object;
+}
+
+void Polytempo_Sequence::setObject(DynamicObject* object)
+{
+    name = object->getProperty("name");
+    colour = Colour::fromString(object->getProperty("colour").toString());
+    
+    beatPatterns.clear();
+    for(var varBeatPattern : *object->getProperty("beatPatterns").getArray())
+    {
+        Polytempo_BeatPattern* bp = new Polytempo_BeatPattern();
+        bp->setObject(varBeatPattern.getDynamicObject());
+        beatPatterns.add(bp);
+    }
+    if(beatPatterns.size() == 0) addEventPattern("4/4",1,"1");
+    buildBeatPattern();
+    
+    controlPoints.clear();
+    for(var varControlPoint : *object->getProperty("controlPoints").getArray())
+    {
+        Polytempo_ControlPoint *cp = new Polytempo_ControlPoint();
+        cp->setObject(varControlPoint.getDynamicObject());
+        controlPoints.add(cp);
+    }
+
+    // check if there is a correct start and end point
+    if(controlPoints.size() < 2)
+    {
+        addControlPoint(0,0);
+        addControlPoint(events.getLast()->getTime() * 0.001f, events.getLast()->getPosition());
+    }
+    else
+    {
+        ControlPointTimeComparator sorter;
+        controlPoints.sort(sorter, true);
+
+        controlPoints.getFirst()->position = 0;
+        controlPoints.getLast()->position = events.getLast()->getPosition();
+    }
+
+    updateEvents();
+    
+    playAudioClick = object->getProperty("playAudioClick");
+    audioDownbeatPitch = object->getProperty("audioDownbeatPitch");
+    audioDownbeatVolume = object->getProperty("audioDownbeatVolume");
+    audioBeatPitch = object->getProperty("audioBeatPitch");
+    audioBeatVolume = object->getProperty("audioBeatVolume");
+    audioCuePitch = object->getProperty("audioCuePitch");
+    audioCueVolume = object->getProperty("audioCueVolume");
+    audioChannel = object->getProperty("audioChannel");
+    
+    playMidiClick = object->getProperty("playMidiClick");
+    midiDownbeatPitch = object->getProperty("midiDownbeatPitch");
+    midiDownbeatVelocity = object->getProperty("midiDownbeatVelocity");
+    midiBeatPitch = object->getProperty("midiBeatPitch");
+    midiBeatVelocity = object->getProperty("midiBeatVelocity");
+    midiCuePitch = object->getProperty("midiCuePitch");
+    midiCueVelocity = object->getProperty("midiCueVelocity");
+    midiChannel = object->getProperty("midiChannel");
+    
+    sendOsc = object->getProperty("sendOsc");
+    oscDownbeatMessage = object->getProperty("oscDownbeatMessage");
+    oscBeatMessage = object->getProperty("oscBeatMessage");
+    oscCueMessage = object->getProperty("oscCueMessage");
+    oscReceiver = object->getProperty("oscReceiver");
+    oscPort = object->getProperty("oscPort");
+    
+    mute = object->getProperty("mute");
+    
 }

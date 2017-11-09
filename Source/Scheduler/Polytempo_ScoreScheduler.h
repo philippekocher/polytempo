@@ -51,6 +51,7 @@ public:
     void start();
     void stop();
     void pause(Polytempo_Event*);
+    void kill();
     void returnToLocator();
     void returnToBeginning();
     bool gotoMarker(Polytempo_Event *event, bool storeLocator = true);
