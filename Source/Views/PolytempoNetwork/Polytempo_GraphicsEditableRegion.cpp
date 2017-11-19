@@ -322,11 +322,10 @@ void Polytempo_GraphicsEditableRegion::handleStartEditing(Point<int> mousePositi
 
 void Polytempo_GraphicsEditableRegion::handleEndEditAccept()
 {
-	if (!temporaryAnnotation.freeHandPath.isEmpty() || !temporaryAnnotation.text.isEmpty())
-		annotations.add(new Polytempo_GraphicsAnnotation(temporaryAnnotation));
+	if (temporaryAnnotation.freeHandPath.isEmpty() && temporaryAnnotation.text.isEmpty())
+		return; // noting to add
 
 	Polytempo_GraphicsAnnotationManager::getInstance()->addAnnotation(temporaryAnnotation);
-
 	handleEndEdit();
 }
 

@@ -57,6 +57,8 @@ void Polytempo_GraphicsAnnotationManager::addAnnotation(Polytempo_GraphicsAnnota
 			annotationSets[i]->SaveToFile();
 		}
 	}
+
+	sendChangeMessage();
 }
 
 void Polytempo_GraphicsAnnotationManager::saveAll() const
