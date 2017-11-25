@@ -47,12 +47,21 @@ public:
 
 	void buttonClicked(Button*) override
 	{
-		if(columnId == COLUMN_ID_SHOW)
+		if (columnId == COLUMN_ID_SHOW)
+		{
 			owner.setShowInfo(row, checkBox.getToggleState());
-		else if(columnId == COLUMN_ID_EDIT)
-			owner.setEditInfo(row, checkBox.getToggleState());
-
-		setRowAndColumn(row, columnId);
+			setRowAndColumn(row, columnId);
+		}
+		else if (columnId == COLUMN_ID_EDIT)
+		{
+			if (!checkBox.getToggleState())
+				checkBox.setToggleState(true, dontSendNotification);
+			else
+			{
+				owner.setEditInfo(row, true);
+				setRowAndColumn(row, columnId);
+			}
+		}
 	}
 
 private:
@@ -123,9 +132,6 @@ Polytempo_GraphicsAnnotationSettingsDialog::Polytempo_GraphicsAnnotationSettings
 	addAndMakeVisible(showAnchorPointsToggle = new ToggleButton("Show anchor points"));
 	showAnchorPointsToggle->setToggleState(Polytempo_GraphicsAnnotationManager::getInstance()->getAnchorFlag(), dontSendNotification);
 	showAnchorPointsToggle->addListener(this);
-
-	addAndMakeVisible(infoLabel = new Label());
-	updateInfoLabel();
 }
 
 Polytempo_GraphicsAnnotationSettingsDialog::~Polytempo_GraphicsAnnotationSettingsDialog()
@@ -145,10 +151,9 @@ void Polytempo_GraphicsAnnotationSettingsDialog::resized()
     int left = getBounds().getX() + 2;
 	int width = getWidth() - 4;
 
-	table.setBounds(left, getBounds().getY() + 2, width, getBounds().getHeight() - 60);
-	addLayerBtn->setBounds(left, getHeight() - 60, width, 20);
-	showAnchorPointsToggle->setBounds(left, getHeight() - 40, width, 20);
-	infoLabel->setBounds(left, getHeight() - 20, width, 20);
+	table.setBounds(left, getBounds().getY() + 2, width, getBounds().getHeight() - 40);
+	addLayerBtn->setBounds(left, getHeight() - 40, width, 20);
+	showAnchorPointsToggle->setBounds(left, getHeight() - 20, width, 20);
 }
 
 int Polytempo_GraphicsAnnotationSettingsDialog::getNumRows()
@@ -180,6 +185,12 @@ bool Polytempo_GraphicsAnnotationSettingsDialog::getShowInfo(int row) const
 
 bool Polytempo_GraphicsAnnotationSettingsDialog::setShowInfo(int row, bool state)
 {
+	if(!state && pAnnotationSet->getUnchecked(row)->getEdit())
+	{
+		AlertWindow::showMessageBox(AlertWindow::WarningIcon, "Set visibility state", "Editable layer has to be visible");
+		return false;
+	}
+
 	bool ok = pAnnotationSet->getUnchecked(row)->setShow(state);
 	if (!ok)
 	{
@@ -195,55 +206,25 @@ bool Polytempo_GraphicsAnnotationSettingsDialog::getEditInfo(int row) const
 	return pAnnotationSet->getUnchecked(row)->getEdit();
 }
 
-void Polytempo_GraphicsAnnotationSettingsDialog::setInfoLabel(String str) const
+bool Polytempo_GraphicsAnnotationSettingsDialog::setEditInfo(int row, bool state)
 {
-	infoLabel->setText(str, dontSendNotification);
-	infoLabel->setColour(infoLabel->backgroundColourId, str.isEmpty() ? Colours::grey : Colours::red);
-}
-
-void Polytempo_GraphicsAnnotationSettingsDialog::updateInfoLabel() const
-{
-	if (GetNumberOfEditableLayers() > 1)
-	{
-		setInfoLabel("More than one layer marked as editable.");
-	}
+	if (!state)
+		pAnnotationSet->getUnchecked(row)->setEdit(false);	// unselect is not allowed
 	else
 	{
-		setInfoLabel("");
-	}
-}
-
-int Polytempo_GraphicsAnnotationSettingsDialog::GetNumberOfEditableLayers(int exceptIndex) const
-{
-	int count = 0;
-	for(int i = 0; i < pAnnotationSet->size(); i++)
-	{
-		if(i != exceptIndex && pAnnotationSet->getUnchecked(i)->getEdit())
+		// select only new layer
+		for (int i = 0; i < pAnnotationSet->size(); i++)
 		{
-			count++;
+			if (i == row)
+			{
+				pAnnotationSet->getUnchecked(i)->setEdit(true);
+				pAnnotationSet->getUnchecked(i)->setShow(true);
+			}
+			else
+				pAnnotationSet->getUnchecked(i)->setEdit(false);
 		}
-	}
 
-	return count;
-}
-
-bool Polytempo_GraphicsAnnotationSettingsDialog::setEditInfo(int row, bool state) const
-{
-	int numberOfEditableLayers = GetNumberOfEditableLayers(row);
-	if(numberOfEditableLayers == 0 && state == false)
-	{
-		AlertWindow::showMessageBox(AlertWindow::WarningIcon, "Set edit state", "Setting edit state failed, at least one layer must be editable!");
-		return false;
-	}
-	
-	bool ok = pAnnotationSet->getUnchecked(row)->setEdit(state);
-	updateInfoLabel();
-
-
-	if (!ok)
-	{
-		AlertWindow::showMessageBox(AlertWindow::WarningIcon, "Set edit state", "Setting edit state failed");
-		return false;
+		table.updateContent();
 	}
 
 	return true;

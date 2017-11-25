@@ -32,9 +32,7 @@ public:
 	bool getShowInfo(int row) const;
 	bool setShowInfo(int row, bool state);
 	bool getEditInfo(int row) const;
-	void setInfoLabel(String str) const;
-	void updateInfoLabel() const;
-	bool setEditInfo(int row, bool state) const;
+	bool setEditInfo(int row, bool state);
 	TableListBox* getTable();
 
 	Component* refreshComponentForCell(int rowNumber, int columnId, bool, Component* existingComponentToUpdate) override;
@@ -43,13 +41,9 @@ public:
 	void buttonClicked(Button*) override;
 
 private:
-	int GetNumberOfEditableLayers(int exceptIndex = -1) const;
-
-private:
 	TableListBox table;
 	ScopedPointer<TextButton> addLayerBtn;
 	ScopedPointer<ToggleButton> showAnchorPointsToggle;
-	ScopedPointer<Label> infoLabel;
 	
 	int numRows;
 	OwnedArray<Polytempo_GraphicsAnnotationSet>* pAnnotationSet;

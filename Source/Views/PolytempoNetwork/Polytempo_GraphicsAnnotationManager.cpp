@@ -128,6 +128,12 @@ void Polytempo_GraphicsAnnotationManager::initialize(String folder, String score
 			}
 		}
 	}
+	// make sure editable layer is visible
+	if(highestPriorityEditableLayer!=nullptr)
+	{
+		highestPriorityEditableLayer->setShow(true);
+		highestPriorityEditableLayer->SaveToFile();
+	}
 	if(multipleEditableLayers)
 	{
 		AlertWindow::showMessageBox(AlertWindow::WarningIcon, "Annotation Layers", "More than one editable layers found! Using layer " + highestPriorityEditableLayer->getAnnotationLayerName() + " only");
