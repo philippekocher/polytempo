@@ -187,10 +187,7 @@ void Polytempo_GraphicsEditableRegion::mouseDown(const MouseEvent& e)
 {
 	if (status == Default)
 	{
-		if (e.source.isTouch())
-		{
-			handleStartEditing(e.getPosition());
-		}
+		handleStartEditing(e.getPosition());
 	}
 	if(status == FreehandEditing)
 	{
