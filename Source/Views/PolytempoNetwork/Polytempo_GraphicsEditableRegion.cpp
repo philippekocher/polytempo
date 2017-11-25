@@ -181,6 +181,11 @@ void Polytempo_GraphicsEditableRegion::mouseUp(const MouseEvent& e)
 			handleStartEditing(e.getPosition());
 		}
 	}
+
+	if(status == FreehandEditing)
+	{
+		doPaletteHandling(true);
+	}
 }
 
 void Polytempo_GraphicsEditableRegion::mouseDown(const MouseEvent& e)
@@ -269,6 +274,24 @@ bool Polytempo_GraphicsEditableRegion::TryGetExistingAnnotation(float x, float y
 	return false;
 }
 
+void Polytempo_GraphicsEditableRegion::doPaletteHandling(bool show)
+{
+	if (show)
+	{
+		buttonOk->setTopLeftPosition(0, 0);
+		buttonCancel->setTopLeftPosition(BUTTON_SIZE, 0);
+		buttonColor->setTopLeftPosition(2 * BUTTON_SIZE, 0);
+		buttonTextSize->setTopLeftPosition(3 * BUTTON_SIZE, 0);
+		buttonSettings->setTopLeftPosition(4 * BUTTON_SIZE, 0);
+	}
+
+	buttonOk->setVisible(show);
+	buttonCancel->setVisible(show);
+	buttonColor->setVisible(show);
+	buttonTextSize->setVisible(show);
+	buttonSettings->setVisible(show);
+}
+
 void Polytempo_GraphicsEditableRegion::handleStartEditing(Point<int> mousePosition)
 {
 	if (!allowAnnotations)
@@ -295,23 +318,6 @@ void Polytempo_GraphicsEditableRegion::handleStartEditing(Point<int> mousePositi
 	status = FreehandEditing;
 	setMouseCursor(MouseCursor::CrosshairCursor);
 
-	buttonsAboveReferencePoint = (mousePosition.getY() > getHeight() - (DISTANCE_REFERENCEPOINT_TO_BUTTONS + 2 * BUTTON_SIZE));
-	int yFirstButtonLine = DISTANCE_REFERENCEPOINT_TO_BUTTONS * (buttonsAboveReferencePoint ? -1 : 1);
-	int ySecondButtonLine = (DISTANCE_REFERENCEPOINT_TO_BUTTONS + BUTTON_SIZE) * (buttonsAboveReferencePoint ? -1 : 1);
-
-	buttonOk->setCentrePosition(mousePosition.translated(BUTTON_SIZE / 2, yFirstButtonLine));
-	buttonOk->setVisible(true);
-	buttonCancel->setCentrePosition(mousePosition.translated(int(BUTTON_SIZE * 1.5), yFirstButtonLine));
-	buttonCancel->setVisible(true);
-	buttonColor->setCentrePosition(mousePosition.translated(0, ySecondButtonLine));
-	buttonColor->setVisible(true);
-	buttonTextSize->setCentrePosition(mousePosition.translated(BUTTON_SIZE, ySecondButtonLine));
-	buttonTextSize->setVisible(true);
-	buttonSettings->setCentrePosition(mousePosition.translated(BUTTON_SIZE * 2, ySecondButtonLine));
-	buttonSettings->setVisible(true);
-
-	colorSelector->setTopLeftPosition(mousePosition.getX() > getBounds().getWidth() / 2 ? 0 : getBounds().getWidth() - colorSelector->getWidth(), getBounds().getHeight() - colorSelector->getHeight());
-	
 	grabKeyboardFocus();
 
 	repaintRequired = true;
@@ -336,11 +342,7 @@ void Polytempo_GraphicsEditableRegion::handleEndEdit()
 {
 	status = Default;
 	setMouseCursor(MouseCursor::NormalCursor);
-	buttonOk->setVisible(false);
-	buttonCancel->setVisible(false);
-	buttonColor->setVisible(false);
-	buttonTextSize->setVisible(false);
-	buttonSettings->setVisible(false);
+	doPaletteHandling(false);
 	colorSelector->setVisible(false);
 	repaintRequired = true;
 }
@@ -390,6 +392,7 @@ void Polytempo_GraphicsEditableRegion::buttonClicked(Button* source)
 	}
 	else if(source == buttonColor)
 	{
+		colorSelector->setTopLeftPosition(buttonColor->getX(), buttonColor->getY() + buttonColor->getHeight());
 		colorSelector->setVisible(!colorSelector->isVisible());
 	}
 	else if(source == buttonTextSize)
