@@ -294,6 +294,8 @@ void Polytempo_GraphicsEditableRegion::doPaletteHandling(bool show)
 	buttonColor->setVisible(show);
 	buttonTextSize->setVisible(show);
 	buttonSettings->setVisible(show);
+
+	grabKeyboardFocus();
 }
 
 void Polytempo_GraphicsEditableRegion::handleStartEditing(Point<int> mousePosition)
