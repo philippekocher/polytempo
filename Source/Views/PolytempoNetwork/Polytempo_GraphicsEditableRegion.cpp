@@ -423,13 +423,19 @@ bool Polytempo_GraphicsEditableRegion::keyPressed(const KeyPress& key, Component
 {
 	if(status != Default && key.isValid())
 	{
-		juce_wchar character = key.getTextCharacter();
-		String str;
-		str += character;
-		if (!str.isEmpty())
-			temporaryAnnotation.text.append(str, 1);
-		repaintRequired = true;
-
+		if (key == KeyPress::escapeKey)
+			handleEndEditCancel();
+		else if (key == KeyPress::returnKey)
+			handleEndEditAccept();
+		else
+		{
+			juce_wchar character = key.getTextCharacter();
+			String str;
+			str += character;
+			if (!str.isEmpty())
+				temporaryAnnotation.text.append(str, 1);
+			repaintRequired = true;
+		}
 		return true;
 	}
 
