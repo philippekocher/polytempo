@@ -71,13 +71,14 @@ Polytempo_GraphicsEditableRegion::Polytempo_GraphicsEditableRegion()
 	addKeyListener(this);
 
 	Polytempo_GraphicsAnnotationManager::getInstance()->addChangeListener(this);
-	startTimer(MIN_INTERVAL_BETWEEN_REPAINTS_MS);
+	startTimer(TIMER_ID_REPAINT, MIN_INTERVAL_BETWEEN_REPAINTS_MS);
 }
 
 Polytempo_GraphicsEditableRegion::~Polytempo_GraphicsEditableRegion()
 {
 	Polytempo_GraphicsAnnotationManager::getInstance()->removeChangeListener(this);
-	stopTimer();
+	stopTimer(TIMER_ID_REPAINT);
+	stopTimer(TIMER_ID_AUTO_ACCEPT);
 }
 
 Image Polytempo_GraphicsEditableRegion::CreateImageWithSolidBackground(Image image, int targetWidth, int targetHeight) const
@@ -185,6 +186,7 @@ void Polytempo_GraphicsEditableRegion::mouseUp(const MouseEvent& e)
 	if(status == FreehandEditing)
 	{
 		doPaletteHandling(true);
+		startTimer(TIMER_ID_AUTO_ACCEPT, AUTO_ACCEPT_INTERVAL_MS);
 	}
 }
 
@@ -201,6 +203,8 @@ void Polytempo_GraphicsEditableRegion::mouseDown(const MouseEvent& e)
 		screenToImage.transformPoint(x, y);
 
 		temporaryAnnotation.freeHandPath.startNewSubPath(Point<float>(x, y));
+
+		stopTimer(TIMER_ID_AUTO_ACCEPT);
 	}
 }
 
@@ -347,17 +351,6 @@ void Polytempo_GraphicsEditableRegion::handleEndEdit()
 	repaintRequired = true;
 }
 
-void Polytempo_GraphicsEditableRegion::timerCallback()
-{
-	if(repaintRequired)
-	{
-		repaintRequired = false;
-		stopTimer();
-		repaint();
-		startTimer(MIN_INTERVAL_BETWEEN_REPAINTS_MS);
-	}
-}
-
 void Polytempo_GraphicsEditableRegion::AddFontSizeToMenu(PopupMenu* m, int fontSize) const
 {
 	m->addItem(fontSize, std::to_string(fontSize), true, temporaryAnnotation.fontSize == fontSize);
@@ -434,6 +427,7 @@ bool Polytempo_GraphicsEditableRegion::keyPressed(const KeyPress& key, Component
 			str += character;
 			if (!str.isEmpty())
 				temporaryAnnotation.text.append(str, 1);
+			startTimer(TIMER_ID_AUTO_ACCEPT, AUTO_ACCEPT_INTERVAL_MS);
 			repaintRequired = true;
 		}
 		return true;
@@ -446,4 +440,27 @@ void Polytempo_GraphicsEditableRegion::setTemporaryFontSize(float fontSize)
 {
 	temporaryAnnotation.fontSize = fontSize;
 	repaintRequired = true;
+}
+
+void Polytempo_GraphicsEditableRegion::timerCallback(int timerID)
+{
+	switch (timerID)
+	{
+	case TIMER_ID_REPAINT:
+		if (repaintRequired)
+		{
+			repaintRequired = false;
+			stopTimer(timerID);
+			repaint();
+			startTimer(timerID, MIN_INTERVAL_BETWEEN_REPAINTS_MS);
+		}
+		break;
+	case TIMER_ID_AUTO_ACCEPT:
+		stopTimer(timerID);
+		if (status == FreehandEditing)
+			handleEndEditAccept();
+		break;
+	default: 
+		stopTimer(timerID);
+	}
 }
