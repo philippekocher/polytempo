@@ -101,6 +101,37 @@ void Polytempo_GraphicsAnnotationManager::initialize(String folder, String score
 		else
 			delete annotationSet;
 	}
+
+	// check editable layers
+	Polytempo_GraphicsAnnotationSet* highestPriorityEditableLayer = nullptr;
+	bool multipleEditableLayers = false;
+	for (Polytempo_GraphicsAnnotationSet* annotationSet : annotationSets)
+	{
+		if(annotationSet->getEdit())
+		{
+			if (highestPriorityEditableLayer == nullptr)
+				highestPriorityEditableLayer = annotationSet;
+			else
+			{
+				multipleEditableLayers = true;
+				if(annotationSet->getAnnotationLayerName() < highestPriorityEditableLayer->getAnnotationLayerName())
+				{
+					highestPriorityEditableLayer->setEdit(false);
+					highestPriorityEditableLayer->SaveToFile();
+					highestPriorityEditableLayer = annotationSet;
+				}
+				else
+				{
+					annotationSet->setEdit(false);
+					annotationSet->SaveToFile();
+				}
+			}
+		}
+	}
+	if(multipleEditableLayers)
+	{
+		AlertWindow::showMessageBox(AlertWindow::WarningIcon, "Annotation Layers", "More than one editable layers found! Using layer " + highestPriorityEditableLayer->getAnnotationLayerName() + " only");
+	}
 }
 
 void Polytempo_GraphicsAnnotationManager::showSettingsDialog()
