@@ -33,7 +33,7 @@ void Polytempo_GraphicsAnnotationManager::createAndAddNewLayer(bool editable)
 
 	do
 	{
-		filename = currentDirectory->getFullPathName() + "//" + currentScoreName + "_" + "Layer" + std::to_string(index++) + ".xml";
+		filename = currentDirectory->getFullPathName() + "\\" + currentScoreName + "_" + "Layer" + std::to_string(index++) + ".xml";
 	} while (File(filename).exists());
 
 	Polytempo_GraphicsAnnotationSet* pSet = new Polytempo_GraphicsAnnotationSet(filename, this);
