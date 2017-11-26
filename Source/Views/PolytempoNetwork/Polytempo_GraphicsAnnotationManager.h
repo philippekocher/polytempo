@@ -32,13 +32,22 @@ public:
 
 	void changeListenerCallback(ChangeBroadcaster*) override;
 	bool removeAnnotation(Uuid id, Polytempo_GraphicsAnnotation* pAnnotation);
+	bool isAnnotationPending();
+	bool trySetAnnotationPending(Polytempo_GraphicsEditableRegion* pEditableRegion);
+	void resetAnnotationPending(Polytempo_GraphicsEditableRegion* pEditableRegion);
+	Polytempo_GraphicsEditableRegion* getCurrentPendingAnnotationRegion() const;
 
 private:
-	Polytempo_GraphicsAnnotationManager() : showAnchorPoints(false) {};
+	Polytempo_GraphicsAnnotationManager() : showAnchorPoints(false), annotationPending(false), pCurrentPendingEditableRegion(nullptr)
+	{
+	};
 
 private:
 	OwnedArray<Polytempo_GraphicsAnnotationSet> annotationSets;
 	ScopedPointer<File> currentDirectory;
 	String currentScoreName;
 	bool showAnchorPoints;
+	bool annotationPending;
+	CriticalSection csPendingAnnotation;
+	Polytempo_GraphicsEditableRegion* pCurrentPendingEditableRegion;
 };

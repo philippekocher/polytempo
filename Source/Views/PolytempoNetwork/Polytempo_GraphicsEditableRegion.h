@@ -52,12 +52,14 @@ public:
 	bool keyPressed(const KeyPress& key, Component* /*originatingComponent*/) override;
 	void setTemporaryFontSize(float fontSize);
 	void timerCallback(int timerID) override;
+	void handleEndEditAccept();
+	void handleEndEditCancel();
+	void hitBtnColor();
+	void hitBtnTextSize();
 
 private:
 	virtual void setViewImage(Image *img, var) = 0;
 	void handleStartEditing(Point<int> mousePosition);
-	void handleEndEditAccept();
-	void handleEndEditCancel();
 	void handleEndEdit();
 	void handleFreeHandPainting(const Point<int>& mousePosition);
 	PopupMenu getTextSizePopupMenu() const;

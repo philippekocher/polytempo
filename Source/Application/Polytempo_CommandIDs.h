@@ -83,6 +83,13 @@ namespace Polytempo_CommandIDs
         adjustTempo,
         addEventPattern,
         
+		annotationAccept,
+		annotationCancel,
+		annotationColor,
+		annotationTextSize,
+		annotationLayerSettings,
+		annotationLayerEditMode,
+
         openRecent // must be last!
     };
 }

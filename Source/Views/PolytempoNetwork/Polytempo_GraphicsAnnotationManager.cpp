@@ -84,6 +84,7 @@ void Polytempo_GraphicsAnnotationManager::initialize(String folder, String score
 {
 	annotationSets.clear();
 
+	annotationPending = false;
 	currentDirectory = new File(folder);
 	currentScoreName = scoreName;
 
@@ -158,6 +159,7 @@ bool Polytempo_GraphicsAnnotationManager::removeAnnotation(Uuid id, Polytempo_Gr
 		{
 			if (annotationSets[iSet]->removeAnnotation(id, pAnnotation))
 			{
+				annotationSets[iSet]->SaveToFile();
 				sendChangeMessage();
 				return true;
 			}
@@ -165,4 +167,44 @@ bool Polytempo_GraphicsAnnotationManager::removeAnnotation(Uuid id, Polytempo_Gr
 	}
 
 	return false;
+}
+
+bool Polytempo_GraphicsAnnotationManager::isAnnotationPending()
+{
+	csPendingAnnotation.enter();
+	bool ret = annotationPending;
+	csPendingAnnotation.exit();
+	return ret;
+}
+
+bool Polytempo_GraphicsAnnotationManager::trySetAnnotationPending(Polytempo_GraphicsEditableRegion* pEditableRegion)
+{
+	bool ret;
+
+	csPendingAnnotation.enter();
+	if (annotationPending)
+		ret = false;
+	else {
+		annotationPending = true;
+		pCurrentPendingEditableRegion = pEditableRegion;
+		ret = true;
+	}
+	csPendingAnnotation.exit();
+	return ret;
+}
+
+void Polytempo_GraphicsAnnotationManager::resetAnnotationPending(Polytempo_GraphicsEditableRegion* pEditableRegion)
+{
+	csPendingAnnotation.enter();
+	if (pEditableRegion == pCurrentPendingEditableRegion)
+	{
+		annotationPending = false;
+		pCurrentPendingEditableRegion = nullptr;
+	}
+	csPendingAnnotation.exit();
+}
+
+Polytempo_GraphicsEditableRegion* Polytempo_GraphicsAnnotationManager::getCurrentPendingAnnotationRegion() const
+{
+	return pCurrentPendingEditableRegion;
 }

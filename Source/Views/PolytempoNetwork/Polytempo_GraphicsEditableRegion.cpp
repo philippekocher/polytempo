@@ -77,6 +77,7 @@ Polytempo_GraphicsEditableRegion::Polytempo_GraphicsEditableRegion()
 Polytempo_GraphicsEditableRegion::~Polytempo_GraphicsEditableRegion()
 {
 	Polytempo_GraphicsAnnotationManager::getInstance()->removeChangeListener(this);
+	Polytempo_GraphicsAnnotationManager::getInstance()->resetAnnotationPending(this);
 	stopTimer(TIMER_ID_REPAINT);
 	stopTimer(TIMER_ID_AUTO_ACCEPT);
 }
@@ -300,7 +301,7 @@ void Polytempo_GraphicsEditableRegion::doPaletteHandling(bool show)
 
 void Polytempo_GraphicsEditableRegion::handleStartEditing(Point<int> mousePosition)
 {
-	if (!allowAnnotations)
+	if (!allowAnnotations || !Polytempo_GraphicsAnnotationManager::getInstance()->trySetAnnotationPending(this))
 		return;
 
 	float x = float(mousePosition.getX());
@@ -344,6 +345,16 @@ void Polytempo_GraphicsEditableRegion::handleEndEditCancel()
 	handleEndEdit();
 }
 
+void Polytempo_GraphicsEditableRegion::hitBtnColor()
+{
+	buttonClicked(buttonColor);
+}
+
+void Polytempo_GraphicsEditableRegion::hitBtnTextSize()
+{
+	buttonClicked(buttonTextSize);
+}
+
 void Polytempo_GraphicsEditableRegion::handleEndEdit()
 {
 	status = Default;
@@ -351,6 +362,7 @@ void Polytempo_GraphicsEditableRegion::handleEndEdit()
 	doPaletteHandling(false);
 	colorSelector->setVisible(false);
 	repaintRequired = true;
+	Polytempo_GraphicsAnnotationManager::getInstance()->resetAnnotationPending(this);
 }
 
 void Polytempo_GraphicsEditableRegion::AddFontSizeToMenu(PopupMenu* m, int fontSize) const
@@ -387,15 +399,18 @@ void Polytempo_GraphicsEditableRegion::buttonClicked(Button* source)
 	}
 	else if(source == buttonColor)
 	{
+		stopTimer(TIMER_ID_AUTO_ACCEPT);
 		colorSelector->setTopLeftPosition(buttonColor->getX(), buttonColor->getY() + buttonColor->getHeight());
 		colorSelector->setVisible(!colorSelector->isVisible());
 	}
 	else if(source == buttonTextSize)
 	{
+		stopTimer(TIMER_ID_AUTO_ACCEPT);
 		getTextSizePopupMenu().showMenuAsync(PopupMenu::Options().withTargetComponent(buttonTextSize), new FontSizeCallback(this));
 	}
 	else if(source == buttonSettings)
 	{
+		stopTimer(TIMER_ID_AUTO_ACCEPT);
 		Polytempo_GraphicsAnnotationManager::getInstance()->showSettingsDialog();
 	}
 }
@@ -422,6 +437,13 @@ bool Polytempo_GraphicsEditableRegion::keyPressed(const KeyPress& key, Component
 			handleEndEditCancel();
 		else if (key == KeyPress::returnKey)
 			handleEndEditAccept();
+		else if(key == KeyPress::backspaceKey)
+		{
+			if (temporaryAnnotation.text.length() > 1)
+				temporaryAnnotation.text = temporaryAnnotation.text.dropLastCharacters(1);
+			startTimer(TIMER_ID_AUTO_ACCEPT, AUTO_ACCEPT_INTERVAL_MS);
+			repaintRequired = true;
+		}
 		else
 		{
 			juce_wchar character = key.getTextCharacter();
