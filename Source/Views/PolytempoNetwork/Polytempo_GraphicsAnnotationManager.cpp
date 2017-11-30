@@ -33,7 +33,7 @@ void Polytempo_GraphicsAnnotationManager::createAndAddNewLayer(bool editable)
 
 	do
 	{
-		filename = currentDirectory->getFullPathName() + "//" + currentScoreName + "_" + "Layer" + std::to_string(index++) + ".xml";
+		filename = currentDirectory->getFullPathName() + "\\" + currentScoreName + "_" + "Layer" + std::to_string(index++) + ".xml";
 	} while (File(filename).exists());
 
 	Polytempo_GraphicsAnnotationSet* pSet = new Polytempo_GraphicsAnnotationSet(filename, this);
@@ -57,6 +57,8 @@ void Polytempo_GraphicsAnnotationManager::addAnnotation(Polytempo_GraphicsAnnota
 			annotationSets[i]->SaveToFile();
 		}
 	}
+
+	sendChangeMessage();
 }
 
 void Polytempo_GraphicsAnnotationManager::saveAll() const
@@ -82,6 +84,7 @@ void Polytempo_GraphicsAnnotationManager::initialize(String folder, String score
 {
 	annotationSets.clear();
 
+	annotationPending = false;
 	currentDirectory = new File(folder);
 	currentScoreName = scoreName;
 
@@ -98,6 +101,43 @@ void Polytempo_GraphicsAnnotationManager::initialize(String folder, String score
 			annotationSets.add(annotationSet);
 		else
 			delete annotationSet;
+	}
+
+	// check editable layers
+	Polytempo_GraphicsAnnotationSet* highestPriorityEditableLayer = nullptr;
+	bool multipleEditableLayers = false;
+	for (Polytempo_GraphicsAnnotationSet* annotationSet : annotationSets)
+	{
+		if(annotationSet->getEdit())
+		{
+			if (highestPriorityEditableLayer == nullptr)
+				highestPriorityEditableLayer = annotationSet;
+			else
+			{
+				multipleEditableLayers = true;
+				if(annotationSet->getAnnotationLayerName() < highestPriorityEditableLayer->getAnnotationLayerName())
+				{
+					highestPriorityEditableLayer->setEdit(false);
+					highestPriorityEditableLayer->SaveToFile();
+					highestPriorityEditableLayer = annotationSet;
+				}
+				else
+				{
+					annotationSet->setEdit(false);
+					annotationSet->SaveToFile();
+				}
+			}
+		}
+	}
+	// make sure editable layer is visible
+	if(highestPriorityEditableLayer!=nullptr)
+	{
+		highestPriorityEditableLayer->setShow(true);
+		highestPriorityEditableLayer->SaveToFile();
+	}
+	if(multipleEditableLayers)
+	{
+		AlertWindow::showMessageBox(AlertWindow::WarningIcon, "Annotation Layers", "More than one editable layers found! Using layer " + highestPriorityEditableLayer->getAnnotationLayerName() + " only");
 	}
 }
 
@@ -119,6 +159,7 @@ bool Polytempo_GraphicsAnnotationManager::removeAnnotation(Uuid id, Polytempo_Gr
 		{
 			if (annotationSets[iSet]->removeAnnotation(id, pAnnotation))
 			{
+				annotationSets[iSet]->SaveToFile();
 				sendChangeMessage();
 				return true;
 			}
@@ -126,4 +167,44 @@ bool Polytempo_GraphicsAnnotationManager::removeAnnotation(Uuid id, Polytempo_Gr
 	}
 
 	return false;
+}
+
+bool Polytempo_GraphicsAnnotationManager::isAnnotationPending()
+{
+	csPendingAnnotation.enter();
+	bool ret = annotationPending;
+	csPendingAnnotation.exit();
+	return ret;
+}
+
+bool Polytempo_GraphicsAnnotationManager::trySetAnnotationPending(Polytempo_GraphicsEditableRegion* pEditableRegion)
+{
+	bool ret;
+
+	csPendingAnnotation.enter();
+	if (annotationPending)
+		ret = false;
+	else {
+		annotationPending = true;
+		pCurrentPendingEditableRegion = pEditableRegion;
+		ret = true;
+	}
+	csPendingAnnotation.exit();
+	return ret;
+}
+
+void Polytempo_GraphicsAnnotationManager::resetAnnotationPending(Polytempo_GraphicsEditableRegion* pEditableRegion)
+{
+	csPendingAnnotation.enter();
+	if (pEditableRegion == pCurrentPendingEditableRegion)
+	{
+		annotationPending = false;
+		pCurrentPendingEditableRegion = nullptr;
+	}
+	csPendingAnnotation.exit();
+}
+
+Polytempo_GraphicsEditableRegion* Polytempo_GraphicsAnnotationManager::getCurrentPendingAnnotationRegion() const
+{
+	return pCurrentPendingEditableRegion;
 }

@@ -30,6 +30,7 @@
 #include "../../Preferences/Polytempo_StoredPreferences.h"
 #include "../../Scheduler/Polytempo_ScoreScheduler.h"
 #include "../../Scheduler/Polytempo_EventDispatcher.h"
+#include "../../Views/PolytempoNetwork/Polytempo_GraphicsAnnotationManager.h"
 
 
 Polytempo_MenuBarModel::Polytempo_MenuBarModel(Polytempo_NetworkWindow *theWindow)
@@ -75,7 +76,7 @@ StringArray Polytempo_MenuBarModel::getMenuBarNames()
 #if JUCE_MAC
     const char* const names[] = { "File", "Edit", "View", "Scheduler", /*"Window",*/ "Help", 0 };
 #else
-    const char* const names[] = { "PolytempoNetwork", "File", "Edit", "View", "Scheduler", /*"Window",*/ "Help", 0 };
+    const char* const names[] = { "PolytempoNetwork", "File", "Edit", "View", "Scheduler", "Annotations", /*"Window",*/ "Help", 0 };
 #endif
     
     return StringArray (names);
@@ -155,7 +156,19 @@ PopupMenu Polytempo_MenuBarModel::getMenuForIndex(int, const String& menuName)
         
         menu.addCommandItem(&commandManager, Polytempo_CommandIDs::gotoTime);
     }
-    else if (menuName == "Window")
+	else if (menuName == "Annotations")
+	{
+		menu.addCommandItem(&commandManager, Polytempo_CommandIDs::annotationAccept);
+		menu.addCommandItem(&commandManager, Polytempo_CommandIDs::annotationCancel);
+
+		menu.addSeparator();
+
+		menu.addCommandItem(&commandManager, Polytempo_CommandIDs::annotationColor);
+		menu.addCommandItem(&commandManager, Polytempo_CommandIDs::annotationTextSize);
+		menu.addCommandItem(&commandManager, Polytempo_CommandIDs::annotationLayerSettings);
+		menu.addCommandItem(&commandManager, Polytempo_CommandIDs::annotationLayerEditMode);
+	}
+	else if (menuName == "Window")
     {
     
     }
@@ -227,6 +240,14 @@ void Polytempo_MenuBarModel::getAllCommands(Array <CommandID>& commands)
         Polytempo_CommandIDs::imageFwd,
         Polytempo_CommandIDs::imageBwd,
         //Polytempo_CommandIDs::gotoTime,
+
+		Polytempo_CommandIDs::annotationAccept,
+		Polytempo_CommandIDs::annotationCancel,
+		Polytempo_CommandIDs::annotationColor,
+		Polytempo_CommandIDs::annotationTextSize,
+		Polytempo_CommandIDs::annotationLayerSettings,
+		Polytempo_CommandIDs::annotationLayerEditMode,
+
         Polytempo_CommandIDs::aboutWindow,
         Polytempo_CommandIDs::preferencesWindow,
         Polytempo_CommandIDs::help,
@@ -398,6 +419,42 @@ void Polytempo_MenuBarModel::getCommandInfo(CommandID commandID, ApplicationComm
             result.setActive(window->getContentID() == Polytempo_NetworkWindow::mainViewID);
             break;
             
+		/* annotation menu
+		 ------------------------------*/
+		case Polytempo_CommandIDs::annotationAccept:
+			result.setInfo("Accept", "Accecpt the current annotation", infoCategory, 0);
+			result.addDefaultKeypress(KeyPress::returnKey, ModifierKeys::noModifiers);
+			result.setActive(Polytempo_GraphicsAnnotationManager::getInstance()->isAnnotationPending());
+			break;
+
+		case Polytempo_CommandIDs::annotationCancel:
+			result.setInfo("Cancel", "Cancel the current annotation", infoCategory, 0);
+			result.addDefaultKeypress(KeyPress::escapeKey, ModifierKeys::noModifiers);
+			result.setActive(Polytempo_GraphicsAnnotationManager::getInstance()->isAnnotationPending());
+			break;
+
+		case Polytempo_CommandIDs::annotationColor:
+			result.setInfo("Color...", "Change the color of the current annotation", infoCategory, 0);
+			result.addDefaultKeypress('c', ModifierKeys::noModifiers);
+			result.setActive(Polytempo_GraphicsAnnotationManager::getInstance()->isAnnotationPending());
+			break;
+
+		case Polytempo_CommandIDs::annotationTextSize:
+			result.setInfo("Text size...", "Change the text size of the current annotation", infoCategory, 0);
+			result.addDefaultKeypress('t', ModifierKeys::noModifiers);
+			result.setActive(Polytempo_GraphicsAnnotationManager::getInstance()->isAnnotationPending());
+			break;
+
+		case Polytempo_CommandIDs::annotationLayerSettings:
+			result.setInfo("Layer settings...", "Annotation layer settings", infoCategory, 0);
+			result.addDefaultKeypress('l', ModifierKeys::noModifiers);
+			break;
+
+		case Polytempo_CommandIDs::annotationLayerEditMode:
+			result.setInfo("Edit mode", "Toggle edit mode", infoCategory, 0);
+			result.addDefaultKeypress('e', ModifierKeys::noModifiers);
+			result.setTicked(Polytempo_GraphicsAnnotationManager::getInstance()->getAnchorFlag());
+			break;
 
         /* help menu
          ----------------------------------*/
@@ -420,7 +477,8 @@ void Polytempo_MenuBarModel::getCommandInfo(CommandID commandID, ApplicationComm
 bool Polytempo_MenuBarModel::perform(const InvocationInfo& info)
 {
     Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
-     
+	Polytempo_GraphicsEditableRegion* pRegion;
+
     switch(info.commandID)
     {
         /* polytempo network menu
@@ -550,6 +608,38 @@ bool Polytempo_MenuBarModel::perform(const InvocationInfo& info)
             break;
 
         
+		case Polytempo_CommandIDs::annotationAccept:
+			pRegion = Polytempo_GraphicsAnnotationManager::getInstance()->getCurrentPendingAnnotationRegion();
+    		if(pRegion != nullptr)
+				pRegion->handleEndEditAccept();
+    		break;
+
+		case Polytempo_CommandIDs::annotationCancel:
+			pRegion = Polytempo_GraphicsAnnotationManager::getInstance()->getCurrentPendingAnnotationRegion();
+    		if(pRegion != nullptr)
+				pRegion->handleEndEditCancel();
+			break;
+
+		case Polytempo_CommandIDs::annotationColor:
+			pRegion = Polytempo_GraphicsAnnotationManager::getInstance()->getCurrentPendingAnnotationRegion();
+    		if(pRegion != nullptr)
+				pRegion->hitBtnColor();
+    		break;
+
+		case Polytempo_CommandIDs::annotationTextSize:
+			pRegion = Polytempo_GraphicsAnnotationManager::getInstance()->getCurrentPendingAnnotationRegion();
+			if (pRegion != nullptr)
+				pRegion->hitBtnTextSize();
+			break;
+
+		case Polytempo_CommandIDs::annotationLayerSettings:
+			Polytempo_GraphicsAnnotationManager::getInstance()->showSettingsDialog();
+			break;
+
+		case Polytempo_CommandIDs::annotationLayerEditMode:
+			Polytempo_GraphicsAnnotationManager::getInstance()->setAnchorFlag(!Polytempo_GraphicsAnnotationManager::getInstance()->getAnchorFlag());
+			break;
+
         /* help menu
          ----------------------------------*/
         case Polytempo_CommandIDs::help:

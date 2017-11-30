@@ -71,13 +71,15 @@ Polytempo_GraphicsEditableRegion::Polytempo_GraphicsEditableRegion()
 	addKeyListener(this);
 
 	Polytempo_GraphicsAnnotationManager::getInstance()->addChangeListener(this);
-	startTimer(MIN_INTERVAL_BETWEEN_REPAINTS_MS);
+	startTimer(TIMER_ID_REPAINT, MIN_INTERVAL_BETWEEN_REPAINTS_MS);
 }
 
 Polytempo_GraphicsEditableRegion::~Polytempo_GraphicsEditableRegion()
 {
 	Polytempo_GraphicsAnnotationManager::getInstance()->removeChangeListener(this);
-	stopTimer();
+	Polytempo_GraphicsAnnotationManager::getInstance()->resetAnnotationPending(this);
+	stopTimer(TIMER_ID_REPAINT);
+	stopTimer(TIMER_ID_AUTO_ACCEPT);
 }
 
 Image Polytempo_GraphicsEditableRegion::CreateImageWithSolidBackground(Image image, int targetWidth, int targetHeight) const
@@ -181,16 +183,19 @@ void Polytempo_GraphicsEditableRegion::mouseUp(const MouseEvent& e)
 			handleStartEditing(e.getPosition());
 		}
 	}
+
+	if(status == FreehandEditing)
+	{
+		doPaletteHandling(true);
+		startTimer(TIMER_ID_AUTO_ACCEPT, AUTO_ACCEPT_INTERVAL_MS);
+	}
 }
 
 void Polytempo_GraphicsEditableRegion::mouseDown(const MouseEvent& e)
 {
 	if (status == Default)
 	{
-		if (e.source.isTouch())
-		{
-			handleStartEditing(e.getPosition());
-		}
+		handleStartEditing(e.getPosition());
 	}
 	if(status == FreehandEditing)
 	{
@@ -199,6 +204,8 @@ void Polytempo_GraphicsEditableRegion::mouseDown(const MouseEvent& e)
 		screenToImage.transformPoint(x, y);
 
 		temporaryAnnotation.freeHandPath.startNewSubPath(Point<float>(x, y));
+
+		stopTimer(TIMER_ID_AUTO_ACCEPT);
 	}
 }
 
@@ -272,9 +279,29 @@ bool Polytempo_GraphicsEditableRegion::TryGetExistingAnnotation(float x, float y
 	return false;
 }
 
+void Polytempo_GraphicsEditableRegion::doPaletteHandling(bool show)
+{
+	if (show)
+	{
+		buttonOk->setTopLeftPosition(0, 0);
+		buttonCancel->setTopLeftPosition(BUTTON_SIZE, 0);
+		buttonColor->setTopLeftPosition(2 * BUTTON_SIZE, 0);
+		buttonTextSize->setTopLeftPosition(3 * BUTTON_SIZE, 0);
+		buttonSettings->setTopLeftPosition(4 * BUTTON_SIZE, 0);
+	}
+
+	buttonOk->setVisible(show);
+	buttonCancel->setVisible(show);
+	buttonColor->setVisible(show);
+	buttonTextSize->setVisible(show);
+	buttonSettings->setVisible(show);
+
+	grabKeyboardFocus();
+}
+
 void Polytempo_GraphicsEditableRegion::handleStartEditing(Point<int> mousePosition)
 {
-	if (!allowAnnotations)
+	if (!allowAnnotations || !Polytempo_GraphicsAnnotationManager::getInstance()->trySetAnnotationPending(this))
 		return;
 
 	float x = float(mousePosition.getX());
@@ -298,23 +325,6 @@ void Polytempo_GraphicsEditableRegion::handleStartEditing(Point<int> mousePositi
 	status = FreehandEditing;
 	setMouseCursor(MouseCursor::CrosshairCursor);
 
-	buttonsAboveReferencePoint = (mousePosition.getY() > getHeight() - (DISTANCE_REFERENCEPOINT_TO_BUTTONS + 2 * BUTTON_SIZE));
-	int yFirstButtonLine = DISTANCE_REFERENCEPOINT_TO_BUTTONS * (buttonsAboveReferencePoint ? -1 : 1);
-	int ySecondButtonLine = (DISTANCE_REFERENCEPOINT_TO_BUTTONS + BUTTON_SIZE) * (buttonsAboveReferencePoint ? -1 : 1);
-
-	buttonOk->setCentrePosition(mousePosition.translated(BUTTON_SIZE / 2, yFirstButtonLine));
-	buttonOk->setVisible(true);
-	buttonCancel->setCentrePosition(mousePosition.translated(int(BUTTON_SIZE * 1.5), yFirstButtonLine));
-	buttonCancel->setVisible(true);
-	buttonColor->setCentrePosition(mousePosition.translated(0, ySecondButtonLine));
-	buttonColor->setVisible(true);
-	buttonTextSize->setCentrePosition(mousePosition.translated(BUTTON_SIZE, ySecondButtonLine));
-	buttonTextSize->setVisible(true);
-	buttonSettings->setCentrePosition(mousePosition.translated(BUTTON_SIZE * 2, ySecondButtonLine));
-	buttonSettings->setVisible(true);
-
-	colorSelector->setTopLeftPosition(mousePosition.getX() > getBounds().getWidth() / 2 ? 0 : getBounds().getWidth() - colorSelector->getWidth(), getBounds().getHeight() - colorSelector->getHeight());
-	
 	grabKeyboardFocus();
 
 	repaintRequired = true;
@@ -322,11 +332,10 @@ void Polytempo_GraphicsEditableRegion::handleStartEditing(Point<int> mousePositi
 
 void Polytempo_GraphicsEditableRegion::handleEndEditAccept()
 {
-	if (!temporaryAnnotation.freeHandPath.isEmpty() || !temporaryAnnotation.text.isEmpty())
-		annotations.add(new Polytempo_GraphicsAnnotation(temporaryAnnotation));
+	if (temporaryAnnotation.freeHandPath.isEmpty() && temporaryAnnotation.text.isEmpty())
+		return; // noting to add
 
 	Polytempo_GraphicsAnnotationManager::getInstance()->addAnnotation(temporaryAnnotation);
-
 	handleEndEdit();
 }
 
@@ -336,28 +345,24 @@ void Polytempo_GraphicsEditableRegion::handleEndEditCancel()
 	handleEndEdit();
 }
 
+void Polytempo_GraphicsEditableRegion::hitBtnColor()
+{
+	buttonClicked(buttonColor);
+}
+
+void Polytempo_GraphicsEditableRegion::hitBtnTextSize()
+{
+	buttonClicked(buttonTextSize);
+}
+
 void Polytempo_GraphicsEditableRegion::handleEndEdit()
 {
 	status = Default;
 	setMouseCursor(MouseCursor::NormalCursor);
-	buttonOk->setVisible(false);
-	buttonCancel->setVisible(false);
-	buttonColor->setVisible(false);
-	buttonTextSize->setVisible(false);
-	buttonSettings->setVisible(false);
+	doPaletteHandling(false);
 	colorSelector->setVisible(false);
 	repaintRequired = true;
-}
-
-void Polytempo_GraphicsEditableRegion::timerCallback()
-{
-	if(repaintRequired)
-	{
-		repaintRequired = false;
-		stopTimer();
-		repaint();
-		startTimer(MIN_INTERVAL_BETWEEN_REPAINTS_MS);
-	}
+	Polytempo_GraphicsAnnotationManager::getInstance()->resetAnnotationPending(this);
 }
 
 void Polytempo_GraphicsEditableRegion::AddFontSizeToMenu(PopupMenu* m, int fontSize) const
@@ -394,14 +399,18 @@ void Polytempo_GraphicsEditableRegion::buttonClicked(Button* source)
 	}
 	else if(source == buttonColor)
 	{
+		stopTimer(TIMER_ID_AUTO_ACCEPT);
+		colorSelector->setTopLeftPosition(buttonColor->getX(), buttonColor->getY() + buttonColor->getHeight());
 		colorSelector->setVisible(!colorSelector->isVisible());
 	}
 	else if(source == buttonTextSize)
 	{
+		stopTimer(TIMER_ID_AUTO_ACCEPT);
 		getTextSizePopupMenu().showMenuAsync(PopupMenu::Options().withTargetComponent(buttonTextSize), new FontSizeCallback(this));
 	}
 	else if(source == buttonSettings)
 	{
+		stopTimer(TIMER_ID_AUTO_ACCEPT);
 		Polytempo_GraphicsAnnotationManager::getInstance()->showSettingsDialog();
 	}
 }
@@ -424,13 +433,27 @@ bool Polytempo_GraphicsEditableRegion::keyPressed(const KeyPress& key, Component
 {
 	if(status != Default && key.isValid())
 	{
-		juce_wchar character = key.getTextCharacter();
-		String str;
-		str += character;
-		if (!str.isEmpty())
-			temporaryAnnotation.text.append(str, 1);
-		repaintRequired = true;
-
+		if (key == KeyPress::escapeKey)
+			handleEndEditCancel();
+		else if (key == KeyPress::returnKey)
+			handleEndEditAccept();
+		else if(key == KeyPress::backspaceKey)
+		{
+			if (temporaryAnnotation.text.length() > 1)
+				temporaryAnnotation.text = temporaryAnnotation.text.dropLastCharacters(1);
+			startTimer(TIMER_ID_AUTO_ACCEPT, AUTO_ACCEPT_INTERVAL_MS);
+			repaintRequired = true;
+		}
+		else
+		{
+			juce_wchar character = key.getTextCharacter();
+			String str;
+			str += character;
+			if (!str.isEmpty())
+				temporaryAnnotation.text.append(str, 1);
+			startTimer(TIMER_ID_AUTO_ACCEPT, AUTO_ACCEPT_INTERVAL_MS);
+			repaintRequired = true;
+		}
 		return true;
 	}
 
@@ -441,4 +464,27 @@ void Polytempo_GraphicsEditableRegion::setTemporaryFontSize(float fontSize)
 {
 	temporaryAnnotation.fontSize = fontSize;
 	repaintRequired = true;
+}
+
+void Polytempo_GraphicsEditableRegion::timerCallback(int timerID)
+{
+	switch (timerID)
+	{
+	case TIMER_ID_REPAINT:
+		if (repaintRequired)
+		{
+			repaintRequired = false;
+			stopTimer(timerID);
+			repaint();
+			startTimer(timerID, MIN_INTERVAL_BETWEEN_REPAINTS_MS);
+		}
+		break;
+	case TIMER_ID_AUTO_ACCEPT:
+		stopTimer(timerID);
+		if (status == FreehandEditing)
+			handleEndEditAccept();
+		break;
+	default: 
+		stopTimer(timerID);
+	}
 }

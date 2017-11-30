@@ -18,13 +18,16 @@
 #define FREE_HAND_LINE_THICKNESS 2
 #define BUTTON_SIZE 32
 #define DISTANCE_REFERENCEPOINT_TO_BUTTONS 50
+#define TIMER_ID_REPAINT 1000
+#define TIMER_ID_AUTO_ACCEPT 1001
+#define AUTO_ACCEPT_INTERVAL_MS	5000
 
 class FontSizeCallback;
 
 //==============================================================================
 /*
 */
-class Polytempo_GraphicsEditableRegion : public Component, Timer, ButtonListener, KeyListener, ChangeListener
+class Polytempo_GraphicsEditableRegion : public Component, MultiTimer, ButtonListener, KeyListener, ChangeListener
 {
 public:
 	Polytempo_GraphicsEditableRegion();
@@ -43,17 +46,20 @@ public:
 	void mouseDrag(const MouseEvent& e) override;
 	void mouseDoubleClick(const MouseEvent& e) override;
 	bool TryGetExistingAnnotation(float x, float y);
-	void timerCallback() override;
+	void doPaletteHandling(bool show);
 	void buttonClicked(Button* source) override;
 	void changeListenerCallback(ChangeBroadcaster* source) override;
 	bool keyPressed(const KeyPress& key, Component* /*originatingComponent*/) override;
 	void setTemporaryFontSize(float fontSize);
+	void timerCallback(int timerID) override;
+	void handleEndEditAccept();
+	void handleEndEditCancel();
+	void hitBtnColor();
+	void hitBtnTextSize();
 
 private:
 	virtual void setViewImage(Image *img, var) = 0;
 	void handleStartEditing(Point<int> mousePosition);
-	void handleEndEditAccept();
-	void handleEndEditCancel();
 	void handleEndEdit();
 	void handleFreeHandPainting(const Point<int>& mousePosition);
 	PopupMenu getTextSizePopupMenu() const;
