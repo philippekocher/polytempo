@@ -47,7 +47,7 @@ public:
     void setSocket(Polytempo_Socket *aSocket);
     void setComponent(Component *aComponent);
 
-    void addPeer(String ip, String name);
+    void handlePeer(String ip, String name);
 
     void eventNotification(Polytempo_Event *event);
 	Uuid getUniqueId();

@@ -28,7 +28,7 @@
 #include "../Scheduler/Polytempo_EventScheduler.h"
 #include "../Misc/Polytempo_Alerts.h"
 #include "../Application/PolytempoNetwork/Polytempo_NetworkApplication.h"
-
+#include "Polytempo_TimeProvider.h"
 
 
 Polytempo_OSCListener::Polytempo_OSCListener(int port) : m_Port(port)
@@ -58,8 +58,14 @@ void Polytempo_OSCListener::oscMessageReceived(const OSCMessage & message)
 
 		String argIp = (argumentIterator++)->getString();
 		String argName = (argumentIterator++)->getString();
+		
+		Polytempo_NetworkSupervisor::getInstance()->handlePeer(argIp, argName);
 
-		Polytempo_NetworkSupervisor::getInstance()->addPeer(argIp, argName);
+		bool isMaster = false;
+		if (argumentIterator)
+			isMaster = (bool)argumentIterator->getInt32();
+		if(isMaster)
+			Polytempo_TimeProvider::getInstance()->setRemoteMasterPeer(argIp, senderId);
 	}
 
 #ifdef POLYTEMPO_NETWORK

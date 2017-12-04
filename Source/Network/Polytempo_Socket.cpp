@@ -22,6 +22,7 @@ Polytempo_Socket::Polytempo_Socket(const String& hostName_, int port_, bool tick
 
 Polytempo_Socket::~Polytempo_Socket()
 {
+	oscSender->disconnect();
 	oscSender = nullptr;
 	hostName = nullptr;
 }

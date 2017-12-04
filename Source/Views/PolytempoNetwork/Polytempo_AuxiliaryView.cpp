@@ -28,6 +28,7 @@
 #include "../../Preferences/Polytempo_StoredPreferences.h"
 #include "../../Network/Polytempo_NetworkSupervisor.h"
 #include "../../Misc/Polytempo_Textbox.h"
+#include "../../Network/Polytempo_TimeProvider.h"
 
 
 Polytempo_AuxiliaryView::Polytempo_AuxiliaryView()
@@ -61,6 +62,9 @@ Polytempo_AuxiliaryView::Polytempo_AuxiliaryView()
     tempoFactorTextbox->addListener(this);
     tempoFactorTextbox->setText("1.0", dontSendNotification);
     
+	addAndMakeVisible(syncMasterToggle = new ToggleButton("Sync Master"));
+	syncMasterToggle->addListener(this);
+
     addAndMakeVisible(peersTextbox = new Label());
     peersTextbox->setEditable(false, false, false);
     peersTextbox->setColour(Label::backgroundColourId, Colours::lightblue);
@@ -82,6 +86,7 @@ void Polytempo_AuxiliaryView::paint (Graphics& g)
     attributedPeers.append(" \n", Font(8.0f, Font::plain));
 	attributedPeers.append(Polytempo_NetworkSupervisor::getInstance()->getAdapterInfo()+"\n", Font(12.0f, Font::plain));
 	attributedPeers.append(" \n", Font(22.0f, Font::plain));
+	attributedPeers.append(Polytempo_TimeProvider::getInstance()->isMaster() ? "Master: yes \n" : "Master: no \n", Font(14.0f, Font::plain));
 	attributedPeers.append("Connected peers:\n", Font(12, Font::bold));
     HashMap < String, String >::Iterator it(*Polytempo_NetworkSupervisor::getInstance()->getPeers());
     while(it.next())
@@ -116,7 +121,10 @@ void Polytempo_AuxiliaryView::resized()
     yPosition +=80;
     
     tempoFactorTextbox->setBounds(10, yPosition, getWidth() - 20, 34);
-    
+	yPosition += 40;
+
+	syncMasterToggle->setBounds(10, yPosition, getWidth() - 20, 34);
+
 	Polytempo_NetworkSupervisor::getInstance()->setComponent(this);
 }
 
@@ -184,6 +192,8 @@ void Polytempo_AuxiliaryView::buttonClicked(Button *button)
         Polytempo_ScoreScheduler::getInstance()->skipToEvent(eventType_Image, true);
     if(button == imageForwards)
         Polytempo_ScoreScheduler::getInstance()->skipToEvent(eventType_Image, false);
+	if (button == syncMasterToggle)
+		Polytempo_TimeProvider::getInstance()->initialize(syncMasterToggle->getToggleState(), TIME_SYNC_OSC_PORT);
 }
 
 void Polytempo_AuxiliaryView::buttonStateChanged(Button*)

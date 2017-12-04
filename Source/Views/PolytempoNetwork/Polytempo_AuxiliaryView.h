@@ -61,7 +61,7 @@ private:
     Polytempo_Textbox *timeTextbox;
     
 //  Polytempo_Textbox *realTimeTextbox;
-    
+	ToggleButton	*syncMasterToggle;
     Polytempo_Textbox *tempoFactorTextbox;
     String            tempoFactor;
     

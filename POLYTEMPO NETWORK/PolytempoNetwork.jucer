@@ -99,6 +99,10 @@
             file="../Source/Network/Polytempo_Socket.cpp"/>
       <FILE id="ExXKRM" name="Polytempo_Socket.h" compile="0" resource="0"
             file="../Source/Network/Polytempo_Socket.h"/>
+      <FILE id="I3SqFa" name="Polytempo_TimeProvider.cpp" compile="1" resource="0"
+            file="../Source/Network/Polytempo_TimeProvider.cpp"/>
+      <FILE id="PIEmTw" name="Polytempo_TimeProvider.h" compile="0" resource="0"
+            file="../Source/Network/Polytempo_TimeProvider.h"/>
     </GROUP>
     <GROUP id="{47AC34E2-55B8-0A83-90F9-17E330BE25A4}" name="Preferences">
       <FILE id="TtP3Vf" name="Polytempo_DefaultPreferences.cpp" compile="1"
