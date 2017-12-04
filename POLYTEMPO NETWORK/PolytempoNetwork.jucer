@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="at55VB" name="PolytempoNetwork" projectType="guiapp" version="0.3.0"
-              bundleIdentifier="net.icst.PolytempoNetwork" jucerVersion="5.1.2"
+              bundleIdentifier="net.icst.PolytempoNetwork" jucerVersion="5.2.0"
               companyName="ICST Institute for Computermusic and Sound Technology, Zurich"
               includeBinaryInAppConfig="1" companyWebsite="www.icst.net" defines="POLYTEMPO_NETWORK=1"
               displaySplashScreen="1" reportAppUsage="1" splashScreenColour="Dark"
-              cppLanguageStandard="11">
+              cppLanguageStandard="11" companyCopyright="ICST Institute for Computermusic and Sound Technology, Zurich">
   <MAINGROUP id="AdMxtt" name="PolytempoNetwork">
     <GROUP id="{380F2332-7EED-CAEF-0B98-BEC0BC16E53A}" name="Resources">
       <FILE id="Z9EfR9" name="colorPalette.png" compile="0" resource="1"
@@ -227,10 +227,11 @@
                customPList="&lt;plist&gt;&lt;dict&gt;&#10;    &lt;key&gt;NSAppTransportSecurity&lt;/key&gt;  &#10;    &lt;dict&gt;  &#10;        &lt;key&gt;NSAllowsArbitraryLoads&lt;/key&gt;&#10;        &lt;true/&gt;  &#10;    &lt;/dict&gt;&#10;&lt;/dict&gt;&lt;/plist&gt;">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" osxSDK="default" osxCompatibility="10.9 SDK" osxArchitecture="default"
-                       isDebug="1" optimisation="1" targetName="PolytempoNetwork"/>
+                       isDebug="1" optimisation="1" targetName="PolytempoNetwork" enablePluginBinaryCopyStep="1"/>
         <CONFIGURATION name="Release" osxSDK="default" osxCompatibility="10.9 SDK" osxArchitecture="default"
                        isDebug="0" optimisation="2" targetName="PolytempoNetwork" defines=""
-                       customXcodeFlags="COPY_PHASE_STRIP = NO,  GCC_GENERATE_DEBUGGING_SYMBOLS = YES "/>
+                       customXcodeFlags="COPY_PHASE_STRIP = NO,  GCC_GENERATE_DEBUGGING_SYMBOLS = YES "
+                       enablePluginBinaryCopyStep="1"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_video" path="../../../../../Documents/JUCE/modules"/>
@@ -253,9 +254,11 @@
     <VS2015 targetFolder="Builds/VisualStudio2015" extraCompilerFlags="/wd&quot;4068&quot;">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
-                       isDebug="1" optimisation="1" targetName="PolytempoNetwork"/>
+                       isDebug="1" optimisation="1" targetName="PolytempoNetwork" debugInformationFormat="ProgramDatabase"
+                       enablePluginBinaryCopyStep="0"/>
         <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
-                       isDebug="0" optimisation="3" targetName="PolytempoNetwork"/>
+                       isDebug="0" optimisation="3" targetName="PolytempoNetwork" debugInformationFormat="ProgramDatabase"
+                       enablePluginBinaryCopyStep="0" linkTimeOptimisation="1"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_video" path="..\..\JUCE\modules"/>
@@ -278,9 +281,11 @@
     <VS2017 targetFolder="Builds/VisualStudio2017" extraCompilerFlags="/wd&quot;4068&quot;">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
-                       isDebug="1" optimisation="1" targetName="PolytempoNetwork"/>
+                       isDebug="1" optimisation="1" targetName="PolytempoNetwork" debugInformationFormat="ProgramDatabase"
+                       enablePluginBinaryCopyStep="0"/>
         <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
-                       isDebug="0" optimisation="3" targetName="PolytempoNetwork"/>
+                       isDebug="0" optimisation="3" targetName="PolytempoNetwork" debugInformationFormat="ProgramDatabase"
+                       enablePluginBinaryCopyStep="0" linkTimeOptimisation="1"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_video" path="..\..\JUCE\modules"/>
