@@ -76,11 +76,17 @@ void Polytempo_TimeProvider::handleTimeSyncMessage(Uuid senderId, int32 masterTi
 	timeDiffHistorySize = jmin(++timeDiffHistorySize, TIME_DIFF_HISTORY_SIZE);
 	timeDiffHistoryWritePosition = (++timeDiffHistoryWritePosition) % TIME_DIFF_HISTORY_SIZE;
 
-	int64 sum = 0;
+	Array<uint32> valueArray;
 	for (int i = 0; i < timeDiffHistorySize; i++)
-		sum += timeDiffHistory[i];
-	
-	relativeMsToMaster = int32(sum / timeDiffHistorySize);
+		valueArray.add(timeDiffHistory[i]);
+	valueArray.sort();
+	if (valueArray.size() == 0)
+		resetTimeSync();
+	else if (valueArray.size() % 2)
+		relativeMsToMaster = valueArray[valueArray.size() / 2];
+	else
+		relativeMsToMaster = valueArray[valueArray.size()/2] / 2 + valueArray[valueArray.size()/2-1] / 2;
+
 #if(JUCE_DEBUG)
 	displayMessage(String(relativeMsToMaster) + "; RT " + String(localTimeDiff)+"ms", MessageType_Info);
 #else
@@ -223,4 +229,5 @@ void Polytempo_TimeProvider::resetTimeSync()
 	timeDiffHistorySize = 0;
 	timeDiffHistoryWritePosition = 0;
 	lastSentTimeIndex = 0;
+	relativeMsToMaster = 0;
 }
