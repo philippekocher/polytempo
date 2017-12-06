@@ -190,6 +190,10 @@
               file="../Source/Views/PolytempoNetwork/Polytempo_ImageManager.cpp"/>
         <FILE id="knovRA" name="Polytempo_ImageManager.h" compile="0" resource="0"
               file="../Source/Views/PolytempoNetwork/Polytempo_ImageManager.h"/>
+        <FILE id="KqR8Cs" name="Polytempo_NetworkInfoView.cpp" compile="1"
+              resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_NetworkInfoView.cpp"/>
+        <FILE id="k8ZILQ" name="Polytempo_NetworkInfoView.h" compile="0" resource="0"
+              file="../Source/Views/PolytempoNetwork/Polytempo_NetworkInfoView.h"/>
         <FILE id="pqaFmI" name="Polytempo_NetworkMainView.cpp" compile="1"
               resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_NetworkMainView.cpp"/>
         <FILE id="UVwdls" name="Polytempo_NetworkMainView.h" compile="0" resource="0"
@@ -198,6 +202,10 @@
               file="../Source/Views/PolytempoNetwork/Polytempo_Progressbar.cpp"/>
         <FILE id="JjsnBh" name="Polytempo_Progressbar.h" compile="0" resource="0"
               file="../Source/Views/PolytempoNetwork/Polytempo_Progressbar.h"/>
+        <FILE id="vEI743" name="Polytempo_TimeSyncControl.cpp" compile="1"
+              resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_TimeSyncControl.cpp"/>
+        <FILE id="KI6F8R" name="Polytempo_TimeSyncControl.h" compile="0" resource="0"
+              file="../Source/Views/PolytempoNetwork/Polytempo_TimeSyncControl.h"/>
         <FILE id="TEAJZH" name="Polytempo_VisualMetro.cpp" compile="1" resource="0"
               file="../Source/Views/PolytempoNetwork/Polytempo_VisualMetro.cpp"/>
         <FILE id="vsBBMn" name="Polytempo_VisualMetro.h" compile="0" resource="0"

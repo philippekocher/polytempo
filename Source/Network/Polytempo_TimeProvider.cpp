@@ -13,10 +13,12 @@
 #include "Polytempo_NetworkInterfaceManager.h"
 
 
-Polytempo_TimeProvider::Polytempo_TimeProvider(): relativeMsToMaster(0), timeDiffHistorySize(0), timeDiffHistoryWritePosition(0), masterFlag(false), sync(false), lastSentTimeIndex(0), lastSentTimestamp(0), nbTimeouts(0)
+Polytempo_TimeProvider::Polytempo_TimeProvider(): relativeMsToMaster(0), timeDiffHistorySize(0), timeDiffHistoryWritePosition(0), masterFlag(false), sync(false), lastSentTimeIndex(0), lastSentTimestamp(0)
 {
 	oscSender = new OSCSender();
 	oscReceiver = new OSCReceiver();
+
+	pTimeSyncControl = nullptr;
 }
 
 Polytempo_TimeProvider::~Polytempo_TimeProvider()
@@ -29,13 +31,13 @@ Polytempo_TimeProvider::~Polytempo_TimeProvider()
 
 juce_ImplementSingleton(Polytempo_TimeProvider)
 
-void Polytempo_TimeProvider::initialize(bool master, int oscPort)
+void Polytempo_TimeProvider::initialize(bool master, int port)
 {
 	stopTimer();
 	oscSender->disconnect();
 	oscReceiver->disconnect();
 
-	this->oscPort = oscPort;
+	oscPort = port;
 	masterFlag = master;
 	sync = masterFlag;
 	timeDiffHistorySize = 0;
@@ -63,16 +65,13 @@ void Polytempo_TimeProvider::handleTimeSyncMessage(Uuid senderId, int32 masterTi
 
 	if(sync && timeIndex != localLastSentTimeIndex || senderId != lastMasterID)
 	{
-		DBG("Wrong time index or master ID");
-		nbTimeouts++;
+		displayMessage("Wrong time index or master ID", MessageType_Error);
 		return;
 	}
 
-	nbTimeouts = 0;
-
-	int32 ts = Time::getMillisecondCounter();
-	int32 localTimeDiff = ts - localLastSentTimestamp;
-	int32 newTimeDiffToMaster = masterTime - (ts - localTimeDiff * 0.5);
+	int32 currentTimestamp = Time::getMillisecondCounter();
+	int32 localTimeDiff = currentTimestamp - localLastSentTimestamp;
+	int32 newTimeDiffToMaster = int32(masterTime - (currentTimestamp - localTimeDiff * 0.5));
 
 	lastReceivedTimestamp = localLastSentTimeIndex;
 	timeDiffHistory[timeDiffHistoryWritePosition] = newTimeDiffToMaster;
@@ -83,8 +82,12 @@ void Polytempo_TimeProvider::handleTimeSyncMessage(Uuid senderId, int32 masterTi
 	for (int i = 0; i < timeDiffHistorySize; i++)
 		sum += timeDiffHistory[i];
 	
-	relativeMsToMaster = sum / timeDiffHistorySize;
-	DBG("New relative time: " + String(relativeMsToMaster) + "; current rounttrip: " + String(localTimeDiff)+"ms");
+	relativeMsToMaster = int32(sum / timeDiffHistorySize);
+#if(JUCE_DEBUG)
+	displayMessage(String(relativeMsToMaster) + "; RT " + String(localTimeDiff)+"ms", MessageType_Info);
+#else
+	displayMessage("Sync! Roundtrip " + String(localTimeDiff)+"ms", MessageType_Info);
+#endif
 	
 	sync = true;
 }
@@ -116,15 +119,23 @@ bool Polytempo_TimeProvider::isMaster() const
 
 void Polytempo_TimeProvider::setRemoteMasterPeer(String ip, Uuid id)
 {
+	if(masterFlag)
+	{
+		displayMessage("Another master detected", MessageType_Error);
+	}
 	// master ID check
 	if (lastMasterID != id)
 	{
-		DBG("Master changed!");
-		// Todo: warning
+		displayMessage("Master changed", MessageType_Warning);
 	}
 
 	lastMasterID = id;
 	lastMasterIp = ip;
+}
+
+void Polytempo_TimeProvider::registerUserInterface(Polytempo_TimeSyncControl* pControl)
+{
+	pTimeSyncControl = pControl;
 }
 
 void Polytempo_TimeProvider::oscMessageReceived(const OSCMessage& message)
@@ -148,7 +159,7 @@ void Polytempo_TimeProvider::oscMessageReceived(const OSCMessage& message)
 		}
 		else
 		{
-			DBG("Wrong timeSyncRequest received");
+			displayMessage("Wrong timeSyncRequest received", MessageType_Error);
 		}
 	}
 	else if(addressPattern == "/timeSyncReply")
@@ -166,8 +177,7 @@ void Polytempo_TimeProvider::timerCallback()
 	String timeSyncMasterIp = lastMasterIp;
 	if(timeSyncMasterIp.isEmpty())
 	{
-		DBG("No master detected");
-		// Todo: warning no time sync master
+		displayMessage("No master detected", MessageType_Error);
 	}
 	else
 	{
@@ -179,5 +189,25 @@ void Polytempo_TimeProvider::timerCallback()
 				OSCAddressPattern("/timeSyncRequest"), 
 				OSCArgument(Polytempo_NetworkInterfaceManager::getInstance()->getSelectedIpAddress().ipAddress.toString()), 
 				OSCArgument(index)));
+	}
+}
+
+void Polytempo_TimeProvider::displayMessage(String message, MessageType messageType)
+{
+	if (pTimeSyncControl != nullptr)
+	{
+		Colour c;
+		switch(messageType)
+		{
+		case MessageType_Info: c = Colours::lightgreen; break;
+		case MessageType_Warning: c = Colours::yellow; break;
+		case MessageType_Error: c = Colours::orangered; break;
+		default: c = Colours::grey;
+		}
+		pTimeSyncControl->showInfoMessage(message, c);
+	}
+	else
+	{
+		DBG(message);
 	}
 }

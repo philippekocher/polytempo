@@ -10,6 +10,7 @@
 
 #pragma once
 #include "JuceHeader.h"
+#include "../Views/PolytempoNetwork/Polytempo_TimeSyncControl.h"
 
 #define TIME_DIFF_HISTORY_SIZE		10
 #define SYNC_TIME_VALID_PERIOD_MS	10000
@@ -28,14 +29,19 @@ public:
 	bool getSyncTime(uint32* pTime);
 	bool isMaster() const;
 	void setRemoteMasterPeer(String ip, Uuid id);
+	void registerUserInterface(Polytempo_TimeSyncControl* pControl);
 
-private:
+	enum MessageType { MessageType_Info, MessageType_Warning, MessageType_Error };
+
+	private:
 	void handleTimeSyncMessage(Uuid senderId, int32 masterTime, int timeIndex);
 	void createTimeIndex(int* pIndex, uint32* pTimestamp);
 	void oscMessageReceived(const OSCMessage& message) override;
 	void timerCallback() override;
+	void displayMessage(String message, MessageType messageType);
 
 private:
+	Polytempo_TimeSyncControl* pTimeSyncControl;
 	ScopedPointer<OSCSender> oscSender;
 	ScopedPointer<OSCReceiver> oscReceiver;
 	int oscPort;
@@ -52,8 +58,7 @@ private:
 	int lastSentTimeIndex;
 	uint32 lastSentTimestamp;
 	uint32 lastReceivedTimestamp;
-	int nbTimeouts;
-
+	
 	Uuid lastMasterID;
 	String lastMasterIp;
 };
