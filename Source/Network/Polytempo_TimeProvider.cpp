@@ -39,10 +39,8 @@ void Polytempo_TimeProvider::initialize(bool master, int port)
 
 	oscPort = port;
 	masterFlag = master;
-	sync = masterFlag;
-	timeDiffHistorySize = 0;
-	timeDiffHistoryWritePosition = 0;
-	lastSentTimeIndex = 0;
+	
+	resetTimeSync();
 
 	bool ok = oscSender->connect(Polytempo_NetworkInterfaceManager::getInstance()->getSelectedIpAddress().ipAddress.toString(), 0);
 	if (!ok)
@@ -126,6 +124,7 @@ void Polytempo_TimeProvider::setRemoteMasterPeer(String ip, Uuid id)
 	// master ID check
 	if (lastMasterID != id)
 	{
+		resetTimeSync();
 		displayMessage("Master changed", MessageType_Warning);
 	}
 
@@ -210,4 +209,12 @@ void Polytempo_TimeProvider::displayMessage(String message, MessageType messageT
 	{
 		DBG(message);
 	}
+}
+
+void Polytempo_TimeProvider::resetTimeSync()
+{
+	sync = false;
+	timeDiffHistorySize = 0;
+	timeDiffHistoryWritePosition = 0;
+	lastSentTimeIndex = 0;
 }

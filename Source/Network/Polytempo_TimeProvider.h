@@ -33,12 +33,13 @@ public:
 
 	enum MessageType { MessageType_Info, MessageType_Warning, MessageType_Error };
 
-	private:
+private:
 	void handleTimeSyncMessage(Uuid senderId, int32 masterTime, int timeIndex);
 	void createTimeIndex(int* pIndex, uint32* pTimestamp);
 	void oscMessageReceived(const OSCMessage& message) override;
 	void timerCallback() override;
 	void displayMessage(String message, MessageType messageType);
+	void resetTimeSync();
 
 private:
 	Polytempo_TimeSyncControl* pTimeSyncControl;
