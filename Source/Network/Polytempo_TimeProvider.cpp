@@ -101,8 +101,13 @@ void Polytempo_TimeProvider::createTimeIndex(int* pIndex, uint32* pTimestamp)
 
 bool Polytempo_TimeProvider::getSyncTime(uint32* pTime)
 {
-	sync = (lastSentTimestamp - lastReceivedTimestamp < SYNC_TIME_VALID_PERIOD_MS);
+	if(masterFlag)
+	{
+		*pTime = Time::getMillisecondCounter();
+		return true;
+	}
 
+	sync = (lastSentTimestamp - lastReceivedTimestamp < SYNC_TIME_VALID_PERIOD_MS);
 	if (!sync)
 		return false;
 
