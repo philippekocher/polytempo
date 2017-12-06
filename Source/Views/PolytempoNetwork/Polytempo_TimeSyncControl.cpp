@@ -39,18 +39,34 @@ void Polytempo_TimeSyncControl::resized()
 
 void Polytempo_TimeSyncControl::showInfoMessage(String message, Colour color)
 {
-	stopTimer();
+	stopTimer(TIMER_ID_DURATION);
+	stopTimer(TIMER_ID_DELAY);
 
-	const MessageManagerLock mmLock;
-	infoField->setText(message, dontSendNotification);
-	infoField->setColour(infoField->backgroundColourId, color);
-	startTimer(DISPLAY_DURATION);
+	newString = message;
+	newColor = color;
+
+	startTimer(TIMER_ID_DELAY, DISPLAY_DELAY);
 }
 
-void Polytempo_TimeSyncControl::timerCallback()
+void Polytempo_TimeSyncControl::timerCallback(int timerID)
 {
-	infoField->setText(String::empty, dontSendNotification);
-	infoField->setColour(infoField->backgroundColourId, findColour(Label::backgroundColourId));
+	stopTimer(timerID);
+	switch(timerID)
+	{
+	case TIMER_ID_DELAY:
+		infoField->setText(newString, dontSendNotification);
+		infoField->setColour(infoField->backgroundColourId, newColor);
+		if(!newString.isEmpty())
+			startTimer(TIMER_ID_DURATION, DISPLAY_DURATION);
+		break;
+	case TIMER_ID_DURATION:
+		newString = String::empty;
+		newColor = findColour(Label::backgroundColourId);
+		startTimer(TIMER_ID_DELAY, DISPLAY_DELAY);
+		break;
+	default: 
+		DBG("Unknown timerID " + String(timerID));
+	}
 }
 
 void Polytempo_TimeSyncControl::buttonClicked(Button* button)

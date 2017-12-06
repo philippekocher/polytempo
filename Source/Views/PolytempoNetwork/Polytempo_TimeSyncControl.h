@@ -12,11 +12,14 @@
 
 #include "JuceHeader.h"
 #define DISPLAY_DURATION	3000
+#define DISPLAY_DELAY		100
+#define TIMER_ID_DELAY		1
+#define TIMER_ID_DURATION	2
 
 //==============================================================================
 /*
 */
-class Polytempo_TimeSyncControl    : public Component, ButtonListener, Timer
+class Polytempo_TimeSyncControl    : public Component, ButtonListener, MultiTimer
 {
 public:
     Polytempo_TimeSyncControl();
@@ -26,7 +29,7 @@ public:
     void resized() override;
 
 	void showInfoMessage(String message, Colour color);
-	void timerCallback() override;
+	void timerCallback(int timerID) override;
 
 private:
 	void buttonClicked(Button* button) override;
@@ -34,7 +37,8 @@ private:
 private:
 	ToggleButton	*syncMasterToggle;
 	Label			*infoField;
-
+	String			newString;
+	Colour			newColor;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_TimeSyncControl)
 };
