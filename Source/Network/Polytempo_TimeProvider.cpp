@@ -160,6 +160,7 @@ void Polytempo_TimeProvider::oscMessageReceived(const OSCMessage& message)
 					OSCArgument(Polytempo_NetworkSupervisor::getInstance()->getUniqueId().toString()), 
 					OSCArgument(int32(Time::getMillisecondCounter())), 
 					OSCArgument(timeIndex)));
+			displayMessage("Mastertime sent", MessageType_Info);
 		}
 		else
 		{
