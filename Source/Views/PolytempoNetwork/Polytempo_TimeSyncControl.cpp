@@ -60,9 +60,7 @@ void Polytempo_TimeSyncControl::timerCallback(int timerID)
 			startTimer(TIMER_ID_DURATION, DISPLAY_DURATION);
 		break;
 	case TIMER_ID_DURATION:
-		newString = String::empty;
-		newColor = findColour(Label::backgroundColourId);
-		startTimer(TIMER_ID_DELAY, DISPLAY_DELAY);
+		resetInfoField();
 		break;
 	default: 
 		DBG("Unknown timerID " + String(timerID));
@@ -72,5 +70,15 @@ void Polytempo_TimeSyncControl::timerCallback(int timerID)
 void Polytempo_TimeSyncControl::buttonClicked(Button* button)
 {
 	if (button == syncMasterToggle)
+	{
 		Polytempo_TimeProvider::getInstance()->initialize(syncMasterToggle->getToggleState(), TIME_SYNC_OSC_PORT);
+		resetInfoField();
+	}
+}
+
+void Polytempo_TimeSyncControl::resetInfoField()
+{
+	newString = String::empty;
+	newColor = findColour(Label::backgroundColourId);
+	startTimer(TIMER_ID_DELAY, DISPLAY_DELAY);
 }

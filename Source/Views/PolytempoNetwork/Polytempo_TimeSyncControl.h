@@ -33,6 +33,7 @@ public:
 
 private:
 	void buttonClicked(Button* button) override;
+	void resetInfoField();
 
 private:
 	ToggleButton	*syncMasterToggle;
