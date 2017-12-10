@@ -131,9 +131,11 @@ void Polytempo_OSCListener::oscMessageReceived(const OSCMessage & message)
         
         if(event->hasProperty(eventPropertyString_TimeTag))
             syncTime = event->getProperty(eventPropertyString_TimeTag);
-        else
-            syncTime = Time::getMillisecondCounter();
-        
+		else
+		{
+			Polytempo_TimeProvider::getInstance()->getSyncTime(&syncTime);
+		}
+
         if(event->hasProperty(eventPropertyString_Time))
         {
             Polytempo_ScoreScheduler *scoreScheduler = Polytempo_ScoreScheduler::getInstance();
