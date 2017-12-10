@@ -124,7 +124,7 @@ int32 Polytempo_TimeProvider::getDelaySafeTimestamp()
 {
 	int32 safeTime;
 	getSyncTime(&safeTime);
-	safeTime += maxRoundTrip + 1000;
+	safeTime += maxRoundTrip;
 
 	return safeTime;
 }
