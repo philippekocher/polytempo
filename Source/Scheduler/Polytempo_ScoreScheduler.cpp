@@ -173,7 +173,7 @@ bool Polytempo_ScoreScheduler::gotoMarker(String marker, bool storeLocator)
 
 void Polytempo_ScoreScheduler::gotoTime(Polytempo_Event *event)
 {
-    gotoTime((float)event->getProperty("value") * 1000.0f);
+    gotoTime(int((float)event->getProperty("value") * 1000.0f));
 }
 
 void Polytempo_ScoreScheduler::gotoTime(int time)

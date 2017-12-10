@@ -141,7 +141,7 @@ void Polytempo_NetworkEngine::run()
     
     while(!threadShouldExit() && !shouldStop)
     {
-        scoreTime += scoreTimeIncrement() * tempoFactor;
+        scoreTime += int(double(scoreTimeIncrement()) * tempoFactor);
         
         while(!shouldStop && !pausing && nextScoreEvent && nextScoreEvent->getTime() <= scoreTime + lookAhead)
         {
@@ -152,7 +152,7 @@ void Polytempo_NetworkEngine::run()
 			syncTime += int(double(nextScoreEvent->getTime() - scoreTime) / tempoFactor);
             
             if(nextScoreEvent->hasProperty(eventPropertyString_Defer))
-                syncTime += (float)nextScoreEvent->getProperty(eventPropertyString_Defer) * 1000.0f;
+                syncTime += int(float(nextScoreEvent->getProperty(eventPropertyString_Defer)) * 1000.0f);
             
             nextScoreEvent->setSyncTime(syncTime);
             
