@@ -36,29 +36,33 @@ void Polytempo_ListComponent::resized()
 
 int Polytempo_ListComponent::getColumnAutoSizeWidth(int columnId)
 {
-    int width = getWidth() * 0.25;
-    return width > 150 ? 150 : width;
+    int width = getWidth() * 0.25; // 4 columns
+    return width;// > 150 ? 150 : width;
 }
 
 void Polytempo_ListComponent::backgroundClicked(const MouseEvent& event)
 {
     if(event.mods.isPopupMenu())
         showPopupMenu();
+    else
+        table.deselectAllRows();
 }
 
 void Polytempo_ListComponent::mouseDownInRow(int rowNumber, const MouseEvent& event)
 {
     if(event.mods.isPopupMenu())
         showPopupMenu();
+    else if(table.isRowSelected(rowNumber) && event.getNumberOfClicks() == 1)
+        table.deselectRow(rowNumber);
     else
-        table.selectRowsBasedOnModifierKeys(rowNumber, event.mods, false);
+        table.selectRow(rowNumber);
 }
 
 void Polytempo_ListComponent::paintRowBackground(Graphics& g, int rowNumber, int width, int height, bool rowIsSelected)
 {
-   // if(rowIsSelected)
-//        g.fillAll(Colour(235,235,255));
-    if(0 == rowNumber % 2)
+    if(rowIsSelected)
+        g.fillAll(Colour(235,235,255));
+    else if(0 == rowNumber % 2)
         g.fillAll(Colour(235,235,235));
     
 //    g.fillRect(0,0,width,height-1);

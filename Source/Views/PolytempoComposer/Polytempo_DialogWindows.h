@@ -205,89 +205,89 @@ namespace Polytempo_DialogWindows
     };
     
     
-    class AddEventPattern : public Basic
-    {
-    public:
-        AddEventPattern()
-        {
-            setName("Add Event Pattern");
-            setOkString("Add");
-            enableOkButton(true);
-            
-            label1.setText("Pattern", dontSendNotification);
-            label1.setEditable(false);
-            label1.setBounds(20,20,150,15);
-            contentComponent->addAndMakeVisible(label1);
-            
-            editor1.setBounds(20,35,150,15);
-            editor1.setText("4/4", dontSendNotification);
-            editor1.setEscapeAndReturnKeysConsumed(false);
-            editor1.setSelectAllWhenFocused(true);
-            editor1.setCaretVisible(false);
-            editor1.setInputRestrictions(0,"0123456789/+");
-            editor1.addListener(this);
-            contentComponent->addAndMakeVisible(editor1);
-            
-            label2.setText("Repeats", dontSendNotification);
-            label2.setEditable(false);
-            label2.setBounds(170,20,50,15);
-            contentComponent->addAndMakeVisible(label2);
-            
-            editor2.setBounds(170,35,50,15);
-            editor2.setText("1", dontSendNotification);
-            editor2.setEscapeAndReturnKeysConsumed(false);
-            editor2.setSelectAllWhenFocused(true);
-            editor2.setCaretVisible(false);
-            editor2.setInputRestrictions(0,"0123456789");
-            editor2.addListener(this);
-            contentComponent->addAndMakeVisible(editor2);
-
-            label3.setText("Counter", dontSendNotification);
-            label3.setEditable(false);
-            label3.setBounds(230,20,50,15);
-            contentComponent->addAndMakeVisible(label3);
-            
-            Polytempo_Sequence* sequence = Polytempo_Composition::getInstance()->getSelectedSequence();
-            editor3.setBounds(230,35,50,15);
-            editor3.setText(String(sequence->getCurrentCounter()), dontSendNotification);
-            editor3.setEscapeAndReturnKeysConsumed(false);
-            editor3.setSelectAllWhenFocused(true);
-            editor3.setCaretVisible(false);
-            editor3.setInputRestrictions(0,"0123456789 ");
-            editor3.addListener(this);
-            contentComponent->addAndMakeVisible(editor3);
-
-            label4.setText("Marker", dontSendNotification);
-            label4.setEditable(false);
-            label4.setBounds(290,20,50,15);
-            contentComponent->addAndMakeVisible(label4);
-            
-            editor4.setBounds(290,35,50,15);
-            editor4.setEscapeAndReturnKeysConsumed(false);
-            editor4.setSelectAllWhenFocused(true);
-            editor4.setCaretVisible(false);
-            editor4.addListener(this);
-            contentComponent->addAndMakeVisible(editor4);
-        }
-        
-        void textEditorTextChanged(TextEditor &)
-        {}
-        
-        void labelTextChanged (Label* label)
-        {}
-        
-        void perform()
-        {
-            Polytempo_Sequence* sequence = Polytempo_Composition::getInstance()->getSelectedSequence();
-            sequence->addEventPattern(editor1.getText(), editor2.getText().getIntValue(), editor3.getText(), editor4.getText());
-            Polytempo_Composition::getInstance()->updateContent(); // repaint everything
-        }
-        
-    private:
-        Label label1, label2, label3, label4;
-        TextEditor editor1, editor2, editor3, editor4;
-    };
-    
+//    class AddEventPattern : public Basic
+//    {
+//    public:
+//        AddEventPattern()
+//        {
+//            setName("Add Event Pattern");
+//            setOkString("Add");
+//            enableOkButton(true);
+//            
+//            label1.setText("Pattern", dontSendNotification);
+//            label1.setEditable(false);
+//            label1.setBounds(20,20,150,15);
+//            contentComponent->addAndMakeVisible(label1);
+//            
+//            editor1.setBounds(20,35,150,15);
+//            editor1.setText("4/4", dontSendNotification);
+//            editor1.setEscapeAndReturnKeysConsumed(false);
+//            editor1.setSelectAllWhenFocused(true);
+//            editor1.setCaretVisible(false);
+//            editor1.setInputRestrictions(0,"0123456789/+");
+//            editor1.addListener(this);
+//            contentComponent->addAndMakeVisible(editor1);
+//            
+//            label2.setText("Repeats", dontSendNotification);
+//            label2.setEditable(false);
+//            label2.setBounds(170,20,50,15);
+//            contentComponent->addAndMakeVisible(label2);
+//            
+//            editor2.setBounds(170,35,50,15);
+//            editor2.setText("1", dontSendNotification);
+//            editor2.setEscapeAndReturnKeysConsumed(false);
+//            editor2.setSelectAllWhenFocused(true);
+//            editor2.setCaretVisible(false);
+//            editor2.setInputRestrictions(0,"0123456789");
+//            editor2.addListener(this);
+//            contentComponent->addAndMakeVisible(editor2);
+//
+//            label3.setText("Counter", dontSendNotification);
+//            label3.setEditable(false);
+//            label3.setBounds(230,20,50,15);
+//            contentComponent->addAndMakeVisible(label3);
+//            
+//            Polytempo_Sequence* sequence = Polytempo_Composition::getInstance()->getSelectedSequence();
+//            editor3.setBounds(230,35,50,15);
+//            editor3.setText(String(sequence->getCurrentCounter()), dontSendNotification);
+//            editor3.setEscapeAndReturnKeysConsumed(false);
+//            editor3.setSelectAllWhenFocused(true);
+//            editor3.setCaretVisible(false);
+//            editor3.setInputRestrictions(0,"0123456789 ");
+//            editor3.addListener(this);
+//            contentComponent->addAndMakeVisible(editor3);
+//
+//            label4.setText("Marker", dontSendNotification);
+//            label4.setEditable(false);
+//            label4.setBounds(290,20,50,15);
+//            contentComponent->addAndMakeVisible(label4);
+//            
+//            editor4.setBounds(290,35,50,15);
+//            editor4.setEscapeAndReturnKeysConsumed(false);
+//            editor4.setSelectAllWhenFocused(true);
+//            editor4.setCaretVisible(false);
+//            editor4.addListener(this);
+//            contentComponent->addAndMakeVisible(editor4);
+//        }
+//        
+//        void textEditorTextChanged(TextEditor &)
+//        {}
+//        
+//        void labelTextChanged (Label* label)
+//        {}
+//        
+//        void perform()
+//        {
+//            Polytempo_Sequence* sequence = Polytempo_Composition::getInstance()->getSelectedSequence();
+//            sequence->addEventPattern(editor1.getText(), editor2.getText().getIntValue(), editor3.getText(), editor4.getText());
+//            Polytempo_Composition::getInstance()->updateContent(); // repaint everything
+//        }
+//        
+//    private:
+//        Label label1, label2, label3, label4;
+//        TextEditor editor1, editor2, editor3, editor4;
+//    };
+//    
     
     class ExportSequences : public Basic
     {

@@ -67,7 +67,8 @@ public:
     bool isTempoConstantAfterPoint(int);
     
     void addControlPoint(float t, Rational pos, float tin=0.25, float tout=0.25);
-    void addEventPattern(const String& pattern, int repeats=1, const String& counter=String::empty, const String& marker=String::empty);
+    void addBeatPattern();
+    void addBeatPattern(const String& pattern, int repeats=1, const String& counter=String::empty, const String& marker=String::empty);
     int getCurrentCounter();
     
     void buildBeatPattern();

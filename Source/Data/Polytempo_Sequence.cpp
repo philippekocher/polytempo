@@ -31,7 +31,7 @@ Polytempo_Sequence::Polytempo_Sequence()
     addControlPoint(0,0);   // start point
     addControlPoint(1,1);   // end point
 
-    addEventPattern("4/4",1,"1");
+    addBeatPattern();
 }
 
 Polytempo_Sequence::~Polytempo_Sequence()
@@ -317,7 +317,12 @@ void Polytempo_Sequence::addControlPoint(float t, Rational pos, float tin, float
     Polytempo_Composition::getInstance()->setDirty(true);
 }
 
-void Polytempo_Sequence::addEventPattern(const String& pattern, int repeats, const String& counter, const String& marker)
+void Polytempo_Sequence::addBeatPattern()
+{
+    addBeatPattern("4/4",1,String(getCurrentCounter()),"");
+}
+
+void Polytempo_Sequence::addBeatPattern(const String& pattern, int repeats, const String& counter, const String& marker)
 {
     Polytempo_BeatPattern* bp = new Polytempo_BeatPattern();
     bp->setPattern(pattern);
@@ -334,7 +339,8 @@ int Polytempo_Sequence::getCurrentCounter()
 {
     Polytempo_BeatPattern* lastBeatPattern = beatPatterns.getLast();
     
-    return lastBeatPattern->getCounter().getIntValue() + lastBeatPattern->getRepeats();
+    if(lastBeatPattern == nullptr) return 1;
+    else return lastBeatPattern->getCounter().getIntValue() + lastBeatPattern->getRepeats();
 }
 
 
@@ -553,7 +559,7 @@ void Polytempo_Sequence::setObject(DynamicObject* object)
         bp->setObject(varBeatPattern.getDynamicObject());
         beatPatterns.add(bp);
     }
-    if(beatPatterns.size() == 0) addEventPattern("4/4",1,"1");
+    if(beatPatterns.size() == 0) addBeatPattern();
     buildBeatPattern();
     
     controlPoints.clear();

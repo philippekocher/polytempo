@@ -74,7 +74,6 @@ public:
     
     void mouseDown (const MouseEvent& event)
     {
-        // single click on the label should select the row
         owner->mouseDownInRow(rowNumber, event);
     }
     

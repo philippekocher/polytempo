@@ -143,8 +143,10 @@ void Polytempo_BeatPatternListComponent::showPopupMenu()
     
     PopupMenu m;
     
-    m.addCommandItem(commandManager, Polytempo_CommandIDs::addEventPattern);
-    
+    m.addCommandItem(commandManager, Polytempo_CommandIDs::addBeatPattern);
+    m.addCommandItem(commandManager, Polytempo_CommandIDs::insertBeatPattern);
+    m.addCommandItem(commandManager, Polytempo_CommandIDs::removeBeatPattern);
+
     m.show();
     
     table.selectRow(getNumRows()-1);    

@@ -81,7 +81,10 @@ namespace Polytempo_CommandIDs
         adjustTime,
         adjustPosition,
         adjustTempo,
-        addEventPattern,
+        
+        addBeatPattern,
+        insertBeatPattern,
+        removeBeatPattern,
         
 		annotationAccept,
 		annotationCancel,

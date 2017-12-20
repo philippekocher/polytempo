@@ -107,7 +107,9 @@ PopupMenu Polytempo_ComposerMenuBarModel::getMenuForIndex (int menuIndex, const 
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::addSequence);
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::removeSequence);
         menu.addSeparator();
-        menu.addCommandItem(commandManager, Polytempo_CommandIDs::addEventPattern);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::addBeatPattern);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::insertBeatPattern);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::removeBeatPattern);
         menu.addSeparator();
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::insertControlPoint);
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::removeControlPoint);
@@ -208,7 +210,9 @@ void Polytempo_ComposerMenuBarModel::getAllCommands (Array <CommandID>& commands
         
         Polytempo_CommandIDs::addSequence,
         Polytempo_CommandIDs::removeSequence,
-        Polytempo_CommandIDs::addEventPattern,
+        Polytempo_CommandIDs::addBeatPattern,
+        Polytempo_CommandIDs::insertBeatPattern,
+        Polytempo_CommandIDs::removeBeatPattern,
         Polytempo_CommandIDs::insertControlPoint,
         Polytempo_CommandIDs::adjustTime,
         Polytempo_CommandIDs::adjustPosition,
@@ -300,10 +304,18 @@ void Polytempo_ComposerMenuBarModel::getCommandInfo(CommandID commandID, Applica
             result.setActive(composition->getSelectedSequenceIndex() >= 0);
             break;
 
-        case Polytempo_CommandIDs::addEventPattern:
-            result.setInfo ("Add Event Pattern", String::empty, infoCategory, 0);
+        case Polytempo_CommandIDs::addBeatPattern:
+            result.setInfo ("Add Beat Pattern", String::empty, infoCategory, 0);
             break;
-        
+            
+        case Polytempo_CommandIDs::insertBeatPattern:
+            result.setInfo ("Insert Beat Pattern", String::empty, infoCategory, 0);
+            break;
+            
+        case Polytempo_CommandIDs::removeBeatPattern:
+            result.setInfo ("Remove Selected Beat Pattern", String::empty, infoCategory, 0);
+            break;
+            
         case Polytempo_CommandIDs::insertControlPoint:
             result.setInfo ("Insert Control Point", String::empty, infoCategory, 0);
             break;
@@ -492,10 +504,19 @@ bool Polytempo_ComposerMenuBarModel::perform (const InvocationInfo& info)
             composition->removeSequence(composition->getSelectedSequenceIndex());
             break;
             
-        case Polytempo_CommandIDs::addEventPattern:
-            Polytempo_DialogWindows::AddEventPattern().show();
+        case Polytempo_CommandIDs::addBeatPattern:
+            composition->getSelectedSequence()->addBeatPattern();
+            composition->updateContent(); // repaint everything
             break;
-   
+            
+        case Polytempo_CommandIDs::insertBeatPattern:
+            DBG("insertBeatPattern");
+            break;
+            
+        case Polytempo_CommandIDs::removeBeatPattern:
+            DBG("removeBeatPattern");
+            break;
+            
         case Polytempo_CommandIDs::insertControlPoint:
             Polytempo_DialogWindows::InsertControlPoint().show();
             break;
