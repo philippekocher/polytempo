@@ -67,8 +67,12 @@ public:
     bool isTempoConstantAfterPoint(int);
     
     void addControlPoint(float t, Rational pos, float tin=0.25, float tout=0.25);
+    
+    int getSelectedBeatPattern();
+    void setSelectedBeatPattern(int index);
     void addBeatPattern();
     void addBeatPattern(const String& pattern, int repeats=1, const String& counter=String::empty, const String& marker=String::empty);
+    void removeSelectedBeatPattern();
     int getCurrentCounter();
     
     void buildBeatPattern();
@@ -89,6 +93,7 @@ private:
 
     OwnedArray <Polytempo_ControlPoint> controlPoints;
     OwnedArray <Polytempo_BeatPattern> beatPatterns;
+    int selectedBeatPattern = -1;
     OwnedArray <Polytempo_Event> events;
     
     

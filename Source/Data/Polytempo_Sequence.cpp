@@ -317,6 +317,16 @@ void Polytempo_Sequence::addControlPoint(float t, Rational pos, float tin, float
     Polytempo_Composition::getInstance()->setDirty(true);
 }
 
+int Polytempo_Sequence::getSelectedBeatPattern()
+{
+    return selectedBeatPattern;
+}
+
+void Polytempo_Sequence::setSelectedBeatPattern(int index)
+{
+    selectedBeatPattern = index;
+}
+
 void Polytempo_Sequence::addBeatPattern()
 {
     addBeatPattern("4/4",1,String(getCurrentCounter()),"");
@@ -330,6 +340,14 @@ void Polytempo_Sequence::addBeatPattern(const String& pattern, int repeats, cons
     bp->setCounter(counter);
     bp->setMarker(marker);
     beatPatterns.add(bp);
+    
+    buildBeatPattern();
+    Polytempo_Composition::getInstance()->setDirty(true);
+}
+
+void Polytempo_Sequence::removeSelectedBeatPattern()
+{
+    beatPatterns.remove(selectedBeatPattern);
     
     buildBeatPattern();
     Polytempo_Composition::getInstance()->setDirty(true);

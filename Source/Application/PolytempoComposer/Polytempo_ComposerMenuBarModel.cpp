@@ -314,6 +314,7 @@ void Polytempo_ComposerMenuBarModel::getCommandInfo(CommandID commandID, Applica
             
         case Polytempo_CommandIDs::removeBeatPattern:
             result.setInfo ("Remove Selected Beat Pattern", String::empty, infoCategory, 0);
+            result.setActive(composition->getSelectedSequence() != nullptr && composition->getSelectedSequence()->getSelectedBeatPattern() >= 0);
             break;
             
         case Polytempo_CommandIDs::insertControlPoint:
@@ -514,7 +515,7 @@ bool Polytempo_ComposerMenuBarModel::perform (const InvocationInfo& info)
             break;
             
         case Polytempo_CommandIDs::removeBeatPattern:
-            DBG("removeBeatPattern");
+            composition->getSelectedSequence()->removeSelectedBeatPattern();
             break;
             
         case Polytempo_CommandIDs::insertControlPoint:

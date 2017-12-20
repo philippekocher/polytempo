@@ -113,8 +113,10 @@ int Polytempo_BeatPatternListComponent::getNumRows()
     return Polytempo_Composition::getInstance()->getSelectedSequence()->getBeatPatterns()->size();
 }
 
-void Polytempo_BeatPatternListComponent::selectedRowsChanged(int lastRowSelected)
-{}
+void Polytempo_BeatPatternListComponent::selectedRowsChanged(int index)
+{
+    Polytempo_Composition::getInstance()->getSelectedSequence()->setSelectedBeatPattern(index);
+}
 
 void Polytempo_BeatPatternListComponent::paintCell(Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected)
 {}
