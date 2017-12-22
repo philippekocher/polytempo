@@ -306,11 +306,13 @@ void Polytempo_ComposerMenuBarModel::getCommandInfo(CommandID commandID, Applica
 
         case Polytempo_CommandIDs::addBeatPattern:
             result.setInfo("Add Beat Pattern", String::empty, infoCategory, 0);
-            result.addDefaultKeypress('b', ModifierKeys::altModifier);
+            result.addDefaultKeypress('b', ModifierKeys::commandModifier);
             break;
             
         case Polytempo_CommandIDs::insertBeatPattern:
             result.setInfo("Insert Beat Pattern", String::empty, infoCategory, 0);
+            result.addDefaultKeypress('b', ModifierKeys::commandModifier | ModifierKeys::altModifier);
+            result.setActive(composition->getSelectedSequence() != nullptr && composition->getSelectedSequence()->getSelectedBeatPattern() >= 0);
             break;
             
         case Polytempo_CommandIDs::removeBeatPattern:
@@ -511,7 +513,7 @@ bool Polytempo_ComposerMenuBarModel::perform (const InvocationInfo& info)
             break;
             
         case Polytempo_CommandIDs::insertBeatPattern:
-            DBG("insertBeatPattern");
+            composition->getSelectedSequence()->insertBeatPattern();
             break;
             
         case Polytempo_CommandIDs::removeBeatPattern:

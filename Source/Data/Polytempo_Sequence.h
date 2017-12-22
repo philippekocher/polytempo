@@ -73,7 +73,8 @@ public:
     int getSelectedBeatPattern();
     void setSelectedBeatPattern(int index);
     void addBeatPattern();
-    void addBeatPattern(const String& pattern, int repeats=1, const String& counter=String::empty, const String& marker=String::empty);
+    void insertBeatPattern();
+    void insertBeatPatternAtIndex(int index, const String& pattern, int repeats=1, const String& counter=String::empty, const String& marker=String::empty);
     void removeSelectedBeatPattern();
     int getCurrentCounter();
     

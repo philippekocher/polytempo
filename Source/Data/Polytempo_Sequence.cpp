@@ -30,8 +30,6 @@ Polytempo_Sequence::Polytempo_Sequence()
 {    
     addControlPoint(0,0);   // start point
     addControlPoint(1,1);   // end point
-
-    addBeatPattern();
 }
 
 Polytempo_Sequence::~Polytempo_Sequence()
@@ -335,23 +333,26 @@ void Polytempo_Sequence::setSelectedBeatPattern(int index)
 
 void Polytempo_Sequence::addBeatPattern()
 {
-    addBeatPattern("4/4",1,String(getCurrentCounter()),"");
+    insertBeatPatternAtIndex(beatPatterns.size(),"4/4",1,String(getCurrentCounter()),"");
 }
 
-void Polytempo_Sequence::addBeatPattern(const String& pattern, int repeats, const String& counter, const String& marker)
+void Polytempo_Sequence::insertBeatPattern()
+{
+    insertBeatPatternAtIndex(selectedBeatPattern,"4/4",1,String(getCurrentCounter()),"");
+}
+
+void Polytempo_Sequence::insertBeatPatternAtIndex(int index, const String& pattern, int repeats, const String& counter, const String& marker)
 {
     Polytempo_BeatPattern* bp = new Polytempo_BeatPattern();
     bp->setPattern(pattern);
     bp->setRepeats(repeats);
     bp->setCounter(counter);
     bp->setMarker(marker);
-    beatPatterns.add(bp);
+    beatPatterns.insert(index, bp);
     
     buildBeatPattern();
-    int index = beatPatterns.size() - 1;
     if(beatPatternListComponent != nullptr)
         beatPatternListComponent->setSelection(index);
-//    setSelectedBeatPattern(index);
 
     Polytempo_Composition::getInstance()->setDirty(true);
 }
