@@ -121,9 +121,11 @@ void Polytempo_BeatPatternListComponent::selectedRowsChanged(int index)
 void Polytempo_BeatPatternListComponent::paintCell(Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected)
 {}
 
-Component* Polytempo_BeatPatternListComponent::refreshComponentForCell(int rowNumber, int columnId, bool rowIsSelected,
-                                                                 Component* existingComponentToUpdate)
+Component* Polytempo_BeatPatternListComponent::refreshComponentForCell(int rowNumber, int columnId, bool rowIsSelected, Component* existingComponentToUpdate)
 {
+    if(sequence != Polytempo_Composition::getInstance()->getSelectedSequence())
+        setSequence();
+    
     EditableTextCustomComponent* textLabel = static_cast<EditableTextCustomComponent*> (existingComponentToUpdate);
     
     // If an existing component is being passed-in for updating, we'll re-use it,
@@ -150,6 +152,15 @@ void Polytempo_BeatPatternListComponent::showPopupMenu()
     m.addCommandItem(commandManager, Polytempo_CommandIDs::removeBeatPattern);
 
     m.show();
+}
+
+void Polytempo_BeatPatternListComponent::setSequence()
+{
+    DBG("wrong sequence");
+    sequence = Polytempo_Composition::getInstance()->getSelectedSequence();
     
-    table.selectRow(getNumRows()-1);    
+    sequence->setBeatPatternListComponent(this);
+    
+    table.deselectAllRows();
+    sequence->setSelectedBeatPattern(-1);
 }

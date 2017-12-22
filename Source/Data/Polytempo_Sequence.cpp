@@ -24,7 +24,7 @@
 
 #include "Polytempo_Sequence.h"
 #include "Polytempo_Composition.h"
-
+#include "../Views/PolytempoComposer/Polytempo_ListComponent.h"
 
 Polytempo_Sequence::Polytempo_Sequence()
 {    
@@ -129,6 +129,12 @@ void Polytempo_Sequence::setVisibility(bool value)
     visible = value;
     Polytempo_Composition::getInstance()->setDirty(true);
 }
+
+void Polytempo_Sequence::setBeatPatternListComponent(Polytempo_ListComponent* component)
+{
+    beatPatternListComponent = component;
+}
+
 
 bool Polytempo_Sequence::validateNewControlPointPosition(float t, Rational pos)
 {
@@ -342,6 +348,11 @@ void Polytempo_Sequence::addBeatPattern(const String& pattern, int repeats, cons
     beatPatterns.add(bp);
     
     buildBeatPattern();
+    int index = beatPatterns.size() - 1;
+    if(beatPatternListComponent != nullptr)
+        beatPatternListComponent->setSelection(index);
+//    setSelectedBeatPattern(index);
+
     Polytempo_Composition::getInstance()->setDirty(true);
 }
 
@@ -384,7 +395,7 @@ void Polytempo_Sequence::buildBeatPattern()
     controlPoints[controlPoints.size()-1]->position = position;
     adjustTime(controlPoints.size()-1); // update the last point to match the new length
 
-    updateEvents();
+    //updateEvents();
 }
 
 void Polytempo_Sequence::updateEvents()

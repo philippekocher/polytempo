@@ -25,10 +25,11 @@
 #ifndef __Polytempo_Sequence__
 #define __Polytempo_Sequence__
 
-#include "../../JuceLibraryCode/JuceHeader.h"
 #include "Polytempo_TempoInterpolation.h"
 #include "Polytempo_BeatPattern.h"
 #include "Polytempo_Score.h"
+
+class Polytempo_ListComponent;
 
 class Polytempo_Sequence
 {
@@ -54,6 +55,7 @@ public:
     void setName(String);
     void setColour(Colour);
     void setVisibility(bool);
+    void setBeatPatternListComponent(Polytempo_ListComponent*);
     
     bool validateNewControlPointPosition(float t, Rational pos);
     void setControlPointValues(int index, float t, Rational pos, float inTempo, float outTempo, float inTempoWeight, float outTempoWeight);
@@ -96,6 +98,7 @@ private:
     int selectedBeatPattern = -1;
     OwnedArray <Polytempo_Event> events;
     
+    Polytempo_ListComponent* beatPatternListComponent = nullptr;
     
     friend class Polytempo_SequencePlaybackSettings;
     bool  playAudioClick = true;

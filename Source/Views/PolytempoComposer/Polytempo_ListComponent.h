@@ -42,6 +42,7 @@ public:
     
     void backgroundClicked(const MouseEvent&);
     void mouseDownInRow(int rowNumber, const MouseEvent&);
+    void setSelection(int rowNumber, bool focus = true);
     
     void paintRowBackground(Graphics& g, int rowNumber, int width, int height, bool rowIsSelected);
     
@@ -50,7 +51,7 @@ public:
     
 protected:
     TableListBox table;
-    
+    int focusRow = -1;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_ListComponent)
 };
@@ -71,25 +72,29 @@ public:
     }
     
     ~EditableTextCustomComponent() {}
-    
-    void mouseDown (const MouseEvent& event)
+        
+    void mouseDown(const MouseEvent& event)
     {
         owner->mouseDownInRow(rowNumber, event);
+        
+        if(event.getNumberOfClicks() > 1) showEditor();
     }
     
-    void editorShown(TextEditor* editor)
-    {
-        Point<int> point = editor->getMouseXYRelative();
-        int index = editor->getTextIndexAt(point.x, point.y);
-        editor->setHighlightedRegion(Range<int>::emptyRange(index));
-    }
+    void mouseDoubleClick(const MouseEvent& event) {}
+    
+//    void editorShown(TextEditor* editor)
+//    {
+//        Point<int> point = editor->getMouseXYRelative();
+//        int index = editor->getTextIndexAt(point.x, point.y);
+//        editor->setHighlightedRegion(Range<int>::emptyRange(index));
+//    }
    
     void textWasEdited()
     {
         owner->setText(getText(), rowNumber, columnId);
     }
     
-    void setRowAndColumn (const int newRow, const int newColumn)
+    void setRowAndColumn(const int newRow, const int newColumn)
     {
         rowNumber = newRow;
         columnId  = newColumn;
@@ -97,7 +102,10 @@ public:
     
     void focusGained(FocusChangeType cause)
     {
-        if(!isBeingEdited() && !isCurrentlyModal()) showEditor();
+        if(!isBeingEdited() &&
+           !isCurrentlyModal() &&
+           cause == focusChangedByTabKey)
+            showEditor();
     }
     
 private:
