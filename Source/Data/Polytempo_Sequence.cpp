@@ -333,12 +333,12 @@ void Polytempo_Sequence::setSelectedBeatPattern(int index)
 
 void Polytempo_Sequence::addBeatPattern()
 {
-    insertBeatPatternAtIndex(beatPatterns.size(),"4/4",1,String(getCurrentCounter()),"");
+    insertBeatPatternAtIndex(beatPatterns.size(),"4/4",1,"+","");
 }
 
 void Polytempo_Sequence::insertBeatPattern()
 {
-    insertBeatPatternAtIndex(selectedBeatPattern,"4/4",1,String(getCurrentCounter()),"");
+    insertBeatPatternAtIndex(selectedBeatPattern,"4/4",1,"+","");
 }
 
 void Polytempo_Sequence::insertBeatPatternAtIndex(int index, const String& pattern, int repeats, const String& counter, const String& marker)
@@ -365,24 +365,18 @@ void Polytempo_Sequence::removeSelectedBeatPattern()
     Polytempo_Composition::getInstance()->setDirty(true);
 }
 
-int Polytempo_Sequence::getCurrentCounter()
-{
-    Polytempo_BeatPattern* lastBeatPattern = beatPatterns.getLast();
-    
-    if(lastBeatPattern == nullptr) return 1;
-    else return lastBeatPattern->getCounter().getIntValue() + lastBeatPattern->getRepeats();
-}
-
-
 void Polytempo_Sequence::buildBeatPattern()
 {
     events.clear();
     Rational position = 0;
+    int currentCounter = 1;
     
     for(int i=0;i<beatPatterns.size();i++)
     {
+        beatPatterns[i]->setCurrentCounter(currentCounter);
         events.addArray(beatPatterns[i]->getEvents(position));
-        
+        currentCounter = beatPatterns[i]->getCurrentCounter();
+
         position = position + beatPatterns[i]->getLength();
     }
 

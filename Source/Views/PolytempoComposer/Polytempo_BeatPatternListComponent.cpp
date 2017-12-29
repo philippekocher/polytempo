@@ -90,6 +90,10 @@ void Polytempo_BeatPatternListComponent::setText(String text, int rowNumber, int
 {
     Polytempo_BeatPattern* beatPattern = Polytempo_Composition::getInstance()->getSelectedSequence()->getBeatPattern(rowNumber);
     
+    EditableTextCustomComponent* cell = (EditableTextCustomComponent*)table.getCellComponent(columnId, rowNumber);
+    // overwrite the value immediately with the actual value
+    
+    
     switch(columnId)
     {
         case 1:
@@ -97,14 +101,17 @@ void Polytempo_BeatPatternListComponent::setText(String text, int rowNumber, int
             break;
         case 2:
             beatPattern->setRepeats(text.getIntValue());
+            cell->setText(String(beatPattern->getRepeats()), dontSendNotification);
             break;
         case 3:
             beatPattern->setCounter(text);
+            cell->setText(beatPattern->getCounter(), dontSendNotification);
             break;
         case 4:
             beatPattern->setMarker(text);
             break;
     }
+    
     
     Polytempo_Composition::getInstance()->getSelectedSequence()->buildBeatPattern();
 //    Polytempo_Composition::getInstance()->updateContent(); // repaint everything
