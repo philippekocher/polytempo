@@ -27,10 +27,7 @@
 #include "../Views/PolytempoComposer/Polytempo_ListComponent.h"
 
 Polytempo_Sequence::Polytempo_Sequence()
-{    
-    addControlPoint(0,0);   // start point
-    addControlPoint(1,1);   // end point
-}
+{}
 
 Polytempo_Sequence::~Polytempo_Sequence()
 {}
@@ -368,6 +365,19 @@ void Polytempo_Sequence::removeSelectedBeatPattern()
 void Polytempo_Sequence::buildBeatPattern()
 {
     events.clear();
+    
+    if(beatPatterns.size() == 0)
+    {
+        controlPoints.clear();
+        Polytempo_Composition::getInstance()->updateContent();
+        return;
+    }
+    if(controlPoints.size() == 0)
+    {
+        addControlPoint(0,0);   // start point
+        addControlPoint(1,1);   // end point
+    }
+    
     Rational position = 0;
     int currentCounter = 1;
     
@@ -389,8 +399,6 @@ void Polytempo_Sequence::buildBeatPattern()
     events.add(event);
     controlPoints[controlPoints.size()-1]->position = position;
     adjustTime(controlPoints.size()-1); // update the last point to match the new length
-
-    //updateEvents();
 }
 
 void Polytempo_Sequence::updateEvents()

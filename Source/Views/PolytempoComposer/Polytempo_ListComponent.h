@@ -51,7 +51,7 @@ public:
     
 protected:
     TableListBox table;
-    int focusRow = 0;
+    int focusRow = -1;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_ListComponent)
 };

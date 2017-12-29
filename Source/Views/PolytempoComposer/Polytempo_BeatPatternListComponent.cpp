@@ -142,8 +142,8 @@ Component* Polytempo_BeatPatternListComponent::refreshComponentForCell(int rowNu
     
     textLabel->setText(getText(rowNumber, columnId), dontSendNotification);
     textLabel->setRowAndColumn(rowNumber, columnId);
-    textLabel->setFont(Font (13.0f, Font::plain));
-    textLabel->setColour(Label::textColourId, Colour(90,90,90));
+    textLabel->setFont(Font (13.0f, rowIsSelected ? Font::bold : Font::plain));
+    textLabel->setColour(Label::textColourId, rowIsSelected ? Colour(0,0,0) : Colour(90,90,90));
     
     return textLabel;
 }
