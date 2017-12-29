@@ -68,7 +68,7 @@ public:
     
     bool isTempoConstantAfterPoint(int);
     
-    void addControlPoint(float t, Rational pos, float tin=0.25, float tout=0.25);
+    void addControlPoint(float t, Rational pos, float tin=0, float tout=0);
     
     int getSelectedBeatPattern();
     void setSelectedBeatPattern(int index);

@@ -282,34 +282,43 @@ bool draggingSession = false;
 
 void Polytempo_TimeMapCoordinateSystem::mouseDown(const MouseEvent &event)
 {
+    float mouseTime      = (event.x - TIMEMAP_OFFSET) / zoomX;
+    float mousePosition  = (getHeight() - event.y - TIMEMAP_OFFSET) / zoomY;
+
+    DBG("mouse: "<<mouseTime<<" "<<mousePosition);
+
     Polytempo_Composition* composition = Polytempo_Composition::getInstance();
     Polytempo_Sequence* sequence = composition->getSelectedSequence();
     
-    //composition->setSelectedControlPointIndex(-1);
+    
+    // cmd-click: add control point
+    if(event.mods.isCommandDown())
+    {
+        if(sequence->validateNewControlPointPosition(mouseTime, mousePosition))
+        {
+            sequence->addControlPoint(mouseTime, mousePosition);
+            composition->updateContent();
+            return;
+        }
+    }
+    
     draggingSession = false;
     
-    int hit = -1;
-    
-    if(sequence->isVisible())
+    // hit test
+    int hit = -1, i = -1;
+    Polytempo_ControlPoint *controlPoint;
+    while((controlPoint = sequence->getControlPoint(++i)) != nullptr)
     {
-        Polytempo_ControlPoint *controlPoint;
-        int i = -1;
-        while((controlPoint = sequence->getControlPoint(++i)) != nullptr)
-        {
-            int x = TIMEMAP_OFFSET + controlPoint->time * zoomX;
-            int y = getHeight() - TIMEMAP_OFFSET - controlPoint->position * zoomY;
-            
-            // stop searching in this sequence if the point coordinates
-            // are beyond the mouse coordinates
-            if(x > event.x + CONTROL_POINT_SIZE ||
-               y < event.y - CONTROL_POINT_SIZE) break;
+        // stop searching in this sequence if the point coordinates
+        // are beyond the mouse coordinates
+        if(controlPoint->time > mouseTime + CONTROL_POINT_SIZE / zoomX ||
+           controlPoint->position.toFloat() > mousePosition + CONTROL_POINT_SIZE / zoomY) break;
 
-            if(abs(event.x - x) <= CONTROL_POINT_SIZE * 0.5 &&
-               abs(event.y - y) <= CONTROL_POINT_SIZE * 0.5)
-            {
-                hit = i;
-                break;
-            }
+        if(fabs(controlPoint->time - mouseTime) <= CONTROL_POINT_SIZE * 0.5 / zoomX &&
+           fabs(controlPoint->position.toFloat() - mousePosition) <= CONTROL_POINT_SIZE * 0.5 / zoomY)
+        {
+            hit = i;
+            break;
         }
     }
 

@@ -322,6 +322,7 @@ void Polytempo_ComposerMenuBarModel::getCommandInfo(CommandID commandID, Applica
             
         case Polytempo_CommandIDs::insertControlPoint:
             result.setInfo ("Insert Control Point", String::empty, infoCategory, 0);
+            result.setActive(composition->getSelectedSequence() != nullptr && composition->getSelectedSequence()->getControlPoints()->size() > 0);
             break;
             
         case Polytempo_CommandIDs::adjustTime:

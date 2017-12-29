@@ -306,15 +306,23 @@ void Polytempo_Sequence::addControlPoint(float t, Rational pos, float tin, float
     point->position = pos;
     point->time = t;
     
-    point->tempoIn  = tin;
-    point->tempoOut = tout;
-    
     controlPoints.add(point);
-    
     ControlPointTimeComparator sorter;
     controlPoints.sort(sorter, true);
     
+    int index = controlPoints.indexOf(point);
+    if(index > 0 && index < controlPoints.size() - 1)
+    {
+        point->tempoIn  = tin == 0 ? controlPoints[index-1]->tempoOut : tin;
+        point->tempoOut = tout == 0 ? controlPoints[index+1]->tempoIn : tout;
+    }
+    else
+    {
+        point->tempoIn = 0.25;
+        point->tempoOut = 0.25;
+    }
     updateEvents();
+    Polytempo_Composition::getInstance()->setSelectedControlPointIndex(index);
     Polytempo_Composition::getInstance()->setDirty(true);
 }
 
