@@ -33,7 +33,7 @@ class Polytempo_ListComponent : public Component,
                                 public TableListBoxModel
 {
 public:
-    Polytempo_ListComponent() {}
+    Polytempo_ListComponent() { setFocusContainer(true); }
     //~Polytempo_ListComponent();
     
     //void paint(Graphics&);
@@ -51,7 +51,7 @@ public:
     
 protected:
     TableListBox table;
-    int focusRow = -1;
+    int focusRow = 0;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_ListComponent)
 };
@@ -67,8 +67,6 @@ public:
         setColour(TextEditor::highlightedTextColourId, Colours::black);
         setColour(TextEditor::highlightColourId, Colours::lightblue);
         setColour(TextEditor::focusedOutlineColourId, Colours::lightblue);
-        
-        createFocusTraverser();
     }
     
     ~EditableTextCustomComponent() {}

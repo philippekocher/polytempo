@@ -48,8 +48,10 @@ Polytempo_BeatPatternListComponent::~Polytempo_BeatPatternListComponent()
 
 void Polytempo_BeatPatternListComponent::paint(Graphics& g)
 {
-    Polytempo_Sequence* sequence;
-    if(!(sequence = Polytempo_Composition::getInstance()->getSelectedSequence())) return;
+    if(sequence == nullptr || sequence != Polytempo_Composition::getInstance()->getSelectedSequence())
+        setSequence();
+  
+    if(sequence == nullptr) return;
     
     g.fillAll(sequence->getColour());
 
@@ -123,9 +125,6 @@ void Polytempo_BeatPatternListComponent::paintCell(Graphics& g, int rowNumber, i
 
 Component* Polytempo_BeatPatternListComponent::refreshComponentForCell(int rowNumber, int columnId, bool rowIsSelected, Component* existingComponentToUpdate)
 {
-    if(sequence != Polytempo_Composition::getInstance()->getSelectedSequence())
-        setSequence();
-    
     EditableTextCustomComponent* textLabel = static_cast<EditableTextCustomComponent*> (existingComponentToUpdate);
     
     // If an existing component is being passed-in for updating, we'll re-use it,
@@ -156,11 +155,13 @@ void Polytempo_BeatPatternListComponent::showPopupMenu()
 
 void Polytempo_BeatPatternListComponent::setSequence()
 {
-    DBG("wrong sequence");
     sequence = Polytempo_Composition::getInstance()->getSelectedSequence();
+    if(sequence == nullptr) return;
     
     sequence->setBeatPatternListComponent(this);
     
     table.deselectAllRows();
     sequence->setSelectedBeatPattern(-1);
+    
+    if(getNumRows() == 0) focusRow = 0; // ensure focus when a first beat pattern is added
 }
