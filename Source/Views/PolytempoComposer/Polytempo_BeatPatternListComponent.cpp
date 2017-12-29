@@ -55,7 +55,8 @@ void Polytempo_BeatPatternListComponent::paint(Graphics& g)
     
     g.fillAll(sequence->getColour());
 
-    table.updateContent();
+    if(getNumCurrentlyModalComponents() == 0)
+        table.updateContent();
 }
 
 
@@ -106,7 +107,7 @@ void Polytempo_BeatPatternListComponent::setText(String text, int rowNumber, int
     }
     
     Polytempo_Composition::getInstance()->getSelectedSequence()->buildBeatPattern();
-    Polytempo_Composition::getInstance()->updateContent(); // repaint everything
+//    Polytempo_Composition::getInstance()->updateContent(); // repaint everything
 }
 
 int Polytempo_BeatPatternListComponent::getNumRows()
@@ -164,4 +165,5 @@ void Polytempo_BeatPatternListComponent::setSequence()
     sequence->setSelectedBeatPattern(-1);
     
     if(getNumRows() == 0) focusRow = 0; // ensure focus when a first beat pattern is added
+    else                  focusRow = -1;
 }
