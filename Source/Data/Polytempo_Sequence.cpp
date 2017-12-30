@@ -264,6 +264,7 @@ bool Polytempo_Sequence::isTempoConstantAfterPoint(int i)
 bool Polytempo_Sequence::allowAdjustTime(int index)
 {
     if(index <= 0) return false;
+    if(index > controlPoints.size()-1) return false;
 
     Polytempo_ControlPoint *c0 = controlPoints[index-1];
     Polytempo_ControlPoint *c1 = controlPoints[index];
@@ -424,15 +425,26 @@ void Polytempo_Sequence::buildBeatPattern()
         position = position + beatPatterns[i]->getLength();
     }
 
-    // add a very last event and adjust the end point
+    // add a very last event
     Polytempo_Event *event = new Polytempo_Event(eventType_Beat);
     event->setOwned(true);
     event->setPosition(position);
     event->setProperty(eventPropertyString_Pattern, 10);
-    
     events.add(event);
+    
+    // remove control points outside the beat pattern
+    // (after the beat pattern has been shortened)
+    for(int i=controlPoints.size()-1;i>0;i--)
+    {
+        if(controlPoints[i-1]->position > position)
+            controlPoints.remove(i);
+        else
+            break;
+    }
+
+    // adjust the last control point to match the last event's position
     controlPoints[controlPoints.size()-1]->position = position;
-    adjustTime(controlPoints.size()-1); // update the last point to match the new length
+    adjustTime(controlPoints.size()-1);
 }
 
 void Polytempo_Sequence::updateEvents()
