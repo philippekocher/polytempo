@@ -219,6 +219,9 @@ void Polytempo_Sequence::setControlPointPosition(int index, float t, Rational po
         pos = controlPoints[index]->position;  // don't change;
     
     // validate time and position
+    if(!validateControlPoint(index, t, pos)) return;
+
+    // validate the resulting bézier curve
     Polytempo_ControlPoint* tempPoint = new Polytempo_ControlPoint();
     tempPoint->time = t;
     tempPoint->position = pos;
