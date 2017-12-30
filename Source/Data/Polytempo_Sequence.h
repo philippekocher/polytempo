@@ -58,9 +58,11 @@ public:
     void setBeatPatternListComponent(Polytempo_ListComponent*);
     
     bool validateNewControlPointPosition(float t, Rational pos);
+    bool validateControlPoint(int index, float t, Rational pos);
     void setControlPointValues(int index, float t, Rational pos, float inTempo, float outTempo, float inTempoWeight, float outTempoWeight);
     void setControlPointPosition(int index, float t, Rational pos);
     void setControlPointTempo(int index, float inTempo, float outTempo);
+    bool allowAdjustTime(int index);
     void adjustTime(int index);
     void adjustPosition(int index);
     void adjustTempo(int index);

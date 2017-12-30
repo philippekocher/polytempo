@@ -327,7 +327,7 @@ void Polytempo_ComposerMenuBarModel::getCommandInfo(CommandID commandID, Applica
             
         case Polytempo_CommandIDs::adjustTime:
             result.setInfo ("Adjust Time", String::empty, infoCategory, 0);
-            result.setActive(composition->getSelectedControlPointIndex() > 0);
+            result.setActive(composition->getSelectedSequence()->allowAdjustTime(composition->getSelectedControlPointIndex()));
             break;
             
         case Polytempo_CommandIDs::adjustPosition:

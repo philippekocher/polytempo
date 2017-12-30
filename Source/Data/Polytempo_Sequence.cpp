@@ -146,6 +146,18 @@ bool Polytempo_Sequence::validateNewControlPointPosition(float t, Rational pos)
     return false;
 }
 
+bool Polytempo_Sequence::validateControlPoint(int index, float t, Rational pos)
+{
+    // check if time and position are valid for a specific point (before it is changed)
+    if(index > 0 && t   <  controlPoints[index - 1]->time)     return false;
+    if(index > 0 && pos <= controlPoints[index - 1]->position) return false;
+    if(index < controlPoints.size() - 1 && t   >  controlPoints[index + 1]->time)     return false;
+    if(index < controlPoints.size() - 1 && pos >= controlPoints[index + 1]->position) return false;
+    
+    return true;
+}
+
+
 void Polytempo_Sequence::setControlPointValues(int index, float t, Rational pos, float inTempo, float outTempo, float inTempoWeight, float outTempoWeight)
 {
     // negative values are ignored
@@ -249,11 +261,25 @@ bool Polytempo_Sequence::isTempoConstantAfterPoint(int i)
         return false;
 }
 
+bool Polytempo_Sequence::allowAdjustTime(int index)
+{
+    if(index <= 0) return false;
+
+    Polytempo_ControlPoint *c0 = controlPoints[index-1];
+    Polytempo_ControlPoint *c1 = controlPoints[index];
+    float meanTempo = (c0->tempoOut + c1->tempoIn) * 0.5;
+
+    return validateControlPoint(index, c0->time + (c1->position - c0->position).toFloat() / meanTempo, c1->position);
+}
+
 void Polytempo_Sequence::adjustTime(int index)
 {
     Polytempo_ControlPoint *c0 = controlPoints[index-1];
     Polytempo_ControlPoint *c1 = controlPoints[index];
     float meanTempo = (c0->tempoOut + c1->tempoIn) * 0.5;
+    
+    if(!validateControlPoint(index, c0->time + (c1->position - c0->position).toFloat() / meanTempo, c1->position))
+        DBG("invalid");
     
     c1->time = c0->time + (c1->position - c0->position).toFloat() / meanTempo;
 
@@ -411,7 +437,7 @@ void Polytempo_Sequence::buildBeatPattern()
 
 void Polytempo_Sequence::updateEvents()
 {
-    DBG("sequence: update events");
+//    DBG("sequence: update events");
     int cpIndex = 0;
     for(int i=0;i<events.size();i++)
     {
