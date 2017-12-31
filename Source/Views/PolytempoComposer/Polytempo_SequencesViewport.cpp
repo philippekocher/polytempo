@@ -111,12 +111,9 @@ Polytempo_SequenceControlComponent::Polytempo_SequenceControlComponent(int i) : 
     sequenceName.addListener(this);
     sequenceName.setFont(11);
     sequenceName.setColour(TextEditor::backgroundColourId, Colours::transparentBlack);
-    //sequenceName.setColour(TextEditor::textColourId,       Colours::white);
-    //sequenceName.setColour(TextEditor::highlightColourId,  Colours::white);
     sequenceName.setColour(TextEditor::highlightedTextColourId, Colours::white);
     sequenceName.setColour(TextEditor::focusedOutlineColourId, Colours::white);
     sequenceName.setText(Polytempo_Composition::getInstance()->getSequence(sequenceIndex)->getName());
-//    sequenceName.setSelectAllWhenFocused(false);
 
     addAndMakeVisible(settingsButton = new Polytempo_Button("Playback Settings"));
     settingsButton->addListener(this);

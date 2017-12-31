@@ -446,9 +446,7 @@ void Polytempo_ComposerMenuBarModel::getCommandInfo(CommandID commandID, Applica
 // this is the ApplicationCommandTarget method that is used to actually perform one of our commands..
 bool Polytempo_ComposerMenuBarModel::perform (const InvocationInfo& info)
 {
-    //DBG ("The current command ID is " + String(info.commandID));
     float zoomX;
-//    Polytempo_ComposerApplication* const app = dynamic_cast<Polytempo_ComposerApplication*>(JUCEApplication::getInstance());
     Polytempo_Composition *composition = Polytempo_Composition::getInstance();
     
     switch (info.commandID)

@@ -25,8 +25,9 @@
 #ifndef __Polytempo_MidiClick__
 #define __Polytempo_MidiClick__
 
-//#include "../../JuceLibraryCode/JuceHeader.h"
+
 #include "../Scheduler/Polytempo_EventObserver.h"
+
 
 class Polytempo_MidiClick : public Polytempo_EventObserver
 {

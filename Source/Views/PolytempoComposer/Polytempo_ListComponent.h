@@ -36,7 +36,6 @@ public:
     Polytempo_ListComponent() { setFocusContainer(true); }
     //~Polytempo_ListComponent();
     
-    //void paint(Graphics&);
     void resized();
     int getColumnAutoSizeWidth (int columnId);
     
@@ -80,13 +79,6 @@ public:
     
     void mouseDoubleClick(const MouseEvent& event) {}
     
-//    void editorShown(TextEditor* editor)
-//    {
-//        Point<int> point = editor->getMouseXYRelative();
-//        int index = editor->getTextIndexAt(point.x, point.y);
-//        editor->setHighlightedRegion(Range<int>::emptyRange(index));
-//    }
-   
     void textWasEdited()
     {
         owner->setText(getText(), rowNumber, columnId);
@@ -110,11 +102,5 @@ private:
     Polytempo_ListComponent* owner;
     int rowNumber, columnId;
 };
-
-
-
-
-
-
 
 #endif  // __Polytempo_ListComponent__

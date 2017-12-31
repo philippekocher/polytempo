@@ -183,7 +183,3 @@ void Polytempo_ComposerMainView::setRightComponent(componentType type)
 
     resized();
 }
-
-
-
-

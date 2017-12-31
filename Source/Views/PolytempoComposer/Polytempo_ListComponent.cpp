@@ -25,7 +25,6 @@
 #include "Polytempo_ListComponent.h"
 
 
-
 void Polytempo_ListComponent::resized()
 {
     Rectangle<int> r = getBounds();
@@ -42,8 +41,6 @@ int Polytempo_ListComponent::getColumnAutoSizeWidth(int columnId)
 
 void Polytempo_ListComponent::backgroundClicked(const MouseEvent& event)
 {
-    DBG("background");
-
     if(event.mods.isPopupMenu())
         showPopupMenu();
     else

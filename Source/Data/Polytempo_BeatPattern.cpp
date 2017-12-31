@@ -85,13 +85,6 @@ void Polytempo_BeatPattern::setPattern(String string)
             pattern.insert(0, new Rational(tokens2[0].getIntValue(), denominator));
         }
     }
-    
-    /*
-    for(int i=0;i<pattern.size();i++)
-    {
-        DBG(pattern[i]->toString());
-    }
-    */
 }
 
 String Polytempo_BeatPattern::getPattern()
@@ -159,7 +152,6 @@ Array<Polytempo_Event *> Polytempo_BeatPattern::getEvents(Rational pos)
     // marker events
     if(!marker.isEmpty())
     {
-        DBG("pattern-marker");
         event = new Polytempo_Event(eventType_Marker);
         event->setOwned(true);
         event->setPosition(pos);

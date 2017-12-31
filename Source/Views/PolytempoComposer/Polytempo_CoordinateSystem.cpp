@@ -262,8 +262,6 @@ void Polytempo_TimeMapCoordinateSystem::mouseDown(const MouseEvent &event)
     float mouseTime      = (event.x - TIMEMAP_OFFSET) / zoomX;
     float mousePosition  = (getHeight() - event.y - TIMEMAP_OFFSET) / zoomY;
 
-    DBG("mouse: "<<mouseTime<<" "<<mousePosition);
-
     Polytempo_Composition* composition = Polytempo_Composition::getInstance();
     Polytempo_Sequence* sequence = composition->getSelectedSequence();
     

@@ -25,7 +25,7 @@
 #ifndef __Polytempo_AudioDeviceManager__
 #define __Polytempo_AudioDeviceManager__
 
-//#include "../JuceLibraryCode/JuceHeader.h"
+
 #include "../Preferences/Polytempo_StoredPreferences.h"
 
 

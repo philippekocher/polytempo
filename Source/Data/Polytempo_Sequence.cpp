@@ -74,11 +74,6 @@ Polytempo_BeatPattern* Polytempo_Sequence::getBeatPattern(int index)
         return beatPatterns[index];
 }
 
-//int Polytempo_Sequence::getNumEvents()
-//{
-//    return events.size();
-//}
-
 OwnedArray <Polytempo_Event>& Polytempo_Sequence::getEvents()
 {
     return events;
