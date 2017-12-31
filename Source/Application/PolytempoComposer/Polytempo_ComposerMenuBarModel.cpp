@@ -395,8 +395,8 @@ void Polytempo_ComposerMenuBarModel::getCommandInfo(CommandID commandID, Applica
             
 #if ! JUCE_LINUX
         case Polytempo_CommandIDs::fullScreen:
-            result.setInfo ("Show full-screen", String::empty, infoCategory, 0);
-            result.addDefaultKeypress ('f', ModifierKeys::ctrlAltCommandModifiers);
+            result.setInfo ("Enter full-screen", String::empty, infoCategory, 0);
+            result.addDefaultKeypress ('f', ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
             result.setTicked (Desktop::getInstance().getKioskModeComponent() != 0);
             break;
 #endif
@@ -561,17 +561,13 @@ bool Polytempo_ComposerMenuBarModel::perform (const InvocationInfo& info)
 #if ! JUCE_LINUX
         case Polytempo_CommandIDs::fullScreen:
         {
-            // Kiosk mode doesn't work properly
-            // problem occurs only with a native titlebar
-            
-            /*
             Desktop& desktop = Desktop::getInstance();
-            
+            Polytempo_ComposerApplication* const app = dynamic_cast<Polytempo_ComposerApplication*>(JUCEApplication::getInstance());
+
             if (desktop.getKioskModeComponent() == nullptr)
-                desktop.setKioskModeComponent(window->getTopLevelComponent());
+                desktop.setKioskModeComponent(app->getDocumentWindow().getTopLevelComponent());
             else
                 desktop.setKioskModeComponent(nullptr);
-            */
             break;
         }
 #endif
