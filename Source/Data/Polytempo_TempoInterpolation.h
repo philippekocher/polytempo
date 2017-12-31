@@ -32,14 +32,10 @@ class Polytempo_ControlPoint
 {
 public:
     Polytempo_ControlPoint()
-    {
-        coincidingControlPoints = new Array < Polytempo_ControlPoint* >();
-    }
+    {}
     
     ~Polytempo_ControlPoint()
-    {
-        coincidingControlPoints = nullptr;
-    }
+    {}
     
     float    time; // in seconds
     Rational position = 0;
@@ -49,9 +45,8 @@ public:
     float    tempoOutWeight = 0.33f;
     
     bool locked = false;
-    
-    ScopedPointer < Array < Polytempo_ControlPoint* > > coincidingControlPoints;
-    
+    bool isCoinciding = false;
+        
     DynamicObject* getObject()
     {
         DynamicObject* object = new DynamicObject();

@@ -221,37 +221,11 @@ void Polytempo_TimeMapCoordinateSystem::paintSequence(Graphics& g, Polytempo_Seq
             }
         }
         
-        if(selected)
+        if(selected && controlPoint->isCoinciding)
         {
-            if(controlPoint->coincidingControlPoints->size())
-            {
-                g.setColour(Colours::black.withAlpha(0.25f));
-                g.drawLine(x, 0, x, getHeight(), 4.0);
-            }
-
-            for(int j=0;j<controlPoint->coincidingControlPoints->size();j++)
-            {
-                controlPoint1 = controlPoint->coincidingControlPoints->getUnchecked(j);
-                
-                int y1 = getHeight() - TIMEMAP_OFFSET - controlPoint1->position * zoomY;
-                
-                g.setColour(Colour(0xffdddddd));
-                
-                g.fillEllipse(x - CONTROL_POINT_SIZE * 0.5,
-                              y1 - CONTROL_POINT_SIZE * 0.5,
-                              CONTROL_POINT_SIZE,
-                              CONTROL_POINT_SIZE);
-
-                g.setColour(Colours::black);
-                
-                g.drawEllipse(x - CONTROL_POINT_SIZE * 0.5,
-                              y1 - CONTROL_POINT_SIZE * 0.5,
-                              CONTROL_POINT_SIZE,
-                              CONTROL_POINT_SIZE,
-                              1.0);
-            }
+            g.setColour(Colours::black.withAlpha(0.25f));
+            g.drawLine(x, 0, x, getHeight(), 4.0);
         }
-
         
         // control points
 
@@ -266,8 +240,11 @@ void Polytempo_TimeMapCoordinateSystem::paintSequence(Graphics& g, Polytempo_Seq
                       CONTROL_POINT_SIZE,
                       CONTROL_POINT_SIZE);
         
-        g.setColour(sequenceColour.withMultipliedBrightness(brightness).withAlpha(alpha));
-
+        if(!selected && controlPoint->isCoinciding)
+            g.setColour(Colours::black);
+        else
+            g.setColour(sequenceColour.withMultipliedBrightness(brightness).withAlpha(alpha));
+        
         float thickness = selected ? 2.0 : 1.0;
         g.drawEllipse(x - CONTROL_POINT_SIZE * 0.5,
                       y - CONTROL_POINT_SIZE * 0.5,
@@ -493,35 +470,10 @@ void Polytempo_TempoMapCoordinateSystem::paintSequence(Graphics& g, Polytempo_Se
             }
         }
         
-        if(selected)
+        if(selected && controlPoint->isCoinciding)
         {
-            if(controlPoint->coincidingControlPoints->size())
-            {
-                g.setColour(Colours::black.withAlpha(0.25f));
-                g.drawLine(x, 0, x, getHeight(), 4.0);
-            }
-            
-            for(int j=0;j<controlPoint->coincidingControlPoints->size();j++)
-            {
-                controlPoint1 = controlPoint->coincidingControlPoints->getUnchecked(j);
-                
-                int y1 = getHeight() - TIMEMAP_OFFSET - controlPoint1->tempoIn * zoomY;
-                
-                g.setColour(Colour(0xffdddddd));
-                
-                g.fillEllipse(x - CONTROL_POINT_SIZE * 0.5,
-                              y1 - CONTROL_POINT_SIZE * 0.5,
-                              CONTROL_POINT_SIZE,
-                              CONTROL_POINT_SIZE);
-                
-                g.setColour(Colours::black);
-                
-                g.drawEllipse(x - CONTROL_POINT_SIZE * 0.5,
-                              y1 - CONTROL_POINT_SIZE * 0.5,
-                              CONTROL_POINT_SIZE,
-                              CONTROL_POINT_SIZE,
-                              1.0);
-            }
+            g.setColour(Colours::black.withAlpha(0.25f));
+            g.drawLine(x, 0, x, getHeight(), 4.0);
         }
         
         // control points
@@ -543,7 +495,10 @@ void Polytempo_TempoMapCoordinateSystem::paintSequence(Graphics& g, Polytempo_Se
                                CONTROL_POINT_SIZE + height,
                                CONTROL_POINT_SIZE * 0.5);
         
-        g.setColour(sequenceColour.withMultipliedBrightness(brightness).withAlpha(alpha));
+        if(!selected && controlPoint->isCoinciding)
+            g.setColour(Colours::black);
+        else
+            g.setColour(sequenceColour.withMultipliedBrightness(brightness).withAlpha(alpha));
         
         float thickness = selected ? 2.0 : 1.0;
         g.drawRoundedRectangle(x - CONTROL_POINT_SIZE * 0.5,

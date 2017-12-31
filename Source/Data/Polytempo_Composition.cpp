@@ -182,7 +182,7 @@ void Polytempo_Composition::findCoincidingControlPoints()
         int j = -1;
         while((controlPoint0 = sequence0->getControlPoint(++j)) != nullptr)
         {
-            controlPoint0->coincidingControlPoints->clearQuick();
+            controlPoint0->isCoinciding = false;
 
             int ii = -1;
             while((sequence1 = getSequence(++ii)) != nullptr)
@@ -192,8 +192,7 @@ void Polytempo_Composition::findCoincidingControlPoints()
                 int jj = -1;
                 while((controlPoint1 = sequence1->getControlPoint(++jj)) != nullptr)
                 {
-                    //DBG("i: "<<i<<" j: "<<j<<" ii: "<<ii<<" jj: "<<jj);
-                    if(controlPoint0->time == controlPoint1->time)  controlPoint0->coincidingControlPoints->add(controlPoint1);
+                    if(controlPoint0->time == controlPoint1->time)  controlPoint0->isCoinciding = true;
                 }
             }
         }
