@@ -629,6 +629,7 @@ void Polytempo_Sequence::setObject(DynamicObject* object)
     colour = Colour::fromString(object->getProperty("colour").toString());
     
     beatPatterns.clear();
+    if(!object->getProperty("beatPatterns")) return;
     for(var varBeatPattern : *object->getProperty("beatPatterns").getArray())
     {
         Polytempo_BeatPattern* bp = new Polytempo_BeatPattern();
