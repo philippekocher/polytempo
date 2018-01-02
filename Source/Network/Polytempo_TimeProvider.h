@@ -10,7 +10,9 @@
 
 #pragma once
 #include "JuceHeader.h"
+#ifdef POLYTEMPO_NETWORK
 #include "../Views/PolytempoNetwork/Polytempo_TimeSyncControl.h"
+#endif
 
 #define TIME_DIFF_HISTORY_SIZE		10
 #define	ROUND_TRIP_HISTORY_SIZE		20
@@ -31,8 +33,9 @@ public:
 	int32 getDelaySafeTimestamp();
 	bool isMaster() const;
 	void setRemoteMasterPeer(String ip, Uuid id, bool master);
+#ifdef POLYTEMPO_NETWORK
 	void registerUserInterface(Polytempo_TimeSyncControl* pControl);
-
+#endif
 	enum MessageType { MessageType_Info, MessageType_Warning, MessageType_Error };
 
 private:
@@ -44,7 +47,9 @@ private:
 	void resetTimeSync();
 
 private:
+#ifdef POLYTEMPO_NETWORK
 	Polytempo_TimeSyncControl* pTimeSyncControl;
+#endif
 	ScopedPointer<OSCSender> oscSender;
 	ScopedPointer<OSCReceiver> oscReceiver;
 	int oscPort;

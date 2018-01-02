@@ -18,7 +18,9 @@ Polytempo_TimeProvider::Polytempo_TimeProvider(): relativeMsToMaster(0), timeDif
 	oscSender = new OSCSender();
 	oscReceiver = new OSCReceiver();
 
+#ifdef POLYTEMPO_NETWORK
 	pTimeSyncControl = nullptr;
+#endif
 }
 
 Polytempo_TimeProvider::~Polytempo_TimeProvider()
@@ -164,10 +166,12 @@ void Polytempo_TimeProvider::setRemoteMasterPeer(String ip, Uuid id, bool master
 	lastMasterIp = ip;
 }
 
+#ifdef POLYTEMPO_NETWORK
 void Polytempo_TimeProvider::registerUserInterface(Polytempo_TimeSyncControl* pControl)
 {
 	pTimeSyncControl = pControl;
 }
+#endif
 
 void Polytempo_TimeProvider::oscMessageReceived(const OSCMessage& message)
 {
@@ -240,6 +244,7 @@ void Polytempo_TimeProvider::timerCallback()
 
 void Polytempo_TimeProvider::displayMessage(String message, MessageType messageType)
 {
+#ifdef POLYTEMPO_NETWORK
 	if (pTimeSyncControl != nullptr)
 	{
 		Colour c;
@@ -251,11 +256,10 @@ void Polytempo_TimeProvider::displayMessage(String message, MessageType messageT
 		default: c = Colours::grey;
 		}
 		pTimeSyncControl->showInfoMessage(message, c);
+		return;
 	}
-	else
-	{
-		DBG(message);
-	}
+#endif
+	DBG(message);
 }
 
 void Polytempo_TimeProvider::resetTimeSync()
