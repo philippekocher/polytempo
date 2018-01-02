@@ -32,7 +32,6 @@ Polytempo_PointListComponent::Polytempo_PointListComponent()
 {
     addAndMakeVisible(table);
     table.setModel(this);
-
                                         // id, width, min, max, flags
     table.getHeader().addColumn("Time",      1, 10, -1, -1, TableHeaderComponent::visible);
     table.getHeader().addColumn("Position",  2, 10, -1, -1, TableHeaderComponent::visible);
@@ -174,7 +173,6 @@ Component* Polytempo_PointListComponent::refreshComponentForCell(int rowNumber, 
     }
     else
     {
-        textLabel->setEditable(true);
         textLabel->setFont(Font (13.0f, rowIsSelected ? Font::bold : Font::plain));
         textLabel->setColour(Label::textColourId, rowIsSelected ? Colour(0,0,0) : Colour(90,90,90));
         textLabel->setText(getText(rowNumber, columnId), dontSendNotification);
@@ -193,7 +191,14 @@ void Polytempo_PointListComponent::showPopupMenu()
     PopupMenu m;
     
     m.addCommandItem(commandManager, Polytempo_CommandIDs::insertControlPoint);
-
+    m.addCommandItem(commandManager, Polytempo_CommandIDs::removeControlPoint);
+    
+    m.addSeparator();
+    
+    m.addCommandItem(commandManager, Polytempo_CommandIDs::adjustTime);
+    m.addCommandItem(commandManager, Polytempo_CommandIDs::adjustPosition);
+    m.addCommandItem(commandManager, Polytempo_CommandIDs::adjustTempo);
+    
     m.show();
 }
 

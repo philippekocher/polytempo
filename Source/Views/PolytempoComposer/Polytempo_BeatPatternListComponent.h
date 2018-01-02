@@ -28,6 +28,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Polytempo_ListComponent.h"
+#include "../../Data/Polytempo_Sequence.h"
 
 
 class Polytempo_BeatPatternListComponent : public Polytempo_ListComponent
@@ -49,6 +50,9 @@ public:
     void showPopupMenu();
 
 private:
+    void setSequence();
+    Polytempo_Sequence* sequence = nullptr;
+    
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_BeatPatternListComponent)
 };
 

@@ -22,7 +22,6 @@
  
  ============================================================================== */
 
-
 #ifndef __Polytempo_AboutWindow__
 #define __Polytempo_AboutWindow__
 
@@ -46,8 +45,6 @@ private:
     ScopedPointer<HyperlinkButton> link1;
     ScopedPointer<HyperlinkButton> link2;
 };
-
-
 
 
 #endif  // __Polytempo_AboutWindow__

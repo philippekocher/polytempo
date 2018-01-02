@@ -77,11 +77,13 @@ namespace Polytempo_CommandIDs
         removeSequence,
         insertControlPoint,
         removeControlPoint,
-        //adjustControlPoint,
         adjustTime,
         adjustPosition,
         adjustTempo,
-        addEventPattern,
+        
+        addBeatPattern,
+        insertBeatPattern,
+        removeBeatPattern,
         
 		annotationAccept,
 		annotationCancel,

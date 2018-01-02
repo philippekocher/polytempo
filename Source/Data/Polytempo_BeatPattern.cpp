@@ -85,13 +85,6 @@ void Polytempo_BeatPattern::setPattern(String string)
             pattern.insert(0, new Rational(tokens2[0].getIntValue(), denominator));
         }
     }
-    
-    /*
-    for(int i=0;i<pattern.size();i++)
-    {
-        DBG(pattern[i]->toString());
-    }
-    */
 }
 
 String Polytempo_BeatPattern::getPattern()
@@ -121,7 +114,10 @@ String Polytempo_BeatPattern::getMarker()
 
 void Polytempo_BeatPattern::setCounter(String string)
 {
-    counterString = string;
+    if(!string.containsOnly("0123456789.+") || string.isEmpty())
+        counterString = "+";
+    else
+        counterString = string;
 }
 
 String Polytempo_BeatPattern::getCounter()
@@ -135,16 +131,27 @@ String Polytempo_BeatPattern::getCounter()
 #pragma mark -
 #pragma mark pattern expansion
 
+void Polytempo_BeatPattern::setCurrentCounter(int n)
+{
+    currentCounter = n;
+}
+
+int Polytempo_BeatPattern::getCurrentCounter()
+{
+    return currentCounter;
+}
+
 Array<Polytempo_Event *> Polytempo_BeatPattern::getEvents(Rational pos)
 {
     Polytempo_Event* event;
     Array<Polytempo_Event *> beatEvents;
-    int counter = counterString.getIntValue();
+    
+    if(counterString != "+")
+        currentCounter = counterString.getIntValue();
     
     // marker events
     if(!marker.isEmpty())
     {
-        DBG("pattern-marker");
         event = new Polytempo_Event(eventType_Marker);
         event->setOwned(true);
         event->setPosition(pos);
@@ -175,16 +182,19 @@ Array<Polytempo_Event *> Polytempo_BeatPattern::getEvents(Rational pos)
             beatEvents.add(event);
             
             // counter events
-            if(!counterString.isEmpty() &&
-               counterString.containsOnly("0123456789") &&
-               int(event->getProperty(eventPropertyString_Pattern)) < 20)
+            if(int(event->getProperty(eventPropertyString_Pattern)) < 20)
             {
                 event = new Polytempo_Event(eventType_Marker);
                 event->setOwned(true);
                 event->setPosition(pos);
-                event->setProperty("value",counter + i);
+                if(i == 0 && counterString != "+")
+                    event->setProperty("value", counterString);
+                else
+                    event->setProperty("value",currentCounter);
 
                 beatEvents.add(event);
+                
+                currentCounter++;
             }
             
             pos = pos + *(pattern[j]);

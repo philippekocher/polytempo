@@ -33,15 +33,15 @@ class Polytempo_ListComponent : public Component,
                                 public TableListBoxModel
 {
 public:
-    Polytempo_ListComponent() {}
+    Polytempo_ListComponent() { setFocusContainer(true); }
     //~Polytempo_ListComponent();
     
-    //void paint(Graphics&);
     void resized();
     int getColumnAutoSizeWidth (int columnId);
     
     void backgroundClicked(const MouseEvent&);
     void mouseDownInRow(int rowNumber, const MouseEvent&);
+    void setSelection(int rowNumber, bool focus = true);
     
     void paintRowBackground(Graphics& g, int rowNumber, int width, int height, bool rowIsSelected);
     
@@ -50,7 +50,7 @@ public:
     
 protected:
     TableListBox table;
-    
+    int focusRow = -1;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_ListComponent)
 };
@@ -66,31 +66,25 @@ public:
         setColour(TextEditor::highlightedTextColourId, Colours::black);
         setColour(TextEditor::highlightColourId, Colours::lightblue);
         setColour(TextEditor::focusedOutlineColourId, Colours::lightblue);
-        
-        createFocusTraverser();
     }
     
     ~EditableTextCustomComponent() {}
-    
-    void mouseDown (const MouseEvent& event)
+        
+    void mouseDown(const MouseEvent& event)
     {
-        // single click on the label should select the row
         owner->mouseDownInRow(rowNumber, event);
+        
+        if(event.getNumberOfClicks() > 1) showEditor();
     }
     
-    void editorShown(TextEditor* editor)
-    {
-        Point<int> point = editor->getMouseXYRelative();
-        int index = editor->getTextIndexAt(point.x, point.y);
-        editor->setHighlightedRegion(Range<int>::emptyRange(index));
-    }
-   
+    void mouseDoubleClick(const MouseEvent& event) {}
+    
     void textWasEdited()
     {
         owner->setText(getText(), rowNumber, columnId);
     }
     
-    void setRowAndColumn (const int newRow, const int newColumn)
+    void setRowAndColumn(const int newRow, const int newColumn)
     {
         rowNumber = newRow;
         columnId  = newColumn;
@@ -98,18 +92,15 @@ public:
     
     void focusGained(FocusChangeType cause)
     {
-        if(!isBeingEdited() && !isCurrentlyModal()) showEditor();
+        if(!isBeingEdited() &&
+           !isCurrentlyModal() &&
+           cause == focusChangedByTabKey)
+            showEditor();
     }
     
 private:
     Polytempo_ListComponent* owner;
     int rowNumber, columnId;
 };
-
-
-
-
-
-
 
 #endif  // __Polytempo_ListComponent__

@@ -25,7 +25,6 @@
 #include "Polytempo_ListComponent.h"
 
 
-
 void Polytempo_ListComponent::resized()
 {
     Rectangle<int> r = getBounds();
@@ -36,30 +35,44 @@ void Polytempo_ListComponent::resized()
 
 int Polytempo_ListComponent::getColumnAutoSizeWidth(int columnId)
 {
-    int width = getWidth() * 0.25;
-    return width > 150 ? 150 : width;
+    int width = getWidth() * 0.25; // 4 columns
+    return width;// > 150 ? 150 : width;
 }
 
 void Polytempo_ListComponent::backgroundClicked(const MouseEvent& event)
 {
     if(event.mods.isPopupMenu())
         showPopupMenu();
+    else
+        table.deselectAllRows();
 }
 
-void Polytempo_ListComponent::mouseDownInRow(int rowNumber, const MouseEvent& event)
+void Polytempo_ListComponent::mouseDownInRow(int rowNumber, const juce::MouseEvent& event)
 {
     if(event.mods.isPopupMenu())
         showPopupMenu();
+    else if(event.getNumberOfClicks() > 1)
+        table.selectRow(rowNumber);
     else
-        table.selectRowsBasedOnModifierKeys(rowNumber, event.mods, false);
+        table.flipRowSelection(rowNumber);
+}
+
+void Polytempo_ListComponent::setSelection(int rowNumber, bool focus)
+{
+    table.updateContent(); // make sure that the row to be selected exists
+    table.selectRow(rowNumber);
+    if(focus) focusRow = rowNumber;
 }
 
 void Polytempo_ListComponent::paintRowBackground(Graphics& g, int rowNumber, int width, int height, bool rowIsSelected)
 {
-   // if(rowIsSelected)
-//        g.fillAll(Colour(235,235,255));
-    if(0 == rowNumber % 2)
-        g.fillAll(Colour(235,235,235));
-    
-//    g.fillRect(0,0,width,height-1);
+    if(rowIsSelected)
+        g.fillAll(Colour(235,235,255));
+
+    if(focusRow >= 0)
+    {
+        EditableTextCustomComponent* cell = ((EditableTextCustomComponent*)table.getCellComponent(1, focusRow));
+        if(cell != nullptr) cell->showEditor();
+        focusRow = -1;
+    }
 }

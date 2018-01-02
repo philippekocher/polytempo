@@ -22,11 +22,9 @@
  
  ============================================================================== */
 
-
 #ifndef __Polytempo_Textbox__
 #define __Polytempo_Textbox__
 
-//#include "../JuceLibraryCode/JuceHeader.h"
 
 class Polytempo_Textbox : public Label
 {
@@ -158,7 +156,5 @@ private:
     float numericalRangeMin = 0.0f;
     float numericalRangeMax = 0.0f;
 };
-
-
 
 #endif  // __Polytempo_Textbox__

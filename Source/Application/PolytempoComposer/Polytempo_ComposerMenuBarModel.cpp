@@ -107,7 +107,9 @@ PopupMenu Polytempo_ComposerMenuBarModel::getMenuForIndex (int menuIndex, const 
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::addSequence);
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::removeSequence);
         menu.addSeparator();
-        menu.addCommandItem(commandManager, Polytempo_CommandIDs::addEventPattern);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::addBeatPattern);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::insertBeatPattern);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::removeBeatPattern);
         menu.addSeparator();
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::insertControlPoint);
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::removeControlPoint);
@@ -208,7 +210,9 @@ void Polytempo_ComposerMenuBarModel::getAllCommands (Array <CommandID>& commands
         
         Polytempo_CommandIDs::addSequence,
         Polytempo_CommandIDs::removeSequence,
-        Polytempo_CommandIDs::addEventPattern,
+        Polytempo_CommandIDs::addBeatPattern,
+        Polytempo_CommandIDs::insertBeatPattern,
+        Polytempo_CommandIDs::removeBeatPattern,
         Polytempo_CommandIDs::insertControlPoint,
         Polytempo_CommandIDs::adjustTime,
         Polytempo_CommandIDs::adjustPosition,
@@ -300,17 +304,30 @@ void Polytempo_ComposerMenuBarModel::getCommandInfo(CommandID commandID, Applica
             result.setActive(composition->getSelectedSequenceIndex() >= 0);
             break;
 
-        case Polytempo_CommandIDs::addEventPattern:
-            result.setInfo ("Add Event Pattern", String::empty, infoCategory, 0);
+        case Polytempo_CommandIDs::addBeatPattern:
+            result.setInfo("Add Beat Pattern", String::empty, infoCategory, 0);
+            result.addDefaultKeypress('b', ModifierKeys::commandModifier);
             break;
-        
+            
+        case Polytempo_CommandIDs::insertBeatPattern:
+            result.setInfo("Insert Beat Pattern", String::empty, infoCategory, 0);
+            result.addDefaultKeypress('b', ModifierKeys::commandModifier | ModifierKeys::altModifier);
+            result.setActive(composition->getSelectedSequence() != nullptr && composition->getSelectedSequence()->getSelectedBeatPattern() >= 0);
+            break;
+            
+        case Polytempo_CommandIDs::removeBeatPattern:
+            result.setInfo ("Remove Selected Beat Pattern", String::empty, infoCategory, 0);
+            result.setActive(composition->getSelectedSequence() != nullptr && composition->getSelectedSequence()->getSelectedBeatPattern() >= 0);
+            break;
+            
         case Polytempo_CommandIDs::insertControlPoint:
             result.setInfo ("Insert Control Point", String::empty, infoCategory, 0);
+            result.setActive(composition->getSelectedSequence() != nullptr && composition->getSelectedSequence()->getControlPoints()->size() > 0);
             break;
             
         case Polytempo_CommandIDs::adjustTime:
             result.setInfo ("Adjust Time", String::empty, infoCategory, 0);
-            result.setActive(composition->getSelectedControlPointIndex() > 0);
+            result.setActive(composition->getSelectedSequence()->allowAdjustTime(composition->getSelectedControlPointIndex()));
             break;
             
         case Polytempo_CommandIDs::adjustPosition:
@@ -378,8 +395,8 @@ void Polytempo_ComposerMenuBarModel::getCommandInfo(CommandID commandID, Applica
             
 #if ! JUCE_LINUX
         case Polytempo_CommandIDs::fullScreen:
-            result.setInfo ("Show full-screen", String::empty, infoCategory, 0);
-            result.addDefaultKeypress ('f', ModifierKeys::ctrlAltCommandModifiers);
+            result.setInfo ("Enter full-screen", String::empty, infoCategory, 0);
+            result.addDefaultKeypress ('f', ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
             result.setTicked (Desktop::getInstance().getKioskModeComponent() != 0);
             break;
 #endif
@@ -429,9 +446,7 @@ void Polytempo_ComposerMenuBarModel::getCommandInfo(CommandID commandID, Applica
 // this is the ApplicationCommandTarget method that is used to actually perform one of our commands..
 bool Polytempo_ComposerMenuBarModel::perform (const InvocationInfo& info)
 {
-    //DBG ("The current command ID is " + String(info.commandID));
     float zoomX;
-//    Polytempo_ComposerApplication* const app = dynamic_cast<Polytempo_ComposerApplication*>(JUCEApplication::getInstance());
     Polytempo_Composition *composition = Polytempo_Composition::getInstance();
     
     switch (info.commandID)
@@ -492,10 +507,18 @@ bool Polytempo_ComposerMenuBarModel::perform (const InvocationInfo& info)
             composition->removeSequence(composition->getSelectedSequenceIndex());
             break;
             
-        case Polytempo_CommandIDs::addEventPattern:
-            Polytempo_DialogWindows::AddEventPattern().show();
+        case Polytempo_CommandIDs::addBeatPattern:
+            composition->getSelectedSequence()->addBeatPattern();
             break;
-   
+            
+        case Polytempo_CommandIDs::insertBeatPattern:
+            composition->getSelectedSequence()->insertBeatPattern();
+            break;
+            
+        case Polytempo_CommandIDs::removeBeatPattern:
+            composition->getSelectedSequence()->removeSelectedBeatPattern();
+            break;
+            
         case Polytempo_CommandIDs::insertControlPoint:
             Polytempo_DialogWindows::InsertControlPoint().show();
             break;
@@ -536,17 +559,13 @@ bool Polytempo_ComposerMenuBarModel::perform (const InvocationInfo& info)
 #if ! JUCE_LINUX
         case Polytempo_CommandIDs::fullScreen:
         {
-            // Kiosk mode doesn't work properly
-            // problem occurs only with a native titlebar
-            
-            /*
             Desktop& desktop = Desktop::getInstance();
-            
+            Polytempo_ComposerApplication* const app = dynamic_cast<Polytempo_ComposerApplication*>(JUCEApplication::getInstance());
+
             if (desktop.getKioskModeComponent() == nullptr)
-                desktop.setKioskModeComponent(window->getTopLevelComponent());
+                desktop.setKioskModeComponent(app->getDocumentWindow().getTopLevelComponent());
             else
                 desktop.setKioskModeComponent(nullptr);
-            */
             break;
         }
 #endif

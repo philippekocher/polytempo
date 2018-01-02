@@ -53,6 +53,14 @@
       </GROUP>
       <GROUP id="{9034F0B6-8603-FA8F-29E2-97866D416D9E}" name="Views">
         <GROUP id="{79FACF80-572F-CB0F-D005-724E9C6AD232}" name="PolytempoComposer">
+          <FILE id="EM2jrX" name="Polytempo_ListComponent.cpp" compile="1" resource="0"
+                file="../Source/Views/PolytempoComposer/Polytempo_ListComponent.cpp"/>
+          <FILE id="e76fJb" name="Polytempo_ListComponent.h" compile="0" resource="0"
+                file="../Source/Views/PolytempoComposer/Polytempo_ListComponent.h"/>
+          <FILE id="fBCDIR" name="Polytempo_PointListComponent.cpp" compile="1"
+                resource="0" file="../Source/Views/PolytempoComposer/Polytempo_PointListComponent.cpp"/>
+          <FILE id="C1UfSm" name="Polytempo_PointListComponent.h" compile="0"
+                resource="0" file="../Source/Views/PolytempoComposer/Polytempo_PointListComponent.h"/>
           <FILE id="AoeJYJ" name="Polytempo_BeatPatternListComponent.cpp" compile="1"
                 resource="0" file="../Source/Views/PolytempoComposer/Polytempo_BeatPatternListComponent.cpp"/>
           <FILE id="K21pDG" name="Polytempo_BeatPatternListComponent.h" compile="0"
@@ -71,14 +79,6 @@
                 file="../Source/Views/PolytempoComposer/Polytempo_CoordinateSystem.h"/>
           <FILE id="U0yeMe" name="Polytempo_DialogWindows.h" compile="0" resource="0"
                 file="../Source/Views/PolytempoComposer/Polytempo_DialogWindows.h"/>
-          <FILE id="EM2jrX" name="Polytempo_ListComponent.cpp" compile="1" resource="0"
-                file="../Source/Views/PolytempoComposer/Polytempo_ListComponent.cpp"/>
-          <FILE id="e76fJb" name="Polytempo_ListComponent.h" compile="0" resource="0"
-                file="../Source/Views/PolytempoComposer/Polytempo_ListComponent.h"/>
-          <FILE id="fBCDIR" name="Polytempo_PointListComponent.cpp" compile="1"
-                resource="0" file="../Source/Views/PolytempoComposer/Polytempo_PointListComponent.cpp"/>
-          <FILE id="C1UfSm" name="Polytempo_PointListComponent.h" compile="0"
-                resource="0" file="../Source/Views/PolytempoComposer/Polytempo_PointListComponent.h"/>
           <FILE id="hbmP3A" name="Polytempo_Ruler.cpp" compile="1" resource="0"
                 file="../Source/Views/PolytempoComposer/Polytempo_Ruler.cpp"/>
           <FILE id="IoPcfG" name="Polytempo_Ruler.h" compile="0" resource="0"

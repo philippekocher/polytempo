@@ -36,7 +36,7 @@
 Polytempo_AboutWindow::Polytempo_AboutWindow()
 : DialogWindow ("About", Colour::greyLevel (0.99f), true)
 {
-    Rectangle<int> rect(0, 0, 700, 200);
+    Rectangle<int> rect(0, 0, 750, 200);
     
     String text1, text2, text3, text4;
     
