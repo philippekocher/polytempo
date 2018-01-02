@@ -62,7 +62,6 @@ Polytempo_TimeRuler::Polytempo_TimeRuler()
     setScrollBarsShown(false, true);
     setViewedComponent(&rulerComponent, false);
     rulerComponent.setBounds (Rectangle<int> (2800, 40));
-    //setViewPositionProportionately (0.0, 0.0);
 }
 
 int Polytempo_TimeRuler::getIncrementForZoom(float zoomX)
@@ -230,7 +229,6 @@ void Polytempo_PositionRulerComponent::paint(Graphics& g)
 #pragma mark -
 #pragma mark tempo ruler
 
-
 Polytempo_TempoRuler::Polytempo_TempoRuler()
 {
     setScrollBarsShown(false, false, true, true);
@@ -250,7 +248,6 @@ void Polytempo_TempoRulerComponent::changeListenerCallback(ChangeBroadcaster *)
     
     repaint();
 }
-
 
 void Polytempo_TempoRulerComponent::paint(Graphics& g)
 {

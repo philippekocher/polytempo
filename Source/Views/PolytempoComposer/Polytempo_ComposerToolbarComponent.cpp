@@ -106,4 +106,3 @@ void Polytempo_ComposerToolbarComponent::setComponentTypes(int left, int right)
     showBeatPatternListButton->setToggleState(right == Polytempo_ComposerMainView::componentType_PatternList, dontSendNotification);
     showPointEditorButton->setToggleState(right == Polytempo_ComposerMainView::componentType_PointList, dontSendNotification);
 }
-

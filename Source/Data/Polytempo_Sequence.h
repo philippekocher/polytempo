@@ -25,10 +25,11 @@
 #ifndef __Polytempo_Sequence__
 #define __Polytempo_Sequence__
 
-#include "../../JuceLibraryCode/JuceHeader.h"
 #include "Polytempo_TempoInterpolation.h"
 #include "Polytempo_BeatPattern.h"
 #include "Polytempo_Score.h"
+
+class Polytempo_ListComponent;
 
 class Polytempo_Sequence
 {
@@ -54,11 +55,14 @@ public:
     void setName(String);
     void setColour(Colour);
     void setVisibility(bool);
+    void setBeatPatternListComponent(Polytempo_ListComponent*);
     
     bool validateNewControlPointPosition(float t, Rational pos);
+    bool validateControlPoint(int index, float t, Rational pos);
     void setControlPointValues(int index, float t, Rational pos, float inTempo, float outTempo, float inTempoWeight, float outTempoWeight);
     void setControlPointPosition(int index, float t, Rational pos);
     void setControlPointTempo(int index, float inTempo, float outTempo);
+    bool allowAdjustTime(int index);
     void adjustTime(int index);
     void adjustPosition(int index);
     void adjustTempo(int index);
@@ -66,9 +70,14 @@ public:
     
     bool isTempoConstantAfterPoint(int);
     
-    void addControlPoint(float t, Rational pos, float tin=0.25, float tout=0.25);
-    void addEventPattern(const String& pattern, int repeats=1, const String& counter=String::empty, const String& marker=String::empty);
-    int getCurrentCounter();
+    void addControlPoint(float t, Rational pos, float tin=0, float tout=0);
+    
+    int getSelectedBeatPattern();
+    void setSelectedBeatPattern(int index);
+    void addBeatPattern();
+    void insertBeatPattern();
+    void insertBeatPatternAtIndex(int index, const String& pattern, int repeats=1, const String& counter=String::empty, const String& marker=String::empty);
+    void removeSelectedBeatPattern();
     
     void buildBeatPattern();
     void updateEvents();
@@ -88,8 +97,10 @@ private:
 
     OwnedArray <Polytempo_ControlPoint> controlPoints;
     OwnedArray <Polytempo_BeatPattern> beatPatterns;
+    int selectedBeatPattern = -1;
     OwnedArray <Polytempo_Event> events;
     
+    Polytempo_ListComponent* beatPatternListComponent = nullptr;
     
     friend class Polytempo_SequencePlaybackSettings;
     bool  playAudioClick = true;

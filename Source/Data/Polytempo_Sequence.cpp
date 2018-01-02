@@ -24,15 +24,10 @@
 
 #include "Polytempo_Sequence.h"
 #include "Polytempo_Composition.h"
-
+#include "../Views/PolytempoComposer/Polytempo_ListComponent.h"
 
 Polytempo_Sequence::Polytempo_Sequence()
-{    
-    addControlPoint(0,0);   // start point
-    addControlPoint(1,1);   // end point
-
-    addEventPattern("4/4",1,"1");
-}
+{}
 
 Polytempo_Sequence::~Polytempo_Sequence()
 {}
@@ -78,11 +73,6 @@ Polytempo_BeatPattern* Polytempo_Sequence::getBeatPattern(int index)
     else
         return beatPatterns[index];
 }
-
-//int Polytempo_Sequence::getNumEvents()
-//{
-//    return events.size();
-//}
 
 OwnedArray <Polytempo_Event>& Polytempo_Sequence::getEvents()
 {
@@ -130,6 +120,12 @@ void Polytempo_Sequence::setVisibility(bool value)
     Polytempo_Composition::getInstance()->setDirty(true);
 }
 
+void Polytempo_Sequence::setBeatPatternListComponent(Polytempo_ListComponent* component)
+{
+    beatPatternListComponent = component;
+}
+
+
 bool Polytempo_Sequence::validateNewControlPointPosition(float t, Rational pos)
 {
     // check if a new control point is valid before it is added
@@ -144,6 +140,18 @@ bool Polytempo_Sequence::validateNewControlPointPosition(float t, Rational pos)
     }
     return false;
 }
+
+bool Polytempo_Sequence::validateControlPoint(int index, float t, Rational pos)
+{
+    // check if time and position are valid for a specific point (before it is changed)
+    if(index > 0 && t   <  controlPoints[index - 1]->time)     return false;
+    if(index > 0 && pos <= controlPoints[index - 1]->position) return false;
+    if(index < controlPoints.size() - 1 && t   >  controlPoints[index + 1]->time)     return false;
+    if(index < controlPoints.size() - 1 && pos >= controlPoints[index + 1]->position) return false;
+    
+    return true;
+}
+
 
 void Polytempo_Sequence::setControlPointValues(int index, float t, Rational pos, float inTempo, float outTempo, float inTempoWeight, float outTempoWeight)
 {
@@ -206,6 +214,9 @@ void Polytempo_Sequence::setControlPointPosition(int index, float t, Rational po
         pos = controlPoints[index]->position;  // don't change;
     
     // validate time and position
+    if(!validateControlPoint(index, t, pos)) return;
+
+    // validate the resulting bézier curve
     Polytempo_ControlPoint* tempPoint = new Polytempo_ControlPoint();
     tempPoint->time = t;
     tempPoint->position = pos;
@@ -248,11 +259,26 @@ bool Polytempo_Sequence::isTempoConstantAfterPoint(int i)
         return false;
 }
 
+bool Polytempo_Sequence::allowAdjustTime(int index)
+{
+    if(index <= 0) return false;
+    if(index > controlPoints.size()-1) return false;
+
+    Polytempo_ControlPoint *c0 = controlPoints[index-1];
+    Polytempo_ControlPoint *c1 = controlPoints[index];
+    float meanTempo = (c0->tempoOut + c1->tempoIn) * 0.5;
+
+    return validateControlPoint(index, c0->time + (c1->position - c0->position).toFloat() / meanTempo, c1->position);
+}
+
 void Polytempo_Sequence::adjustTime(int index)
 {
     Polytempo_ControlPoint *c0 = controlPoints[index-1];
     Polytempo_ControlPoint *c1 = controlPoints[index];
     float meanTempo = (c0->tempoOut + c1->tempoIn) * 0.5;
+    
+    if(!validateControlPoint(index, c0->time + (c1->position - c0->position).toFloat() / meanTempo, c1->position))
+        DBG("invalid");
     
     c1->time = c0->time + (c1->position - c0->position).toFloat() / meanTempo;
 
@@ -305,67 +331,123 @@ void Polytempo_Sequence::addControlPoint(float t, Rational pos, float tin, float
     point->position = pos;
     point->time = t;
     
-    point->tempoIn  = tin;
-    point->tempoOut = tout;
-    
     controlPoints.add(point);
-    
     ControlPointTimeComparator sorter;
     controlPoints.sort(sorter, true);
     
+    int index = controlPoints.indexOf(point);
+    if(index > 0 && index < controlPoints.size() - 1)
+    {
+        point->tempoIn  = tin == 0 ? controlPoints[index-1]->tempoOut : tin;
+        point->tempoOut = tout == 0 ? controlPoints[index+1]->tempoIn : tout;
+    }
+    else
+    {
+        point->tempoIn = 0.25;
+        point->tempoOut = 0.25;
+    }
     updateEvents();
+    Polytempo_Composition::getInstance()->setSelectedControlPointIndex(index);
     Polytempo_Composition::getInstance()->setDirty(true);
 }
 
-void Polytempo_Sequence::addEventPattern(const String& pattern, int repeats, const String& counter, const String& marker)
+int Polytempo_Sequence::getSelectedBeatPattern()
+{
+    return selectedBeatPattern;
+}
+
+void Polytempo_Sequence::setSelectedBeatPattern(int index)
+{
+    selectedBeatPattern = index;
+}
+
+void Polytempo_Sequence::addBeatPattern()
+{
+    insertBeatPatternAtIndex(beatPatterns.size(),"4/4",1,"+","");
+}
+
+void Polytempo_Sequence::insertBeatPattern()
+{
+    insertBeatPatternAtIndex(selectedBeatPattern,"4/4",1,"+","");
+}
+
+void Polytempo_Sequence::insertBeatPatternAtIndex(int index, const String& pattern, int repeats, const String& counter, const String& marker)
 {
     Polytempo_BeatPattern* bp = new Polytempo_BeatPattern();
     bp->setPattern(pattern);
     bp->setRepeats(repeats);
     bp->setCounter(counter);
     bp->setMarker(marker);
-    beatPatterns.add(bp);
+    beatPatterns.insert(index, bp);
+    
+    buildBeatPattern();
+    if(beatPatternListComponent != nullptr)
+        beatPatternListComponent->setSelection(index);
+
+    Polytempo_Composition::getInstance()->setDirty(true);
+}
+
+void Polytempo_Sequence::removeSelectedBeatPattern()
+{
+    beatPatterns.remove(selectedBeatPattern);
     
     buildBeatPattern();
     Polytempo_Composition::getInstance()->setDirty(true);
 }
 
-int Polytempo_Sequence::getCurrentCounter()
-{
-    Polytempo_BeatPattern* lastBeatPattern = beatPatterns.getLast();
-    
-    return lastBeatPattern->getCounter().getIntValue() + lastBeatPattern->getRepeats();
-}
-
-
 void Polytempo_Sequence::buildBeatPattern()
 {
     events.clear();
+    
+    if(beatPatterns.size() == 0)
+    {
+        controlPoints.clear();
+        Polytempo_Composition::getInstance()->updateContent();
+        return;
+    }
+    if(controlPoints.size() == 0)
+    {
+        addControlPoint(0,0);   // start point
+        addControlPoint(1,1);   // end point
+    }
+    
     Rational position = 0;
+    int currentCounter = 1;
     
     for(int i=0;i<beatPatterns.size();i++)
     {
+        beatPatterns[i]->setCurrentCounter(currentCounter);
         events.addArray(beatPatterns[i]->getEvents(position));
-        
+        currentCounter = beatPatterns[i]->getCurrentCounter();
+
         position = position + beatPatterns[i]->getLength();
     }
 
-    // add a very last event and adjust the end point
+    // add a very last event
     Polytempo_Event *event = new Polytempo_Event(eventType_Beat);
     event->setOwned(true);
     event->setPosition(position);
     event->setProperty(eventPropertyString_Pattern, 10);
-    
     events.add(event);
-    controlPoints[controlPoints.size()-1]->position = position;
-    adjustTime(controlPoints.size()-1); // update the last point to match the new length
+    
+    // remove control points outside the beat pattern
+    // (after the beat pattern has been shortened)
+    for(int i=controlPoints.size()-1;i>0;i--)
+    {
+        if(controlPoints[i-1]->position > position)
+            controlPoints.remove(i);
+        else
+            break;
+    }
 
-    updateEvents();
+    // adjust the last control point to match the last event's position
+    controlPoints[controlPoints.size()-1]->position = position;
+    adjustTime(controlPoints.size()-1);
 }
 
 void Polytempo_Sequence::updateEvents()
 {
-    DBG("sequence: update events");
+//    DBG("sequence: update events");
     int cpIndex = 0;
     for(int i=0;i<events.size();i++)
     {
@@ -547,13 +629,14 @@ void Polytempo_Sequence::setObject(DynamicObject* object)
     colour = Colour::fromString(object->getProperty("colour").toString());
     
     beatPatterns.clear();
+    if(!object->getProperty("beatPatterns")) return;
     for(var varBeatPattern : *object->getProperty("beatPatterns").getArray())
     {
         Polytempo_BeatPattern* bp = new Polytempo_BeatPattern();
         bp->setObject(varBeatPattern.getDynamicObject());
         beatPatterns.add(bp);
     }
-    if(beatPatterns.size() == 0) addEventPattern("4/4",1,"1");
+    if(beatPatterns.size() == 0) addBeatPattern();
     buildBeatPattern();
     
     controlPoints.clear();

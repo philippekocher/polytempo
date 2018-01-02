@@ -44,6 +44,10 @@ Polytempo_ComposerWindow::Polytempo_ComposerWindow()
     setBounds(50, 50, 800, 500);
     setVisible(true);    
 
+    // look and feel (set before the main view is restored)
+    lookAndFeel.setUsingNativeAlertWindows(true);
+    LookAndFeel::setDefaultLookAndFeel(&lookAndFeel);
+
     // restore the window's properties from the settings file
     restoreWindowStateFromString(Polytempo_StoredPreferences::getInstance()->getProps().getValue("mainWindow"));
     restoreWindowContentStateFromString(Polytempo_StoredPreferences::getInstance()->getProps().getValue("mainWindowContent"));
@@ -57,8 +61,6 @@ Polytempo_ComposerWindow::Polytempo_ComposerWindow()
     // use keypresses that arrive in this window to send out commands
     ApplicationCommandManager* commandManager = &Polytempo_ComposerApplication::getCommandManager();
     addKeyListener(commandManager->getKeyMappings());
-    
-    LookAndFeel::setDefaultLookAndFeel (&lookAndFeel);
 }
 
 Polytempo_ComposerWindow::~Polytempo_ComposerWindow()

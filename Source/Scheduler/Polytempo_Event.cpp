@@ -365,7 +365,6 @@ void Polytempo_Event::removeProperty(String key)
     properties->remove(key);
 }
 
-
 NamedValueSet* Polytempo_Event::getProperties()
 {
     return properties;

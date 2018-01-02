@@ -25,7 +25,7 @@
 #ifndef __Polytempo_MidiInput__
 #define __Polytempo_MidiInput__
 
-//#include "../../JuceLibraryCode/JuceHeader.h"
+
 #include "Polytempo_AudioDeviceManager.h"
 
 
