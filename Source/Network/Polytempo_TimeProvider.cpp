@@ -89,8 +89,8 @@ void Polytempo_TimeProvider::handleTimeSyncMessage(Uuid senderId, uint32 masterT
 		relativeMsToMaster = valueArray[valueArray.size() / 2];
 	else
 		relativeMsToMaster = valueArray[valueArray.size()/2] / 2 + valueArray[valueArray.size()/2-1] / 2;
-	maxRoundTrip = roundTrip;
 	lastRoundTrip = localTimeDiff;
+	maxRoundTrip = jmax(lastRoundTrip, roundTrip);
 
 #if(JUCE_DEBUG)
 	displayMessage(String(relativeMsToMaster) + "; RT " + String(localTimeDiff)+"ms; MRT " + String(maxRoundTrip), MessageType_Info);
