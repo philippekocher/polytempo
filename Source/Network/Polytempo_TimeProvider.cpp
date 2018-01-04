@@ -95,7 +95,7 @@ void Polytempo_TimeProvider::handleTimeSyncMessage(Uuid senderId, uint32 masterT
 #if(JUCE_DEBUG)
 	displayMessage(String(relativeMsToMaster) + "; RT " + String(localTimeDiff)+"ms; MRT " + String(maxRoundTrip), MessageType_Info);
 #else
-	displayMessage("Sync! Roundtrip " + String(localTimeDiff)+"ms", MessageType_Info);
+	displayMessage("Sync! Max RT " + String(maxRoundTrip)+"ms", MessageType_Info);
 #endif
 	
 	sync = true;
@@ -234,12 +234,14 @@ void Polytempo_TimeProvider::timerCallback()
 		int index;
 		uint32 timestamp;
 		createTimeIndex(&index, &timestamp);
-		oscSender->sendToIPAddress(timeSyncMasterIp, oscPort, 
+		bool ok = oscSender->sendToIPAddress(timeSyncMasterIp, oscPort, 
 			OSCMessage(
 				OSCAddressPattern("/timeSyncRequest"), 
 				OSCArgument(Polytempo_NetworkInterfaceManager::getInstance()->getSelectedIpAddress().ipAddress.toString()), 
 				OSCArgument(index),
 				OSCArgument(lastRoundTrip)));
+		if(!ok)
+			displayMessage("send TS request failed", MessageType_Warning);
 	}
 }
 
