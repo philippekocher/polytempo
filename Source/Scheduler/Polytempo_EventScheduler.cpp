@@ -49,7 +49,7 @@ void Polytempo_EventScheduler::scheduleScoreEvent(Polytempo_Event *event)
     if(event == nullptr) return;
     if(event->getType() == eventType_None) return;
     
-	int32 currentSyncTime;
+	uint32 currentSyncTime;
 	Polytempo_TimeProvider::getInstance()->getSyncTime(&currentSyncTime);
 	if(event->getSyncTime() <= currentSyncTime)
     {
@@ -73,7 +73,7 @@ void Polytempo_EventScheduler::scheduleEvent(Polytempo_Event *event, bool delete
     if(event == nullptr) return;
     if(event->getType() == eventType_None) return;
     
-	int32 currentSyncTime;
+	uint32 currentSyncTime;
 	Polytempo_TimeProvider::getInstance()->getSyncTime(&currentSyncTime);
 	if(event->getSyncTime() <= currentSyncTime)
     {
@@ -94,7 +94,7 @@ void Polytempo_EventScheduler::scheduleEvent(Polytempo_Event *event, bool delete
 void Polytempo_EventScheduler::run()
 {
     int interval = 5;
-    int32 currentSyncTime;
+    uint32 currentSyncTime;
 	
     while(!threadShouldExit())
     {

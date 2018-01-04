@@ -58,7 +58,7 @@ void Polytempo_TimeProvider::initialize(bool master, int port)
 		startTimer(TIME_SYNC_INTERVAL_MS);
 }
 
-void Polytempo_TimeProvider::handleTimeSyncMessage(Uuid senderId, int32 masterTime, int timeIndex, int32 roundTrip)
+void Polytempo_TimeProvider::handleTimeSyncMessage(Uuid senderId, uint32 masterTime, int timeIndex, int32 roundTrip)
 {
 	uint32 localLastSentTimestamp = lastSentTimestamp;
 	int localLastSentTimeIndex = lastSentTimeIndex;
@@ -71,7 +71,7 @@ void Polytempo_TimeProvider::handleTimeSyncMessage(Uuid senderId, int32 masterTi
 
 	int32 currentTimestamp = Time::getMillisecondCounter();
 	int32 localTimeDiff = currentTimestamp - localLastSentTimestamp;
-	int32 newTimeDiffToMaster = int32(masterTime - (currentTimestamp - localTimeDiff * 0.5));
+	int32 newTimeDiffToMaster = int32(int64(masterTime) - int64(currentTimestamp - localTimeDiff * 0.5));
 	lastReceivedTimestamp = currentTimestamp;
 
 	timeDiffHistory[timeDiffHistoryWritePosition] = newTimeDiffToMaster;
@@ -110,7 +110,7 @@ void Polytempo_TimeProvider::createTimeIndex(int* pIndex, uint32* pTimestamp)
 	*pTimestamp = lastSentTimestamp;
 }
 
-bool Polytempo_TimeProvider::getSyncTime(int32* pTime)
+bool Polytempo_TimeProvider::getSyncTime(uint32* pTime)
 {
 	sync = masterFlag || (lastReceivedTimestamp > lastSentTimestamp) || (lastSentTimestamp - lastReceivedTimestamp < SYNC_TIME_VALID_PERIOD_MS);
 
@@ -122,9 +122,9 @@ bool Polytempo_TimeProvider::getSyncTime(int32* pTime)
 	return sync;
 }
 
-int32 Polytempo_TimeProvider::getDelaySafeTimestamp()
+uint32 Polytempo_TimeProvider::getDelaySafeTimestamp()
 {
-	int32 safeTime;
+	uint32 safeTime;
 	getSyncTime(&safeTime);
 	safeTime += maxRoundTrip;
 
@@ -186,11 +186,12 @@ void Polytempo_TimeProvider::oscMessageReceived(const OSCMessage& message)
 
 		if (masterFlag)
 		{
+			uint32 ts = Time::getMillisecondCounter();
 			bool ok = oscSender->sendToIPAddress(senderIp, oscPort, 
 				OSCMessage(
 					OSCAddressPattern("/timeSyncReply"), 
 					OSCArgument(Polytempo_NetworkSupervisor::getInstance()->getUniqueId().toString()), 
-					OSCArgument(int32(Time::getMillisecondCounter())), 
+					OSCArgument(int32(ts)), 
 					OSCArgument(timeIndex),
 					OSCArgument(maxRoundTrip)));
 			displayMessage(ok ? "Mastertime sent" : "Fail", ok ? MessageType_Info : MessageType_Error);
@@ -213,7 +214,7 @@ void Polytempo_TimeProvider::oscMessageReceived(const OSCMessage& message)
 	else if(addressPattern == "/timeSyncReply")
 	{
 		Uuid senderId = Uuid((argumentIterator++)->getString());
-		int32 argMasterTime = (argumentIterator++)->getInt32();
+		uint32 argMasterTime = uint32((argumentIterator++)->getInt32());
 		int timeIndex = (argumentIterator++)->getInt32();
 		int32 maxRoundTripFromMaster = (argumentIterator++)->getInt32();
 

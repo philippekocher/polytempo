@@ -147,7 +147,7 @@ void Polytempo_NetworkEngine::run()
         {
             // calculate syncTime
             
-			int syncTime;
+			uint32 syncTime;
         	Polytempo_TimeProvider::getInstance()->getSyncTime(&syncTime);
 			syncTime += int(double(nextScoreEvent->getTime() - scoreTime) / tempoFactor);
             

@@ -29,8 +29,8 @@ public:
 	~Polytempo_TimeProvider();
 
 	void initialize(bool master, int oscPort);
-	bool getSyncTime(int32* pTime);
-	int32 getDelaySafeTimestamp();
+	bool getSyncTime(uint32* pTime);
+	uint32 getDelaySafeTimestamp();
 	bool isMaster() const;
 	void setRemoteMasterPeer(String ip, Uuid id, bool master);
 #ifdef POLYTEMPO_NETWORK
@@ -39,7 +39,7 @@ public:
 	enum MessageType { MessageType_Info, MessageType_Warning, MessageType_Error };
 
 private:
-	void handleTimeSyncMessage(Uuid senderId, int32 masterTime, int timeIndex, int32 roundTrip);
+	void handleTimeSyncMessage(Uuid senderId, uint32 masterTime, int timeIndex, int32 roundTrip);
 	void createTimeIndex(int* pIndex, uint32* pTimestamp);
 	void oscMessageReceived(const OSCMessage& message) override;
 	void timerCallback() override;
