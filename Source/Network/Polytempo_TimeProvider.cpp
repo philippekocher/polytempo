@@ -95,7 +95,7 @@ void Polytempo_TimeProvider::handleTimeSyncMessage(Uuid senderId, uint32 masterT
 #if(JUCE_DEBUG)
 	displayMessage(String(relativeMsToMaster) + "; RT " + String(localTimeDiff)+"ms; MRT " + String(maxRoundTrip), MessageType_Info);
 #else
-	displayMessage("Sync! Max RT " + String(maxRoundTrip)+"ms", MessageType_Info);
+	displayMessage("Sync, MRT: " + String(maxRoundTrip)+"ms", MessageType_Info);
 #endif
 	
 	sync = true;
