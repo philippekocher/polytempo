@@ -63,7 +63,7 @@ void Polytempo_TimeProvider::handleTimeSyncMessage(Uuid senderId, uint32 masterT
 	uint32 localLastSentTimestamp = lastSentTimestamp;
 	int localLastSentTimeIndex = lastSentTimeIndex;
 
-	if(sync && timeIndex != localLastSentTimeIndex || senderId != lastMasterID)
+    if((sync && timeIndex != localLastSentTimeIndex) || senderId != lastMasterID)
 	{
 		displayMessage("Wrong time index or master ID", MessageType_Error);
 		return;

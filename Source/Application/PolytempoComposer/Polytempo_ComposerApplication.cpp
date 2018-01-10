@@ -30,6 +30,7 @@
 #include "../../Scheduler/Polytempo_ScoreScheduler.h"
 #include "../../Scheduler/Polytempo_EventScheduler.h"
 #include "../../Network/Polytempo_NetworkSupervisor.h"
+#include "../../Network/Polytempo_TimeProvider.h"
 #include "../../Misc/Polytempo_Alerts.h"
 
 
@@ -90,6 +91,7 @@ void Polytempo_ComposerApplication::shutdown()
     Polytempo_NetworkSupervisor::deleteInstance();
     Polytempo_ScoreScheduler::deleteInstance(); // delete after observers!
     Polytempo_EventScheduler::deleteInstance();
+    Polytempo_TimeProvider::deleteInstance();
 }
     
 void Polytempo_ComposerApplication::systemRequestedQuit()
