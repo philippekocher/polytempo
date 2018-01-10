@@ -28,7 +28,7 @@
 #include "../Scheduler/Polytempo_EventScheduler.h"
 #include "../Misc/Polytempo_Alerts.h"
 #include "../Application/PolytempoNetwork/Polytempo_NetworkApplication.h"
-
+#include "Polytempo_TimeProvider.h"
 
 
 Polytempo_OSCListener::Polytempo_OSCListener(int port) : m_Port(port)
@@ -58,8 +58,13 @@ void Polytempo_OSCListener::oscMessageReceived(const OSCMessage & message)
 
 		String argIp = (argumentIterator++)->getString();
 		String argName = (argumentIterator++)->getString();
+		
+		Polytempo_NetworkSupervisor::getInstance()->handlePeer(argIp, argName);
 
-		Polytempo_NetworkSupervisor::getInstance()->addPeer(argIp, argName);
+		bool isMaster = false;
+		if (argumentIterator)
+			isMaster = (bool)argumentIterator->getInt32();
+		Polytempo_TimeProvider::getInstance()->setRemoteMasterPeer(argIp, senderId, isMaster);
 	}
 
 #ifdef POLYTEMPO_NETWORK
@@ -122,13 +127,15 @@ void Polytempo_OSCListener::oscMessageReceived(const OSCMessage & message)
         }
         
         // calculate syncTime
-        int syncTime;
+        uint32 syncTime;
         
         if(event->hasProperty(eventPropertyString_TimeTag))
-            syncTime = event->getProperty(eventPropertyString_TimeTag);
-        else
-            syncTime = Time::getMillisecondCounter();
-        
+            syncTime = uint32(int(event->getProperty(eventPropertyString_TimeTag)));
+		else
+		{
+			Polytempo_TimeProvider::getInstance()->getSyncTime(&syncTime);
+		}
+
         if(event->hasProperty(eventPropertyString_Time))
         {
             Polytempo_ScoreScheduler *scoreScheduler = Polytempo_ScoreScheduler::getInstance();
@@ -140,7 +147,7 @@ void Polytempo_OSCListener::oscMessageReceived(const OSCMessage & message)
         }
         
         if(event->hasProperty(eventPropertyString_Defer))
-            syncTime += (float)event->getProperty(eventPropertyString_Defer) * 1000.0f;
+            syncTime += int(float(event->getProperty(eventPropertyString_Defer)) * 1000.0f);
         
         event->setSyncTime(syncTime);
 

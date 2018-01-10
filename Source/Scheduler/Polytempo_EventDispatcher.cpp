@@ -23,25 +23,28 @@
  ============================================================================== */
 
 #include "Polytempo_EventDispatcher.h"
+#include "../Network/Polytempo_TimeProvider.h"
 
 
 juce_ImplementSingleton(Polytempo_EventDispatcher);
 
 void Polytempo_EventDispatcher::setBroadcastSender(Polytempo_OSCSender *sender)
 {
-    oscSender = sender;
+	oscSender = sender;
 }
 
 void Polytempo_EventDispatcher::broadcastEvent(Polytempo_Event *event)
 {
-    // network broadcast
-    if(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("broadcastSchedulerCommands") &&
-       oscSender != nullptr)
-    {
-        oscSender->broadcastEventAsMessage(event);
-    }
+	// set sync time
+	event->setSyncTime(int32(Polytempo_TimeProvider::getInstance()->getDelaySafeTimestamp()));
 
-    // direct connection
-    Polytempo_EventScheduler::getInstance()->scheduleEvent(event); // the scheduler deletes the event
-    
+	// network broadcast
+	if (Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("broadcastSchedulerCommands") &&
+		oscSender != nullptr)
+	{
+		oscSender->broadcastEventAsMessage(event);
+	}
+
+	// direct connection
+	Polytempo_EventScheduler::getInstance()->scheduleEvent(event); // the scheduler deletes the event
 }

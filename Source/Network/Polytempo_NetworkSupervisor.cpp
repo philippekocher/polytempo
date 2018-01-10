@@ -27,6 +27,9 @@
 #include "Polytempo_IPAddress.h"
 #include "../Preferences/Polytempo_StoredPreferences.h"
 #include "Polytempo_NetworkInterfaceManager.h"
+#include "Polytempo_TimeProvider.h"
+
+#define PING_INTERVAL	1000
 
 Polytempo_NetworkSupervisor::Polytempo_NetworkSupervisor()
 {
@@ -36,11 +39,13 @@ Polytempo_NetworkSupervisor::Polytempo_NetworkSupervisor()
     socket = nullptr;
     component = nullptr;
 
-	startTimer(1000);
+	startTimer(PING_INTERVAL);
 }
 
 Polytempo_NetworkSupervisor::~Polytempo_NetworkSupervisor()
 {
+	stopTimer();
+
     localName = nullptr;
     connectedPeersMap = nullptr;
     tempConnectedPeersMap = nullptr;
@@ -62,7 +67,13 @@ void Polytempo_NetworkSupervisor::timerCallback()
     if(localName == nullptr) name = new String("Unnamed");
     else                     name = new String(getLocalName());
     
-	socket->write(OSCMessage(OSCAddressPattern("/node"), OSCArgument(getUniqueId().toString()), OSCArgument(Polytempo_NetworkInterfaceManager::getInstance()->getSelectedIpAddress().ipAddress.toString()), OSCArgument(*name)));
+	socket->write(
+		OSCMessage(
+			OSCAddressPattern("/node"), 
+			OSCArgument(getUniqueId().toString()), 
+			OSCArgument(Polytempo_NetworkInterfaceManager::getInstance()->getSelectedIpAddress().ipAddress.toString()), 
+			OSCArgument(*name), 
+			OSCArgument((int32)Polytempo_TimeProvider::getInstance()->isMaster())));
 	
     // update hash maps
     connectedPeersMap->clear();
@@ -120,9 +131,9 @@ void Polytempo_NetworkSupervisor::setComponent(Component *aComponent)
     component = aComponent;
 }
 
-void Polytempo_NetworkSupervisor::addPeer(String ip, String name)
+void Polytempo_NetworkSupervisor::handlePeer(String ip, String name)
 {
-    connectedPeersMap->set(ip, name);
+	connectedPeersMap->set(ip, name);
     tempConnectedPeersMap->set(ip, name);
     component->repaint();
 }

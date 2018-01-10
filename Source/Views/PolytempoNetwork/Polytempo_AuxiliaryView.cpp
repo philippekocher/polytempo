@@ -28,6 +28,7 @@
 #include "../../Preferences/Polytempo_StoredPreferences.h"
 #include "../../Network/Polytempo_NetworkSupervisor.h"
 #include "../../Misc/Polytempo_Textbox.h"
+#include "../../Network/Polytempo_TimeProvider.h"
 
 
 Polytempo_AuxiliaryView::Polytempo_AuxiliaryView()
@@ -61,9 +62,11 @@ Polytempo_AuxiliaryView::Polytempo_AuxiliaryView()
     tempoFactorTextbox->addListener(this);
     tempoFactorTextbox->setText("1.0", dontSendNotification);
     
-    addAndMakeVisible(peersTextbox = new Label());
-    peersTextbox->setEditable(false, false, false);
-    peersTextbox->setColour(Label::backgroundColourId, Colours::lightblue);
+	addAndMakeVisible(timeSyncControl = new Polytempo_TimeSyncControl());
+	Polytempo_TimeProvider::getInstance()->registerUserInterface(timeSyncControl);
+
+    addAndMakeVisible(networkInfoView = new Polytempo_NetworkInfoView());
+	networkInfoView->setColour(Label::backgroundColourId, Colours::lightblue);
 }
 
 Polytempo_AuxiliaryView::~Polytempo_AuxiliaryView()
@@ -75,26 +78,7 @@ void Polytempo_AuxiliaryView::paint (Graphics& g)
 {
     g.fillAll (Colours::white);   // clear the background
     
-    AttributedString attributedPeers;
-	attributedPeers.append("Network\n", Font(14.0f, Font::plain));
-    attributedPeers.append(" \n", Font(8.0f, Font::plain));
-	attributedPeers.append(Polytempo_NetworkSupervisor::getInstance()->getLocalName()+"\n", Font(12.0f, Font::bold));
-    attributedPeers.append(" \n", Font(8.0f, Font::plain));
-	attributedPeers.append(Polytempo_NetworkSupervisor::getInstance()->getAdapterInfo()+"\n", Font(12.0f, Font::plain));
-	attributedPeers.append(" \n", Font(22.0f, Font::plain));
-	attributedPeers.append("Connected peers:\n", Font(12, Font::bold));
-    HashMap < String, String >::Iterator it(*Polytempo_NetworkSupervisor::getInstance()->getPeers());
-    while(it.next())
-    {
-        attributedPeers.append(" \n", Font(4.0f, Font::plain));
-        attributedPeers.append(it.getValue()+"\n", Font(12.0f, Font::plain));
-	}
-    
-    g.drawHorizontalLine(320, 0.0f, (float)getWidth());
-	attributedPeers.draw(g, Rectangle<int>(10, 330, getWidth() - 20, 100).toFloat());
-
-    g.setColour(Colours::grey);
-    g.drawVerticalLine(0, 0.0f, (float)getHeight());
+	networkInfoView->repaint();
 }
 
 void Polytempo_AuxiliaryView::resized()
@@ -116,8 +100,12 @@ void Polytempo_AuxiliaryView::resized()
     yPosition +=80;
     
     tempoFactorTextbox->setBounds(10, yPosition, getWidth() - 20, 34);
-    
-	Polytempo_NetworkSupervisor::getInstance()->setComponent(this);
+	yPosition += 40;
+
+	timeSyncControl->setBounds(10, yPosition, getWidth() - 20, 60);
+	yPosition += 70;
+
+	networkInfoView->setBounds(10, yPosition, getWidth() - 20, getHeight() - yPosition);
 }
 
 void Polytempo_AuxiliaryView::eventNotification(Polytempo_Event *event)

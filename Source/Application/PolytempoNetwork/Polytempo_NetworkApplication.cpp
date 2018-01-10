@@ -34,6 +34,7 @@
 #include "../../Network/Polytempo_NetworkSupervisor.h"
 #include "../../Misc/Polytempo_Alerts.h"
 #include "../../Views/PolytempoNetwork/Polytempo_GraphicsAnnotationManager.h"
+#include "../../Network/Polytempo_TimeProvider.h"
 
 Polytempo_NetworkApplication::Polytempo_NetworkApplication()
 {}
@@ -71,6 +72,9 @@ void Polytempo_NetworkApplication::initialise(const String&)
     // image manager
     Polytempo_ImageManager::getInstance();
     
+	// time sync
+	Polytempo_TimeProvider::getInstance()->initialize(false, TIME_SYNC_OSC_PORT);
+
 #if (!JUCE_DEBUG)
     // contact web server
     getApplicationName();
@@ -147,6 +151,7 @@ void Polytempo_NetworkApplication::shutdown()
     Polytempo_ScoreScheduler::deleteInstance();
     Polytempo_EventScheduler::deleteInstance();
 	Polytempo_GraphicsAnnotationManager::deleteInstance();
+	Polytempo_TimeProvider::deleteInstance();
 }
 
 //------------------------------------------------------------------------------

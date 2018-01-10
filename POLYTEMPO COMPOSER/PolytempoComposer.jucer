@@ -128,6 +128,10 @@
               resource="0" file="../Source/Data/Polytempo_TempoInterpolation.h"/>
       </GROUP>
       <GROUP id="{D87069DD-1863-4062-50B8-DC088D3AC352}" name="Network">
+        <FILE id="WIpFta" name="Polytempo_TimeProvider.cpp" compile="1" resource="0"
+              file="../Source/Network/Polytempo_TimeProvider.cpp"/>
+        <FILE id="moLPe3" name="Polytempo_TimeProvider.h" compile="0" resource="0"
+              file="../Source/Network/Polytempo_TimeProvider.h"/>
         <FILE id="dedn0R" name="Polytempo_IPAddress.h" compile="0" resource="0"
               file="../Source/Network/Polytempo_IPAddress.h"/>
         <FILE id="KTwlrR" name="Polytempo_IPAddress.cpp" compile="1" resource="0"

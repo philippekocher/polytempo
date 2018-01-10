@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="at55VB" name="PolytempoNetwork" projectType="guiapp" version="0.3.0"
-              bundleIdentifier="net.icst.PolytempoNetwork" jucerVersion="5.1.2"
+              bundleIdentifier="net.icst.PolytempoNetwork" jucerVersion="5.2.0"
               companyName="ICST Institute for Computermusic and Sound Technology, Zurich"
               includeBinaryInAppConfig="1" companyWebsite="www.icst.net" defines="POLYTEMPO_NETWORK=1"
               displaySplashScreen="1" reportAppUsage="1" splashScreenColour="Dark"
-              cppLanguageStandard="11">
+              cppLanguageStandard="11" companyCopyright="ICST Institute for Computermusic and Sound Technology, Zurich">
   <MAINGROUP id="AdMxtt" name="PolytempoNetwork">
     <GROUP id="{380F2332-7EED-CAEF-0B98-BEC0BC16E53A}" name="Resources">
       <FILE id="Z9EfR9" name="colorPalette.png" compile="0" resource="1"
@@ -99,6 +99,10 @@
             file="../Source/Network/Polytempo_Socket.cpp"/>
       <FILE id="ExXKRM" name="Polytempo_Socket.h" compile="0" resource="0"
             file="../Source/Network/Polytempo_Socket.h"/>
+      <FILE id="I3SqFa" name="Polytempo_TimeProvider.cpp" compile="1" resource="0"
+            file="../Source/Network/Polytempo_TimeProvider.cpp"/>
+      <FILE id="PIEmTw" name="Polytempo_TimeProvider.h" compile="0" resource="0"
+            file="../Source/Network/Polytempo_TimeProvider.h"/>
     </GROUP>
     <GROUP id="{47AC34E2-55B8-0A83-90F9-17E330BE25A4}" name="Preferences">
       <FILE id="TtP3Vf" name="Polytempo_DefaultPreferences.cpp" compile="1"
@@ -186,6 +190,10 @@
               file="../Source/Views/PolytempoNetwork/Polytempo_ImageManager.cpp"/>
         <FILE id="knovRA" name="Polytempo_ImageManager.h" compile="0" resource="0"
               file="../Source/Views/PolytempoNetwork/Polytempo_ImageManager.h"/>
+        <FILE id="KqR8Cs" name="Polytempo_NetworkInfoView.cpp" compile="1"
+              resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_NetworkInfoView.cpp"/>
+        <FILE id="k8ZILQ" name="Polytempo_NetworkInfoView.h" compile="0" resource="0"
+              file="../Source/Views/PolytempoNetwork/Polytempo_NetworkInfoView.h"/>
         <FILE id="pqaFmI" name="Polytempo_NetworkMainView.cpp" compile="1"
               resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_NetworkMainView.cpp"/>
         <FILE id="UVwdls" name="Polytempo_NetworkMainView.h" compile="0" resource="0"
@@ -194,6 +202,10 @@
               file="../Source/Views/PolytempoNetwork/Polytempo_Progressbar.cpp"/>
         <FILE id="JjsnBh" name="Polytempo_Progressbar.h" compile="0" resource="0"
               file="../Source/Views/PolytempoNetwork/Polytempo_Progressbar.h"/>
+        <FILE id="vEI743" name="Polytempo_TimeSyncControl.cpp" compile="1"
+              resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_TimeSyncControl.cpp"/>
+        <FILE id="KI6F8R" name="Polytempo_TimeSyncControl.h" compile="0" resource="0"
+              file="../Source/Views/PolytempoNetwork/Polytempo_TimeSyncControl.h"/>
         <FILE id="TEAJZH" name="Polytempo_VisualMetro.cpp" compile="1" resource="0"
               file="../Source/Views/PolytempoNetwork/Polytempo_VisualMetro.cpp"/>
         <FILE id="vsBBMn" name="Polytempo_VisualMetro.h" compile="0" resource="0"
@@ -223,10 +235,11 @@
                customPList="&lt;plist&gt;&lt;dict&gt;&#10;    &lt;key&gt;NSAppTransportSecurity&lt;/key&gt;  &#10;    &lt;dict&gt;  &#10;        &lt;key&gt;NSAllowsArbitraryLoads&lt;/key&gt;&#10;        &lt;true/&gt;  &#10;    &lt;/dict&gt;&#10;&lt;/dict&gt;&lt;/plist&gt;">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" osxSDK="default" osxCompatibility="10.9 SDK" osxArchitecture="default"
-                       isDebug="1" optimisation="1" targetName="PolytempoNetwork"/>
+                       isDebug="1" optimisation="1" targetName="PolytempoNetwork" enablePluginBinaryCopyStep="1"/>
         <CONFIGURATION name="Release" osxSDK="default" osxCompatibility="10.9 SDK" osxArchitecture="default"
                        isDebug="0" optimisation="2" targetName="PolytempoNetwork" defines=""
-                       customXcodeFlags="COPY_PHASE_STRIP = NO,  GCC_GENERATE_DEBUGGING_SYMBOLS = YES "/>
+                       customXcodeFlags="COPY_PHASE_STRIP = NO,  GCC_GENERATE_DEBUGGING_SYMBOLS = YES "
+                       enablePluginBinaryCopyStep="1"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_video" path="../../../../../Documents/JUCE/modules"/>
@@ -249,9 +262,11 @@
     <VS2015 targetFolder="Builds/VisualStudio2015" extraCompilerFlags="/wd&quot;4068&quot;">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
-                       isDebug="1" optimisation="1" targetName="PolytempoNetwork"/>
+                       isDebug="1" optimisation="1" targetName="PolytempoNetwork" debugInformationFormat="ProgramDatabase"
+                       enablePluginBinaryCopyStep="0"/>
         <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
-                       isDebug="0" optimisation="3" targetName="PolytempoNetwork"/>
+                       isDebug="0" optimisation="3" targetName="PolytempoNetwork" debugInformationFormat="ProgramDatabase"
+                       enablePluginBinaryCopyStep="0" linkTimeOptimisation="1"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_video" path="..\..\JUCE\modules"/>
@@ -274,9 +289,11 @@
     <VS2017 targetFolder="Builds/VisualStudio2017" extraCompilerFlags="/wd&quot;4068&quot;">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
-                       isDebug="1" optimisation="1" targetName="PolytempoNetwork"/>
+                       isDebug="1" optimisation="1" targetName="PolytempoNetwork" debugInformationFormat="ProgramDatabase"
+                       enablePluginBinaryCopyStep="0"/>
         <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
-                       isDebug="0" optimisation="3" targetName="PolytempoNetwork"/>
+                       isDebug="0" optimisation="3" targetName="PolytempoNetwork" debugInformationFormat="ProgramDatabase"
+                       enablePluginBinaryCopyStep="0" linkTimeOptimisation="1"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_video" path="..\..\JUCE\modules"/>

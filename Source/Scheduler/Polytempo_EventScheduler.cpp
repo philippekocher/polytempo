@@ -23,6 +23,7 @@
  ============================================================================== */
 
 #include "Polytempo_EventScheduler.h"
+#include "../Network/Polytempo_TimeProvider.h"
 
 
 Polytempo_EventScheduler::Polytempo_EventScheduler() : Thread("Polytempo_EventScheduler_Thread")
@@ -47,8 +48,10 @@ void Polytempo_EventScheduler::scheduleScoreEvent(Polytempo_Event *event)
 {
     if(event == nullptr) return;
     if(event->getType() == eventType_None) return;
-        
-    if(event->getSyncTime() <= Time::getMillisecondCounter())
+    
+	uint32 currentSyncTime;
+	Polytempo_TimeProvider::getInstance()->getSyncTime(&currentSyncTime);
+	if(event->getSyncTime() <= currentSyncTime)
     {
         notify(event);
         if(!event->isOwned()) delete event;
@@ -70,7 +73,9 @@ void Polytempo_EventScheduler::scheduleEvent(Polytempo_Event *event, bool delete
     if(event == nullptr) return;
     if(event->getType() == eventType_None) return;
     
-    if(event->getSyncTime() <= Time::getMillisecondCounter())
+	uint32 currentSyncTime;
+	Polytempo_TimeProvider::getInstance()->getSyncTime(&currentSyncTime);
+	if(event->getSyncTime() <= currentSyncTime)
     {
         notify(event);
         if(!event->isOwned()) delete event;
@@ -89,14 +94,13 @@ void Polytempo_EventScheduler::scheduleEvent(Polytempo_Event *event, bool delete
 void Polytempo_EventScheduler::run()
 {
     int interval = 5;
-    int currentSyncTime;
-    
+    uint32 currentSyncTime;
+	
     while(!threadShouldExit())
     {
         // get current sync time
-        currentSyncTime = Time::getMillisecondCounter();
-        
-        if(deleteScoreEvents) scheduledScoreEvents.clear();
+		Polytempo_TimeProvider::getInstance()->getSyncTime(&currentSyncTime);
+		if(deleteScoreEvents) scheduledScoreEvents.clear();
         deleteScoreEvents = false;
         
         for(int i=0;i<scheduledScoreEvents.size();)

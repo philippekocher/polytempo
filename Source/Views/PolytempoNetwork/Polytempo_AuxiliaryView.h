@@ -28,6 +28,8 @@
 #include "../../Scheduler/Polytempo_EventObserver.h"
 #include "../../Misc/Polytempo_Textbox.h"
 #include "../../Misc/Polytempo_Button.h"
+#include "Polytempo_TimeSyncControl.h"
+#include "Polytempo_NetworkInfoView.h"
 
 
 class Polytempo_AuxiliaryView : public Component,
@@ -61,12 +63,15 @@ private:
     Polytempo_Textbox *timeTextbox;
     
 //  Polytempo_Textbox *realTimeTextbox;
-    
+	
     Polytempo_Textbox *tempoFactorTextbox;
-    String            tempoFactor;
+    
+	Polytempo_TimeSyncControl *timeSyncControl;
+
+	String            tempoFactor;
     
     AttributedString peers;
-    Label       *peersTextbox;
+    Polytempo_NetworkInfoView       *networkInfoView;
     
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_AuxiliaryView)
 };

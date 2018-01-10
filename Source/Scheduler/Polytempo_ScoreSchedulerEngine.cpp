@@ -27,6 +27,7 @@
 #include "../Data/Polytempo_Composition.h"
 #include "Polytempo_EventDispatcher.h"
 #include "Polytempo_EventScheduler.h"
+#include "../Network/Polytempo_TimeProvider.h"
 
 
 #ifdef POLYTEMPO_COMPOSER
@@ -127,9 +128,8 @@ void Polytempo_NetworkEngine::run()
     //DBG("run");
     int interval = 200;
     int lookAhead = 200;
-    int syncTime;
-    
-    Polytempo_Event *nextScoreEvent = score->getNextEvent();
+
+	Polytempo_Event *nextScoreEvent = score->getNextEvent();
     Polytempo_Event *schedulerTick  = Polytempo_Event::makeEvent(eventType_Tick);
     
     schedulerTick->setOwned(true);
@@ -141,17 +141,18 @@ void Polytempo_NetworkEngine::run()
     
     while(!threadShouldExit() && !shouldStop)
     {
-        scoreTime += scoreTimeIncrement() * tempoFactor;
+        scoreTime += int(double(scoreTimeIncrement()) * tempoFactor);
         
         while(!shouldStop && !pausing && nextScoreEvent && nextScoreEvent->getTime() <= scoreTime + lookAhead)
         {
             // calculate syncTime
             
-            syncTime = Time::getMillisecondCounter();
-            syncTime += (nextScoreEvent->getTime() - scoreTime) / tempoFactor;
+			uint32 syncTime;
+        	Polytempo_TimeProvider::getInstance()->getSyncTime(&syncTime);
+			syncTime += int(double(nextScoreEvent->getTime() - scoreTime) / tempoFactor);
             
             if(nextScoreEvent->hasProperty(eventPropertyString_Defer))
-                syncTime += (float)nextScoreEvent->getProperty(eventPropertyString_Defer) * 1000.0f;
+                syncTime += int(float(nextScoreEvent->getProperty(eventPropertyString_Defer)) * 1000.0f);
             
             nextScoreEvent->setSyncTime(syncTime);
             

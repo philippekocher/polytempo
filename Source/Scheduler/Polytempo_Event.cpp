@@ -306,6 +306,7 @@ int Polytempo_Event::getTime()
 void  Polytempo_Event::setSyncTime(int t)
 {
     syncTime = t;
+	properties->set(eventPropertyString_TimeTag, t);
 }
 
 int Polytempo_Event::getSyncTime()
