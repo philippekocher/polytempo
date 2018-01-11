@@ -25,6 +25,7 @@
 #include "Polytempo_ComposerMenuBarModel.h"
 #include "Polytempo_ComposerApplication.h"
 #include "../Polytempo_AboutWindow.h"
+#include "../../Preferences/Polytempo_ComposerPreferencesPanel.h"
 #include "../../Preferences/Polytempo_StoredPreferences.h"
 #include "../../Data/Polytempo_Composition.h"
 #include "../../Scheduler/Polytempo_ScoreScheduler.h"
@@ -85,6 +86,15 @@ PopupMenu Polytempo_ComposerMenuBarModel::getMenuForIndex (int menuIndex, const 
     ApplicationCommandManager* commandManager = &Polytempo_ComposerApplication::getCommandManager();
     PopupMenu menu;
     
+#ifdef WIN32
+    if (menuName == "PolytempoNetwork")
+    {
+        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::aboutWindow);
+        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::preferencesWindow);
+        menu.addSeparator();
+        menu.addCommandItem(&commandManager, StandardApplicationCommandIDs::quit);
+    }
+#endif
     if (menuName == "File")
     {
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::newDocument);
@@ -204,9 +214,6 @@ void Polytempo_ComposerMenuBarModel::getAllCommands (Array <CommandID>& commands
         Polytempo_CommandIDs::startStop,
         Polytempo_CommandIDs::returnToLoc,
         Polytempo_CommandIDs::returnToBeginning,
-        //gotoCmd,
-        Polytempo_CommandIDs::aboutWindow,
-        //Polytempo_CommandIDs::preferencesWindow,
         
         Polytempo_CommandIDs::addSequence,
         Polytempo_CommandIDs::removeSequence,
@@ -219,6 +226,8 @@ void Polytempo_ComposerMenuBarModel::getAllCommands (Array <CommandID>& commands
         Polytempo_CommandIDs::adjustTempo,
         Polytempo_CommandIDs::removeControlPoint,
         
+        Polytempo_CommandIDs::aboutWindow,
+        Polytempo_CommandIDs::preferencesWindow,
         //Polytempo_CommandIDs::help,
         Polytempo_CommandIDs::visitWebsite,
 
@@ -454,9 +463,9 @@ bool Polytempo_ComposerMenuBarModel::perform (const InvocationInfo& info)
         /* polytempo composer menu
          ----------------------------------*/
             
-//        case Polytempo_CommandIDs::preferencesWindow:
-//            Polytempo_NetworkPreferencesPanel::show();
-//            break;
+        case Polytempo_CommandIDs::preferencesWindow:
+            Polytempo_ComposerPreferencesPanel::show();
+            break;
             
         case Polytempo_CommandIDs::aboutWindow:
             Polytempo_AboutWindow::show();

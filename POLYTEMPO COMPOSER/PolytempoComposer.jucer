@@ -184,6 +184,10 @@
               resource="0" file="../Source/Scheduler/Polytempo_ScoreSchedulerEngine.h"/>
       </GROUP>
       <GROUP id="{59B7EAC5-AA1A-D0A0-9C5A-1EB601E3E627}" name="Preferences">
+        <FILE id="KZlWAB" name="Polytempo_ComposerPreferencesPanel.cpp" compile="1"
+              resource="0" file="../Source/Preferences/Polytempo_ComposerPreferencesPanel.cpp"/>
+        <FILE id="C4Ahav" name="Polytempo_ComposerPreferencesPanel.h" compile="0"
+              resource="0" file="../Source/Preferences/Polytempo_ComposerPreferencesPanel.h"/>
         <FILE id="tdLKZW" name="Polytempo_DefaultPreferences.cpp" compile="1"
               resource="0" file="../Source/Preferences/Polytempo_DefaultPreferences.cpp"/>
         <FILE id="GtdJeF" name="Polytempo_DefaultPreferences.h" compile="0"

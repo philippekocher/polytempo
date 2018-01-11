@@ -104,7 +104,7 @@ public:
     
     String toString()
     {
-        if(denominator == 1) return String(numerator);
+//        if(denominator == 1) return String(numerator);
 //        if(denominator < numerator)
 //        {
 //            const int i = int(numerator/denominator);
