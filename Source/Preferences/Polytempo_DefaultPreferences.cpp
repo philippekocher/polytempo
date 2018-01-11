@@ -34,6 +34,7 @@ Polytempo_DefaultPreferences::Polytempo_DefaultPreferences()
     setValue("mainWindowContent", "400 0 0");
     setValue("tempoMeasurementUnit", "1/1");
     setValue("tempoMeasurementTime", 1);
+    setValue("defaultBeatPattern", "4/4 1");
 
     // network
     setValue("broadcastSchedulerCommands", 1);

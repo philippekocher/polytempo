@@ -39,10 +39,18 @@ class GeneralPreferencesPage : public Component, Button::Listener, TextEditor::L
     TextEditor *tempoMeasurementUnit;
     Label      *tempoMeasurementTimeLabel;
     TextEditor *tempoMeasurementTime;
+    
+    Label      *defaultBeatPatternLabel;
+    Label      *defaultBeatPatternMetreLabel;
+    TextEditor *defaultBeatPatternMetre;
+    Label      *defaultBeatPatternRepeatsLabel;
+    TextEditor *defaultBeatPatternRepeats;
 
 public:
     GeneralPreferencesPage()
     {
+        // tempo measurement
+        
         addAndMakeVisible(tempoMeasurementLabel = new Label(String::empty, L"Tempo Measurement"));
         tempoMeasurementLabel->setFont(Font(15.0000f, Font::plain));
         tempoMeasurementLabel->setJustificationType(Justification::centredLeft);
@@ -71,6 +79,44 @@ public:
         tempoMeasurementTime->setColour(TextEditor::outlineColourId, Colours::grey);
         tempoMeasurementTime->setInputRestrictions(0, "0123456789.");
         tempoMeasurementTime->addListener(this);
+ 
+        
+        // default beat pattern
+        
+        String defaultBeatPattern = Polytempo_StoredPreferences::getInstance()->getProps().getValue("defaultBeatPattern");
+        
+        StringArray beatPatternTokens;
+        beatPatternTokens.addTokens(defaultBeatPattern, false);
+
+        addAndMakeVisible(defaultBeatPatternLabel = new Label(String::empty, L"Default Beat Pattern"));
+        defaultBeatPatternLabel->setFont(Font(15.0000f, Font::plain));
+        defaultBeatPatternLabel->setJustificationType(Justification::centredLeft);
+        defaultBeatPatternLabel->setEditable(false, false, false);
+        
+        addAndMakeVisible(defaultBeatPatternMetreLabel = new Label(String::empty, L"Metre:"));
+        defaultBeatPatternMetreLabel->setFont(Font(12.0000f, Font::plain));
+        defaultBeatPatternMetreLabel->setJustificationType(Justification::centredLeft);
+        defaultBeatPatternMetreLabel->setEditable(false, false, false);
+        
+        addAndMakeVisible(defaultBeatPatternMetre = new TextEditor());
+        defaultBeatPatternMetre->setText(beatPatternTokens[0]);
+        defaultBeatPatternMetre->setBorder(BorderSize<int>(1));
+        defaultBeatPatternMetre->setColour(TextEditor::outlineColourId, Colours::grey);
+        defaultBeatPatternMetre->setInputRestrictions(0, "0123456789/");
+        defaultBeatPatternMetre->addListener(this);
+        
+        addAndMakeVisible(defaultBeatPatternRepeatsLabel = new Label(String::empty, L"Repeats:"));
+        defaultBeatPatternRepeatsLabel->setFont(Font(12.0000f, Font::plain));
+        defaultBeatPatternRepeatsLabel->setJustificationType(Justification::centredLeft);
+        defaultBeatPatternRepeatsLabel->setEditable(false, false, false);
+        
+        addAndMakeVisible(defaultBeatPatternRepeats = new TextEditor());
+        defaultBeatPatternRepeats->setText(beatPatternTokens[1]);
+        defaultBeatPatternRepeats->setBorder(BorderSize<int>(1));
+        defaultBeatPatternRepeats->setColour(TextEditor::outlineColourId, Colours::grey);
+        defaultBeatPatternRepeats->setInputRestrictions(0, "0123456789");
+        defaultBeatPatternRepeats->addListener(this);
+
     }
     
     ~GeneralPreferencesPage()
@@ -83,9 +129,15 @@ public:
         tempoMeasurementLabel->setBounds    (18,  35, 200, 24);
         tempoMeasurementUnitLabel->setBounds(20,  70, 50, 24);
         tempoMeasurementUnit->setBounds     (70,  70, 40, 24);
-        tempoMeasurementTimeLabel->setBounds(20, 100, 50, 24);
-        tempoMeasurementTime->setBounds     (70, 100, 40, 24);
-    }
+        tempoMeasurementTimeLabel->setBounds(120, 70, 50, 24);
+        tempoMeasurementTime->setBounds     (170, 70, 40, 24);
+
+        defaultBeatPatternLabel->setBounds       (18,  135, 200, 24);
+        defaultBeatPatternMetreLabel->setBounds  (20,  170, 50, 24);
+        defaultBeatPatternMetre->setBounds       (70,  170, 40, 24);
+        defaultBeatPatternRepeatsLabel->setBounds(120, 170, 50, 24);
+        defaultBeatPatternRepeats->setBounds     (170, 170, 40, 24);
+}
     
     /* text editor & button listener
      --------------------------------------- */
@@ -115,11 +167,20 @@ public:
             Polytempo_StoredPreferences::getInstance()->getProps().setValue("tempoMeasurementUnit", unit.toString());
         }
         else if(&editor == tempoMeasurementTime)
+        {
             Polytempo_StoredPreferences::getInstance()->getProps().setValue("tempoMeasurementTime", editor.getText());
+        }
+        else if(&editor == defaultBeatPatternMetre || &editor == defaultBeatPatternRepeats)
+        {
+            Polytempo_StoredPreferences::getInstance()->getProps().setValue("defaultBeatPattern", defaultBeatPatternMetre->getText()+" "+defaultBeatPatternRepeats->getText());
+        }
         
         // everything needs to be repainted when the tempo measurement changes
-        Polytempo_ComposerApplication* const app = dynamic_cast<Polytempo_ComposerApplication*>(JUCEApplication::getInstance());
-        app->getMainView().repaint();
+        if(&editor == tempoMeasurementUnit || &editor == tempoMeasurementTime)
+        {
+            Polytempo_ComposerApplication* const app = dynamic_cast<Polytempo_ComposerApplication*>(JUCEApplication::getInstance());
+            app->getMainView().repaint();
+        }
     }
     
     void buttonClicked(Button* button)

@@ -25,6 +25,8 @@
 #include "Polytempo_Sequence.h"
 #include "Polytempo_Composition.h"
 #include "../Views/PolytempoComposer/Polytempo_ListComponent.h"
+#include "../Preferences/Polytempo_StoredPreferences.h"
+
 
 Polytempo_Sequence::Polytempo_Sequence()
 {}
@@ -363,12 +365,22 @@ void Polytempo_Sequence::setSelectedBeatPattern(int index)
 
 void Polytempo_Sequence::addBeatPattern()
 {
-    insertBeatPatternAtIndex(beatPatterns.size(),"4/4",1,"+","");
+    String defaultBeatPattern = Polytempo_StoredPreferences::getInstance()->getProps().getValue("defaultBeatPattern");
+
+    StringArray tokens;
+    tokens.addTokens(defaultBeatPattern, false);
+    
+    insertBeatPatternAtIndex(beatPatterns.size(), tokens[0], tokens[1].getIntValue(), "+", "");
 }
 
 void Polytempo_Sequence::insertBeatPattern()
 {
-    insertBeatPatternAtIndex(selectedBeatPattern,"4/4",1,"+","");
+    String defaultBeatPattern = Polytempo_StoredPreferences::getInstance()->getProps().getValue("defaultBeatPattern");
+    
+    StringArray tokens;
+    tokens.addTokens(defaultBeatPattern, false);
+
+    insertBeatPatternAtIndex(selectedBeatPattern, tokens[0], tokens[1].getIntValue(), "+", "");
 }
 
 void Polytempo_Sequence::insertBeatPatternAtIndex(int index, const String& pattern, int repeats, const String& counter, const String& marker)
