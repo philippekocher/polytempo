@@ -51,6 +51,11 @@ public:
     {
         // tempo measurement
         
+        String tempoMeasurement = Polytempo_StoredPreferences::getInstance()->getProps().getValue("tempoMeasurement");
+        
+        StringArray tempoMeasurementTokens;
+        tempoMeasurementTokens.addTokens(tempoMeasurement, false);
+
         addAndMakeVisible(tempoMeasurementLabel = new Label(String::empty, L"Tempo Measurement"));
         tempoMeasurementLabel->setFont(Font(15.0000f, Font::plain));
         tempoMeasurementLabel->setJustificationType(Justification::centredLeft);
@@ -62,7 +67,7 @@ public:
         tempoMeasurementUnitLabel->setEditable(false, false, false);
         
         addAndMakeVisible(tempoMeasurementUnit = new TextEditor());
-        tempoMeasurementUnit->setText(Polytempo_StoredPreferences::getInstance()->getProps().getValue("tempoMeasurementUnit"));
+        tempoMeasurementUnit->setText(tempoMeasurementTokens[0]);
         tempoMeasurementUnit->setBorder(BorderSize<int>(1));
         tempoMeasurementUnit->setColour(TextEditor::outlineColourId, Colours::grey);
         tempoMeasurementUnit->setInputRestrictions(0, "0123456789/");
@@ -74,7 +79,7 @@ public:
         tempoMeasurementTimeLabel->setEditable(false, false, false);
         
         addAndMakeVisible(tempoMeasurementTime = new TextEditor());
-        tempoMeasurementTime->setText(Polytempo_StoredPreferences::getInstance()->getProps().getValue("tempoMeasurementTime"));
+        tempoMeasurementTime->setText(tempoMeasurementTokens[1]);
         tempoMeasurementTime->setBorder(BorderSize<int>(1));
         tempoMeasurementTime->setColour(TextEditor::outlineColourId, Colours::grey);
         tempoMeasurementTime->setInputRestrictions(0, "0123456789.");
@@ -156,30 +161,35 @@ public:
     
     void textEditorFocusLost (TextEditor& editor)
     {
-        if(&editor == tempoMeasurementUnit)
+        if(&editor == tempoMeasurementUnit || &editor == tempoMeasurementTime)
         {
-            Rational unit = Rational(editor.getText());
-            if(unit == 0)
-            {
-                unit = Rational("1/1");
-            }
-            editor.setText(unit.toString());
-            Polytempo_StoredPreferences::getInstance()->getProps().setValue("tempoMeasurementUnit", unit.toString());
-        }
-        else if(&editor == tempoMeasurementTime)
-        {
-            Polytempo_StoredPreferences::getInstance()->getProps().setValue("tempoMeasurementTime", editor.getText());
+            Rational unit = Rational(tempoMeasurementUnit->getText());
+            if(unit == 0) unit = Rational("1/1");
+            tempoMeasurementUnit->setText(unit.toString());
+            
+            String time = tempoMeasurementTime->getText();
+            if(time == String::empty) time = "1";
+            if(time.getFloatValue() == 0.0f) time = "1";
+            tempoMeasurementTime->setText(time);
+            
+            Polytempo_StoredPreferences::getInstance()->getProps().setValue("tempoMeasurement", unit.toString()+" "+time);
+
+            // everything needs to be repainted when the tempo measurement changes
+            Polytempo_ComposerApplication* const app = dynamic_cast<Polytempo_ComposerApplication*>(JUCEApplication::getInstance());
+            app->getMainView().repaint();
         }
         else if(&editor == defaultBeatPatternMetre || &editor == defaultBeatPatternRepeats)
         {
-            Polytempo_StoredPreferences::getInstance()->getProps().setValue("defaultBeatPattern", defaultBeatPatternMetre->getText()+" "+defaultBeatPatternRepeats->getText());
-        }
-        
-        // everything needs to be repainted when the tempo measurement changes
-        if(&editor == tempoMeasurementUnit || &editor == tempoMeasurementTime)
-        {
-            Polytempo_ComposerApplication* const app = dynamic_cast<Polytempo_ComposerApplication*>(JUCEApplication::getInstance());
-            app->getMainView().repaint();
+            Rational metre = Rational(defaultBeatPatternMetre->getText());
+            if(metre == 0) metre = Rational(1);
+            defaultBeatPatternMetre->setText(metre.toString());
+            
+            String repeats = defaultBeatPatternRepeats->getText();
+            if(repeats == String::empty) repeats = "1";
+            if(repeats == "0") repeats = "1";
+            defaultBeatPatternRepeats->setText(repeats);
+
+            Polytempo_StoredPreferences::getInstance()->getProps().setValue("defaultBeatPattern", metre.toString()+" "+repeats);
         }
     }
     
