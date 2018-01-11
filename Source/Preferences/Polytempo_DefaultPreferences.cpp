@@ -33,7 +33,7 @@ Polytempo_DefaultPreferences::Polytempo_DefaultPreferences()
     setValue("tempoMapZoomY", 20);
     setValue("mainWindowContent", "400 0 0");
     setValue("tempoMeasurementUnit", "1/1");
-    setValue("tempoMeasurementDuration", 1);
+    setValue("tempoMeasurementTime", 1);
 
     // network
     setValue("broadcastSchedulerCommands", 1);

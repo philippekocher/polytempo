@@ -25,6 +25,7 @@
 #include "Polytempo_ComposerPreferencesPanel.h"
 #include "Polytempo_StoredPreferences.h"
 #include "../Misc/Rational.h"
+#include "../Application/PolytempoComposer/Polytempo_ComposerApplication.h"
 
 
 //------------------------------------------------------------------------------
@@ -36,8 +37,8 @@ class GeneralPreferencesPage : public Component, Button::Listener, TextEditor::L
     Label      *tempoMeasurementLabel;
     Label      *tempoMeasurementUnitLabel;
     TextEditor *tempoMeasurementUnit;
-    Label      *tempoMeasurementDurationLabel;
-    TextEditor *tempoMeasurementDuration;
+    Label      *tempoMeasurementTimeLabel;
+    TextEditor *tempoMeasurementTime;
 
 public:
     GeneralPreferencesPage()
@@ -59,17 +60,17 @@ public:
         tempoMeasurementUnit->setInputRestrictions(0, "0123456789/");
         tempoMeasurementUnit->addListener(this);
         
-        addAndMakeVisible(tempoMeasurementDurationLabel = new Label(String::empty, L"Duration:"));
-        tempoMeasurementDurationLabel->setFont(Font(12.0000f, Font::plain));
-        tempoMeasurementDurationLabel->setJustificationType(Justification::centredLeft);
-        tempoMeasurementDurationLabel->setEditable(false, false, false);
+        addAndMakeVisible(tempoMeasurementTimeLabel = new Label(String::empty, L"Time:"));
+        tempoMeasurementTimeLabel->setFont(Font(12.0000f, Font::plain));
+        tempoMeasurementTimeLabel->setJustificationType(Justification::centredLeft);
+        tempoMeasurementTimeLabel->setEditable(false, false, false);
         
-        addAndMakeVisible(tempoMeasurementDuration = new TextEditor());
-        tempoMeasurementDuration->setText(Polytempo_StoredPreferences::getInstance()->getProps().getValue("tempoMeasurementDuration"));
-        tempoMeasurementDuration->setBorder(BorderSize<int>(1));
-        tempoMeasurementDuration->setColour(TextEditor::outlineColourId, Colours::grey);
-        tempoMeasurementDuration->setInputRestrictions(0, "0123456789.");
-        tempoMeasurementDuration->addListener(this);
+        addAndMakeVisible(tempoMeasurementTime = new TextEditor());
+        tempoMeasurementTime->setText(Polytempo_StoredPreferences::getInstance()->getProps().getValue("tempoMeasurementTime"));
+        tempoMeasurementTime->setBorder(BorderSize<int>(1));
+        tempoMeasurementTime->setColour(TextEditor::outlineColourId, Colours::grey);
+        tempoMeasurementTime->setInputRestrictions(0, "0123456789.");
+        tempoMeasurementTime->addListener(this);
     }
     
     ~GeneralPreferencesPage()
@@ -79,11 +80,11 @@ public:
     
     void resized()
     {
-        tempoMeasurementLabel->setBounds        (18,  35, 200, 24);
-        tempoMeasurementUnitLabel->setBounds    (20,  70, 60, 24);
-        tempoMeasurementUnit->setBounds         (80,  70, 40, 24);
-        tempoMeasurementDurationLabel->setBounds(20, 100, 60, 24);
-        tempoMeasurementDuration->setBounds     (80, 100, 40, 24);
+        tempoMeasurementLabel->setBounds    (18,  35, 200, 24);
+        tempoMeasurementUnitLabel->setBounds(20,  70, 50, 24);
+        tempoMeasurementUnit->setBounds     (70,  70, 40, 24);
+        tempoMeasurementTimeLabel->setBounds(20, 100, 50, 24);
+        tempoMeasurementTime->setBounds     (70, 100, 40, 24);
     }
     
     /* text editor & button listener
@@ -113,8 +114,12 @@ public:
             editor.setText(unit.toString());
             Polytempo_StoredPreferences::getInstance()->getProps().setValue("tempoMeasurementUnit", unit.toString());
         }
-        else if(&editor == tempoMeasurementDuration)
-            Polytempo_StoredPreferences::getInstance()->getProps().setValue("tempoMeasurementDuration", editor.getText());
+        else if(&editor == tempoMeasurementTime)
+            Polytempo_StoredPreferences::getInstance()->getProps().setValue("tempoMeasurementTime", editor.getText());
+        
+        // everything needs to be repainted when the tempo measurement changes
+        Polytempo_ComposerApplication* const app = dynamic_cast<Polytempo_ComposerApplication*>(JUCEApplication::getInstance());
+        app->getMainView().repaint();
     }
     
     void buttonClicked(Button* button)

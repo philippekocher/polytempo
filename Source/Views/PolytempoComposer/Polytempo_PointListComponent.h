@@ -25,7 +25,6 @@
 #ifndef __Polytempo_PointListComponent__
 #define __Polytempo_PointListComponent__
 
-
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Polytempo_ListComponent.h"
 

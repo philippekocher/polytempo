@@ -69,15 +69,16 @@ public:
     }
     
     ~EditableTextCustomComponent() {}
-        
+    
     void mouseDown(const MouseEvent& event)
     {
         owner->mouseDownInRow(rowNumber, event);
-        
-        if(event.getNumberOfClicks() > 1) showEditor();
     }
     
-    void mouseDoubleClick(const MouseEvent& event) {}
+    void mouseDoubleClick(const MouseEvent& event)
+    {
+        showEditor();
+    }
     
     void textWasEdited()
     {

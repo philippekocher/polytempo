@@ -26,6 +26,7 @@
 #include "../../Misc/Polytempo_Globals.h"
 #include "../../Preferences/Polytempo_StoredPreferences.h"
 #include "../../Data/Polytempo_Composition.h"
+#include "../../Misc/Polytempo_TempoMeasurement.h"
 
 
 Polytempo_Ruler::Polytempo_Ruler()
@@ -269,7 +270,7 @@ void Polytempo_TempoRulerComponent::paint(Graphics& g)
         if(i % 2 == 0)
         {
             g.drawLine(45, y, getWidth(), y, 1.0);
-            g.drawText(String(tempo,1), 18, y - 6, 20, 10, Justification::left);
+            g.drawText(String(Polytempo_TempoMeasurement::decodeTempoForUI(tempo),1), 18, y - 6, 30, 10, Justification::left);
         }
         else
         {

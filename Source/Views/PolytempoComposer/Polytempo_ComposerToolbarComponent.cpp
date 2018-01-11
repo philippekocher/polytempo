@@ -22,11 +22,12 @@
  
  ============================================================================== */
 
-#include "../../JuceLibraryCode/JuceHeader.h"
 #include "Polytempo_ComposerToolbarComponent.h"
 #include "../../Application/PolytempoComposer/Polytempo_ComposerApplication.h"
 #include "../../Application/Polytempo_CommandIDs.h"
+#include "../../Misc/Polytempo_TempoMeasurement.h"
 #include "Polytempo_ComposerMainView.h"
+
 
 Polytempo_ComposerToolbarComponent::Polytempo_ComposerToolbarComponent()
 {
@@ -61,6 +62,8 @@ void Polytempo_ComposerToolbarComponent::paint (Graphics& g)
     
     g.setColour(Colour(170,170,170));
     g.drawHorizontalLine(getHeight() - 1, 0, getWidth());
+    
+    g.drawFittedText("Tempo Measurement: "+Polytempo_TempoMeasurement::getMeasurementAsString(), getWidth() * 0.5 - 50, 8, 100, 20, Justification::centred, 2);
 }
 
 void Polytempo_ComposerToolbarComponent::resized()
