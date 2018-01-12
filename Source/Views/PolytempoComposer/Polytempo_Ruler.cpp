@@ -237,6 +237,21 @@ Polytempo_TempoRuler::Polytempo_TempoRuler()
     rulerComponent.setBounds(Rectangle<int>(65, 2800));
 }
 
+float Polytempo_TempoRuler::getIncrementForZoom(float zoom)
+{
+    if(zoom > 8000) return 0.00125;
+    if(zoom > 4000) return 0.0025;
+    if(zoom > 2000) return 0.005;
+    if(zoom > 1000) return 0.01;
+    if(zoom >  500) return 0.02;
+    if(zoom >  250) return 0.04;
+    if(zoom >  125) return 0.08;
+    if(zoom >   60) return 0.16;
+    if(zoom >   30) return 0.32;
+    return 0.64;
+}
+
+
 Polytempo_TempoRulerComponent::Polytempo_TempoRulerComponent()
 {
     Polytempo_StoredPreferences::getInstance()->getProps().addChangeListener(this);
@@ -262,9 +277,11 @@ void Polytempo_TempoRulerComponent::paint(Graphics& g)
     g.setFont(12);
     g.setColour(Colour(50,50,50));
     
+    float increment = Polytempo_TempoRuler::getIncrementForZoom(zoomY);
+    float tempo = 0;
+    
     for(int i=0; i<100; i++)
     {
-        float tempo = i * 0.05;
         float y = getHeight() - TIMEMAP_OFFSET - tempo * zoomY;
         
         if(i % 2 == 0)
@@ -277,6 +294,7 @@ void Polytempo_TempoRulerComponent::paint(Graphics& g)
             g.drawLine(50, y, getWidth(), y, 1.0);
         }
         
+        tempo += increment;
     }
     
 }

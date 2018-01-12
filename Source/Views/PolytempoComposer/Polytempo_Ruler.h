@@ -82,7 +82,6 @@ private:
     Polytempo_PositionRulerComponent rulerComponent;
 };
 
-
 class Polytempo_TempoRulerComponent : public Polytempo_RulerComponent
 {
 public:
@@ -95,6 +94,7 @@ class Polytempo_TempoRuler : public Polytempo_Ruler
 {
 public:
     Polytempo_TempoRuler();
+    static float getIncrementForZoom(float zoomX);
 private:
     Polytempo_TempoRulerComponent rulerComponent;
 };
