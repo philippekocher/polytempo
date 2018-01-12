@@ -98,7 +98,7 @@ void Polytempo_TransportComponent::labelTextChanged (Label* label)
 {
     if(label == timeTextbox)
     {
-        Polytempo_ScoreScheduler::getInstance()->storeLocator(Polytempo_Textbox::stringToTime(label->getText()));
+        Polytempo_ScoreScheduler::getInstance()->storeLocator(Polytempo_Textbox::stringToTime(label->getText()) * 1000.0f);
         Polytempo_ScoreScheduler::getInstance()->gotoTime(
         Polytempo_Event::makeEvent(eventType_GotoTime, Polytempo_Textbox::stringToTime(label->getText())));
     }

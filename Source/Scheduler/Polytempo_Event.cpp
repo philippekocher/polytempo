@@ -290,7 +290,7 @@ var  Polytempo_Event::getValue()
 void Polytempo_Event::setTime(int t)
 {
     time = t;
-    properties->set(eventPropertyString_Time, t * 0.001);
+    setProperty(eventPropertyString_Time, t * 0.001);
 }
 
 int Polytempo_Event::getTime()
@@ -306,7 +306,7 @@ int Polytempo_Event::getTime()
 void  Polytempo_Event::setSyncTime(int t)
 {
     syncTime = t;
-	properties->set(eventPropertyString_TimeTag, t);
+	setProperty(eventPropertyString_TimeTag, t);
 }
 
 int Polytempo_Event::getSyncTime()
@@ -336,7 +336,7 @@ bool Polytempo_Event::isOwned()
 
 void Polytempo_Event::setProperty(String key, var value)
 {
-    if     (key == eventPropertyString_Time)
+    if(key == eventPropertyString_Time)
     {
         float t = float(value);
         
@@ -346,6 +346,8 @@ void Polytempo_Event::setProperty(String key, var value)
     }
     else if(key == "position")
         position = value;
+    
+    if(!properties) properties = new NamedValueSet();
     
     properties->set(key,value);
 }
@@ -358,6 +360,7 @@ var Polytempo_Event::getProperty(String key)
 
 bool Polytempo_Event::hasProperty(String key)
 {
+    if(!properties) return false;
     return properties->contains(key);
 }
 
