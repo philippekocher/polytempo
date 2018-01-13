@@ -57,7 +57,8 @@ private:
     Polytempo_Textbox *timeTextbox;
     String timeString;
     
-    Polytempo_Textbox *timeFactorTextbox;
+    Polytempo_Textbox *tempoFactorTextbox;
+    String tempoFactorString;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_TransportComponent)
 };

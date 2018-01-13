@@ -48,9 +48,10 @@ Polytempo_TransportComponent::Polytempo_TransportComponent()
     timeTextbox->setFont(Font (24.0f, Font::bold));
     timeTextbox->addListener(this);
 
-    addAndMakeVisible(timeFactorTextbox = new Polytempo_Textbox(String::empty));
-    timeFactorTextbox->setFont(Font (24.0f, Font::bold));
-    timeFactorTextbox->addListener(this);
+    addAndMakeVisible(tempoFactorTextbox = new Polytempo_Textbox(String::empty));
+    tempoFactorTextbox->setFont(Font (24.0f, Font::bold));
+    tempoFactorTextbox->setText("1.0", dontSendNotification);
+    tempoFactorTextbox->addListener(this);
 }
 
 Polytempo_TransportComponent::~Polytempo_TransportComponent()
@@ -80,7 +81,7 @@ void Polytempo_TransportComponent::resized()
     returnToZeroButton->setBounds     (67, (getHeight() - 22) * 0.5, 32, 22);
     
     timeTextbox->setBounds            (140, (getHeight() - 28) * 0.5, 145, 29);
-    timeFactorTextbox->setBounds      (380, (getHeight() - 28) * 0.5, 50, 29);
+    tempoFactorTextbox->setBounds     (380, (getHeight() - 28) * 0.5, 50, 29);
 }
 
 void Polytempo_TransportComponent::buttonClicked(Button* button)
@@ -90,8 +91,8 @@ void Polytempo_TransportComponent::buttonClicked(Button* button)
 
 void Polytempo_TransportComponent::editorShown (Label* label, TextEditor&)
 {
-    if(label == timeTextbox)   timeString = label->getText();
-//    else if(label == tempoFactorTextbox)   tempoFactor   = label->getText();
+    if(label == timeTextbox)             timeString        = label->getText();
+    else if(label == tempoFactorTextbox) tempoFactorString = label->getText();
 }
 
 void Polytempo_TransportComponent::labelTextChanged (Label* label)
@@ -99,17 +100,16 @@ void Polytempo_TransportComponent::labelTextChanged (Label* label)
     if(label == timeTextbox)
     {
         Polytempo_ScoreScheduler::getInstance()->storeLocator(Polytempo_Textbox::stringToTime(label->getText()) * 1000.0f);
-        Polytempo_ScoreScheduler::getInstance()->gotoTime(
-        Polytempo_Event::makeEvent(eventType_GotoTime, Polytempo_Textbox::stringToTime(label->getText())));
+        Polytempo_ScoreScheduler::getInstance()->gotoTime(Polytempo_Event::makeEvent(eventType_GotoTime, Polytempo_Textbox::stringToTime(label->getText())));
     }
-//    else if(label == tempoFactorTextbox)
-//    {
-//        float num = (label->getText()).getFloatValue();
-//        if(num <= 0.0)
-//            label->setText(tempoFactor, dontSendNotification);
-//        else
-//            Polytempo_Application::getSharedApplication()->broadcastEvent(Polytempo_Event::eventOfType(eventType_TempoFactor, num));
-//    }
+    else if(label == tempoFactorTextbox)
+    {
+        float num = (label->getText()).getFloatValue();
+        if(num <= 0.0)
+            label->setText(tempoFactorString, dontSendNotification);
+        else
+            Polytempo_ScoreScheduler::getInstance()->setTempoFactor(Polytempo_Event::makeEvent(eventType_TempoFactor, num));
+    }
 }
 
 void Polytempo_TransportComponent::eventNotification(Polytempo_Event *event)
@@ -126,5 +126,9 @@ void Polytempo_TransportComponent::eventNotification(Polytempo_Event *event)
     {
         // update the time with every tick
         timeTextbox->setText(Polytempo_Textbox::timeToString(event->getValue()), dontSendNotification);
+    }
+    else if(event->getType() == eventType_TempoFactor)
+    {
+        tempoFactorTextbox->setText(event->getValue(), dontSendNotification);
     }
 }
