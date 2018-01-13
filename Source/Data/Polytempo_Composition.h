@@ -76,6 +76,7 @@ public:
     void exportAsPolytempoScore();
 
 private:
+    bool scoreNeedsUpdate = false;
     int selectedSequenceIndex = -1;
     int selectedControlPointIndex = -1;
     bool exportAll;

@@ -97,7 +97,9 @@ void Polytempo_ComposerEngine::run()
         wait(interval);
     }
     
-	/*
+    Polytempo_Composition::getInstance()->updateScore();
+    
+    /*
          set time in order to set the score's pointer to the next event
          (which is already ahead by the amount of lookahead).
 	*/
