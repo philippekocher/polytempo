@@ -22,12 +22,24 @@
  
  ============================================================================== */
 
-#ifndef __Polytempo_ListComponent__
-#define __Polytempo_ListComponent__
-
+#pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+
+class Polytempo_TableListBox : public TableListBox
+{
+public:
+    bool keyPressed(const KeyPress& key)
+    {
+        // keys that should be ingnored by the table
+        if(key.getModifiers() == ModifierKeys::commandModifier) return false;
+        if(key == KeyPress::returnKey) return false;
+        
+        // default behaviour for other keys
+        return ListBox::keyPressed(key);
+    }
+};
 
 class Polytempo_ListComponent : public Component,
                                 public TableListBoxModel
@@ -49,7 +61,7 @@ public:
     virtual void showPopupMenu() = 0;
     
 protected:
-    TableListBox table;
+    Polytempo_TableListBox table;
     int focusRow = -1;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_ListComponent)
@@ -103,5 +115,3 @@ private:
     Polytempo_ListComponent* owner;
     int rowNumber, columnId;
 };
-
-#endif  // __Polytempo_ListComponent__
