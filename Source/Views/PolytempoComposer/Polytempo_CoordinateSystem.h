@@ -49,7 +49,7 @@ protected:
     OwnedArray < Polytempo_Sequence > *sequences;
     
     ScopedPointer < DrawableRectangle > playhead;
-    ScopedPointer < Array < float > > positionGrid;
+    ScopedPointer < Array < float > > horizontalGrid;
 };
 
 class Polytempo_TimeMapCoordinateSystem : public Polytempo_CoordinateSystemComponent

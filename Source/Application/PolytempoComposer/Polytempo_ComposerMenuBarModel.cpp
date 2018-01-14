@@ -463,7 +463,7 @@ void Polytempo_ComposerMenuBarModel::getCommandInfo(CommandID commandID, Applica
 // this is the ApplicationCommandTarget method that is used to actually perform one of our commands..
 bool Polytempo_ComposerMenuBarModel::perform (const InvocationInfo& info)
 {
-    float zoomX;
+    float zoomX, zoomY;
     Polytempo_Composition *composition = Polytempo_Composition::getInstance();
     
     switch (info.commandID)
@@ -626,7 +626,9 @@ bool Polytempo_ComposerMenuBarModel::perform (const InvocationInfo& info)
             }
             else
             {
-                Polytempo_StoredPreferences::getInstance()->getProps().setValue("tempoMapZoomY", Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("tempoMapZoomY") * 1.2);
+                zoomY = Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("tempoMapZoomY") * 1.1;
+                zoomY = zoomY > 15000 ? 15000 : zoomY;
+                Polytempo_StoredPreferences::getInstance()->getProps().setValue("tempoMapZoomY", zoomY);
             }
             break;
             
@@ -637,7 +639,9 @@ bool Polytempo_ComposerMenuBarModel::perform (const InvocationInfo& info)
             }
             else
             {
-                Polytempo_StoredPreferences::getInstance()->getProps().setValue("tempoMapZoomY", Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("tempoMapZoomY") / 1.2);
+                zoomY = Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("tempoMapZoomY") / 1.1;
+                zoomY = zoomY < 500 ? 500 : zoomY;
+                Polytempo_StoredPreferences::getInstance()->getProps().setValue("tempoMapZoomY", zoomY);
             }
             break;
         

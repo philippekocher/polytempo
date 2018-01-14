@@ -33,7 +33,7 @@ Polytempo_TempoMapComponent::Polytempo_TempoMapComponent()
     coordinateSystem->setSynchronizedViewport(&tempoRuler,1);
     
     tempoMapCoordinateSystem = new Polytempo_TempoMapCoordinateSystem(coordinateSystem);
-    tempoMapCoordinateSystem->setBounds(Rectangle<int> (2800, 2800));
+    tempoMapCoordinateSystem->setBounds(Rectangle<int> (2800, 10000));
     coordinateSystem->setViewedComponent(tempoMapCoordinateSystem, false);
     
     addAndMakeVisible(timeRuler);
@@ -63,7 +63,7 @@ void Polytempo_TempoMapComponent::resized()
 {
     Rectangle<int> r (getLocalBounds());
     
-    coordinateSystem->setBounds(r.withTrimmedBottom(40).withTrimmedLeft(65).withTrimmedRight(1));
-    timeRuler.setBounds(r.removeFromBottom(40).withTrimmedLeft(65).withTrimmedRight(1));
-    tempoRuler.setBounds(r.removeFromLeft(65).withTrimmedLeft(5));
+    coordinateSystem->setBounds(r.withTrimmedBottom(40).withTrimmedLeft(70).withTrimmedRight(1));
+    timeRuler.setBounds(r.removeFromBottom(40).withTrimmedLeft(70).withTrimmedRight(1));
+    tempoRuler.setBounds(r.removeFromLeft(70).withTrimmedLeft(5));
 }

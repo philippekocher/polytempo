@@ -62,7 +62,7 @@ Polytempo_TimeRuler::Polytempo_TimeRuler()
 {
     setScrollBarsShown(false, true);
     setViewedComponent(&rulerComponent, false);
-    rulerComponent.setBounds (Rectangle<int> (2800, 40));
+    rulerComponent.setBounds(Rectangle<int> (2800, 40));
 }
 
 int Polytempo_TimeRuler::getIncrementForZoom(float zoomX)
@@ -234,21 +234,17 @@ Polytempo_TempoRuler::Polytempo_TempoRuler()
 {
     setScrollBarsShown(false, false, true, true);
     setViewedComponent(&rulerComponent, false);
-    rulerComponent.setBounds(Rectangle<int>(65, 2800));
+    rulerComponent.setBounds(Rectangle<int>(65, 10000));
 }
 
 float Polytempo_TempoRuler::getIncrementForZoom(float zoom)
 {
-    if(zoom > 8000) return 0.00125;
-    if(zoom > 4000) return 0.0025;
-    if(zoom > 2000) return 0.005;
-    if(zoom > 1000) return 0.01;
-    if(zoom >  500) return 0.02;
-    if(zoom >  250) return 0.04;
-    if(zoom >  125) return 0.08;
-    if(zoom >   60) return 0.16;
-    if(zoom >   30) return 0.32;
-    return 0.64;
+    if(zoom > 8000) return 0.0025;
+    if(zoom > 4000) return 0.005;
+    if(zoom > 2000) return 0.01;
+    if(zoom > 1000) return 0.02;
+    if(zoom >  500) return 0.04;
+    return 0.08;
 }
 
 
@@ -262,7 +258,7 @@ void Polytempo_TempoRulerComponent::changeListenerCallback(ChangeBroadcaster *)
 {
     zoomY = Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("tempoMapZoomY");
     
-    repaint();
+    setSize(getWidth(), zoomY * 2);
 }
 
 void Polytempo_TempoRulerComponent::paint(Graphics& g)
@@ -279,23 +275,25 @@ void Polytempo_TempoRulerComponent::paint(Graphics& g)
     
     float increment = Polytempo_TempoRuler::getIncrementForZoom(zoomY);
     float tempo = 0;
+    int i = 0;
     
-    for(int i=0; i<100; i++)
+    while(tempo < 5.0f)
     {
         float y = getHeight() - TIMEMAP_OFFSET - tempo * zoomY;
         
-        if(i % 2 == 0)
+        if(i++ % 2 == 0)
         {
-            g.drawLine(45, y, getWidth(), y, 1.0);
-            g.drawText(String(Polytempo_TempoMeasurement::decodeTempoForUI(tempo),1), 18, y - 6, 30, 10, Justification::left);
+            g.drawLine(55, y, getWidth(), y, 0.5);
+            float num = Polytempo_TempoMeasurement::decodeTempoForUI(tempo);
+            int decimalPlaces = num < 10 ? 4 : num < 100 ? 3 : num < 1000 ? 2 : 1;
+            g.drawFittedText(String(num, decimalPlaces), 18, y - 6, 30, 10, Justification::left, 1);
         }
         else
         {
-            g.drawLine(50, y, getWidth(), y, 1.0);
+            g.drawLine(60, y, getWidth(), y, 0.5);
         }
         
         tempo += increment;
     }
-    
 }
 

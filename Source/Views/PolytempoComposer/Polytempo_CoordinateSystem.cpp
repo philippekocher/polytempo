@@ -78,7 +78,7 @@ Polytempo_CoordinateSystemComponent::Polytempo_CoordinateSystemComponent()
     playhead->setFill(Colours::black);
     addAndMakeVisible(playhead);
 
-    positionGrid = new Array < float >();
+    horizontalGrid = new Array < float >();
 }
 
 Polytempo_CoordinateSystemComponent::~Polytempo_CoordinateSystemComponent()
@@ -142,7 +142,7 @@ void Polytempo_TimeMapCoordinateSystem::paint(Graphics& g)
     
     // horizontal grid lines (position)
     
-    positionGrid->clearQuick();
+    horizontalGrid->clearQuick();
     
     Polytempo_Event* event;
     Rational pos;
@@ -154,7 +154,7 @@ void Polytempo_TimeMapCoordinateSystem::paint(Graphics& g)
         if(event->getType() == eventType_Beat)
         {
             y = getHeight() - TIMEMAP_OFFSET - pos * zoomY;
-            positionGrid->add(pos.toFloat());
+            horizontalGrid->add(pos.toFloat());
             if(int(event->getProperty(eventPropertyString_Pattern)) == 10)
                 thickness = 2.0;
             else if(int(event->getProperty(eventPropertyString_Pattern)) < 20)
@@ -339,16 +339,16 @@ void Polytempo_TimeMapCoordinateSystem::mouseDrag(const MouseEvent &event)
             time = int(time * 10) * 0.1;
  
             // quantize score position
-            for(int i=0;i<positionGrid->size()-1;i++)
+            for(int i=0;i<horizontalGrid->size()-1;i++)
             {
-                if(positionGrid->getUnchecked(i)   < scorePosition &&
-                   positionGrid->getUnchecked(i+1) > scorePosition)
+                if(horizontalGrid->getUnchecked(i)   < scorePosition &&
+                   horizontalGrid->getUnchecked(i+1) > scorePosition)
                 {
-                    if(fabs(positionGrid->getUnchecked(i) - scorePosition) <
-                       fabs(positionGrid->getUnchecked(i+1) - scorePosition))
-                        scorePosition = positionGrid->getUnchecked(i);
+                    if(fabs(horizontalGrid->getUnchecked(i) - scorePosition) <
+                       fabs(horizontalGrid->getUnchecked(i+1) - scorePosition))
+                        scorePosition = horizontalGrid->getUnchecked(i);
                     else
-                        scorePosition = positionGrid->getUnchecked(i+1);
+                        scorePosition = horizontalGrid->getUnchecked(i+1);
                     break;
                 }
             }
@@ -380,13 +380,16 @@ void Polytempo_TempoMapCoordinateSystem::changeListenerCallback(ChangeBroadcaste
     
     float x = (viewport->getViewPositionX() - TIMEMAP_OFFSET) / zoomX;
     float y = (getHeight() - viewport->getViewPositionY() - TIMEMAP_OFFSET - viewport->getMaximumVisibleHeight()) / zoomY;
-    
+
     zoomX = Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("zoomX");
     zoomY = Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("tempoMapZoomY");
-    
+
+    setSize(getWidth(), zoomY * 2);
     repaint();
-    
+
     viewport->setViewPosition(TIMEMAP_OFFSET + x*zoomX, getHeight() - y*zoomY - TIMEMAP_OFFSET - viewport->getMaximumVisibleHeight());
+    
+    playhead->setSize(playhead->getWidth(), getHeight());
 }
 
 void Polytempo_TempoMapCoordinateSystem::paint(Graphics& g)
@@ -400,16 +403,25 @@ void Polytempo_TempoMapCoordinateSystem::paint(Graphics& g)
     
     // vertical grid lines (time)
     
-    int increment = Polytempo_TimeRuler::getIncrementForZoom(zoomX);
+    int timeIncrement = Polytempo_TimeRuler::getIncrementForZoom(zoomX);
     g.setColour(Colour(50,50,50));
     for(int i=0;i<100;i++)
-        g.drawVerticalLine(TIMEMAP_OFFSET + i * increment * zoomX, 0, getHeight());
+        g.drawVerticalLine(TIMEMAP_OFFSET + i * timeIncrement * zoomX, 0, getHeight());
     
     
     // horizontal grid lines (tempo)
+
+    horizontalGrid->clearQuick();
     
-    // cf. tempo ruler
+    float tempoIncrement = Polytempo_TempoRuler::getIncrementForZoom(zoomY);
+    float tempo = 0;
     
+    while(tempo < 5.0f)
+    {
+        float y = getHeight() - TIMEMAP_OFFSET - tempo * zoomY;
+        g.drawLine(0, y, getWidth(), y, 0.5);
+        tempo += tempoIncrement;
+    }
     
     // control points and curve
     
