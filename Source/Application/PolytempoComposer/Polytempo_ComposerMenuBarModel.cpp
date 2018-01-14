@@ -127,6 +127,7 @@ PopupMenu Polytempo_ComposerMenuBarModel::getMenuForIndex (int menuIndex, const 
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::adjustTime);
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::adjustPosition);
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::adjustTempo);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::alignWithCursor);
     }
     else if (menuName == "View")
     {
@@ -224,6 +225,7 @@ void Polytempo_ComposerMenuBarModel::getAllCommands (Array <CommandID>& commands
         Polytempo_CommandIDs::adjustTime,
         Polytempo_CommandIDs::adjustPosition,
         Polytempo_CommandIDs::adjustTempo,
+        Polytempo_CommandIDs::alignWithCursor,
         Polytempo_CommandIDs::removeControlPoint,
         
         Polytempo_CommandIDs::aboutWindow,
@@ -347,6 +349,12 @@ void Polytempo_ComposerMenuBarModel::getCommandInfo(CommandID commandID, Applica
         case Polytempo_CommandIDs::adjustTempo:
             result.setInfo ("Adjust Tempo", String::empty, infoCategory, 0);
             result.setActive(composition->getSelectedControlPointIndex() > 0);
+            break;
+            
+        case Polytempo_CommandIDs::alignWithCursor:
+            result.setInfo ("Align With Cursor", String::empty, infoCategory, 0);
+            result.setActive(composition->getSelectedControlPointIndex() > 0 &&
+                             !Polytempo_ScoreScheduler::getInstance()->isRunning());
             break;
             
         case Polytempo_CommandIDs::removeControlPoint:
@@ -542,6 +550,10 @@ bool Polytempo_ComposerMenuBarModel::perform (const InvocationInfo& info)
             
         case Polytempo_CommandIDs::adjustTempo:
             composition->getSelectedSequence()->adjustTempo(composition->getSelectedControlPointIndex());
+            break;
+            
+        case Polytempo_CommandIDs::alignWithCursor:
+            composition->getSelectedSequence()->setControlPointPosition(composition->getSelectedControlPointIndex(), Polytempo_ScoreScheduler::getInstance()->getScoreTime() * 0.001f, -1);
             break;
             
         case Polytempo_CommandIDs::removeControlPoint:
