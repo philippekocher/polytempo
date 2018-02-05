@@ -89,10 +89,10 @@ PopupMenu Polytempo_ComposerMenuBarModel::getMenuForIndex (int /*menuIndex*/, co
 #ifdef WIN32
     if (menuName == "PolytempoNetwork")
     {
-        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::aboutWindow);
-        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::preferencesWindow);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::aboutWindow);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::preferencesWindow);
         menu.addSeparator();
-        menu.addCommandItem(&commandManager, StandardApplicationCommandIDs::quit);
+        menu.addCommandItem(commandManager, StandardApplicationCommandIDs::quit);
     }
 #endif
     if (menuName == "File")
