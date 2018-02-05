@@ -340,8 +340,8 @@ void Polytempo_Event::setProperty(String key, var value)
     {
         float t = float(value);
         
-        if(t > 0.0f)      time = t * 1000.0f + 0.5f;
-        else if(t < 0.0f) time = t * 1000.0f - 0.5f;
+        if(t > 0.0f)      time = int(t * 1000.0f + 0.5f);
+        else if(t < 0.0f) time = int(t * 1000.0f - 0.5f);
         else              time = 0;
     }
     else if(key == "position")

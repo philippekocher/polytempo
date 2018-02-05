@@ -139,8 +139,8 @@ void Polytempo_TimeRulerComponent::paint(Graphics& g)
             label = "";
             label << String(hour) << ":" << String(min).paddedLeft('0',2) << ":" << String(sec%60).paddedLeft('0',2);
         }
-        g.drawVerticalLine(TIMEMAP_OFFSET + sec * zoomX, 0, getHeight());
-        g.drawText(label, TIMEMAP_OFFSET + 2 + sec * zoomX, 1, 50, 12, Justification::left);
+        g.drawVerticalLine(TIMEMAP_OFFSET + int(sec * zoomX), 0, getHeight());
+        g.drawText(label, TIMEMAP_OFFSET + 2 + int(sec * zoomX), 1, 50, 12, Justification::left);
 
         sec += increment;
     }
@@ -219,7 +219,7 @@ void Polytempo_PositionRulerComponent::paint(Graphics& g)
                 labelOffset = 0;
             }
             label = event->getProperty("value");
-            g.drawFittedText(label, 18+labelOffset, getHeight() - TIMEMAP_OFFSET - 6 - pos * zoomY, 10, 10, Justification::left, 1, 0.1);
+            g.drawFittedText(label, 18+labelOffset, getHeight() - TIMEMAP_OFFSET - 6 - int(pos * zoomY), 10, 10, Justification::left, 1, 0.1);
             
             labelOffset += 12;
         }
@@ -258,7 +258,7 @@ void Polytempo_TempoRulerComponent::changeListenerCallback(ChangeBroadcaster *)
 {
     zoomY = Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("tempoMapZoomY");
     
-    setSize(getWidth(), zoomY * 2);
+    setSize(getWidth(), int(zoomY * 2));
 }
 
 void Polytempo_TempoRulerComponent::paint(Graphics& g)
@@ -279,7 +279,7 @@ void Polytempo_TempoRulerComponent::paint(Graphics& g)
     
     while(tempo < 5.0f)
     {
-        float y = getHeight() - TIMEMAP_OFFSET - tempo * zoomY;
+        int y = getHeight() - TIMEMAP_OFFSET - int(tempo * zoomY);
         
         if(i++ % 2 == 0)
         {

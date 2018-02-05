@@ -63,16 +63,16 @@ void Polytempo_ComposerToolbarComponent::paint (Graphics& g)
     g.setColour(Colour(170,170,170));
     g.drawHorizontalLine(getHeight() - 1, 0, getWidth());
     
-    g.drawFittedText("Tempo Measurement: "+Polytempo_TempoMeasurement::getMeasurementAsString(), getWidth() * 0.5 - 50, 8, 100, 20, Justification::centred, 2);
+    g.drawFittedText("Tempo Measurement: "+Polytempo_TempoMeasurement::getMeasurementAsString(), int(getWidth() * 0.5) - 50, 8, 100, 20, Justification::centred, 2);
 }
 
 void Polytempo_ComposerToolbarComponent::resized()
 {
-    showTimeMapButton->setBounds  (5,  (getHeight() - 18) * 0.5, 80, 18);
-    showTempoMapButton->setBounds (85, (getHeight() - 18) * 0.5, 80, 18);
+    showTimeMapButton->setBounds  (5,  int((getHeight() - 18) * 0.5), 80, 18);
+    showTempoMapButton->setBounds (85, int((getHeight() - 18) * 0.5), 80, 18);
     
-    showBeatPatternListButton->setBounds (getWidth() - 165, (getHeight() - 18) * 0.5, 80, 18);
-    showPointEditorButton->setBounds     (getWidth() - 85,  (getHeight() - 18) * 0.5, 80, 18);
+    showBeatPatternListButton->setBounds (getWidth() - 165, int((getHeight() - 18) * 0.5), 80, 18);
+    showPointEditorButton->setBounds     (getWidth() - 85,  int((getHeight() - 18) * 0.5), 80, 18);
 }
 
 void Polytempo_ComposerToolbarComponent::buttonClicked(Button* button)

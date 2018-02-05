@@ -35,7 +35,7 @@ void Polytempo_ListComponent::resized()
 
 int Polytempo_ListComponent::getColumnAutoSizeWidth(int columnId)
 {
-    int width = getWidth() * 0.25; // 4 columns
+    int width = int(getWidth() * 0.25); // 4 columns
     return width;// > 150 ? 150 : width;
 }
 

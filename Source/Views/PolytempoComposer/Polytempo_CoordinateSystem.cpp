@@ -120,7 +120,7 @@ void Polytempo_TimeMapCoordinateSystem::changeListenerCallback(ChangeBroadcaster
     
     repaint();
     
-    viewport->setViewPosition(TIMEMAP_OFFSET + x*zoomX, getHeight() - y*zoomY - TIMEMAP_OFFSET - viewport->getMaximumVisibleHeight());
+    viewport->setViewPosition(TIMEMAP_OFFSET + int(x*zoomX), getHeight() - int(y*zoomY) - TIMEMAP_OFFSET - viewport->getMaximumVisibleHeight());
 }
 
 void Polytempo_TimeMapCoordinateSystem::paint(Graphics& g)
@@ -137,7 +137,7 @@ void Polytempo_TimeMapCoordinateSystem::paint(Graphics& g)
     int increment = Polytempo_TimeRuler::getIncrementForZoom(zoomX);
     g.setColour(Colour(50,50,50));
     for(int i=0;i<100;i++)
-        g.drawVerticalLine(TIMEMAP_OFFSET + i * increment * zoomX, 0, getHeight());
+        g.drawVerticalLine(TIMEMAP_OFFSET + int(i * increment * zoomX), 0, getHeight());
     
     
     // horizontal grid lines (position)
@@ -192,8 +192,8 @@ void Polytempo_TimeMapCoordinateSystem::paintSequence(Graphics& g, Polytempo_Seq
     int i = -1;
     while((controlPoint = sequence->getControlPoint(++i)) != nullptr)
     {
-        int x = TIMEMAP_OFFSET + controlPoint->time * zoomX;
-        int y = getHeight() - TIMEMAP_OFFSET - controlPoint->position * zoomY;
+        int x = TIMEMAP_OFFSET + int(controlPoint->time * zoomX);
+        int y = getHeight() - TIMEMAP_OFFSET - int(controlPoint->position * zoomY);
 
         
         // line segment between control points
@@ -384,10 +384,10 @@ void Polytempo_TempoMapCoordinateSystem::changeListenerCallback(ChangeBroadcaste
     zoomX = Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("zoomX");
     zoomY = Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("tempoMapZoomY");
 
-    setSize(getWidth(), zoomY * 2);
+    setSize(getWidth(), int(zoomY * 2));
     repaint();
 
-    viewport->setViewPosition(TIMEMAP_OFFSET + x*zoomX, getHeight() - y*zoomY - TIMEMAP_OFFSET - viewport->getMaximumVisibleHeight());
+    viewport->setViewPosition(TIMEMAP_OFFSET + int(x*zoomX), getHeight() - int(y*zoomY) - TIMEMAP_OFFSET - viewport->getMaximumVisibleHeight());
     
     playhead->setSize(playhead->getWidth(), getHeight());
 }
@@ -406,7 +406,7 @@ void Polytempo_TempoMapCoordinateSystem::paint(Graphics& g)
     int timeIncrement = Polytempo_TimeRuler::getIncrementForZoom(zoomX);
     g.setColour(Colour(50,50,50));
     for(int i=0;i<100;i++)
-        g.drawVerticalLine(TIMEMAP_OFFSET + i * timeIncrement * zoomX, 0, getHeight());
+        g.drawVerticalLine(TIMEMAP_OFFSET + int(i * timeIncrement * zoomX), 0, getHeight());
     
     
     // horizontal grid lines (tempo)

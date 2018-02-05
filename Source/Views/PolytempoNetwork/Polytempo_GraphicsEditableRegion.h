@@ -66,6 +66,7 @@ private:
 	void AddFontSizeToMenu(PopupMenu* m, int fontSize) const;
 	Image CreateImageWithSolidBackground(Image image, int targetWidth, int targetHeight) const;
 
+    
 protected:
 	Rectangle<int> targetArea;
 

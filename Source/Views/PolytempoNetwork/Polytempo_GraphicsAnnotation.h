@@ -9,7 +9,9 @@
 */
 
 #pragma once
+
 #include "JuceHeader.h"
+
 #define STANDARD_FONT_SIZE 40.0f
 
 class Polytempo_GraphicsAnnotation
@@ -39,4 +41,7 @@ public:
 	Path freeHandPath;
 	String text;
 	float fontSize;
+
+private:
+
 };

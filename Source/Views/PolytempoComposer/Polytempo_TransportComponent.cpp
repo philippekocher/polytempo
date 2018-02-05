@@ -71,17 +71,17 @@ void Polytempo_TransportComponent::paint (Graphics& g)
     g.drawHorizontalLine(0,0,getWidth());
     
     g.setColour(Colour(150,150,150));
-    g.drawText("Tempo x", 320, getHeight() * 0.25, 100, 20, Justification::left);
+    g.drawText("Tempo x", 320, int(getHeight() * 0.25), 100, 20, Justification::left);
 }
 
 void Polytempo_TransportComponent::resized()
 {
-    startButton->setBounds            (5,  (getHeight() - 22) * 0.5, 31, 22);
-    returnToLocatorButton->setBounds  (36, (getHeight() - 22) * 0.5, 31, 22);
-    returnToZeroButton->setBounds     (67, (getHeight() - 22) * 0.5, 32, 22);
+    startButton->setBounds            (5,  int((getHeight() - 22) * 0.5), 31, 22);
+    returnToLocatorButton->setBounds  (36, int((getHeight() - 22) * 0.5), 31, 22);
+    returnToZeroButton->setBounds     (67, int((getHeight() - 22) * 0.5), 32, 22);
     
-    timeTextbox->setBounds            (140, (getHeight() - 28) * 0.5, 145, 29);
-    tempoFactorTextbox->setBounds     (380, (getHeight() - 28) * 0.5, 50, 29);
+    timeTextbox->setBounds            (140, int((getHeight() - 28) * 0.5), 145, 29);
+    tempoFactorTextbox->setBounds     (380, int((getHeight() - 28) * 0.5), 50, 29);
 }
 
 void Polytempo_TransportComponent::buttonClicked(Button* button)
@@ -99,7 +99,7 @@ void Polytempo_TransportComponent::labelTextChanged (Label* label)
 {
     if(label == timeTextbox)
     {
-        Polytempo_ScoreScheduler::getInstance()->storeLocator(Polytempo_Textbox::stringToTime(label->getText()) * 1000.0f);
+        Polytempo_ScoreScheduler::getInstance()->storeLocator(int(Polytempo_Textbox::stringToTime(label->getText()) * 1000.0f));
         Polytempo_ScoreScheduler::getInstance()->gotoTime(Polytempo_Event::makeEvent(eventType_GotoTime, Polytempo_Textbox::stringToTime(label->getText())));
     }
     else if(label == tempoFactorTextbox)

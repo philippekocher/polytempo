@@ -11,7 +11,8 @@
 #include "../../../POLYTEMPO NETWORK/JuceLibraryCode/JuceHeader.h"
 #include "Polytempo_GraphicsEditableRegion.h"
 #include "Polytempo_GraphicsAnnotationManager.h"
-#include <string>
+
+//#include <string>
 
 //==============================================================================
 Polytempo_GraphicsEditableRegion::Polytempo_GraphicsEditableRegion()
@@ -108,8 +109,8 @@ void Polytempo_GraphicsEditableRegion::paintAnnotation(Graphics& g, const Polyte
 	}
 
 	if(anchorFlag)
-	{
-		g.setColour(anchorColor);
+	{		
+        g.setColour(anchorColor);
 		g.fillRoundedRectangle(annotation->referencePoint.getX() - 8.0f, annotation->referencePoint.getY() - 8.0f, 16.0f, 16.0f, 4.0f);
 	}
 }
