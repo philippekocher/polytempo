@@ -87,7 +87,7 @@ public:
         owner->mouseDownInRow(rowNumber, event);
     }
     
-    void mouseDoubleClick(const MouseEvent& event)
+    void mouseDoubleClick(const MouseEvent& /*event*/)
     {
         showEditor();
     }

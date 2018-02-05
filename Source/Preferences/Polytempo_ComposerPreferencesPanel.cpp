@@ -146,10 +146,10 @@ public:
     
     /* text editor & button listener
      --------------------------------------- */
-    void textEditorTextChanged(TextEditor& editor)
+    void textEditorTextChanged(TextEditor&)
     {}
     
-    void textEditorReturnKeyPressed(TextEditor& editor)
+    void textEditorReturnKeyPressed(TextEditor&)
     {
         Component::unfocusAllComponents();
     }
@@ -193,7 +193,7 @@ public:
         }
     }
     
-    void buttonClicked(Button* button)
+    void buttonClicked(Button*)
     {}
     
     void buttonStateChanged(Button&)

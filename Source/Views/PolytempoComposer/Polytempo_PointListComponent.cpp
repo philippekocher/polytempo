@@ -137,7 +137,7 @@ void Polytempo_PointListComponent::selectedRowsChanged(int lastRowSelected)
     composition->updateContent();
 }
 
-void Polytempo_PointListComponent::paintCell(Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected)
+void Polytempo_PointListComponent::paintCell(Graphics& /*g*/, int /*rowNumber*/, int /*columnId*/, int /*width*/, int /*height*/, bool /*rowIsSelected*/)
 {}
 
 Component* Polytempo_PointListComponent::refreshComponentForCell(int rowNumber, int columnId, bool rowIsSelected, Component* existingComponentToUpdate)

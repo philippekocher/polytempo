@@ -108,7 +108,7 @@ Polytempo_TimeMapCoordinateSystem::Polytempo_TimeMapCoordinateSystem(Viewport *v
     Polytempo_StoredPreferences::getInstance()->getProps().addChangeListener(this);
 }
 
-void Polytempo_TimeMapCoordinateSystem::changeListenerCallback(ChangeBroadcaster* bc)
+void Polytempo_TimeMapCoordinateSystem::changeListenerCallback(ChangeBroadcaster*)
 {
     // scroll friendly zoom
     
@@ -374,7 +374,7 @@ Polytempo_TempoMapCoordinateSystem::Polytempo_TempoMapCoordinateSystem(Viewport 
     Polytempo_StoredPreferences::getInstance()->getProps().addChangeListener(this);
 }
 
-void Polytempo_TempoMapCoordinateSystem::changeListenerCallback(ChangeBroadcaster* bc)
+void Polytempo_TempoMapCoordinateSystem::changeListenerCallback(ChangeBroadcaster*)
 {
     // scroll friendly zoom
     

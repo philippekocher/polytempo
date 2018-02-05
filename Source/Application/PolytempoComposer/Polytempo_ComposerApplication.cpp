@@ -36,7 +36,7 @@
 
 Polytempo_ComposerApplication::Polytempo_ComposerApplication() {}
     
-void Polytempo_ComposerApplication::initialise(const String& commandLine)
+void Polytempo_ComposerApplication::initialise(const String& /*commandLine*/)
 {
     commandManager = new ApplicationCommandManager();
     commandManager->registerAllCommandsForTarget(this);
@@ -118,7 +118,7 @@ void Polytempo_ComposerApplication::applicationShouldQuit()
     quit();
 }
     
-void Polytempo_ComposerApplication::anotherInstanceStarted(const String& commandLine)
+void Polytempo_ComposerApplication::anotherInstanceStarted(const String& /*commandLine*/)
 {
     // When another instance of the app is launched while this one is running,
     // this method is invoked, and the commandLine parameter tells you what

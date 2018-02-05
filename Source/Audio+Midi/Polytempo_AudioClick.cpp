@@ -69,7 +69,7 @@ public:
         angleDelta = cyclesPerSample * 2.0 * double_Pi;
     }
     
-    void stopNote (float velocity, bool allowTailOff)
+    void stopNote (float /*velocity*/, bool /*allowTailOff*/)
     {
         if (tailOff == 0.0) tailOff = 1.0;
         // we only need to begin a tail-off if it's not already doing so

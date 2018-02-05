@@ -81,7 +81,7 @@ StringArray Polytempo_ComposerMenuBarModel::getMenuBarNames()
     return StringArray (names);
 }
 
-PopupMenu Polytempo_ComposerMenuBarModel::getMenuForIndex (int menuIndex, const String& menuName)
+PopupMenu Polytempo_ComposerMenuBarModel::getMenuForIndex (int /*menuIndex*/, const String& menuName)
 {
     ApplicationCommandManager* commandManager = &Polytempo_ComposerApplication::getCommandManager();
     PopupMenu menu;
@@ -167,7 +167,7 @@ PopupMenu Polytempo_ComposerMenuBarModel::getMenuForIndex (int menuIndex, const 
     return menu;
 }
 
-void Polytempo_ComposerMenuBarModel::menuItemSelected (int menuID, int topLevelMenuIndex)
+void Polytempo_ComposerMenuBarModel::menuItemSelected (int menuID, int /*topLevelMenuIndex*/)
 {
     int fileIndex = menuID - Polytempo_CommandIDs::openRecent;
     if(fileIndex >= 0)

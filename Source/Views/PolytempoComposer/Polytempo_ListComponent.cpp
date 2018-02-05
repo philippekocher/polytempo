@@ -33,7 +33,7 @@ void Polytempo_ListComponent::resized()
     table.autoSizeAllColumns();
 }
 
-int Polytempo_ListComponent::getColumnAutoSizeWidth(int columnId)
+int Polytempo_ListComponent::getColumnAutoSizeWidth(int /*columnId*/)
 {
     int width = int(getWidth() * 0.25); // 4 columns
     return width;// > 150 ? 150 : width;
@@ -64,7 +64,7 @@ void Polytempo_ListComponent::setSelection(int rowNumber, bool focus)
     if(focus) focusRow = rowNumber;
 }
 
-void Polytempo_ListComponent::paintRowBackground(Graphics& g, int rowNumber, int width, int height, bool rowIsSelected)
+void Polytempo_ListComponent::paintRowBackground(Graphics& g, int /*rowNumber*/, int /*width*/, int /*height*/, bool rowIsSelected)
 {
     if(rowIsSelected)
         g.fillAll(Colour(235,235,255));
