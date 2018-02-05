@@ -42,11 +42,11 @@ void calculateBezierPoints(Polytempo_ControlPoint* cp1, Polytempo_ControlPoint* 
     
     //double weight = 0.333; // TODO: take tempoInWeight and tempoOutWeight
     
-    p1->x = p0->x + dist * cp1->tempoOutWeight * cos(theta1);
-    p1->y = p0->y + dist * cp1->tempoOutWeight * sin(theta1);
+    p1->x = p0->x + float(dist * cp1->tempoOutWeight * cos(theta1));
+    p1->y = p0->y + float(dist * cp1->tempoOutWeight * sin(theta1));
     
-    p2->x = p3->x - dist * cp2->tempoInWeight * cos(theta2);
-    p2->y = p3->y - dist * cp2->tempoInWeight * sin(theta2);
+    p2->x = p3->x - float(dist * cp2->tempoInWeight * cos(theta2));
+    p2->y = p3->y - float(dist * cp2->tempoInWeight * sin(theta2));
 }
 
 Array < Point < float >* > Polytempo_TempoInterpolation::getPoints(int num, Polytempo_ControlPoint* cp1, Polytempo_ControlPoint* cp2)
@@ -63,15 +63,15 @@ Array < Point < float >* > Polytempo_TempoInterpolation::getPoints(int num, Poly
         t = float(i) * 1/(num-1);
         point = new Point<float>();
         
-        point->x = (-1 * p0.x + 3 * p1.x - 3 * p2.x + p3.x) * t * t * t +
+        point->x = float((-1 * p0.x + 3 * p1.x - 3 * p2.x + p3.x) * t * t * t +
         ( 3 * p0.x - 6 * p1.x + 3 * p2.x) * t * t +
         (-3 * p0.x + 3 * p1.x) * t +
-        p0.x;
+        p0.x);
         
-        point->y = (-1 * p0.y + 3 * p1.y - 3 * p2.y + p3.y) * t * t * t +
+        point->y = float((-1 * p0.y + 3 * p1.y - 3 * p2.y + p3.y) * t * t * t +
         ( 3 * p0.y - 6 * p1.y + 3 * p2.y) * t * t +
         (-3 * p0.y + 3 * p1.y) * t +
-        p0.y;
+        p0.y);
         
         result.add(point);
     }
@@ -93,13 +93,13 @@ Array < float > Polytempo_TempoInterpolation::getTempos(int num, Polytempo_Contr
     {
         t = float(i) * 1/(num-1);
         
-        mx = 3 * (1 - t) * (1 - t) * (p1.x - p0.x) +
+        mx = float(3 * (1 - t) * (1 - t) * (p1.x - p0.x) +
         6 * (1 - t) * t * (p2.x - p1.x) +
-        3 * t * t * (p3.x - p2.x);
+        3 * t * t * (p3.x - p2.x));
         
-        my = 3 * (1 - t) * (1 - t) * (p1.y - p0.y) +
+        my = float(3 * (1 - t) * (1 - t) * (p1.y - p0.y) +
         6 * (1 - t) * t * (p2.y - p1.y) +
-        3 * t * t * (p3.y - p2.y);
+        3 * t * t * (p3.y - p2.y));
         
         tempo = 1/(mx/my);
         
@@ -160,7 +160,7 @@ float Polytempo_TempoInterpolation::getTime(Rational pos, Polytempo_ControlPoint
             incr *= 0.5;
         }
     }
-    return x;
+    return float(x);
 }
 
 
@@ -195,13 +195,13 @@ float Polytempo_TempoInterpolation::getTempo(Rational pos, Polytempo_ControlPoin
         if (fabs(y-y0) < epsilon)
         {
             // calculate only when x has been found
-            mx = 3 * (1 - t) * (1 - t) * (p1.x - p0.x) +
+            mx = float(3 * (1 - t) * (1 - t) * (p1.x - p0.x) +
             6 * (1 - t) * t * (p2.x - p1.x) +
-            3 * t * t * (p3.x - p2.x);
+            3 * t * t * (p3.x - p2.x));
             
-            my = 3 * (1 - t) * (1 - t) * (p1.y - p0.y) +
+            my = float(3 * (1 - t) * (1 - t) * (p1.y - p0.y) +
             6 * (1 - t) * t * (p2.y - p1.y) +
-            3 * t * t * (p3.y - p2.y);
+            3 * t * t * (p3.y - p2.y));
             
             tempo = 1/(mx/my);
             
@@ -233,13 +233,13 @@ bool Polytempo_TempoInterpolation::validateCurve(Polytempo_ControlPoint *cp1, Po
     {
         t = float(i) * 1/num;
 
-        mx = 3 * (1 - t) * (1 - t) * (p1.x - p0.x) +
+        mx = float(3 * (1 - t) * (1 - t) * (p1.x - p0.x) +
         6 * (1 - t) * t * (p2.x - p1.x) +
-        3 * t * t * (p3.x - p2.x);
+        3 * t * t * (p3.x - p2.x));
         
-        my = 3 * (1 - t) * (1 - t) * (p1.y - p0.y) +
+        my = float(3 * (1 - t) * (1 - t) * (p1.y - p0.y) +
         6 * (1 - t) * t * (p2.y - p1.y) +
-        3 * t * t * (p3.y - p2.y);
+        3 * t * t * (p3.y - p2.y));
         
         if(mx*my <= 0) return false;
     }

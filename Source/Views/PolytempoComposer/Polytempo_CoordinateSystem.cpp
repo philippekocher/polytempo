@@ -102,8 +102,8 @@ Polytempo_TimeMapCoordinateSystem::Polytempo_TimeMapCoordinateSystem(Viewport *v
 {
     viewport = vp;
     
-    zoomX = Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("zoomX");
-    zoomY = Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("timeMapZoomY");
+    zoomX = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("zoomX"));
+    zoomY = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("timeMapZoomY"));
 
     Polytempo_StoredPreferences::getInstance()->getProps().addChangeListener(this);
 }
@@ -115,8 +115,8 @@ void Polytempo_TimeMapCoordinateSystem::changeListenerCallback(ChangeBroadcaster
     float x = (viewport->getViewPositionX() - TIMEMAP_OFFSET) / zoomX;
     float y = (getHeight() - viewport->getViewPositionY() - TIMEMAP_OFFSET - viewport->getMaximumVisibleHeight()) / zoomY;
     
-    zoomX = Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("zoomX");
-    zoomY = Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("timeMapZoomY");
+    zoomX = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("zoomX"));
+    zoomY = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("timeMapZoomY"));
     
     repaint();
     
@@ -236,8 +236,8 @@ void Polytempo_TimeMapCoordinateSystem::paintSequence(Graphics& g, Polytempo_Seq
         else
             g.setColour(Colour(0xffdddddd));
         
-        g.fillEllipse(x - CONTROL_POINT_SIZE * 0.5,
-                      y - CONTROL_POINT_SIZE * 0.5,
+        g.fillEllipse(x - CONTROL_POINT_SIZE * 0.5f,
+                      y - CONTROL_POINT_SIZE * 0.5f,
                       CONTROL_POINT_SIZE,
                       CONTROL_POINT_SIZE);
         
@@ -247,8 +247,8 @@ void Polytempo_TimeMapCoordinateSystem::paintSequence(Graphics& g, Polytempo_Seq
             g.setColour(sequenceColour.withMultipliedBrightness(brightness).withAlpha(alpha));
         
         float thickness = selected ? 2.0 : 1.0;
-        g.drawEllipse(x - CONTROL_POINT_SIZE * 0.5,
-                      y - CONTROL_POINT_SIZE * 0.5,
+        g.drawEllipse(x - CONTROL_POINT_SIZE * 0.5f,
+                      y - CONTROL_POINT_SIZE * 0.5f,
                       CONTROL_POINT_SIZE,
                       CONTROL_POINT_SIZE,
                       thickness);
@@ -336,7 +336,7 @@ void Polytempo_TimeMapCoordinateSystem::mouseDrag(const MouseEvent &event)
         if(!event.mods.isCommandDown())
         {
             // quantize time
-            time = int(time * 10) * 0.1;
+            time = int(time * 10) * 0.1f;
  
             // quantize score position
             for(int i=0;i<horizontalGrid->size()-1;i++)
@@ -368,8 +368,8 @@ Polytempo_TempoMapCoordinateSystem::Polytempo_TempoMapCoordinateSystem(Viewport 
 {
     viewport = vp;
 
-    zoomX = Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("zoomX");
-    zoomY = Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("tempoMapZoomY");
+    zoomX = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("zoomX"));
+    zoomY = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("tempoMapZoomY"));
 
     Polytempo_StoredPreferences::getInstance()->getProps().addChangeListener(this);
 }
@@ -381,8 +381,8 @@ void Polytempo_TempoMapCoordinateSystem::changeListenerCallback(ChangeBroadcaste
     float x = (viewport->getViewPositionX() - TIMEMAP_OFFSET) / zoomX;
     float y = (getHeight() - viewport->getViewPositionY() - TIMEMAP_OFFSET - viewport->getMaximumVisibleHeight()) / zoomY;
 
-    zoomX = Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("zoomX");
-    zoomY = Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("tempoMapZoomY");
+    zoomX = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("zoomX"));
+    zoomY = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("tempoMapZoomY"));
 
     setSize(getWidth(), int(zoomY * 2));
     repaint();
@@ -449,9 +449,9 @@ void Polytempo_TempoMapCoordinateSystem::paintSequence(Graphics& g, Polytempo_Se
     int i = -1;
     while((controlPoint = sequence->getControlPoint(++i)) != nullptr)
     {
-        int x = TIMEMAP_OFFSET + controlPoint->time * zoomX;
-        int y = i == 0 ? getHeight() - TIMEMAP_OFFSET - controlPoint->tempoOut * zoomY
-                      :  getHeight() - TIMEMAP_OFFSET - controlPoint->tempoIn * zoomY;
+        int x = TIMEMAP_OFFSET + int(controlPoint->time * zoomX);
+        int y = i == 0 ? getHeight() - TIMEMAP_OFFSET - int(controlPoint->tempoOut * zoomY)
+                      :  getHeight() - TIMEMAP_OFFSET - int(controlPoint->tempoIn * zoomY);
         
         
         // line segment between control points
@@ -490,7 +490,7 @@ void Polytempo_TempoMapCoordinateSystem::paintSequence(Graphics& g, Polytempo_Se
         // control points
         
         int y1 = i < sequence->getControlPoints()->size() - 1 ?
-                getHeight() - TIMEMAP_OFFSET - controlPoint->tempoOut * zoomY : y;
+                getHeight() - TIMEMAP_OFFSET - int(controlPoint->tempoOut * zoomY) : y;
         int height = abs(y-y1);
         y = y < y1 ? y : y1;
         
@@ -500,8 +500,8 @@ void Polytempo_TempoMapCoordinateSystem::paintSequence(Graphics& g, Polytempo_Se
         else
             g.setColour(Colour(0xffdddddd));
         
-        g.fillRoundedRectangle(x - CONTROL_POINT_SIZE * 0.5,
-                               y - CONTROL_POINT_SIZE * 0.5,
+        g.fillRoundedRectangle(x - CONTROL_POINT_SIZE * 0.5f,
+                               y - CONTROL_POINT_SIZE * 0.5f,
                                CONTROL_POINT_SIZE,
                                CONTROL_POINT_SIZE + height,
                                CONTROL_POINT_SIZE * 0.5);
@@ -512,8 +512,8 @@ void Polytempo_TempoMapCoordinateSystem::paintSequence(Graphics& g, Polytempo_Se
             g.setColour(sequenceColour.withMultipliedBrightness(brightness).withAlpha(alpha));
         
         float thickness = selected ? 2.0 : 1.0;
-        g.drawRoundedRectangle(x - CONTROL_POINT_SIZE * 0.5,
-                               y - CONTROL_POINT_SIZE * 0.5,
+        g.drawRoundedRectangle(x - CONTROL_POINT_SIZE * 0.5f,
+                               y - CONTROL_POINT_SIZE * 0.5f,
                                CONTROL_POINT_SIZE,
                                CONTROL_POINT_SIZE + height,
                                CONTROL_POINT_SIZE * 0.5,

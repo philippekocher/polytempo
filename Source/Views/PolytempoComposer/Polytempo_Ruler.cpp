@@ -104,12 +104,12 @@ int Polytempo_TimeRuler::getIncrementForZoom(float zoomX)
 Polytempo_TimeRulerComponent::Polytempo_TimeRulerComponent()
 {
     Polytempo_StoredPreferences::getInstance()->getProps().addChangeListener(this);
-    zoomX = Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("zoomX");
+    zoomX = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("zoomX"));
 }
 
 void Polytempo_TimeRulerComponent::changeListenerCallback(ChangeBroadcaster *)
 {
-    zoomX = Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("zoomX");
+    zoomX = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("zoomX"));
     
     repaint();
 }
@@ -161,12 +161,12 @@ Polytempo_PositionRuler::Polytempo_PositionRuler()
 Polytempo_PositionRulerComponent::Polytempo_PositionRulerComponent()
 {
     Polytempo_StoredPreferences::getInstance()->getProps().addChangeListener(this);
-    zoomY = Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("timeMapZoomY");
+    zoomY = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("timeMapZoomY"));
 }
 
 void Polytempo_PositionRulerComponent::changeListenerCallback(ChangeBroadcaster *)
 {
-    zoomY = Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("timeMapZoomY");
+    zoomY = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("timeMapZoomY"));
     
     repaint();
 }
@@ -219,7 +219,7 @@ void Polytempo_PositionRulerComponent::paint(Graphics& g)
                 labelOffset = 0;
             }
             label = event->getProperty("value");
-            g.drawFittedText(label, 18+labelOffset, getHeight() - TIMEMAP_OFFSET - 6 - int(pos * zoomY), 10, 10, Justification::left, 1, 0.1);
+            g.drawFittedText(label, 18+labelOffset, getHeight() - TIMEMAP_OFFSET - 6 - int(pos * zoomY), 10, 10, Justification::left, 1, 0.1f);
             
             labelOffset += 12;
         }
@@ -239,24 +239,24 @@ Polytempo_TempoRuler::Polytempo_TempoRuler()
 
 float Polytempo_TempoRuler::getIncrementForZoom(float zoom)
 {
-    if(zoom > 8000) return 0.0025;
-    if(zoom > 4000) return 0.005;
-    if(zoom > 2000) return 0.01;
-    if(zoom > 1000) return 0.02;
-    if(zoom >  500) return 0.04;
-    return 0.08;
+    if(zoom > 8000) return 0.0025f;
+    if(zoom > 4000) return 0.005f;
+    if(zoom > 2000) return 0.01f;
+    if(zoom > 1000) return 0.02f;
+    if(zoom >  500) return 0.04f;
+    return 0.08f;
 }
 
 
 Polytempo_TempoRulerComponent::Polytempo_TempoRulerComponent()
 {
     Polytempo_StoredPreferences::getInstance()->getProps().addChangeListener(this);
-    zoomY = Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("tempoMapZoomY");
+    zoomY = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("tempoMapZoomY"));
 }
 
 void Polytempo_TempoRulerComponent::changeListenerCallback(ChangeBroadcaster *)
 {
-    zoomY = Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("tempoMapZoomY");
+    zoomY = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("tempoMapZoomY"));
     
     setSize(getWidth(), int(zoomY * 2));
 }

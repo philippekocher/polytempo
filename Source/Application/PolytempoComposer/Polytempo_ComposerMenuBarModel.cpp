@@ -608,14 +608,14 @@ bool Polytempo_ComposerMenuBarModel::perform (const InvocationInfo& info)
             
             
         case Polytempo_CommandIDs::zoomInX:
-            zoomX = Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("zoomX") * 1.2;
+            zoomX = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("zoomX") * 1.2);
             zoomX = zoomX > 100 ? 100 : zoomX;
             Polytempo_StoredPreferences::getInstance()->getProps().setValue("zoomX", zoomX);
             break;
             
         case Polytempo_CommandIDs::zoomOutX:
-            zoomX = Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("zoomX") / 1.2;
-            zoomX = zoomX < 0.2 ? 0.2 : zoomX;
+            zoomX = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("zoomX") / 1.2);
+            zoomX = zoomX < 0.2f ? 0.2f : zoomX;
             Polytempo_StoredPreferences::getInstance()->getProps().setValue("zoomX", zoomX);
             break;
             
@@ -626,7 +626,7 @@ bool Polytempo_ComposerMenuBarModel::perform (const InvocationInfo& info)
             }
             else
             {
-                zoomY = Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("tempoMapZoomY") * 1.1;
+                zoomY = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("tempoMapZoomY") * 1.1);
                 zoomY = zoomY > 15000 ? 15000 : zoomY;
                 Polytempo_StoredPreferences::getInstance()->getProps().setValue("tempoMapZoomY", zoomY);
             }
@@ -639,7 +639,7 @@ bool Polytempo_ComposerMenuBarModel::perform (const InvocationInfo& info)
             }
             else
             {
-                zoomY = Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("tempoMapZoomY") / 1.1;
+                zoomY = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("tempoMapZoomY") / 1.1);
                 zoomY = zoomY < 500 ? 500 : zoomY;
                 Polytempo_StoredPreferences::getInstance()->getProps().setValue("tempoMapZoomY", zoomY);
             }

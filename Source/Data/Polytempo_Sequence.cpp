@@ -268,7 +268,7 @@ bool Polytempo_Sequence::allowAdjustTime(int index)
 
     Polytempo_ControlPoint *c0 = controlPoints[index-1];
     Polytempo_ControlPoint *c1 = controlPoints[index];
-    float meanTempo = (c0->tempoOut + c1->tempoIn) * 0.5;
+    float meanTempo = (c0->tempoOut + c1->tempoIn) * 0.5f;
 
     return validateControlPoint(index, c0->time + (c1->position - c0->position).toFloat() / meanTempo, c1->position);
 }
@@ -277,7 +277,7 @@ void Polytempo_Sequence::adjustTime(int index)
 {
     Polytempo_ControlPoint *c0 = controlPoints[index-1];
     Polytempo_ControlPoint *c1 = controlPoints[index];
-    float meanTempo = (c0->tempoOut + c1->tempoIn) * 0.5;
+    float meanTempo = (c0->tempoOut + c1->tempoIn) * 0.5f;
     
     if(!validateControlPoint(index, c0->time + (c1->position - c0->position).toFloat() / meanTempo, c1->position))
         DBG("invalid");
@@ -293,7 +293,7 @@ void Polytempo_Sequence::adjustPosition(int index)
 {
     Polytempo_ControlPoint *c0 = controlPoints[index-1];
     Polytempo_ControlPoint *c1 = controlPoints[index];
-    float meanTempo = (c0->tempoOut + c1->tempoIn) * 0.5;
+    float meanTempo = (c0->tempoOut + c1->tempoIn) * 0.5f;
     
     c1->position = Rational(c0->position.toFloat() + (c1->time - c0->time) * meanTempo);
     
