@@ -120,7 +120,7 @@ void Polytempo_ComposerMainView::setLeftComponent(componentType type)
     
     float position = float(stretchableManager.getItemCurrentPosition(1)) / getWidth();
     if(position > 0 && position < 1)
-        resizerBarPosition = float(stretchableManager.getItemCurrentPosition(1)) / getWidth() - stretchableManager.getItemCurrentRelativeSize(1); // to restore it later
+        resizerBarPosition = float(stretchableManager.getItemCurrentPosition(1) / getWidth() - stretchableManager.getItemCurrentRelativeSize(1)); // to restore it later
     
     if(leftComponentType == componentType_None)
     {
@@ -160,7 +160,7 @@ void Polytempo_ComposerMainView::setRightComponent(componentType type)
 
     float position = float(stretchableManager.getItemCurrentPosition(1)) / getWidth();
     if(position > 0 && position < 1)
-        resizerBarPosition = float(stretchableManager.getItemCurrentPosition(1)) / getWidth() - stretchableManager.getItemCurrentRelativeSize(1); // to restore it later
+        resizerBarPosition = float(stretchableManager.getItemCurrentPosition(1) / getWidth() - stretchableManager.getItemCurrentRelativeSize(1)); // to restore it later
 
     if(rightComponentType == componentType_None)
     {

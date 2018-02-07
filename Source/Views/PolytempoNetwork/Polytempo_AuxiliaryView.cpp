@@ -79,6 +79,11 @@ void Polytempo_AuxiliaryView::paint (Graphics& g)
     g.fillAll (Colours::white);   // clear the background
     
 	networkInfoView->repaint();
+
+    g.setColour(Colours::black);
+    g.drawHorizontalLine(275, 0.0f, (float)getWidth());
+    g.setColour(Colours::grey);
+    g.drawVerticalLine(0, 0.0f, (float)getHeight());
 }
 
 void Polytempo_AuxiliaryView::resized()
@@ -94,13 +99,13 @@ void Polytempo_AuxiliaryView::resized()
     markerBackwards->setBounds(10 + buttonWidth * 1, yPosition, buttonWidth, 20);
     markerForwards->setBounds (10 + buttonWidth * 2, yPosition, buttonWidth, 20);
     imageForwards->setBounds  (10 + buttonWidth * 3, yPosition, buttonWidth + widthCorrection, 20);
-    yPosition +=60;
+    yPosition +=55;
     
     timeTextbox->setBounds(10, yPosition, getWidth() - 20, 34);
-    yPosition +=80;
+    yPosition +=75;
     
     tempoFactorTextbox->setBounds(10, yPosition, getWidth() - 20, 34);
-	yPosition += 40;
+	yPosition += 70;
 
 	timeSyncControl->setBounds(10, yPosition, getWidth() - 20, 60);
 	yPosition += 70;

@@ -28,7 +28,6 @@ Polytempo_TimeSyncControl::~Polytempo_TimeSyncControl()
 void Polytempo_TimeSyncControl::paint (Graphics& g)
 {
     g.fillAll (Colours::white);   // clear the background
-	g.drawRect(0, 0, getWidth(), getHeight(), 1);
 }
 
 void Polytempo_TimeSyncControl::resized()

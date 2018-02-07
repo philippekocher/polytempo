@@ -68,7 +68,7 @@ void Polytempo_EventScheduler::deletePendingScoreEvents()
     deleteScoreEvents = true;
 }
 
-void Polytempo_EventScheduler::scheduleEvent(Polytempo_Event *event, bool deleteAfterUsage)
+void Polytempo_EventScheduler::scheduleEvent(Polytempo_Event *event)
 {
     if(event == nullptr) return;
     if(event->getType() == eventType_None) return;

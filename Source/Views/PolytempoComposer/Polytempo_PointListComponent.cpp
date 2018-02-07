@@ -27,6 +27,8 @@
 #include "Polytempo_PointListComponent.h"
 #include "../../Data/Polytempo_Composition.h"
 #include "../../Application/Polytempo_CommandIDs.h"
+#include "../../Misc/Polytempo_TempoMeasurement.h"
+
 
 Polytempo_PointListComponent::Polytempo_PointListComponent()
 {
@@ -74,10 +76,10 @@ String Polytempo_PointListComponent::getText(int rowNumber, int columnId)
             text = (controlPoint->position).toString();
             break;
         case 3:
-            text = String(controlPoint->tempoIn);
+            text = String(Polytempo_TempoMeasurement::decodeTempoForUI(controlPoint->tempoIn));
             break;
         case 4:
-            text = String(controlPoint->tempoOut);
+            text = String(Polytempo_TempoMeasurement::decodeTempoForUI(controlPoint->tempoOut));
             break;
         case 5:
             text = String(controlPoint->tempoInWeight);
@@ -105,10 +107,10 @@ void Polytempo_PointListComponent::setText(String text, int rowNumber, int colum
             sequence->setControlPointValues(rowNumber, -1, Rational(text), -1, -1, -1, -1);
             break;
         case 3:
-            sequence->setControlPointValues(rowNumber, -1, -1, text.getFloatValue(), -1, -1, -1);
+            sequence->setControlPointValues(rowNumber, -1, -1, Polytempo_TempoMeasurement::encodeTempoFromUI(text.getFloatValue()), -1, -1, -1);
             break;
         case 4:
-            sequence->setControlPointValues(rowNumber, -1, -1, -1, text.getFloatValue(), -1, -1);
+            sequence->setControlPointValues(rowNumber, -1, -1, -1, Polytempo_TempoMeasurement::encodeTempoFromUI(text.getFloatValue()), -1, -1);
             break;
         case 5:
             sequence->setControlPointValues(rowNumber, -1, -1, -1, -1, text.getFloatValue(), -1);
@@ -135,14 +137,12 @@ void Polytempo_PointListComponent::selectedRowsChanged(int lastRowSelected)
     composition->updateContent();
 }
 
-void Polytempo_PointListComponent::paintCell(Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected)
+void Polytempo_PointListComponent::paintCell(Graphics& /*g*/, int /*rowNumber*/, int /*columnId*/, int /*width*/, int /*height*/, bool /*rowIsSelected*/)
 {}
 
-Component* Polytempo_PointListComponent::refreshComponentForCell(int rowNumber, int columnId, bool rowIsSelected,
-                                    Component* existingComponentToUpdate)
+Component* Polytempo_PointListComponent::refreshComponentForCell(int rowNumber, int columnId, bool rowIsSelected, Component* existingComponentToUpdate)
 {
     EditableTextCustomComponent* textLabel = static_cast<EditableTextCustomComponent*> (existingComponentToUpdate);
-    
     
     // If an existing component is being passed-in for updating, we'll re-use it,
     // but if not, we'll have to create one.
@@ -171,6 +171,13 @@ Component* Polytempo_PointListComponent::refreshComponentForCell(int rowNumber, 
         textLabel->setColour(Label::textColourId, Colour(0xffaaaaaa));
         textLabel->setText("--", dontSendNotification);
     }
+    // tempo in or tempo out
+    else if(columnId == 3 || columnId == 4)
+    {
+        textLabel->setFont(Font (13.0f, rowIsSelected ? Font::bold : Font::plain));
+        textLabel->setColour(Label::textColourId, rowIsSelected ? Colour(0,0,0) : Colour(90,90,90));
+        textLabel->setText(getText(rowNumber, columnId), dontSendNotification);
+    }
     else
     {
         textLabel->setFont(Font (13.0f, rowIsSelected ? Font::bold : Font::plain));
@@ -198,8 +205,7 @@ void Polytempo_PointListComponent::showPopupMenu()
     m.addCommandItem(commandManager, Polytempo_CommandIDs::adjustTime);
     m.addCommandItem(commandManager, Polytempo_CommandIDs::adjustPosition);
     m.addCommandItem(commandManager, Polytempo_CommandIDs::adjustTempo);
-    
+    m.addCommandItem(commandManager, Polytempo_CommandIDs::alignWithCursor);
+
     m.show();
 }
-
-

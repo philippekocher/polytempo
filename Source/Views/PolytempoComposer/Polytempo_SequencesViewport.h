@@ -37,7 +37,7 @@ public:
     Polytempo_ColourButton(int index) : Button(String()), sequenceIndex(index)
     {}
     
-    void paintButton(Graphics &g, bool mouseOver, bool buttonDown) override
+    void paintButton(Graphics &g, bool /*mouseOver*/, bool /*buttonDown*/) override
     {
         Polytempo_Composition* composition = Polytempo_Composition::getInstance();
         

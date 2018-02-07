@@ -42,7 +42,7 @@ public:
     void scheduleScoreEvent(Polytempo_Event *event);
     void deletePendingScoreEvents();
 
-    void scheduleEvent(Polytempo_Event *event, bool deleteAfterUsage = true);
+    void scheduleEvent(Polytempo_Event *event);
 
     /* thread
      --------------------------------------- */

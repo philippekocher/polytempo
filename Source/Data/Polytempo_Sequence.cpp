@@ -25,6 +25,8 @@
 #include "Polytempo_Sequence.h"
 #include "Polytempo_Composition.h"
 #include "../Views/PolytempoComposer/Polytempo_ListComponent.h"
+#include "../Preferences/Polytempo_StoredPreferences.h"
+
 
 Polytempo_Sequence::Polytempo_Sequence()
 {}
@@ -266,7 +268,7 @@ bool Polytempo_Sequence::allowAdjustTime(int index)
 
     Polytempo_ControlPoint *c0 = controlPoints[index-1];
     Polytempo_ControlPoint *c1 = controlPoints[index];
-    float meanTempo = (c0->tempoOut + c1->tempoIn) * 0.5;
+    float meanTempo = (c0->tempoOut + c1->tempoIn) * 0.5f;
 
     return validateControlPoint(index, c0->time + (c1->position - c0->position).toFloat() / meanTempo, c1->position);
 }
@@ -275,7 +277,7 @@ void Polytempo_Sequence::adjustTime(int index)
 {
     Polytempo_ControlPoint *c0 = controlPoints[index-1];
     Polytempo_ControlPoint *c1 = controlPoints[index];
-    float meanTempo = (c0->tempoOut + c1->tempoIn) * 0.5;
+    float meanTempo = (c0->tempoOut + c1->tempoIn) * 0.5f;
     
     if(!validateControlPoint(index, c0->time + (c1->position - c0->position).toFloat() / meanTempo, c1->position))
         DBG("invalid");
@@ -291,7 +293,7 @@ void Polytempo_Sequence::adjustPosition(int index)
 {
     Polytempo_ControlPoint *c0 = controlPoints[index-1];
     Polytempo_ControlPoint *c1 = controlPoints[index];
-    float meanTempo = (c0->tempoOut + c1->tempoIn) * 0.5;
+    float meanTempo = (c0->tempoOut + c1->tempoIn) * 0.5f;
     
     c1->position = Rational(c0->position.toFloat() + (c1->time - c0->time) * meanTempo);
     
@@ -363,12 +365,22 @@ void Polytempo_Sequence::setSelectedBeatPattern(int index)
 
 void Polytempo_Sequence::addBeatPattern()
 {
-    insertBeatPatternAtIndex(beatPatterns.size(),"4/4",1,"+","");
+    String defaultBeatPattern = Polytempo_StoredPreferences::getInstance()->getProps().getValue("defaultBeatPattern");
+
+    StringArray tokens;
+    tokens.addTokens(defaultBeatPattern, false);
+    
+    insertBeatPatternAtIndex(beatPatterns.size(), tokens[0], tokens[1].getIntValue(), "+", "");
 }
 
 void Polytempo_Sequence::insertBeatPattern()
 {
-    insertBeatPatternAtIndex(selectedBeatPattern,"4/4",1,"+","");
+    String defaultBeatPattern = Polytempo_StoredPreferences::getInstance()->getProps().getValue("defaultBeatPattern");
+    
+    StringArray tokens;
+    tokens.addTokens(defaultBeatPattern, false);
+
+    insertBeatPatternAtIndex(selectedBeatPattern, tokens[0], tokens[1].getIntValue(), "+", "");
 }
 
 void Polytempo_Sequence::insertBeatPatternAtIndex(int index, const String& pattern, int repeats, const String& counter, const String& marker)

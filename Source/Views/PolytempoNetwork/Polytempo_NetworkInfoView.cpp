@@ -40,11 +40,7 @@ void Polytempo_NetworkInfoView::paint (Graphics& g)
 		attributedPeers.append(it.getValue() + "\n", Font(12.0f, Font::plain));
 	}
 
-	g.drawHorizontalLine(0, 0.0f, (float)getWidth());
-	attributedPeers.draw(g, Rectangle<int>(10, 10, getWidth()-20, getHeight()).toFloat());
-
-	g.setColour(Colours::grey);
-	g.drawVerticalLine(0, 0.0f, (float)getHeight());
+	attributedPeers.draw(g, Rectangle<int>(0, 10, getWidth(), getHeight()).toFloat());
 }
 
 void Polytempo_NetworkInfoView::resized()

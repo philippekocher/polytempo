@@ -32,7 +32,9 @@ Polytempo_DefaultPreferences::Polytempo_DefaultPreferences()
     setValue("timeMapZoomY", 20);
     setValue("tempoMapZoomY", 20);
     setValue("mainWindowContent", "400 0 0");
-    
+    setValue("tempoMeasurement", "1/1 1");
+    setValue("defaultBeatPattern", "4/4 1");
+
     // network
     setValue("broadcastSchedulerCommands", 1);
     setValue("showVisualMetro", 1);

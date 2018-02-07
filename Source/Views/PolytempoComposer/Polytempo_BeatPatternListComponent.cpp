@@ -127,7 +127,7 @@ void Polytempo_BeatPatternListComponent::selectedRowsChanged(int index)
     Polytempo_Composition::getInstance()->getSelectedSequence()->setSelectedBeatPattern(index);
 }
 
-void Polytempo_BeatPatternListComponent::paintCell(Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected)
+void Polytempo_BeatPatternListComponent::paintCell(Graphics& /*g*/, int /*rowNumber*/, int /*columnId*/, int /*width*/, int /*height*/, bool /*rowIsSelected*/)
 {}
 
 Component* Polytempo_BeatPatternListComponent::refreshComponentForCell(int rowNumber, int columnId, bool rowIsSelected, Component* existingComponentToUpdate)

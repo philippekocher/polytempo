@@ -74,7 +74,7 @@ Polytempo_MenuBarModel::~Polytempo_MenuBarModel()
 StringArray Polytempo_MenuBarModel::getMenuBarNames()
 {
 #if JUCE_MAC
-    const char* const names[] = { "File", "Edit", "View", "Scheduler", /*"Window",*/ "Help", 0 };
+    const char* const names[] = { "File", "Edit", "View", "Scheduler", /*"Window",*/ "Annotations", "Help", 0 };
 #else
     const char* const names[] = { "PolytempoNetwork", "File", "Edit", "View", "Scheduler", "Annotations", /*"Window",*/ "Help", 0 };
 #endif

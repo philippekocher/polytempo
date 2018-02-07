@@ -65,7 +65,8 @@ void Polytempo_CoordinateSystem::showPopupMenu()
     m.addCommandItem(commandManager, Polytempo_CommandIDs::adjustTime);
     m.addCommandItem(commandManager, Polytempo_CommandIDs::adjustPosition);
     m.addCommandItem(commandManager, Polytempo_CommandIDs::adjustTempo);
- 
+    m.addCommandItem(commandManager, Polytempo_CommandIDs::alignWithCursor);
+
     m.show();
 }
 
@@ -77,7 +78,7 @@ Polytempo_CoordinateSystemComponent::Polytempo_CoordinateSystemComponent()
     playhead->setFill(Colours::black);
     addAndMakeVisible(playhead);
 
-    positionGrid = new Array < float >();
+    horizontalGrid = new Array < float >();
 }
 
 Polytempo_CoordinateSystemComponent::~Polytempo_CoordinateSystemComponent()
@@ -101,25 +102,25 @@ Polytempo_TimeMapCoordinateSystem::Polytempo_TimeMapCoordinateSystem(Viewport *v
 {
     viewport = vp;
     
-    zoomX = Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("zoomX");
-    zoomY = Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("timeMapZoomY");
+    zoomX = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("zoomX"));
+    zoomY = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("timeMapZoomY"));
 
     Polytempo_StoredPreferences::getInstance()->getProps().addChangeListener(this);
 }
 
-void Polytempo_TimeMapCoordinateSystem::changeListenerCallback(ChangeBroadcaster* bc)
+void Polytempo_TimeMapCoordinateSystem::changeListenerCallback(ChangeBroadcaster*)
 {
     // scroll friendly zoom
     
     float x = (viewport->getViewPositionX() - TIMEMAP_OFFSET) / zoomX;
     float y = (getHeight() - viewport->getViewPositionY() - TIMEMAP_OFFSET - viewport->getMaximumVisibleHeight()) / zoomY;
     
-    zoomX = Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("zoomX");
-    zoomY = Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("timeMapZoomY");
+    zoomX = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("zoomX"));
+    zoomY = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("timeMapZoomY"));
     
     repaint();
     
-    viewport->setViewPosition(TIMEMAP_OFFSET + x*zoomX, getHeight() - y*zoomY - TIMEMAP_OFFSET - viewport->getMaximumVisibleHeight());
+    viewport->setViewPosition(TIMEMAP_OFFSET + int(x*zoomX), getHeight() - int(y*zoomY) - TIMEMAP_OFFSET - viewport->getMaximumVisibleHeight());
 }
 
 void Polytempo_TimeMapCoordinateSystem::paint(Graphics& g)
@@ -136,12 +137,12 @@ void Polytempo_TimeMapCoordinateSystem::paint(Graphics& g)
     int increment = Polytempo_TimeRuler::getIncrementForZoom(zoomX);
     g.setColour(Colour(50,50,50));
     for(int i=0;i<100;i++)
-        g.drawVerticalLine(TIMEMAP_OFFSET + i * increment * zoomX, 0, getHeight());
+        g.drawVerticalLine(TIMEMAP_OFFSET + int(i * increment * zoomX), 0, getHeight());
     
     
     // horizontal grid lines (position)
     
-    positionGrid->clearQuick();
+    horizontalGrid->clearQuick();
     
     Polytempo_Event* event;
     Rational pos;
@@ -153,7 +154,7 @@ void Polytempo_TimeMapCoordinateSystem::paint(Graphics& g)
         if(event->getType() == eventType_Beat)
         {
             y = getHeight() - TIMEMAP_OFFSET - pos * zoomY;
-            positionGrid->add(pos.toFloat());
+            horizontalGrid->add(pos.toFloat());
             if(int(event->getProperty(eventPropertyString_Pattern)) == 10)
                 thickness = 2.0;
             else if(int(event->getProperty(eventPropertyString_Pattern)) < 20)
@@ -191,8 +192,8 @@ void Polytempo_TimeMapCoordinateSystem::paintSequence(Graphics& g, Polytempo_Seq
     int i = -1;
     while((controlPoint = sequence->getControlPoint(++i)) != nullptr)
     {
-        int x = TIMEMAP_OFFSET + controlPoint->time * zoomX;
-        int y = getHeight() - TIMEMAP_OFFSET - controlPoint->position * zoomY;
+        int x = TIMEMAP_OFFSET + int(controlPoint->time * zoomX);
+        int y = getHeight() - TIMEMAP_OFFSET - int(controlPoint->position * zoomY);
 
         
         // line segment between control points
@@ -235,8 +236,8 @@ void Polytempo_TimeMapCoordinateSystem::paintSequence(Graphics& g, Polytempo_Seq
         else
             g.setColour(Colour(0xffdddddd));
         
-        g.fillEllipse(x - CONTROL_POINT_SIZE * 0.5,
-                      y - CONTROL_POINT_SIZE * 0.5,
+        g.fillEllipse(x - CONTROL_POINT_SIZE * 0.5f,
+                      y - CONTROL_POINT_SIZE * 0.5f,
                       CONTROL_POINT_SIZE,
                       CONTROL_POINT_SIZE);
         
@@ -246,8 +247,8 @@ void Polytempo_TimeMapCoordinateSystem::paintSequence(Graphics& g, Polytempo_Seq
             g.setColour(sequenceColour.withMultipliedBrightness(brightness).withAlpha(alpha));
         
         float thickness = selected ? 2.0 : 1.0;
-        g.drawEllipse(x - CONTROL_POINT_SIZE * 0.5,
-                      y - CONTROL_POINT_SIZE * 0.5,
+        g.drawEllipse(x - CONTROL_POINT_SIZE * 0.5f,
+                      y - CONTROL_POINT_SIZE * 0.5f,
                       CONTROL_POINT_SIZE,
                       CONTROL_POINT_SIZE,
                       thickness);
@@ -335,19 +336,19 @@ void Polytempo_TimeMapCoordinateSystem::mouseDrag(const MouseEvent &event)
         if(!event.mods.isCommandDown())
         {
             // quantize time
-            time = int(time * 10) * 0.1;
+            time = int(time * 10) * 0.1f;
  
             // quantize score position
-            for(int i=0;i<positionGrid->size()-1;i++)
+            for(int i=0;i<horizontalGrid->size()-1;i++)
             {
-                if(positionGrid->getUnchecked(i)   < scorePosition &&
-                   positionGrid->getUnchecked(i+1) > scorePosition)
+                if(horizontalGrid->getUnchecked(i)   < scorePosition &&
+                   horizontalGrid->getUnchecked(i+1) > scorePosition)
                 {
-                    if(fabs(positionGrid->getUnchecked(i) - scorePosition) <
-                       fabs(positionGrid->getUnchecked(i+1) - scorePosition))
-                        scorePosition = positionGrid->getUnchecked(i);
+                    if(fabs(horizontalGrid->getUnchecked(i) - scorePosition) <
+                       fabs(horizontalGrid->getUnchecked(i+1) - scorePosition))
+                        scorePosition = horizontalGrid->getUnchecked(i);
                     else
-                        scorePosition = positionGrid->getUnchecked(i+1);
+                        scorePosition = horizontalGrid->getUnchecked(i+1);
                     break;
                 }
             }
@@ -367,25 +368,28 @@ Polytempo_TempoMapCoordinateSystem::Polytempo_TempoMapCoordinateSystem(Viewport 
 {
     viewport = vp;
 
-    zoomX = Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("zoomX");
-    zoomY = Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("tempoMapZoomY");
+    zoomX = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("zoomX"));
+    zoomY = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("tempoMapZoomY"));
 
     Polytempo_StoredPreferences::getInstance()->getProps().addChangeListener(this);
 }
 
-void Polytempo_TempoMapCoordinateSystem::changeListenerCallback(ChangeBroadcaster* bc)
+void Polytempo_TempoMapCoordinateSystem::changeListenerCallback(ChangeBroadcaster*)
 {
     // scroll friendly zoom
     
     float x = (viewport->getViewPositionX() - TIMEMAP_OFFSET) / zoomX;
     float y = (getHeight() - viewport->getViewPositionY() - TIMEMAP_OFFSET - viewport->getMaximumVisibleHeight()) / zoomY;
-    
-    zoomX = Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("zoomX");
-    zoomY = Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("tempoMapZoomY");
-    
+
+    zoomX = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("zoomX"));
+    zoomY = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("tempoMapZoomY"));
+
+    setSize(getWidth(), int(zoomY * 2));
     repaint();
+
+    viewport->setViewPosition(TIMEMAP_OFFSET + int(x*zoomX), getHeight() - int(y*zoomY) - TIMEMAP_OFFSET - viewport->getMaximumVisibleHeight());
     
-    viewport->setViewPosition(TIMEMAP_OFFSET + x*zoomX, getHeight() - y*zoomY - TIMEMAP_OFFSET - viewport->getMaximumVisibleHeight());
+    playhead->setSize(playhead->getWidth(), getHeight());
 }
 
 void Polytempo_TempoMapCoordinateSystem::paint(Graphics& g)
@@ -399,16 +403,25 @@ void Polytempo_TempoMapCoordinateSystem::paint(Graphics& g)
     
     // vertical grid lines (time)
     
-    int increment = Polytempo_TimeRuler::getIncrementForZoom(zoomX);
+    int timeIncrement = Polytempo_TimeRuler::getIncrementForZoom(zoomX);
     g.setColour(Colour(50,50,50));
     for(int i=0;i<100;i++)
-        g.drawVerticalLine(TIMEMAP_OFFSET + i * increment * zoomX, 0, getHeight());
+        g.drawVerticalLine(TIMEMAP_OFFSET + int(i * timeIncrement * zoomX), 0, getHeight());
     
     
     // horizontal grid lines (tempo)
+
+    horizontalGrid->clearQuick();
     
-    // cf. tempo ruler
+    float tempoIncrement = Polytempo_TempoRuler::getIncrementForZoom(zoomY);
+    float tempo = 0;
     
+    while(tempo < 5.0f)
+    {
+        float y = getHeight() - TIMEMAP_OFFSET - tempo * zoomY;
+        g.drawLine(0, y, getWidth(), y, 0.5);
+        tempo += tempoIncrement;
+    }
     
     // control points and curve
     
@@ -436,9 +449,9 @@ void Polytempo_TempoMapCoordinateSystem::paintSequence(Graphics& g, Polytempo_Se
     int i = -1;
     while((controlPoint = sequence->getControlPoint(++i)) != nullptr)
     {
-        int x = TIMEMAP_OFFSET + controlPoint->time * zoomX;
-        int y = i == 0 ? getHeight() - TIMEMAP_OFFSET - controlPoint->tempoOut * zoomY
-                      :  getHeight() - TIMEMAP_OFFSET - controlPoint->tempoIn * zoomY;
+        int x = TIMEMAP_OFFSET + int(controlPoint->time * zoomX);
+        int y = i == 0 ? getHeight() - TIMEMAP_OFFSET - int(controlPoint->tempoOut * zoomY)
+                      :  getHeight() - TIMEMAP_OFFSET - int(controlPoint->tempoIn * zoomY);
         
         
         // line segment between control points
@@ -477,7 +490,7 @@ void Polytempo_TempoMapCoordinateSystem::paintSequence(Graphics& g, Polytempo_Se
         // control points
         
         int y1 = i < sequence->getControlPoints()->size() - 1 ?
-                getHeight() - TIMEMAP_OFFSET - controlPoint->tempoOut * zoomY : y;
+                getHeight() - TIMEMAP_OFFSET - int(controlPoint->tempoOut * zoomY) : y;
         int height = abs(y-y1);
         y = y < y1 ? y : y1;
         
@@ -487,8 +500,8 @@ void Polytempo_TempoMapCoordinateSystem::paintSequence(Graphics& g, Polytempo_Se
         else
             g.setColour(Colour(0xffdddddd));
         
-        g.fillRoundedRectangle(x - CONTROL_POINT_SIZE * 0.5,
-                               y - CONTROL_POINT_SIZE * 0.5,
+        g.fillRoundedRectangle(x - CONTROL_POINT_SIZE * 0.5f,
+                               y - CONTROL_POINT_SIZE * 0.5f,
                                CONTROL_POINT_SIZE,
                                CONTROL_POINT_SIZE + height,
                                CONTROL_POINT_SIZE * 0.5);
@@ -499,8 +512,8 @@ void Polytempo_TempoMapCoordinateSystem::paintSequence(Graphics& g, Polytempo_Se
             g.setColour(sequenceColour.withMultipliedBrightness(brightness).withAlpha(alpha));
         
         float thickness = selected ? 2.0 : 1.0;
-        g.drawRoundedRectangle(x - CONTROL_POINT_SIZE * 0.5,
-                               y - CONTROL_POINT_SIZE * 0.5,
+        g.drawRoundedRectangle(x - CONTROL_POINT_SIZE * 0.5f,
+                               y - CONTROL_POINT_SIZE * 0.5f,
                                CONTROL_POINT_SIZE,
                                CONTROL_POINT_SIZE + height,
                                CONTROL_POINT_SIZE * 0.5,

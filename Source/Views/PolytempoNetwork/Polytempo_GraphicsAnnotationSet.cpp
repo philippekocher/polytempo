@@ -108,7 +108,7 @@ void Polytempo_GraphicsAnnotationSet::loadFromFile()
 
 String Polytempo_GraphicsAnnotationSet::getFileName(String newLayerName) const
 {
-	return filePath + "\\" + scoreName + "_" + (newLayerName.isEmpty()?annotationLayerName:newLayerName) + ".xml";
+    return filePath + File::getSeparatorString() + scoreName + "_" + (newLayerName.isEmpty()?annotationLayerName:newLayerName) + ".xml";
 }
 
 bool Polytempo_GraphicsAnnotationSet::SaveToFile()

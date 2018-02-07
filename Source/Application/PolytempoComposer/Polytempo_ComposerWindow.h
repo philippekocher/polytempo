@@ -38,8 +38,8 @@ struct Polytempo_LookAndFeel : public LookAndFeel_V3
     }
     
     void drawTableHeaderColumn (Graphics& g, const String& columnName, int /*columnId*/,
-                                                int width, int height, bool isMouseOver, bool isMouseDown,
-                                                int columnFlags)
+                                                int width, int height, bool /*isMouseOver*/, bool /*isMouseDown*/,
+                                                int /*columnFlags*/)
     {
         Rectangle<int> area(width, height);
         area.reduce(2, 0);

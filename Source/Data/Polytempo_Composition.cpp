@@ -61,7 +61,10 @@ void Polytempo_Composition::updateContent()
     Polytempo_ComposerApplication::getCommandManager().commandStatusChanged(); // update menubar
     Polytempo_AudioClick::getInstance()->setNumVoices(sequenceCounter);
     
-    updateScore();
+    scoreNeedsUpdate = true;
+
+    // the score mustn't be updated while it is being read by the scheduler
+    if(!Polytempo_ScoreScheduler::getInstance()->isRunning()) updateScore();
 }
 
 void Polytempo_Composition::setDirty(bool flag) { dirty = flag; }
@@ -157,6 +160,8 @@ bool Polytempo_Composition::isSelectedControlPointRemovable()
 
 void Polytempo_Composition::updateScore()
 {
+    if(!scoreNeedsUpdate) return;
+    
     //DBG("update score");
     Polytempo_Sequence *sequence;
     Array <Polytempo_Event*> events;
@@ -169,6 +174,8 @@ void Polytempo_Composition::updateScore()
         sequence->updateEvents();
         score->addEvents(sequence->getEvents());
     }
+    
+    scoreNeedsUpdate = false;
 }
 
 void Polytempo_Composition::findCoincidingControlPoints()

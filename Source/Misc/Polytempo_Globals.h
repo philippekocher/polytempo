@@ -22,12 +22,7 @@
  
  ============================================================================== */
 
-#ifndef __Polytempo_Globals__
-#define __Polytempo_Globals__
-
+#pragma once
 
 #define TIMEMAP_OFFSET 25
 #define CONTROL_POINT_SIZE 10
-
-
-#endif  // __Polytempo_Globals__

@@ -25,6 +25,7 @@
 #include "Polytempo_ComposerMenuBarModel.h"
 #include "Polytempo_ComposerApplication.h"
 #include "../Polytempo_AboutWindow.h"
+#include "../../Preferences/Polytempo_ComposerPreferencesPanel.h"
 #include "../../Preferences/Polytempo_StoredPreferences.h"
 #include "../../Data/Polytempo_Composition.h"
 #include "../../Scheduler/Polytempo_ScoreScheduler.h"
@@ -80,11 +81,20 @@ StringArray Polytempo_ComposerMenuBarModel::getMenuBarNames()
     return StringArray (names);
 }
 
-PopupMenu Polytempo_ComposerMenuBarModel::getMenuForIndex (int menuIndex, const String& menuName)
+PopupMenu Polytempo_ComposerMenuBarModel::getMenuForIndex (int /*menuIndex*/, const String& menuName)
 {
     ApplicationCommandManager* commandManager = &Polytempo_ComposerApplication::getCommandManager();
     PopupMenu menu;
     
+#ifdef WIN32
+    if (menuName == "PolytempoNetwork")
+    {
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::aboutWindow);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::preferencesWindow);
+        menu.addSeparator();
+        menu.addCommandItem(commandManager, StandardApplicationCommandIDs::quit);
+    }
+#endif
     if (menuName == "File")
     {
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::newDocument);
@@ -117,6 +127,7 @@ PopupMenu Polytempo_ComposerMenuBarModel::getMenuForIndex (int menuIndex, const 
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::adjustTime);
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::adjustPosition);
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::adjustTempo);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::alignWithCursor);
     }
     else if (menuName == "View")
     {
@@ -156,7 +167,7 @@ PopupMenu Polytempo_ComposerMenuBarModel::getMenuForIndex (int menuIndex, const 
     return menu;
 }
 
-void Polytempo_ComposerMenuBarModel::menuItemSelected (int menuID, int topLevelMenuIndex)
+void Polytempo_ComposerMenuBarModel::menuItemSelected (int menuID, int /*topLevelMenuIndex*/)
 {
     int fileIndex = menuID - Polytempo_CommandIDs::openRecent;
     if(fileIndex >= 0)
@@ -204,9 +215,6 @@ void Polytempo_ComposerMenuBarModel::getAllCommands (Array <CommandID>& commands
         Polytempo_CommandIDs::startStop,
         Polytempo_CommandIDs::returnToLoc,
         Polytempo_CommandIDs::returnToBeginning,
-        //gotoCmd,
-        Polytempo_CommandIDs::aboutWindow,
-        //Polytempo_CommandIDs::preferencesWindow,
         
         Polytempo_CommandIDs::addSequence,
         Polytempo_CommandIDs::removeSequence,
@@ -217,8 +225,11 @@ void Polytempo_ComposerMenuBarModel::getAllCommands (Array <CommandID>& commands
         Polytempo_CommandIDs::adjustTime,
         Polytempo_CommandIDs::adjustPosition,
         Polytempo_CommandIDs::adjustTempo,
+        Polytempo_CommandIDs::alignWithCursor,
         Polytempo_CommandIDs::removeControlPoint,
         
+        Polytempo_CommandIDs::aboutWindow,
+        Polytempo_CommandIDs::preferencesWindow,
         //Polytempo_CommandIDs::help,
         Polytempo_CommandIDs::visitWebsite,
 
@@ -340,6 +351,12 @@ void Polytempo_ComposerMenuBarModel::getCommandInfo(CommandID commandID, Applica
             result.setActive(composition->getSelectedControlPointIndex() > 0);
             break;
             
+        case Polytempo_CommandIDs::alignWithCursor:
+            result.setInfo ("Align With Cursor", String::empty, infoCategory, 0);
+            result.setActive(composition->getSelectedControlPointIndex() > 0 &&
+                             !Polytempo_ScoreScheduler::getInstance()->isRunning());
+            break;
+            
         case Polytempo_CommandIDs::removeControlPoint:
             result.setInfo("Remove Selected Control Point", String::empty, infoCategory, 0);
             result.setActive(composition->isSelectedControlPointRemovable());
@@ -446,7 +463,7 @@ void Polytempo_ComposerMenuBarModel::getCommandInfo(CommandID commandID, Applica
 // this is the ApplicationCommandTarget method that is used to actually perform one of our commands..
 bool Polytempo_ComposerMenuBarModel::perform (const InvocationInfo& info)
 {
-    float zoomX;
+    float zoomX, zoomY;
     Polytempo_Composition *composition = Polytempo_Composition::getInstance();
     
     switch (info.commandID)
@@ -454,9 +471,9 @@ bool Polytempo_ComposerMenuBarModel::perform (const InvocationInfo& info)
         /* polytempo composer menu
          ----------------------------------*/
             
-//        case Polytempo_CommandIDs::preferencesWindow:
-//            Polytempo_NetworkPreferencesPanel::show();
-//            break;
+        case Polytempo_CommandIDs::preferencesWindow:
+            Polytempo_ComposerPreferencesPanel::show();
+            break;
             
         case Polytempo_CommandIDs::aboutWindow:
             Polytempo_AboutWindow::show();
@@ -535,6 +552,10 @@ bool Polytempo_ComposerMenuBarModel::perform (const InvocationInfo& info)
             composition->getSelectedSequence()->adjustTempo(composition->getSelectedControlPointIndex());
             break;
             
+        case Polytempo_CommandIDs::alignWithCursor:
+            composition->getSelectedSequence()->setControlPointPosition(composition->getSelectedControlPointIndex(), Polytempo_ScoreScheduler::getInstance()->getScoreTime() * 0.001f, -1);
+            break;
+            
         case Polytempo_CommandIDs::removeControlPoint:
             composition->getSelectedSequence()->removeControlPoint(composition->getSelectedControlPointIndex());
             composition->setSelectedControlPointIndex(-1);
@@ -587,14 +608,14 @@ bool Polytempo_ComposerMenuBarModel::perform (const InvocationInfo& info)
             
             
         case Polytempo_CommandIDs::zoomInX:
-            zoomX = Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("zoomX") * 1.2;
+            zoomX = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("zoomX") * 1.2);
             zoomX = zoomX > 100 ? 100 : zoomX;
             Polytempo_StoredPreferences::getInstance()->getProps().setValue("zoomX", zoomX);
             break;
             
         case Polytempo_CommandIDs::zoomOutX:
-            zoomX = Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("zoomX") / 1.2;
-            zoomX = zoomX < 0.2 ? 0.2 : zoomX;
+            zoomX = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("zoomX") / 1.2);
+            zoomX = zoomX < 0.2f ? 0.2f : zoomX;
             Polytempo_StoredPreferences::getInstance()->getProps().setValue("zoomX", zoomX);
             break;
             
@@ -605,7 +626,9 @@ bool Polytempo_ComposerMenuBarModel::perform (const InvocationInfo& info)
             }
             else
             {
-                Polytempo_StoredPreferences::getInstance()->getProps().setValue("tempoMapZoomY", Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("tempoMapZoomY") * 1.2);
+                zoomY = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("tempoMapZoomY") * 1.1);
+                zoomY = zoomY > 15000 ? 15000 : zoomY;
+                Polytempo_StoredPreferences::getInstance()->getProps().setValue("tempoMapZoomY", zoomY);
             }
             break;
             
@@ -616,7 +639,9 @@ bool Polytempo_ComposerMenuBarModel::perform (const InvocationInfo& info)
             }
             else
             {
-                Polytempo_StoredPreferences::getInstance()->getProps().setValue("tempoMapZoomY", Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("tempoMapZoomY") / 1.2);
+                zoomY = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("tempoMapZoomY") / 1.1);
+                zoomY = zoomY < 500 ? 500 : zoomY;
+                Polytempo_StoredPreferences::getInstance()->getProps().setValue("tempoMapZoomY", zoomY);
             }
             break;
         

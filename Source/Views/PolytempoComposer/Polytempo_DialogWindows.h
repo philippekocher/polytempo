@@ -178,7 +178,7 @@ namespace Polytempo_DialogWindows
             enableOkButton(sequence->validateNewControlPointPosition(timeTextbox->getText().getIntValue(), Rational(positionTextbox->getText())));
         }
         
-        void labelTextChanged (Label* label)
+        void labelTextChanged (Label* /*label*/)
         {
             Polytempo_Sequence* sequence = Polytempo_Composition::getInstance()->getSelectedSequence();
             
@@ -334,7 +334,7 @@ namespace Polytempo_DialogWindows
         void textEditorTextChanged(TextEditor &)
         {}
         
-        void labelTextChanged (Label* label)
+        void labelTextChanged (Label*)
         {}
         
         void perform()

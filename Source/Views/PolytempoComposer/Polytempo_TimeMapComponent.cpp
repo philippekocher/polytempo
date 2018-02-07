@@ -64,7 +64,7 @@ void Polytempo_TimeMapComponent::resized()
 {
     Rectangle<int> r (getLocalBounds());
     
-    coordinateSystem->setBounds(r.withTrimmedBottom(40).withTrimmedLeft(65).withTrimmedRight(1));
-    timeRuler.setBounds(r.removeFromBottom(40).withTrimmedLeft(65).withTrimmedRight(1));
-    positionRuler.setBounds(r.removeFromLeft(65).withTrimmedLeft(5));
+    coordinateSystem->setBounds(r.withTrimmedBottom(40).withTrimmedLeft(70).withTrimmedRight(1));
+    timeRuler.setBounds(r.removeFromBottom(40).withTrimmedLeft(70).withTrimmedRight(1));
+    positionRuler.setBounds(r.removeFromLeft(70).withTrimmedLeft(5));
 }

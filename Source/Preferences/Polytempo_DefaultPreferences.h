@@ -22,25 +22,16 @@
  
  ============================================================================== */
 
-#ifndef __Polytempo_DefaultPreferences__
-#define __Polytempo_DefaultPreferences__
+#pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
 
-//==============================================================================
-/**
-    A singleton to hold the default settings
-*/
 class Polytempo_DefaultPreferences : public PropertySet
 {
 public:
-    //==============================================================================
     Polytempo_DefaultPreferences();
     ~Polytempo_DefaultPreferences();
 
     juce_DeclareSingleton (Polytempo_DefaultPreferences, false);
 };
-
-
-#endif   // __Polytempo_DefaultPreferences__

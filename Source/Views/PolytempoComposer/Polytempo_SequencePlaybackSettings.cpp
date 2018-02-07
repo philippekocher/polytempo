@@ -216,25 +216,25 @@ Polytempo_SequencePlaybackSettings::~Polytempo_SequencePlaybackSettings()
 
 void Polytempo_SequencePlaybackSettings::resized()
 {
-    audioClick->setBounds              (20, 10, getWidth() * 0.5 - 40, 24);
+    audioClick->setBounds              (20, 10, int(getWidth() * 0.5) - 40, 24);
     
-    audioDownbeatPitch->setBounds      (20, 60, getWidth() * 0.25 - 30, 20);
-    audioDownbeatVolume->setBounds     (getWidth() * 0.25 + 5, 60, getWidth() * 0.25 - 30, 20);
-    audioBeatPitch->setBounds          (20, 100, getWidth() * 0.25 - 30, 20);
-    audioBeatVolume->setBounds         (getWidth() * 0.25 + 5, 100, getWidth() * 0.25 - 30, 20);
-    audioCuePitch->setBounds           (20, 140, getWidth() * 0.25 - 30, 20);
-    audioCueVolume->setBounds          (getWidth() * 0.25 + 5, 140, getWidth() * 0.25 - 30, 20);
-    audioChannel->setBounds            (20, 200, getWidth() * 0.25 - 30, 20);
+    audioDownbeatPitch->setBounds      (20, 60, int(getWidth() * 0.25) - 30, 20);
+    audioDownbeatVolume->setBounds     (int(getWidth() * 0.25) + 5, 60, int(getWidth() * 0.25) - 30, 20);
+    audioBeatPitch->setBounds          (20, 100, int(getWidth() * 0.25) - 30, 20);
+    audioBeatVolume->setBounds         (int(getWidth() * 0.25) + 5, 100, int(getWidth() * 0.25) - 30, 20);
+    audioCuePitch->setBounds           (20, 140, int(getWidth() * 0.25) - 30, 20);
+    audioCueVolume->setBounds          (int(getWidth() * 0.25) + 5, 140, int(getWidth() * 0.25) - 30, 20);
+    audioChannel->setBounds            (20, 200, int(getWidth() * 0.25) - 30, 20);
     
-    midiClick->setBounds               (getWidth() * 0.5 + 20,  10, getWidth() * 0.5 - 40, 24);
+    midiClick->setBounds               (int(getWidth() * 0.5) + 20,  10, int(getWidth() * 0.5) - 40, 24);
     
-    midiDownbeatPitch->setBounds       (getWidth() * 0.5 + 20, 60, getWidth() * 0.25 - 30, 20);
-    midiDownbeatVelocity->setBounds    (getWidth() * 0.75 + 5, 60, getWidth() * 0.25 - 30, 20);
-    midiBeatPitch->setBounds           (getWidth() * 0.5 + 20, 100, getWidth() * 0.25 - 30, 20);
-    midiBeatVelocity->setBounds        (getWidth() * 0.75 + 5, 100, getWidth() * 0.25 - 30, 20);
-    midiCuePitch->setBounds            (getWidth() * 0.5 + 20, 140, getWidth() * 0.25 - 30, 20);
-    midiCueVelocity->setBounds         (getWidth() * 0.75 + 5, 140, getWidth() * 0.25 - 30, 20);
-    midiChannel->setBounds             (getWidth() * 0.5 + 20, 200, getWidth() * 0.25 - 30, 20);
+    midiDownbeatPitch->setBounds       (int(getWidth() * 0.5) + 20, 60, int(getWidth() * 0.25) - 30, 20);
+    midiDownbeatVelocity->setBounds    (int(getWidth() * 0.75) + 5, 60, int(getWidth() * 0.25) - 30, 20);
+    midiBeatPitch->setBounds           (int(getWidth() * 0.5) + 20, 100, int(getWidth() * 0.25) - 30, 20);
+    midiBeatVelocity->setBounds        (int(getWidth() * 0.75) + 5, 100, int(getWidth() * 0.25) - 30, 20);
+    midiCuePitch->setBounds            (int(getWidth() * 0.5) + 20, 140, int(getWidth() * 0.25) - 30, 20);
+    midiCueVelocity->setBounds         (int(getWidth() * 0.75) + 5, 140, int(getWidth() * 0.25) - 30, 20);
+    midiChannel->setBounds             (int(getWidth() * 0.5) + 20, 200, int(getWidth() * 0.25) - 30, 20);
     
     sendOsc->setBounds                  (20, 300, getWidth() - 40, 24);
     
@@ -339,20 +339,20 @@ void Polytempo_SequencePlaybackSettings::labelTextChanged(Label* textbox)
 {
     String labelText = textbox->getText();
     
-    if(textbox == audioDownbeatPitch)       sequence->audioDownbeatPitch = labelText.getFloatValue();
+    if(textbox == audioDownbeatPitch)       sequence->audioDownbeatPitch = labelText.getIntValue();
     else if(textbox == audioDownbeatVolume) sequence->audioDownbeatVolume = labelText.getFloatValue();
-    else if(textbox == audioBeatPitch)      sequence->audioBeatPitch = labelText.getFloatValue();
+    else if(textbox == audioBeatPitch)      sequence->audioBeatPitch = labelText.getIntValue();
     else if(textbox == audioBeatVolume)     sequence->audioBeatVolume = labelText.getFloatValue();
-    else if(textbox == audioCuePitch)       sequence->audioCuePitch = labelText.getFloatValue();
+    else if(textbox == audioCuePitch)       sequence->audioCuePitch = labelText.getIntValue();
     else if(textbox == audioCueVolume)      sequence->audioCueVolume = labelText.getFloatValue();
     else if(textbox == audioChannel)        sequence->audioChannel = labelText.getIntValue();
     
-    else if(textbox == midiDownbeatPitch)   sequence->midiDownbeatPitch = labelText.getFloatValue();
-    else if(textbox == midiDownbeatVelocity)sequence->midiDownbeatVelocity = labelText.getFloatValue();
-    else if(textbox == midiBeatPitch)       sequence->midiBeatPitch = labelText.getFloatValue();
-    else if(textbox == midiBeatVelocity)    sequence->midiBeatVelocity = labelText.getFloatValue();
-    else if(textbox == midiCuePitch)        sequence->midiCuePitch = labelText.getFloatValue();
-    else if(textbox == midiCueVelocity)     sequence->midiCueVelocity = labelText.getFloatValue();
+    else if(textbox == midiDownbeatPitch)   sequence->midiDownbeatPitch = labelText.getIntValue();
+    else if(textbox == midiDownbeatVelocity)sequence->midiDownbeatVelocity = labelText.getIntValue();
+    else if(textbox == midiBeatPitch)       sequence->midiBeatPitch = labelText.getIntValue();
+    else if(textbox == midiBeatVelocity)    sequence->midiBeatVelocity = labelText.getIntValue();
+    else if(textbox == midiCuePitch)        sequence->midiCuePitch = labelText.getIntValue();
+    else if(textbox == midiCueVelocity)     sequence->midiCueVelocity = labelText.getIntValue();
     
     else if(textbox == oscDownbeatMessage)  sequence->oscDownbeatMessage = labelText;
     else if(textbox == oscBeatMessage)      sequence->oscBeatMessage = labelText;

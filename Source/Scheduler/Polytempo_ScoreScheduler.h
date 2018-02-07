@@ -72,7 +72,7 @@ private:
     ScopedPointer < Polytempo_ScoreSchedulerEngine > engine;
     Array < class Polytempo_EventObserver * > observers;
     
-    int storedLocator; // milliseconds
+    int storedLocator = 0; // milliseconds
     
     Polytempo_Score *score = nullptr;
 };
