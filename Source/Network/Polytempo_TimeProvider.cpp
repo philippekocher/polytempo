@@ -245,7 +245,7 @@ void Polytempo_TimeProvider::timerCallback()
 	}
 }
 
-void Polytempo_TimeProvider::displayMessage(String message, MessageType)
+void Polytempo_TimeProvider::displayMessage(String message, MessageType messageType)
 {
 #ifdef POLYTEMPO_NETWORK
 	if (pTimeSyncControl != nullptr)

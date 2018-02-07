@@ -12,7 +12,7 @@
 #include "Polytempo_GraphicsEditableRegion.h"
 #include "Polytempo_GraphicsAnnotationManager.h"
 
-//#include <string>
+#include <string>
 
 //==============================================================================
 Polytempo_GraphicsEditableRegion::Polytempo_GraphicsEditableRegion()
