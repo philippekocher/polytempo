@@ -77,7 +77,7 @@ void Polytempo_OSCListener::oscMessageReceived(const OSCMessage & message)
 		if (argumentIterator != message.end() && (*argumentIterator).isString())
         {
             String filePath(argumentIterator->getString());
-            if(filePath.startsWithChar(File::separator) ||
+            if(filePath.startsWithChar(File::getSeparatorChar()) ||
                filePath.startsWithChar('~'))
                 app->openScoreFilePath(argumentIterator->getString());
         }
