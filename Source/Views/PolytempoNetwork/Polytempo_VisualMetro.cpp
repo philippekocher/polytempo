@@ -67,7 +67,7 @@ public:
          ----------------------------------- */
         
         // don't draw when bar is idle
-        if(position == 0.0) return;
+        if(position <= 0.0f) return;
 
         g.setImageResamplingQuality(Graphics::lowResamplingQuality);
         // lo quality seems to be ok
@@ -110,13 +110,14 @@ Polytempo_VisualMetro::Polytempo_VisualMetro()
 : Polytempo_EventObserver()
 {
     setOpaque(true);
-    width = 0;
-    pos = 0.5;
+    width = 0.0f;
+    pos = 0.5f;
     timeInterval = 15; // good somewhere between 5 and 20
-    tempoFactor = 1.0;
-    pattern = 0;
-    exponentMain = 1.5;
-    exponentSub = 1.0;
+    tempoFactor = 1.0f;
+    pattern = 0.0f;
+    exponentMain = 1.5f;
+    exponentSub = 1.0f;
+    linear = false;
     shouldStop = true;
 
     normalColour = Colour::fromString(Polytempo_StoredPreferences::getInstance()->getProps().getValue("stripNormalColour"));
@@ -176,16 +177,24 @@ void Polytempo_VisualMetro::hiResTimerCallback()
     if(width == 0) return;
     
     // stop when a new beat event is overdue
-    if(pos > 1.1 )
+    if(pos > 1.1 && !linear)
     {
         shouldStop = true;
+        // the bar moves back to 0 with the same speed as the last beat
+        // but not slower than a beat of 60 bpm
+        float minIncrement = increment = timeInterval / 1000.0f;
+        increment = increment < minIncrement ? minIncrement : increment;
     }
-    
+    else if(pos > 1.0f && linear)
+    {
+        pattern = 0;
+        stopTimer();
+    }
+
     if(shouldStop && pos > 0.4 && pos < 0.6)
     {
-        pos = 0.5;
+        pattern = 0;
         stopTimer();
-        
 
         Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
         if(app->quitApplication) app->applicationShouldQuit();
@@ -209,23 +218,25 @@ void Polytempo_VisualMetro::hiResTimerCallback()
         subpos = 1;
     }
 
-    if(pattern == 11 ||
-       (pattern == 10 && pos <= 0.5) ||
-       (pattern == 12 && pos <= 0.5) ||
-       (pattern == 21 && pos >= 0.5))
+    if(pattern == 11 || pattern == 1 ||
+       (pattern == 10 && pos <= 0.5f) ||
+       (pattern == 12 && pos <= 0.5f) ||
+       (pattern == 21 && pos >= 0.5f))
     {
         x = 0;
-        if(holdMax) y = 1;
-        else        y = pow(fabs(pos * 2 - 1) * ictus, exponentMain);
+        if(holdMax)     y = 1;
+        else if(linear) y = fabs(pos * 2 - 1);
+        else            y = pow(fabs(pos * 2 - 1) * ictus, exponentMain);
     }
-    else if(pattern == 22 ||
-       (pattern == 20 && pos <= 0.5) ||
-       (pattern == 21 && pos <= 0.5) ||
-       (pattern == 12 && pos >= 0.5))
+    else if(pattern == 22 || pattern == 2 ||
+       (pattern == 20 && pos <= 0.5f) ||
+       (pattern == 21 && pos <= 0.5f) ||
+       (pattern == 12 && pos >= 0.5f))
     {
         y = 0;
-        if(holdMax) x = 1;
-        else        x = pow(fabs(pos * 2 - 1) * ictus, exponentMain);
+        if(holdMax)     x = 1;
+        else if(linear) x = fabs(pos * 2 - 1);
+        else            x = pow(fabs(pos * 2.0f - 1.0f) * ictus, exponentMain);
     }
     else
     {
@@ -271,12 +282,17 @@ void Polytempo_VisualMetro::eventNotification(Polytempo_Event *event)
         if(event->hasProperty(eventPropertyString_Pattern))
             pattern = event->getProperty(eventPropertyString_Pattern);
         else
-            pattern = 10;
+            pattern = eventPropertyDefault_Pattern;
         
         if(int(event->getProperty(eventPropertyString_Cue)) == 1)
             foregroundColour = cueColour;
         else
             foregroundColour = normalColour;
+        
+        if(int(event->getProperty(eventPropertyDefault_Linear)) != 0)
+            linear = true;
+        else
+            linear = false;
       
         shouldStop = false;
         
@@ -291,11 +307,17 @@ void Polytempo_VisualMetro::eventNotification(Polytempo_Event *event)
          60 / timeInterval is needed for slower computers (old mac minis)
          */
         
-        holdMax = 60 / timeInterval;
+        if(pattern < 3) holdMax = 0;
+        else            holdMax = 60 / timeInterval;
         
         increment = (float)timeInterval / actualDuration * 0.001f;
+        
+        
+        if(pattern < 3 || pattern == 10 || pattern == 20)
+            increment *= 0.5f; // only half the distance
 
-        pos = 0;
+        if(pattern > 2) pos = 0.0f;
+        else            pos = 0.5f;
         
         startTimer(timeInterval);
     }

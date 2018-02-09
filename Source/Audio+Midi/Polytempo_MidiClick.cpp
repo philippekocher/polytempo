@@ -70,12 +70,17 @@ void Polytempo_MidiClick::eventNotification(Polytempo_Event *event)
         // or take default values if midi is turned on
         else if(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("midiClick"))
         {
-            int pattern = event->getProperty(eventPropertyString_Pattern);
+            int pattern;
             int pitch;
             uint8 velocity;
             
-            if(pattern == 0) return;
+            if(event->hasProperty(eventPropertyString_Pattern))
+                pattern = event->getProperty(eventPropertyString_Pattern);
+            else
+                pattern = eventPropertyDefault_Pattern;
             
+            if(pattern < 3) return;
+
             if(int(event->getProperty(eventPropertyString_Cue)) != 0)
             {
                 pitch = cuePitch;

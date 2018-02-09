@@ -223,11 +223,16 @@ void Polytempo_AudioClick::eventNotification(Polytempo_Event *event)
         // or take default values if audio is turned on
         else if(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("audioClick"))
         {
-            int pattern = event->getProperty(eventPropertyString_Pattern);
+            int pattern;
             int pitch;
             float volume;
             
-            if(pattern == 0) return;
+            if(event->hasProperty(eventPropertyString_Pattern))
+                pattern = event->getProperty(eventPropertyString_Pattern);
+            else
+                pattern = eventPropertyDefault_Pattern;
+
+            if(pattern < 3) return;
             
             if(int(event->getProperty(eventPropertyString_Cue)) != 0)
             {

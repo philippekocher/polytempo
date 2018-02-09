@@ -63,6 +63,7 @@ private:
     Colour foregroundColour;
     Colour normalColour, cueColour;
     bool shouldStop;
+    bool linear;
     int holdMax;
 
     Polytempo_VisualConductorComponent *hComponent;

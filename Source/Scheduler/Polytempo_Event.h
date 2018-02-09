@@ -117,6 +117,8 @@ enum Polytempo_EventType
 #define eventPropertyString_URL         "url"
 #define eventPropertyString_Rect        "rect"
 #define eventPropertyString_Pattern     "pattern"
+#define eventPropertyDefault_Pattern    10
+#define eventPropertyDefault_Linear     "linear"
 #define eventPropertyString_Cue         "cue"
 
 
