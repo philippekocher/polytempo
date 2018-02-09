@@ -103,7 +103,6 @@ void Polytempo_Score::addEvent(Polytempo_Event *event, bool addToInit)
     if(addToInit)
     {
         initSection->events.add(event);
-        Polytempo_EventScheduler::getInstance()->scheduleScoreEvent(event);
     }
     else
     {
