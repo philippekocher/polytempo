@@ -53,8 +53,9 @@ public:
     Polytempo_Score* getScore() { return score; };
     Polytempo_NetworkWindow* getMainWindow() { return mainWindow; }
 
+    void unsavedChangesAlert(double customValue);
+    void newScore();
     void openFileDialog();
-
     void openScoreFilePath(String filePath = String::empty);
     void openScoreFile(File aFile = File::nonexistent);
     void saveScoreFile(bool showFileDialog);

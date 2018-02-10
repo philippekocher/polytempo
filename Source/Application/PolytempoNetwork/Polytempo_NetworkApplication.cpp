@@ -110,8 +110,7 @@ void Polytempo_NetworkApplication::initialise(const String&)
     }
     else
     {
-        score = new Polytempo_Score();
-        Polytempo_ScoreScheduler::getInstance()->setScore(score);
+        newScore();
     }
 }
 
@@ -172,6 +171,8 @@ static void unsavedChangesCallback(int modalResult, double customValue)
 
     if(customValue == 0)      app->applicationShouldQuit();
     else if(customValue == 1) app->openScoreFile();
+    else if(customValue == 2) app->newScore();
+
 }
 
 void Polytempo_NetworkApplication::applicationShouldQuit()
@@ -188,9 +189,7 @@ void Polytempo_NetworkApplication::applicationShouldQuit()
     
     if(score && score->isDirty())
     {
-        DBG("save score");
-        String title;
-        Polytempo_YesNoCancelAlert::show(title << "Do you want to save the changes to \"" << scoreFile.getFileName().toRawUTF8() << "\"?", "If you don't save your changes will be lost.",ModalCallbackFunction::create(unsavedChangesCallback,0.0));
+        unsavedChangesAlert(0.0);
         return;
 
         // after the score will have been saved
@@ -207,6 +206,27 @@ void Polytempo_NetworkApplication::anotherInstanceStarted (const String&)
     // the other instance's command-line arguments were.
 }
 
+void Polytempo_NetworkApplication::unsavedChangesAlert(double customValue)
+{
+    String title;
+
+    Polytempo_YesNoCancelAlert::show(title << "Do you want to save the changes to \"" << scoreFile.getFileName().toRawUTF8() << "\"?", "If you don't save your changes will be lost.", ModalCallbackFunction::create(unsavedChangesCallback, customValue));
+}
+
+void Polytempo_NetworkApplication::newScore()
+{
+    if(score && score->isDirty())
+    {
+        unsavedChangesAlert(2.0);
+        return;
+    }
+    
+    score = new Polytempo_Score();
+    Polytempo_ScoreScheduler::getInstance()->setScore(score);
+    
+    mainWindow->setName("Untitled");
+}
+
 void Polytempo_NetworkApplication::openFileDialog()
 {
     File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("scoreFileDirectory"));
@@ -221,7 +241,7 @@ void Polytempo_NetworkApplication::openFileDialog()
 void Polytempo_NetworkApplication::saveScoreFile(bool showFileDialog)
 {
     if(score == nullptr) return;
-    if(scoreFile == File::nonexistent && !showFileDialog) return;
+    if(scoreFile == File::nonexistent) showFileDialog = true;
     
     File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("scoreFileDirectory"));
     FileChooser fileChooser("Save Score File", scoreFile, "*.ptsco", true);
@@ -267,9 +287,7 @@ void Polytempo_NetworkApplication::openScoreFile(File aFile)
 
     if(score && score->isDirty())
     {
-        DBG("save score");
-        String title;
-        Polytempo_YesNoCancelAlert::show(title << "Do you want to save the changes to \"" << scoreFile.getFileName().toRawUTF8() << "\"?", "If you don't save your changes will be lost.", ModalCallbackFunction::create(unsavedChangesCallback, 1.0));
+        unsavedChangesAlert(1.0);
         return;
     }
     

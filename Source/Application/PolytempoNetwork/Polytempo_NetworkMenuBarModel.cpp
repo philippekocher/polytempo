@@ -105,6 +105,8 @@ PopupMenu Polytempo_MenuBarModel::getMenuForIndex(int, const String& menuName)
 
     if (menuName == "File")
     {
+        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::newDocument);
+        menu.addSeparator();
         menu.addCommandItem(&commandManager, Polytempo_CommandIDs::open);
 
         PopupMenu recentFilesMenu;
@@ -216,6 +218,7 @@ void Polytempo_MenuBarModel::getAllCommands(Array <CommandID>& commands)
 {
     // this returns the set of all commands that this target can perform..
     const CommandID ids[] = {
+        Polytempo_CommandIDs::newDocument,
         Polytempo_CommandIDs::open,
         Polytempo_CommandIDs::clearOpenRecent,
         Polytempo_CommandIDs::save,
@@ -283,6 +286,11 @@ void Polytempo_MenuBarModel::getCommandInfo(CommandID commandID, ApplicationComm
             
         /* file menu
          ----------------------------------*/
+        case Polytempo_CommandIDs::newDocument:
+            result.setInfo("New", String::empty, infoCategory, 0);
+            result.addDefaultKeypress('n', ModifierKeys::commandModifier);
+            break;
+
         case Polytempo_CommandIDs::open:
             result.setInfo("Open...", "Opens a Polytempo score file", infoCategory, 0);
             result.addDefaultKeypress('o', ModifierKeys::commandModifier);
@@ -495,6 +503,10 @@ bool Polytempo_MenuBarModel::perform(const InvocationInfo& info)
             
         /* file menu
          ----------------------------------*/
+        case Polytempo_CommandIDs::newDocument:
+            app->newScore();
+            break;
+
         case Polytempo_CommandIDs::open:
             app->openFileDialog();
             break;
