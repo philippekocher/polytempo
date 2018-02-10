@@ -265,6 +265,7 @@ void Polytempo_NetworkApplication::saveScoreFile(bool showFileDialog)
         tempFile.copyFileTo(scoreFile);
     }
     tempFile.deleteFile();
+    mainWindow->setName(scoreFile.getFileNameWithoutExtension());
 }
 
 void Polytempo_NetworkApplication::openScoreFilePath(String filePath)

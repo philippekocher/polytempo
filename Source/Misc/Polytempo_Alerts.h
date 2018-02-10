@@ -48,10 +48,6 @@ public:
     {
         return AlertWindow::showOkCancelBox (AlertWindow::QuestionIcon,
                                              title, message);
-//                                             String::empty,
-//                                      String::empty,
-//                                      nullptr,
-//                                      nullptr);
     }
 
 private:

@@ -23,9 +23,11 @@
  ============================================================================== */
 
 #include "Polytempo_NetworkWindow.h"
+#include "../../Application/PolytempoNetwork/Polytempo_NetworkApplication.h"
 #include "../../Views/PolytempoNetwork/Polytempo_NetworkMainView.h"
 #include "../../Preferences/Polytempo_StoredPreferences.h"
 #include "../../Scheduler/Polytempo_ScoreScheduler.h"
+#include "../../Misc/Polytempo_Alerts.h"
 
 
 Polytempo_NetworkWindow::Polytempo_NetworkWindow()
@@ -71,6 +73,16 @@ void Polytempo_NetworkWindow::setContentID(contentID newContentID)
 {
     if(newContentID != currentContentID)
     {
+        Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
+
+        if(newContentID == imageEditorViewID && !app->scoreFileExists())
+        {
+            if(Polytempo_OkCancelAlert::show("You must first save the document before using the Page Editor", String::empty))
+                app->saveScoreFile(true);
+            if(!app->scoreFileExists()) // the user has aborted the save process
+                return;
+        }
+        
         currentContentID = newContentID;
         
         if(currentContentID == imageEditorViewID)

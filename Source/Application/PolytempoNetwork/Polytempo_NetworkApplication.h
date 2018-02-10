@@ -51,6 +51,7 @@ public:
     void anotherInstanceStarted(const String& commandLine);
     
     Polytempo_Score* getScore() { return score; };
+    bool scoreFileExists() { return scoreFile != File::nonexistent; }
     Polytempo_NetworkWindow* getMainWindow() { return mainWindow; }
 
     void unsavedChangesAlert(double customValue);
