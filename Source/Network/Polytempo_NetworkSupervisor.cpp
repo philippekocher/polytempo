@@ -51,6 +51,8 @@ Polytempo_NetworkSupervisor::~Polytempo_NetworkSupervisor()
     tempConnectedPeersMap = nullptr;
     
     clearSingletonInstance();
+    
+    Polytempo_NetworkInterfaceManager::deleteInstance();
 }
 
 juce_ImplementSingleton(Polytempo_NetworkSupervisor);

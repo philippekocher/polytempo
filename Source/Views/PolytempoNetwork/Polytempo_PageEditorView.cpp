@@ -22,7 +22,7 @@
  
  ============================================================================== */
 
-#include "Polytempo_ImageEditorView.h"
+#include "Polytempo_PageEditorView.h"
 #include "../../Application/PolytempoNetwork/Polytempo_NetworkApplication.h"
 #include "../../Preferences/Polytempo_StoredPreferences.h"
 #include "../../Misc/Polytempo_Alerts.h"
@@ -39,10 +39,10 @@ static ValueTree createTree(const String& imageID, const String& sectionID)
     return t;
 }
 
-Polytempo_ImageEditorView::Polytempo_ImageEditorView()
+Polytempo_PageEditorView::Polytempo_PageEditorView()
 {
     addAndMakeVisible(tree = new TreeView());
-    addAndMakeVisible(imageEditorViewport = new Polytempo_ImageEditorViewport());
+    addAndMakeVisible(pageEditorViewport = new Polytempo_PageEditorViewport());
     
     addAndMakeVisible(imageFileLabel = new Label(String::empty, "Image File"));
     imageFileLabel->setFont(Font (14.0f, Font::plain));
@@ -89,12 +89,12 @@ Polytempo_ImageEditorView::Polytempo_ImageEditorView()
     selectedItem = nullptr;
 }
 
-Polytempo_ImageEditorView::~Polytempo_ImageEditorView()
+Polytempo_PageEditorView::~Polytempo_PageEditorView()
 {
     deleteAllChildren();
 }
 
-void Polytempo_ImageEditorView::refresh()
+void Polytempo_PageEditorView::refresh()
 {
     Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
     score = app->getScore();
@@ -187,13 +187,13 @@ void Polytempo_ImageEditorView::refresh()
     }
 }
 
-void Polytempo_ImageEditorView::update()
+void Polytempo_PageEditorView::update()
 {
     //DBG("update()");
     imageID = selectedItem->getProperty("imageID");
     sectionID = selectedItem->getProperty("sectionID");
 
-    imageEditorViewport->getComponent()->setImage(Polytempo_ImageManager::getInstance()->getImage(imageID));
+    pageEditorViewport->getComponent()->setImage(Polytempo_ImageManager::getInstance()->getImage(imageID));
 
     selectedAddSectionEvent = nullptr;
     selectedImageEvent = nullptr;
@@ -201,7 +201,7 @@ void Polytempo_ImageEditorView::update()
     if(sectionID == var::null)
     {
         // hide handles
-        imageEditorViewport->getComponent()->setSectionRect(Rectangle<float>(0,0,0,0));
+        pageEditorViewport->getComponent()->setSectionRect(Rectangle<float>(0,0,0,0));
         
         // hide textboxes
         relativePositionLabel->setVisible(false);
@@ -231,11 +231,11 @@ void Polytempo_ImageEditorView::update()
             }
         }
         
-        imageEditorViewport->getComponent()->setEditedEvent(selectedAddSectionEvent);
+        pageEditorViewport->getComponent()->setEditedEvent(selectedAddSectionEvent);
  
         // show handles
         Array<var> r = *selectedAddSectionEvent->getProperty(eventPropertyString_Rect).getArray();
-        imageEditorViewport->getComponent()->setSectionRect(Rectangle<float>(r[0],r[1],r[2],r[3]));
+        pageEditorViewport->getComponent()->setSectionRect(Rectangle<float>(r[0],r[1],r[2],r[3]));
         
         // hide textboxes
         imageFileLabel->setVisible(false);
@@ -292,7 +292,7 @@ void Polytempo_ImageEditorView::update()
     app->commandStatusChanged();
 }
 
-void Polytempo_ImageEditorView::paint(Graphics& g)
+void Polytempo_PageEditorView::paint(Graphics& g)
 {
     g.fillAll(Colour::Colour(245,245,245));
  
@@ -314,12 +314,12 @@ void Polytempo_ImageEditorView::paint(Graphics& g)
     g.drawVerticalLine(getWidth() - TREE_VIEW_WIDTH, 0.0f, (float)getHeight());
 }
 
-void Polytempo_ImageEditorView::resized()
+void Polytempo_PageEditorView::resized()
 {
     Rectangle<int> r (getLocalBounds());
     
     tree->setBounds(r.withWidth(TREE_VIEW_WIDTH));
-    imageEditorViewport->setBounds(r.withLeft(TREE_VIEW_WIDTH+1).withTrimmedRight(TREE_VIEW_WIDTH));
+    pageEditorViewport->setBounds(r.withLeft(TREE_VIEW_WIDTH+1).withTrimmedRight(TREE_VIEW_WIDTH));
     
     int yPosition = 25;
     
@@ -351,7 +351,7 @@ void Polytempo_ImageEditorView::resized()
 #pragma mark -
 #pragma mark actions
 
-void Polytempo_ImageEditorView::deleteSelected()
+void Polytempo_PageEditorView::deleteSelected()
 {
     imageID = selectedItem->getProperty("imageID");
     sectionID = selectedItem->getProperty("sectionID");
@@ -436,7 +436,7 @@ void Polytempo_ImageEditorView::deleteSelected()
     }
 }
 
-int Polytempo_ImageEditorView::findNewID(String eventPropertyString, Array < Polytempo_Event* > events)
+int Polytempo_PageEditorView::findNewID(String eventPropertyString, Array < Polytempo_Event* > events)
 {
     int newID = 0;
     bool success = false;
@@ -459,7 +459,7 @@ int Polytempo_ImageEditorView::findNewID(String eventPropertyString, Array < Pol
 }
 
 
-void Polytempo_ImageEditorView::loadImage()
+void Polytempo_PageEditorView::loadImage()
 {
     File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("scoreFileDirectory"));
     FileChooser fileChooser("Open Score File", directory, "*.jpg;*.png", true);
@@ -480,7 +480,7 @@ void Polytempo_ImageEditorView::loadImage()
     }
 }
 
-void Polytempo_ImageEditorView::addSection()
+void Polytempo_PageEditorView::addSection()
 {
     Polytempo_Event* event = Polytempo_Event::makeEvent(eventType_AddSection);
     
@@ -500,7 +500,7 @@ void Polytempo_ImageEditorView::addSection()
     refresh();
 }
 
-void Polytempo_ImageEditorView::addInstance()
+void Polytempo_PageEditorView::addInstance()
 {
     // we assume for the moment that there is only
     // one single instance per section.
@@ -541,7 +541,7 @@ void Polytempo_ImageEditorView::addInstance()
 #pragma mark -
 #pragma mark retrieve state
 
-bool Polytempo_ImageEditorView::hasSelectedSection()
+bool Polytempo_PageEditorView::hasSelectedSection()
 {
     return sectionID != var::null;
 }
@@ -551,10 +551,10 @@ bool Polytempo_ImageEditorView::hasSelectedSection()
 #pragma mark -
 #pragma mark label listener
 
-void Polytempo_ImageEditorView::editorShown(Label*, TextEditor&)
+void Polytempo_PageEditorView::editorShown(Label*, TextEditor&)
 {}
 
-void Polytempo_ImageEditorView::labelTextChanged(Label* label)
+void Polytempo_PageEditorView::labelTextChanged(Label* label)
 {
     if(label == imageFileTextbox)
     {
@@ -600,7 +600,7 @@ void Polytempo_ImageEditorView::labelTextChanged(Label* label)
     else if(label == xTextbox || label == yTextbox || label == wTextbox || label == hTextbox)
     {
         Array < var > r = *selectedAddSectionEvent->getProperty(eventPropertyString_Rect).getArray();
-        imageEditorViewport->getComponent()->setSectionRect(Rectangle<float>(r[0],r[1],r[2],r[3]));
+        pageEditorViewport->getComponent()->setSectionRect(Rectangle<float>(r[0],r[1],r[2],r[3]));
         float num = label->getText().getFloatValue();
         num = num < 0.0f ? 0.0f : num > 1.0f ? 1.0f : num;
         
@@ -620,7 +620,7 @@ void Polytempo_ImageEditorView::labelTextChanged(Label* label)
 #pragma mark -
 #pragma mark button listener
 
-void Polytempo_ImageEditorView::buttonClicked(Button* button)
+void Polytempo_PageEditorView::buttonClicked(Button* button)
 {
     if(button == chooseImageFile)
     {
@@ -642,7 +642,7 @@ void Polytempo_ImageEditorView::buttonClicked(Button* button)
 #pragma mark -
 #pragma mark event observer
 
-void Polytempo_ImageEditorView::eventNotification(Polytempo_Event *event)
+void Polytempo_PageEditorView::eventNotification(Polytempo_Event *event)
 {
     if(event->getType() == eventType_DeleteAll)
     {

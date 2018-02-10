@@ -41,7 +41,7 @@ Polytempo_NetworkWindow::Polytempo_NetworkWindow()
     setResizeLimits(800, 450, 99999, 99999);
 
     mainView = new Polytempo_NetworkMainView();
-    imageEditorView = new Polytempo_ImageEditorView();
+    pageEditorView = new Polytempo_PageEditorView();
     
     // sets the main content component for the window
     setContentNonOwned(mainView, false);
@@ -75,7 +75,7 @@ void Polytempo_NetworkWindow::setContentID(contentID newContentID)
     {
         Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
 
-        if(newContentID == imageEditorViewID && !app->scoreFileExists())
+        if(newContentID == pageEditorViewID && !app->scoreFileExists())
         {
             if(Polytempo_OkCancelAlert::show("You must first save the document before using the Page Editor", String::empty))
                 app->saveScoreFile(true);
@@ -85,10 +85,10 @@ void Polytempo_NetworkWindow::setContentID(contentID newContentID)
         
         currentContentID = newContentID;
         
-        if(currentContentID == imageEditorViewID)
+        if(currentContentID == pageEditorViewID)
         {
-            imageEditorView->refresh();
-            setContentNonOwned(imageEditorView, false);
+            pageEditorView->refresh();
+            setContentNonOwned(pageEditorView, false);
         }
         else
         {
@@ -109,7 +109,7 @@ int Polytempo_NetworkWindow::getContentID()
 Component* Polytempo_NetworkWindow::getContentComponent()
 {
     if(currentContentID == mainViewID) return mainView;
-    if(currentContentID == imageEditorViewID)  return imageEditorView;
+    if(currentContentID == pageEditorViewID)  return pageEditorView;
     
     return nullptr;
 }

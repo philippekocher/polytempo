@@ -151,6 +151,7 @@ void Polytempo_NetworkApplication::shutdown()
     Polytempo_EventScheduler::deleteInstance();
 	Polytempo_GraphicsAnnotationManager::deleteInstance();
 	Polytempo_TimeProvider::deleteInstance();
+    Polytempo_EventDispatcher::deleteInstance();
 }
 
 //------------------------------------------------------------------------------

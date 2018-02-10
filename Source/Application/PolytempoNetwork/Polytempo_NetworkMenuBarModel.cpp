@@ -132,7 +132,7 @@ PopupMenu Polytempo_MenuBarModel::getMenuForIndex(int, const String& menuName)
     else if (menuName == "View")
     {
         menu.addCommandItem(&commandManager, Polytempo_CommandIDs::showMainView);
-        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::showImageEditor);
+        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::showPageEditor);
         menu.addSeparator();
         menu.addCommandItem(&commandManager, Polytempo_CommandIDs::zoomIn);
         menu.addCommandItem(&commandManager, Polytempo_CommandIDs::zoomOut);
@@ -231,7 +231,7 @@ void Polytempo_MenuBarModel::getAllCommands(Array <CommandID>& commands)
         Polytempo_CommandIDs::addInstance,
         
         Polytempo_CommandIDs::showMainView,
-        Polytempo_CommandIDs::showImageEditor,
+        Polytempo_CommandIDs::showPageEditor,
         //Polytempo_CommandIDs::showScoreEditor,
         Polytempo_CommandIDs::zoomIn,
         Polytempo_CommandIDs::zoomOut,
@@ -324,23 +324,23 @@ void Polytempo_MenuBarModel::getCommandInfo(CommandID commandID, ApplicationComm
             result.setInfo("Delete", "Delete the selected item", infoCategory, 0);
             result.addDefaultKeypress('\b', 0);
             result.addDefaultKeypress(KeyPress::backspaceKey, 0);
-            result.setActive(window->getContentID() == Polytempo_NetworkWindow::imageEditorViewID);
+            result.setActive(window->getContentID() == Polytempo_NetworkWindow::pageEditorViewID);
             break;
             
         case Polytempo_CommandIDs::loadImage:
             result.setInfo("Load Image", "Load an image", infoCategory, 0);
-            result.setActive(window->getContentID() == Polytempo_NetworkWindow::imageEditorViewID);
+            result.setActive(window->getContentID() == Polytempo_NetworkWindow::pageEditorViewID);
             break;
 
         case Polytempo_CommandIDs::addSection:
             result.setInfo("Add Section", "Add a section", infoCategory, 0);
-            result.setActive(window->getContentID() == Polytempo_NetworkWindow::imageEditorViewID);
+            result.setActive(window->getContentID() == Polytempo_NetworkWindow::pageEditorViewID);
             break;
             
         case Polytempo_CommandIDs::addInstance:
             result.setInfo("Add Instance", "Add an instance of the section", infoCategory, 0);
-            result.setActive(window->getContentID() == Polytempo_NetworkWindow::imageEditorViewID &&
- ((Polytempo_ImageEditorView*)window->getContentComponent())->hasSelectedSection());
+            result.setActive(window->getContentID() == Polytempo_NetworkWindow::pageEditorViewID &&
+ ((Polytempo_PageEditorView*)window->getContentComponent())->hasSelectedSection());
             break;
             
         /* view menu
@@ -351,7 +351,7 @@ void Polytempo_MenuBarModel::getCommandInfo(CommandID commandID, ApplicationComm
             result.addDefaultKeypress(KeyPress::numberPad1, ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
             break;
     
-        case Polytempo_CommandIDs::showImageEditor:
+        case Polytempo_CommandIDs::showPageEditor:
             result.setInfo("Show Page Editor", String::empty, infoCategory, 0);
             result.addDefaultKeypress('2', ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
             result.addDefaultKeypress(KeyPress::numberPad2, ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
@@ -360,13 +360,13 @@ void Polytempo_MenuBarModel::getCommandInfo(CommandID commandID, ApplicationComm
         case Polytempo_CommandIDs::zoomIn:
             result.setInfo("Zoom In", String::empty, infoCategory, 0);
             result.addDefaultKeypress(KeyPress::upKey, ModifierKeys::commandModifier);
-            result.setActive(window->getContentID() == Polytempo_NetworkWindow::imageEditorViewID);
+            result.setActive(window->getContentID() == Polytempo_NetworkWindow::pageEditorViewID);
             break;
             
         case Polytempo_CommandIDs::zoomOut:
             result.setInfo("Zoom Out", String::empty, infoCategory, 0);
             result.addDefaultKeypress(KeyPress::downKey, ModifierKeys::commandModifier);
-            result.setActive(window->getContentID() == Polytempo_NetworkWindow::imageEditorViewID);
+            result.setActive(window->getContentID() == Polytempo_NetworkWindow::pageEditorViewID);
             break;
             
 #if ! JUCE_LINUX
@@ -531,19 +531,19 @@ bool Polytempo_MenuBarModel::perform(const InvocationInfo& info)
         /* edit menu
          ----------------------------------*/
         case Polytempo_CommandIDs::deleteSelected:
-            ((Polytempo_ImageEditorView*)window->getContentComponent())->deleteSelected();
+            ((Polytempo_PageEditorView*)window->getContentComponent())->deleteSelected();
             break;
             
         case Polytempo_CommandIDs::loadImage:
-            ((Polytempo_ImageEditorView*)window->getContentComponent())->loadImage();
+            ((Polytempo_PageEditorView*)window->getContentComponent())->loadImage();
             break;
 
         case Polytempo_CommandIDs::addSection:
-            ((Polytempo_ImageEditorView*)window->getContentComponent())->addSection();
+            ((Polytempo_PageEditorView*)window->getContentComponent())->addSection();
             break;
 
         case Polytempo_CommandIDs::addInstance:
-            ((Polytempo_ImageEditorView*)window->getContentComponent())->addInstance();
+            ((Polytempo_PageEditorView*)window->getContentComponent())->addInstance();
             break;
 
             
@@ -553,8 +553,8 @@ bool Polytempo_MenuBarModel::perform(const InvocationInfo& info)
             window->setContentID(Polytempo_NetworkWindow::mainViewID);
             break;
             
-        case Polytempo_CommandIDs::showImageEditor:
-            window->setContentID(Polytempo_NetworkWindow::imageEditorViewID);
+        case Polytempo_CommandIDs::showPageEditor:
+            window->setContentID(Polytempo_NetworkWindow::pageEditorViewID);
             break;
             
         case Polytempo_CommandIDs::zoomIn:

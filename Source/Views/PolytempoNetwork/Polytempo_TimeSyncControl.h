@@ -19,7 +19,7 @@
 //==============================================================================
 /*
 */
-class Polytempo_TimeSyncControl    : public Component, ButtonListener, MultiTimer
+class Polytempo_TimeSyncControl    : public Component, Button::Listener, MultiTimer
 {
 public:
     Polytempo_TimeSyncControl();

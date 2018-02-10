@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="at55VB" name="PolytempoNetwork" projectType="guiapp" version="0.3.0"
-              bundleIdentifier="net.icst.PolytempoNetwork" jucerVersion="5.2.0"
+              bundleIdentifier="net.icst.PolytempoNetwork" jucerVersion="5.2.1"
               companyName="ICST Institute for Computermusic and Sound Technology, Zurich"
               includeBinaryInAppConfig="1" companyWebsite="www.icst.net" defines="POLYTEMPO_NETWORK=1"
               displaySplashScreen="1" reportAppUsage="1" splashScreenColour="Dark"
@@ -178,14 +178,14 @@
               resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_GraphicsViewRegion.cpp"/>
         <FILE id="ZOmWKz" name="Polytempo_GraphicsViewRegion.h" compile="0"
               resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_GraphicsViewRegion.h"/>
-        <FILE id="K4iWQX" name="Polytempo_ImageEditorComponent.cpp" compile="1"
-              resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_ImageEditorComponent.cpp"/>
-        <FILE id="RrLDZg" name="Polytempo_ImageEditorComponent.h" compile="0"
-              resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_ImageEditorComponent.h"/>
-        <FILE id="rujGNc" name="Polytempo_ImageEditorView.cpp" compile="1"
-              resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_ImageEditorView.cpp"/>
-        <FILE id="RsrOOJ" name="Polytempo_ImageEditorView.h" compile="0" resource="0"
-              file="../Source/Views/PolytempoNetwork/Polytempo_ImageEditorView.h"/>
+        <FILE id="K4iWQX" name="Polytempo_PageEditorComponent.cpp" compile="1"
+              resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_PageEditorComponent.cpp"/>
+        <FILE id="RrLDZg" name="Polytempo_PageEditorComponent.h" compile="0"
+              resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_PageEditorComponent.h"/>
+        <FILE id="rujGNc" name="Polytempo_PageEditorView.cpp" compile="1" resource="0"
+              file="../Source/Views/PolytempoNetwork/Polytempo_PageEditorView.cpp"/>
+        <FILE id="RsrOOJ" name="Polytempo_PageEditorView.h" compile="0" resource="0"
+              file="../Source/Views/PolytempoNetwork/Polytempo_PageEditorView.h"/>
         <FILE id="wYVHeb" name="Polytempo_ImageManager.cpp" compile="1" resource="0"
               file="../Source/Views/PolytempoNetwork/Polytempo_ImageManager.cpp"/>
         <FILE id="knovRA" name="Polytempo_ImageManager.h" compile="0" resource="0"
@@ -234,11 +234,10 @@
     <XCODE_MAC targetFolder="Builds/MacOSX/PolytempoNetwork" smallIcon="KOwPbh"
                customPList="&lt;plist&gt;&lt;dict&gt;&#10;    &lt;key&gt;NSAppTransportSecurity&lt;/key&gt;  &#10;    &lt;dict&gt;  &#10;        &lt;key&gt;NSAllowsArbitraryLoads&lt;/key&gt;&#10;        &lt;true/&gt;  &#10;    &lt;/dict&gt;&#10;&lt;/dict&gt;&lt;/plist&gt;">
       <CONFIGURATIONS>
-        <CONFIGURATION name="Debug" osxSDK="default" osxCompatibility="10.9 SDK" osxArchitecture="default"
-                       isDebug="1" optimisation="1" targetName="PolytempoNetwork" enablePluginBinaryCopyStep="1"/>
-        <CONFIGURATION name="Release" osxSDK="default" osxCompatibility="10.9 SDK" osxArchitecture="default"
-                       isDebug="0" optimisation="2" targetName="PolytempoNetwork" defines=""
-                       customXcodeFlags="COPY_PHASE_STRIP = NO,  GCC_GENERATE_DEBUGGING_SYMBOLS = YES "
+        <CONFIGURATION name="Debug" osxCompatibility="10.9 SDK" isDebug="1" optimisation="1"
+                       targetName="PolytempoNetwork" enablePluginBinaryCopyStep="1"/>
+        <CONFIGURATION name="Release" osxCompatibility="10.9 SDK" isDebug="0" optimisation="2"
+                       targetName="PolytempoNetwork" defines="" customXcodeFlags="COPY_PHASE_STRIP = NO,  GCC_GENERATE_DEBUGGING_SYMBOLS = YES "
                        enablePluginBinaryCopyStep="1"/>
       </CONFIGURATIONS>
       <MODULEPATHS>

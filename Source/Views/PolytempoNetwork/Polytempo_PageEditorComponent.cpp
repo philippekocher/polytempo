@@ -23,13 +23,13 @@
  ============================================================================== */
 
 
-#include "Polytempo_ImageEditorComponent.h"
+#include "Polytempo_PageEditorComponent.h"
 #include "../../Preferences/Polytempo_StoredPreferences.h"
 #include "../../Application/PolytempoNetwork/Polytempo_NetworkApplication.h"
-#include "Polytempo_ImageEditorView.h"
+#include "Polytempo_PageEditorView.h"
 
 
-Polytempo_ImageEditorComponent::Polytempo_ImageEditorComponent()
+Polytempo_PageEditorComponent::Polytempo_PageEditorComponent()
 {
 	image = nullptr;
 
@@ -45,15 +45,15 @@ Polytempo_ImageEditorComponent::Polytempo_ImageEditorComponent()
     Polytempo_StoredPreferences::getInstance()->getProps().addChangeListener(this);
 }
 
-Polytempo_ImageEditorComponent::~Polytempo_ImageEditorComponent()
+Polytempo_PageEditorComponent::~Polytempo_PageEditorComponent()
 {
     deleteAllChildren();
 }
 
-void Polytempo_ImageEditorComponent::update()
+void Polytempo_PageEditorComponent::update()
 {}
 
-void Polytempo_ImageEditorComponent::paint(Graphics& g)
+void Polytempo_PageEditorComponent::paint(Graphics& g)
 {
     g.fillAll (Colours::red);
 
@@ -76,7 +76,7 @@ void Polytempo_ImageEditorComponent::paint(Graphics& g)
     }
 }
 
-void Polytempo_ImageEditorComponent::resized()
+void Polytempo_PageEditorComponent::resized()
 {
     if(image && image->isValid())
     {
@@ -95,13 +95,13 @@ void Polytempo_ImageEditorComponent::resized()
     }
 }
 
-void Polytempo_ImageEditorComponent::setImage(Image* img)
+void Polytempo_PageEditorComponent::setImage(Image* img)
 {
     image = img;
     resized();
 }
 
-void Polytempo_ImageEditorComponent::setSectionRect(Rectangle < float > r)
+void Polytempo_PageEditorComponent::setSectionRect(Rectangle < float > r)
 {
     sectionRect = r;
     
@@ -120,7 +120,7 @@ void Polytempo_ImageEditorComponent::setSectionRect(Rectangle < float > r)
     }
 }
 
-void Polytempo_ImageEditorComponent::setEditedEvent(Polytempo_Event *event)
+void Polytempo_PageEditorComponent::setEditedEvent(Polytempo_Event *event)
 {
     if(event->getType() == eventType_AddSection) editedEvent = event;
     
@@ -133,10 +133,10 @@ void Polytempo_ImageEditorComponent::setEditedEvent(Polytempo_Event *event)
 #pragma mark -
 #pragma mark drag handle listener
 
-void Polytempo_ImageEditorComponent::draggingSessionEnded()
+void Polytempo_PageEditorComponent::draggingSessionEnded()
 {}
 
-void Polytempo_ImageEditorComponent::positionChanged(DragHandle* handle)
+void Polytempo_PageEditorComponent::positionChanged(DragHandle* handle)
 {
     if(handle != dragHandles.getUnchecked(0))
         dragHandles.getUnchecked(0)->setCentrePosition((int)(dragHandles.getUnchecked(3)->getCentreX() + (dragHandles.getUnchecked(1)->getCentreX() - dragHandles.getUnchecked(3)->getCentreX()) * 0.5), (int)(dragHandles.getUnchecked(0)->getCentreY()));
@@ -165,7 +165,7 @@ void Polytempo_ImageEditorComponent::positionChanged(DragHandle* handle)
     
     // update everything
     Component *parent = getParentComponent()->getParentComponent()->getParentComponent();
-    ((Polytempo_ImageEditorView*)parent)->update();
+    ((Polytempo_PageEditorView*)parent)->update();
 }
 
 
@@ -173,7 +173,7 @@ void Polytempo_ImageEditorComponent::positionChanged(DragHandle* handle)
 #pragma mark -
 #pragma mark change listener
 
-void Polytempo_ImageEditorComponent::changeListenerCallback(ChangeBroadcaster*)
+void Polytempo_PageEditorComponent::changeListenerCallback(ChangeBroadcaster*)
 {
     if(!isVisible()) return;
     

@@ -54,7 +54,7 @@ namespace Polytempo_CommandIDs
         zoomIn, zoomOut,
  
         showMainView,
-        showImageEditor,
+        showPageEditor,
         
         deleteSelected,
         loadImage,
