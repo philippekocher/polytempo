@@ -69,6 +69,13 @@ bool Polytempo_ImageManager::loadImage(Polytempo_Event *event)
     var imageID = event->getProperty(eventPropertyString_ImageID);
     String url(event->getProperty(eventPropertyString_URL).toString());
     File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("scoreFileDirectory"));
+
+    if(!File(directory.getChildFile(url)).existsAsFile())
+    {
+        Polytempo_Alert::show("Error", "Can't open file:\n" + directory.getChildFile(url).getFullPathName());
+        return false;
+    }
+   
     Image* image = new Image(ImageFileFormat::loadFrom(directory.getChildFile(url)));
     
     if(*image == Image::null)
@@ -83,7 +90,7 @@ bool Polytempo_ImageManager::loadImage(Polytempo_Event *event)
         
         loadImageEventMap.set(imageID, event);
         imageMap.set(imageID, image);
-        
+
         return true;
     }
     return false;
@@ -94,8 +101,15 @@ bool Polytempo_ImageManager::replaceImage(var imageID, String url)
     if(loadImageEventMap.contains(imageID))
     {
         File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("scoreFileDirectory"));
+
+        if(!File(directory.getChildFile(url)).existsAsFile())
+        {
+            Polytempo_Alert::show("Error", "Can't open file:\n" + directory.getChildFile(url).getFullPathName());
+            return false;
+        }
+
         Image* image = new Image(ImageFileFormat::loadFrom(directory.getChildFile(url)));
-    
+
         if(*image == Image::null)
         {
             Polytempo_Alert::show("Error", "Can't open file:\n" + directory.getChildFile(url).getFullPathName());
@@ -111,7 +125,6 @@ bool Polytempo_ImageManager::replaceImage(var imageID, String url)
 
             imageMap.set(imageID, image);
   
-            delete image;
             return true;
         }
     }

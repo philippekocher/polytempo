@@ -55,8 +55,6 @@ void Polytempo_PageEditorComponent::update()
 
 void Polytempo_PageEditorComponent::paint(Graphics& g)
 {
-    g.fillAll (Colours::red);
-
     if(image != nullptr)
     {
         g.drawImage(*image,
@@ -93,6 +91,8 @@ void Polytempo_PageEditorComponent::resized()
             dragHandles.getUnchecked(3)->setCentrePosition((int)(sectionRect.getX() * image->getWidth() * zoomFactor), (int)((sectionRect.getY() + sectionRect.getHeight() * 0.5) * image->getHeight() * zoomFactor));
         }
     }
+    else
+        setBounds(0, 0, 0, 0);
 }
 
 void Polytempo_PageEditorComponent::setImage(Image* img)
