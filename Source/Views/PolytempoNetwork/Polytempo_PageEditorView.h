@@ -143,6 +143,7 @@ public:
     void addInstance();
     
     // retrieve state
+    bool hasSelectedImage();
     bool hasSelectedSection();
 
     // Label Listener

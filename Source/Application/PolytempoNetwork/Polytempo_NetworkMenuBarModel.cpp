@@ -334,13 +334,12 @@ void Polytempo_MenuBarModel::getCommandInfo(CommandID commandID, ApplicationComm
 
         case Polytempo_CommandIDs::addSection:
             result.setInfo("Add Section", "Add a section", infoCategory, 0);
-            result.setActive(window->getContentID() == Polytempo_NetworkWindow::pageEditorViewID);
+            result.setActive(window->getContentID() == Polytempo_NetworkWindow::pageEditorViewID && ((Polytempo_PageEditorView*)window->getContentComponent())->hasSelectedImage());
             break;
             
         case Polytempo_CommandIDs::addInstance:
             result.setInfo("Add Instance", "Add an instance of the section", infoCategory, 0);
-            result.setActive(window->getContentID() == Polytempo_NetworkWindow::pageEditorViewID &&
- ((Polytempo_PageEditorView*)window->getContentComponent())->hasSelectedSection());
+            result.setActive(window->getContentID() == Polytempo_NetworkWindow::pageEditorViewID && ((Polytempo_PageEditorView*)window->getContentComponent())->hasSelectedSection());
             break;
             
         /* view menu

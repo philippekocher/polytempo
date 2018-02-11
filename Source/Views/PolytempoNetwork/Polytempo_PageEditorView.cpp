@@ -129,12 +129,21 @@ void Polytempo_PageEditorView::refresh()
         }
     }
 
+    // create and populate tree
     ValueTree vt = createTree(String::empty, String::empty);
 
     for(int i=0;i<loadImageEvents.size();i++)
     {
         ValueTree item;
         vt.addChild(item = createTree(loadImageEvents[i]->getProperty(eventPropertyString_ImageID), String::empty), -1, nullptr);
+        
+        if(selectedEvent && selectedEvent == loadImageEvents[i])
+        {
+            imageID       = loadImageEvents[i]->getProperty(eventPropertyString_ImageID);
+            sectionID     = var::null;
+            selectedItem  = (TreeItem*)tree->getItemOnRow(0);
+            selectedEvent = nullptr;
+        }
 
         for(int j=0;j<addSectionEvents.size();j++)
         {
@@ -143,14 +152,15 @@ void Polytempo_PageEditorView::refresh()
                 item.addChild(createTree(loadImageEvents[i]->getProperty(eventPropertyString_ImageID), addSectionEvents[j]->getProperty(eventPropertyString_SectionID)), -1, nullptr);
                 if(selectedEvent && selectedEvent == addSectionEvents[j])
                 {
-                    imageID      = loadImageEvents[i]->getProperty(eventPropertyString_ImageID);
-                    selectedItem = (TreeItem*)tree->getItemOnRow(0);
+                    imageID       = loadImageEvents[i]->getProperty(eventPropertyString_ImageID);
+                    sectionID     = selectedEvent->getProperty(eventPropertyString_SectionID);
+                    selectedItem  = (TreeItem*)tree->getItemOnRow(0);
                     selectedEvent = nullptr;
                 }
             }
         }
     }
-    
+ 
     tree->setDefaultOpenness(true);
     tree->setOpenCloseButtonsVisible(false);
     tree->setMultiSelectEnabled(false);
@@ -189,7 +199,6 @@ void Polytempo_PageEditorView::refresh()
 
 void Polytempo_PageEditorView::update()
 {
-    
     DBG("update()");
     if(selectedItem)
     {
@@ -493,6 +502,7 @@ void Polytempo_PageEditorView::loadImage()
         
         Polytempo_EventScheduler::getInstance()->scheduleEvent(event); // execute event
         
+        selectedEvent = event;
         refresh();
     }
 }
@@ -512,8 +522,6 @@ void Polytempo_PageEditorView::addSection()
     score->setDirty();
     
     selectedEvent = event;
-    selectedItem = nullptr;
-    
     refresh();
 }
 
@@ -557,6 +565,11 @@ void Polytempo_PageEditorView::addInstance()
 //------------------------------------------------------------------------------
 #pragma mark -
 #pragma mark retrieve state
+
+bool Polytempo_PageEditorView::hasSelectedImage()
+{
+    return imageID != var::null;
+}
 
 bool Polytempo_PageEditorView::hasSelectedSection()
 {
