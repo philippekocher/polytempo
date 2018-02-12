@@ -178,14 +178,18 @@
               resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_GraphicsViewRegion.cpp"/>
         <FILE id="ZOmWKz" name="Polytempo_GraphicsViewRegion.h" compile="0"
               resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_GraphicsViewRegion.h"/>
-        <FILE id="K4iWQX" name="Polytempo_PageEditorComponent.cpp" compile="1"
-              resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_PageEditorComponent.cpp"/>
-        <FILE id="RrLDZg" name="Polytempo_PageEditorComponent.h" compile="0"
-              resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_PageEditorComponent.h"/>
         <FILE id="rujGNc" name="Polytempo_PageEditorView.cpp" compile="1" resource="0"
               file="../Source/Views/PolytempoNetwork/Polytempo_PageEditorView.cpp"/>
         <FILE id="RsrOOJ" name="Polytempo_PageEditorView.h" compile="0" resource="0"
               file="../Source/Views/PolytempoNetwork/Polytempo_PageEditorView.h"/>
+        <FILE id="K4iWQX" name="Polytempo_PageEditorComponent.cpp" compile="1"
+              resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_PageEditorComponent.cpp"/>
+        <FILE id="RrLDZg" name="Polytempo_PageEditorComponent.h" compile="0"
+              resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_PageEditorComponent.h"/>
+        <FILE id="ejTlmN" name="Polytempo_SectionInstancesComponent.cpp" compile="1"
+              resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_SectionInstancesComponent.cpp"/>
+        <FILE id="CwU7hS" name="Polytempo_SectionInstancesComponent.h" compile="0"
+              resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_SectionInstancesComponent.h"/>
         <FILE id="wYVHeb" name="Polytempo_ImageManager.cpp" compile="1" resource="0"
               file="../Source/Views/PolytempoNetwork/Polytempo_ImageManager.cpp"/>
         <FILE id="knovRA" name="Polytempo_ImageManager.h" compile="0" resource="0"

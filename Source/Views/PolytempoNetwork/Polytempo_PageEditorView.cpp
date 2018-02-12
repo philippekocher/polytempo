@@ -46,7 +46,7 @@ Polytempo_PageEditorView::Polytempo_PageEditorView()
     addAndMakeVisible(pageEditorViewport = new Polytempo_PageEditorViewport());
     
     addChildComponent(imageFileLabel = new Label(String::empty, "Image File"));
-    imageFileLabel->setFont(Font (14.0f, Font::plain));
+    imageFileLabel->setFont(Font (15.0f, Font::plain));
     
     addChildComponent(imageFileTextbox = new Polytempo_Textbox(String::empty));
     imageFileTextbox->setFont(Font (14.0f, Font::plain));
@@ -55,20 +55,8 @@ Polytempo_PageEditorView::Polytempo_PageEditorView()
     addChildComponent(chooseImageFile = new TextButton("Choose.."));
     chooseImageFile->addListener(this);
 
-    addChildComponent(markerTextbox = new Polytempo_Textbox("Marker"));
-    markerTextbox->setFont(Font (24.0f, Font::plain));
-    markerTextbox->addListener(this);
-    
-    addChildComponent(timeTextbox = new Polytempo_Textbox("Time"));
-    timeTextbox->setFont(Font (24.0f, Font::plain));
-    timeTextbox->addListener(this);
-    
-    addChildComponent(regionTextbox = new Polytempo_Textbox("Region"));
-    regionTextbox->setFont(Font (24.0f, Font::plain));
-    regionTextbox->addListener(this);
-    
     addChildComponent(relativePositionLabel = new Label(String::empty, "Relative Bounds"));
-    relativePositionLabel->setFont(Font (14.0f, Font::plain));
+    relativePositionLabel->setFont(Font (15.0f, Font::plain));
 
     addChildComponent(xTextbox = new Polytempo_Textbox("Left"));
     xTextbox->setFont(Font (16.0f, Font::plain));
@@ -86,6 +74,13 @@ Polytempo_PageEditorView::Polytempo_PageEditorView()
     hTextbox->setFont(Font (16.0f, Font::plain));
     hTextbox->addListener(this);
     
+    addChildComponent(sectionInstancesLabel = new Label(String::empty, "Instances"));
+    sectionInstancesLabel->setFont(Font (15.0f, Font::plain));
+    
+    addChildComponent(sectionInstancesViewport = new Polytempo_SectionInstancesViewport());
+    sectionInstancesViewport->setScrollBarsShown(true, false);
+    sectionInstancesViewport->getComponent()->setModel(this);
+
     selectedItem = nullptr;
 }
 
@@ -216,41 +211,34 @@ void Polytempo_PageEditorView::update()
     selectedAddSectionEvent = nullptr;
     selectedImageEvent = nullptr;
 
-    if(sectionID == var::null)
-    {
-        // hide handles
-        pageEditorViewport->getComponent()->setSectionRect(Rectangle<float>(0,0,0,0));
+    // hide handles
+    pageEditorViewport->getComponent()->setSectionRect(Rectangle<float>(0,0,0,0));
+    
+    // hide image texboxes
+    imageFileLabel->setVisible(false);
+    imageFileTextbox->setVisible(false);
+    chooseImageFile->setVisible(false);
+
+    // hide section textboxes
+    relativePositionLabel->setVisible(false);
+    xTextbox->setVisible(false);
+    yTextbox->setVisible(false);
+    wTextbox->setVisible(false);
+    hTextbox->setVisible(false);
+
+    // hide section instances
+    sectionInstancesLabel->setVisible(false);
+    sectionInstancesViewport->setVisible(false);
         
-        // hide textboxes
-        relativePositionLabel->setVisible(false);
-        xTextbox->setVisible(false);
-        yTextbox->setVisible(false);
-        wTextbox->setVisible(false);
-        hTextbox->setVisible(false);
-
-        markerTextbox->setVisible(false);
-        timeTextbox->setVisible(false);
-        regionTextbox->setVisible(false);
-
-        if(imageID != var::null)
-        {
-            // show textboxes
-            imageFileLabel->setVisible(true);
-            imageFileTextbox->setVisible(true);
-            imageFileTextbox->setText(Polytempo_ImageManager::getInstance()->getFileName(imageID), dontSendNotification);
-            chooseImageFile->setVisible(true);
-        }
-    }
-    if(imageID == var::null || sectionID != var::null)
+    if(imageID != var::null && sectionID == var::null)
     {
-        // hide textboxes
-        imageFileLabel->setVisible(false);
-        imageFileTextbox->setVisible(false);
-        chooseImageFile->setVisible(false);
-        markerTextbox->setVisible(false);
-        timeTextbox->setVisible(false);
+        // show textboxes
+        imageFileLabel->setVisible(true);
+        imageFileTextbox->setVisible(true);
+        imageFileTextbox->setText(Polytempo_ImageManager::getInstance()->getFileName(imageID), dontSendNotification);
+        chooseImageFile->setVisible(true);
     }
-    if(sectionID != var::null)
+    else if(sectionID != var::null)
     {
         for(int i=0;i<addSectionEvents.size();i++)
         {
@@ -277,38 +265,12 @@ void Polytempo_PageEditorView::update()
         yTextbox->setText(String((float)r[1],3), dontSendNotification);
         wTextbox->setText(String((float)r[2],3), dontSendNotification);
         hTextbox->setText(String((float)r[3],3), dontSendNotification);
-
-        for(int i=0;i<imageEvents.size();i++)
-        {
-            if(imageEvents[i]->getProperty(eventPropertyString_SectionID) == sectionID)
-            {
-                selectedImageEvent = imageEvents[i];
-                break;
-            }
-        }
         
-        if(selectedImageEvent == nullptr)
-        {
-            markerTextbox->setVisible(false);
-            timeTextbox->setVisible(false);
-            regionTextbox->setVisible(false);
-        }
-        else
-        {
-            markerTextbox->setVisible(true);
-            timeTextbox->setVisible(true);
-            regionTextbox->setVisible(true);
-            
-            String marker;
-            if(score->getMarkerForTime(selectedImageEvent->getTime(), &marker))
-                markerTextbox->setText(marker, dontSendNotification);
-            else
-                markerTextbox->reset();
-            timeTextbox->setText(Polytempo_Textbox::timeToString(selectedImageEvent->getTime() * 0.001f), dontSendNotification);
-            regionTextbox->setText(selectedImageEvent->getProperty(eventPropertyString_RegionID).toString(),dontSendNotification);
-        }
+        sectionInstancesLabel->setVisible(true);
+        sectionInstancesViewport->setVisible(true);
+        sectionInstancesViewport->getComponent()->setImageEvents(imageEvents, sectionID);
     }
-
+    
     repaint();
     
     // enable / disable menu items
@@ -334,6 +296,8 @@ void Polytempo_PageEditorView::paint(Graphics& g)
     g.setColour(Colour::Colour(245,245,245));
     g.fillRect(r.removeFromRight(TREE_VIEW_WIDTH));
     g.setColour(Colours::grey);
+    if(sectionID != var::null)
+        g.drawHorizontalLine(168, getWidth() - TREE_VIEW_WIDTH, getWidth());
     g.drawVerticalLine(TREE_VIEW_WIDTH, 0.0f, (float)getHeight());
     g.drawVerticalLine(getWidth() - TREE_VIEW_WIDTH, 0.0f, (float)getHeight());
 }
@@ -344,9 +308,7 @@ void Polytempo_PageEditorView::resized()
     
     tree->setBounds(r.withWidth(TREE_VIEW_WIDTH));
     pageEditorViewport->setBounds(r.withLeft(TREE_VIEW_WIDTH+1).withTrimmedRight(TREE_VIEW_WIDTH));
-    
-    int yPosition = 25;
-    
+        
     imageFileLabel->setBounds(getWidth() - TREE_VIEW_WIDTH + 5, 0, TREE_VIEW_WIDTH - 20, 34);
     imageFileTextbox->setBounds(getWidth() - TREE_VIEW_WIDTH + 10, 50, TREE_VIEW_WIDTH - 20, 26);
     chooseImageFile->setBounds(getWidth() - TREE_VIEW_WIDTH + 10, 80, 50, 16);
@@ -358,17 +320,8 @@ void Polytempo_PageEditorView::resized()
     wTextbox->setBounds(getWidth() - TREE_VIEW_WIDTH + 10, 95, 55, 26);
     hTextbox->setBounds((int)(getWidth() - TREE_VIEW_WIDTH * 0.5 + 10), 95, 55, 26);
     
-    yPosition = 300;
-    markerTextbox->setBounds(getWidth() - TREE_VIEW_WIDTH + 10, yPosition, TREE_VIEW_WIDTH - 20, 34);
-    yPosition +=55;
-    
-    timeTextbox->setBounds(getWidth() - TREE_VIEW_WIDTH + 10, yPosition, TREE_VIEW_WIDTH - 20, 34);
-    yPosition +=60;
-    
-    regionTextbox->setBounds(getWidth() - TREE_VIEW_WIDTH + 10, yPosition, 40, 34);
-    yPosition +=50;
-    
-
+    sectionInstancesLabel->setBounds(getWidth() - TREE_VIEW_WIDTH + 5, 140, TREE_VIEW_WIDTH - 20, 34);
+    sectionInstancesViewport->setBounds(r.withLeft(int(getWidth()) - TREE_VIEW_WIDTH + 1).withTrimmedTop(170));
 }
 
 //------------------------------------------------------------------------------
@@ -527,11 +480,6 @@ void Polytempo_PageEditorView::addSection()
 
 void Polytempo_PageEditorView::addInstance()
 {
-    // we assume for the moment that there is only
-    // one single instance per section.
-    // TODO: this has to be extended to cover
-    // multiple instances.
-    
     if(selectedImageEvent == nullptr)
     {
         Polytempo_Event* event;
@@ -593,39 +541,6 @@ void Polytempo_PageEditorView::labelTextChanged(Label* label)
             score->setDirty();
         }
         refresh();
-    }
-    else if(label == markerTextbox)
-    {
-        String marker = label->getTextValue().toString();
-        int time;
-        
-        if(score->getTimeForMarker(marker, &time))
-        {
-            selectedImageEvent->setTime(time);
-            score->sortSection();
-            score->setDirty();
-        }
-        update();
-    }
-    else if(label == timeTextbox)
-    {
-        int time = Polytempo_Textbox::stringToTime(label->getText()) * 1000.0f;
-        
-        selectedImageEvent->setTime(time);
-        score->sortSection();
-        score->setDirty();
-        
-        update();
-    }
-    else if(label == regionTextbox)
-    {
-        int num = (label->getText()).getIntValue();
-        // TODO: check if region exists
-        
-        selectedImageEvent->setProperty(eventPropertyString_RegionID, var(num));
-        score->setDirty();
-        
-        update();
     }
     else if(label == xTextbox || label == yTextbox || label == wTextbox || label == hTextbox)
     {

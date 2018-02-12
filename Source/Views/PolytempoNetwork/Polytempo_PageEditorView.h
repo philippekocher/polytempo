@@ -29,6 +29,7 @@
 #include "../../Data/Polytempo_Score.h"
 #include "Polytempo_ImageManager.h"
 #include "Polytempo_PageEditorComponent.h"
+#include "Polytempo_SectionInstancesComponent.h"
 
 
 class TreeItem : public TreeViewItem, private ValueTree::Listener
@@ -120,6 +121,20 @@ private:
     Polytempo_PageEditorComponent *component;
 };
 
+class Polytempo_SectionInstancesViewport : public Viewport
+{
+public:
+    Polytempo_SectionInstancesViewport()
+    {
+        setViewedComponent(component = new Polytempo_SectionInstancesComponent());
+    }
+    ~Polytempo_SectionInstancesViewport() {}
+    Polytempo_SectionInstancesComponent* getComponent() { return component; }
+    void resized() { component->setBounds(getBounds()); }
+    
+private:
+    Polytempo_SectionInstancesComponent *component;
+};
 
 class Polytempo_PageEditorView : public Component,
                                  public Label::Listener,
@@ -186,15 +201,14 @@ private:
     Polytempo_Textbox *imageFileTextbox;
     TextButton *chooseImageFile;
     
-    Polytempo_Textbox *markerTextbox;
-    Polytempo_Textbox *timeTextbox;
-    Polytempo_Textbox *regionTextbox;
-    
     Label *relativePositionLabel;
     Polytempo_Textbox *xTextbox;
     Polytempo_Textbox *yTextbox;
     Polytempo_Textbox *wTextbox;
     Polytempo_Textbox *hTextbox;
+    
+    Label *sectionInstancesLabel;
+    Polytempo_SectionInstancesViewport* sectionInstancesViewport;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_PageEditorView)
 };
