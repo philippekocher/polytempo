@@ -280,7 +280,6 @@ void Polytempo_NetworkApplication::openScoreFile(File aFile)
 {
     if(aFile != File::nonexistent) newScoreFile = aFile;
     
-    if(newScoreFile == scoreFile) return; // file already open
     if(!newScoreFile.existsAsFile())
     {
         Polytempo_Alert::show("Error", "File does not exist:\n" + newScoreFile.getFullPathName());

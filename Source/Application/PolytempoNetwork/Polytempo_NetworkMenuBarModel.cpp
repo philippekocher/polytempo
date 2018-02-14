@@ -568,17 +568,12 @@ bool Polytempo_MenuBarModel::perform(const InvocationInfo& info)
 #if ! JUCE_LINUX
         case Polytempo_CommandIDs::fullScreen:
         {
-            // Kiosk mode doesn't work properly
-            // problem occurs only with a native titlebar
-            
-            /*
             Desktop& desktop = Desktop::getInstance();
             
             if (desktop.getKioskModeComponent() == nullptr)
                 desktop.setKioskModeComponent(window->getTopLevelComponent());
             else
                 desktop.setKioskModeComponent(nullptr);
-            */
             break;
         }
 #endif
