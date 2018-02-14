@@ -63,6 +63,8 @@ public:
     
     void commandStatusChanged();
     
+    static ApplicationCommandManager* getCommandManager();
+
 private:
 	ScopedPointer<Polytempo_NetworkWindow> mainWindow;
     ScopedPointer<Polytempo_MenuBarModel> menuBarModel;
@@ -71,6 +73,7 @@ private:
     ScopedPointer<Polytempo_MidiInput> midiInput;
     ScopedPointer<Polytempo_Score> score;
     
+    ApplicationCommandManager commandManager;
     File scoreFile, newScoreFile;
     LookAndFeel_V3 lookAndFeelV3;
 };

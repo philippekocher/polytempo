@@ -24,6 +24,7 @@
 
 #include "Polytempo_PageEditorView.h"
 #include "../../Application/PolytempoNetwork/Polytempo_NetworkApplication.h"
+#include "../../Application/Polytempo_CommandIDs.h"
 #include "../../Preferences/Polytempo_StoredPreferences.h"
 #include "../../Scheduler/Polytempo_EventScheduler.h"
 #include "../../Misc/Polytempo_Alerts.h"
@@ -43,7 +44,10 @@ static ValueTree createTree(const String& imageID, const String& sectionID)
 Polytempo_PageEditorView::Polytempo_PageEditorView()
 {
     addAndMakeVisible(tree = new TreeView());
+    tree->addMouseListener(this, false);
+    
     addAndMakeVisible(pageEditorViewport = new Polytempo_PageEditorViewport());
+    pageEditorViewport->addMouseListener(this, true);
     
     addChildComponent(imageFileLabel = new Label(String::empty, "Image File"));
     imageFileLabel->setFont(Font (15.0f, Font::plain));
@@ -80,6 +84,7 @@ Polytempo_PageEditorView::Polytempo_PageEditorView()
     addChildComponent(sectionInstancesViewport = new Polytempo_SectionInstancesViewport());
     sectionInstancesViewport->setScrollBarsShown(true, false);
     sectionInstancesViewport->getComponent()->setModel(this);
+    sectionInstancesViewport->addMouseListener(this, true);
 
     selectedItem = nullptr;
 }
@@ -327,6 +332,23 @@ void Polytempo_PageEditorView::resized()
 //------------------------------------------------------------------------------
 #pragma mark -
 #pragma mark actions
+
+void Polytempo_PageEditorView::mouseDown(const MouseEvent &event)
+{
+    if(event.mods.isPopupMenu())
+    {
+        ApplicationCommandManager* commandManager = Polytempo_NetworkApplication::getCommandManager();
+        PopupMenu m;
+        
+        m.addCommandItem(commandManager, Polytempo_CommandIDs::loadImage);
+        m.addCommandItem(commandManager, Polytempo_CommandIDs::addSection);
+        m.addCommandItem(commandManager, Polytempo_CommandIDs::addInstance);
+        m.addSeparator();
+        m.addCommandItem(commandManager, Polytempo_CommandIDs::deleteSelected);
+        
+        m.show();
+    }
+}
 
 void Polytempo_PageEditorView::deleteSelected()
 {

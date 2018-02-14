@@ -152,6 +152,7 @@ public:
     void resized();
     
     // actions
+    void mouseDown(const MouseEvent &);
     void deleteSelected();
     void loadImage();
     void addSection();

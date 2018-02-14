@@ -52,7 +52,7 @@ void Polytempo_NetworkApplication::initialise(const String&)
     menuBarModel = new Polytempo_MenuBarModel(mainWindow);
     
     // use keypresses that arrive in the windows to send out commands
-    mainWindow->addKeyListener(menuBarModel->commandManager.getKeyMappings());
+    mainWindow->addKeyListener(commandManager.getKeyMappings());
     
     // scheduler
     Polytempo_ScoreScheduler::getInstance()->setEngine(new Polytempo_NetworkEngine());
@@ -321,7 +321,14 @@ void Polytempo_NetworkApplication::openScoreFile(File aFile)
 
 void Polytempo_NetworkApplication::commandStatusChanged()
 {
-    menuBarModel->commandManager.commandStatusChanged();
+    commandManager.commandStatusChanged();
+}
+
+ApplicationCommandManager* Polytempo_NetworkApplication::getCommandManager()
+{
+    Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
+    
+    return &(app->commandManager);
 }
 
 //------------------------------------------------------------------------------

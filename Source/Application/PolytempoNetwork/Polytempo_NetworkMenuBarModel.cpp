@@ -37,21 +37,23 @@ Polytempo_MenuBarModel::Polytempo_MenuBarModel(Polytempo_NetworkWindow *theWindo
 {
     window = theWindow;
     
-    commandManager.registerAllCommandsForTarget(this);
-    commandManager.registerAllCommandsForTarget(JUCEApplication::getInstance());
-    commandManager.setFirstCommandTarget(this);
+    ApplicationCommandManager *commandManager = Polytempo_NetworkApplication::getCommandManager();
+
+    commandManager->registerAllCommandsForTarget(this);
+    commandManager->registerAllCommandsForTarget(JUCEApplication::getInstance());
+    commandManager->setFirstCommandTarget(this);
     
     // tells our menu bar model that it should watch this command manager for
     // changes, and send change messages accordingly.
-    setApplicationCommandManagerToWatch (&commandManager);
+    setApplicationCommandManagerToWatch (commandManager);
     
 #if JUCE_MAC
     // extra menu to be added to the mac osx app-menu
     extraAppleMenuItems = new PopupMenu();
     
-    extraAppleMenuItems->addCommandItem(&commandManager, Polytempo_CommandIDs::aboutWindow);
+    extraAppleMenuItems->addCommandItem(commandManager, Polytempo_CommandIDs::aboutWindow);
     extraAppleMenuItems->addSeparator();
-    extraAppleMenuItems->addCommandItem(&commandManager, Polytempo_CommandIDs::preferencesWindow);
+    extraAppleMenuItems->addCommandItem(commandManager, Polytempo_CommandIDs::preferencesWindow);
 
     MenuBarModel::setMacMainMenu(this, extraAppleMenuItems);
 #else
@@ -91,84 +93,85 @@ StringArray Polytempo_MenuBarModel::getMenuBarNames()
 
 PopupMenu Polytempo_MenuBarModel::getMenuForIndex(int, const String& menuName)
 {
+    ApplicationCommandManager *commandManager = Polytempo_NetworkApplication::getCommandManager();
     PopupMenu menu;
     
 #ifdef WIN32
     if (menuName == "PolytempoNetwork")
     {
-        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::aboutWindow);
-        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::preferencesWindow);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::aboutWindow);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::preferencesWindow);
         menu.addSeparator();
-        menu.addCommandItem(&commandManager, StandardApplicationCommandIDs::quit);
+        menu.addCommandItem(commandManager, StandardApplicationCommandIDs::quit);
     }
 #endif
 
     if (menuName == "File")
     {
-        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::newDocument);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::newDocument);
         menu.addSeparator();
-        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::open);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::open);
 
         PopupMenu recentFilesMenu;
         Polytempo_StoredPreferences::getInstance()->recentFiles.createPopupMenuItems(recentFilesMenu, Polytempo_CommandIDs::openRecent, false, true);
         recentFilesMenu.addSeparator();
-        recentFilesMenu.addCommandItem(&commandManager, Polytempo_CommandIDs::clearOpenRecent);
+        recentFilesMenu.addCommandItem(commandManager, Polytempo_CommandIDs::clearOpenRecent);
         menu.addSubMenu("Open Recent", recentFilesMenu);
         
         menu.addSeparator();
-        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::save);
-        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::saveAs);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::save);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::saveAs);
         menu.addSeparator();
-        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::close);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::close);
     }
     else if (menuName == "Edit")
     {
-        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::deleteSelected);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::loadImage);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::addSection);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::addInstance);
         menu.addSeparator();
-        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::loadImage);
-        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::addSection);
-        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::addInstance);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::deleteSelected);
     }
     else if (menuName == "View")
     {
-        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::showMainView);
-        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::showPageEditor);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::showMainView);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::showPageEditor);
         menu.addSeparator();
-        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::zoomIn);
-        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::zoomOut);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::zoomIn);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::zoomOut);
         menu.addSeparator();
 #if ! JUCE_LINUX
-        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::fullScreen);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::fullScreen);
 #endif
     }    
     else if (menuName == "Scheduler")
     {
-        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::startStop);
-        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::returnToLoc);
-        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::returnToBeginning);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::startStop);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::returnToLoc);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::returnToBeginning);
 
         menu.addSeparator();
         
-        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::markerFwd);
-        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::markerBwd);
-        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::imageFwd);
-        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::imageBwd);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::markerFwd);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::markerBwd);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::imageFwd);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::imageBwd);
 
         menu.addSeparator();
         
-        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::gotoTime);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::gotoTime);
     }
 	else if (menuName == "Annotations")
 	{
-		menu.addCommandItem(&commandManager, Polytempo_CommandIDs::annotationAccept);
-		menu.addCommandItem(&commandManager, Polytempo_CommandIDs::annotationCancel);
+		menu.addCommandItem(commandManager, Polytempo_CommandIDs::annotationAccept);
+		menu.addCommandItem(commandManager, Polytempo_CommandIDs::annotationCancel);
 
 		menu.addSeparator();
 
-		menu.addCommandItem(&commandManager, Polytempo_CommandIDs::annotationColor);
-		menu.addCommandItem(&commandManager, Polytempo_CommandIDs::annotationTextSize);
-		menu.addCommandItem(&commandManager, Polytempo_CommandIDs::annotationLayerSettings);
-		menu.addCommandItem(&commandManager, Polytempo_CommandIDs::annotationLayerEditMode);
+		menu.addCommandItem(commandManager, Polytempo_CommandIDs::annotationColor);
+		menu.addCommandItem(commandManager, Polytempo_CommandIDs::annotationTextSize);
+		menu.addCommandItem(commandManager, Polytempo_CommandIDs::annotationLayerSettings);
+		menu.addCommandItem(commandManager, Polytempo_CommandIDs::annotationLayerEditMode);
 	}
 	else if (menuName == "Window")
     {
@@ -177,11 +180,11 @@ PopupMenu Polytempo_MenuBarModel::getMenuForIndex(int, const String& menuName)
     else if (menuName == "Help")
     {
 #if ! JUCE_MAC
-        menu.addCommandItem (&commandManager, Polytempo_CommandIDs::aboutWindow);
+        menu.addCommandItem (commandManager, Polytempo_CommandIDs::aboutWindow);
 #endif
-        menu.addCommandItem (&commandManager, Polytempo_CommandIDs::help);
+        menu.addCommandItem (commandManager, Polytempo_CommandIDs::help);
         menu.addSeparator();
-        menu.addCommandItem (&commandManager, Polytempo_CommandIDs::visitWebsite);
+        menu.addCommandItem (commandManager, Polytempo_CommandIDs::visitWebsite);
     }
     
     return menu;
@@ -321,9 +324,7 @@ void Polytempo_MenuBarModel::getCommandInfo(CommandID commandID, ApplicationComm
         /* edit menu
          ----------------------------------*/
         case Polytempo_CommandIDs::deleteSelected:
-            result.setInfo("Delete", "Delete the selected item", infoCategory, 0);
-            result.addDefaultKeypress('\b', 0);
-            result.addDefaultKeypress(KeyPress::backspaceKey, 0);
+            result.setInfo("Delete selected", "Delete the selected item", infoCategory, 0);
             result.setActive(window->getContentID() == Polytempo_NetworkWindow::pageEditorViewID);
             break;
             
