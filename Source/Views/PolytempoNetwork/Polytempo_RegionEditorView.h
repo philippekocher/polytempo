@@ -43,6 +43,8 @@ public:
     
     bool keyPressed(const KeyPress&);
     void mouseDown(const MouseEvent&);
+    
+    void addRegion();
 
     // Drag Handle Listener
     void positionChanged(DragHandle*);
@@ -52,6 +54,8 @@ public:
     void eventNotification(Polytempo_Event*);
     
 private:
+    int findNewID(String eventPropertyString, Array < Polytempo_Event* > events);
+
     Polytempo_Score *score;
     Array < DragHandle* > dragHandles;    
     Array < Polytempo_Event* > addRegionEvents;

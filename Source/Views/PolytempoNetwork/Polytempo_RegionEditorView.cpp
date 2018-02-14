@@ -58,11 +58,11 @@ void Polytempo_RegionEditorView::paint(Graphics& g)
     {
         Array<var> r = *addRegionEvent->getProperty(eventPropertyString_Rect).getArray();
         
+        Rectangle<int> bounds = Rectangle<int>(width * float(r[0]), height * float(r[1]), width * float(r[2]), height * float(r[3]));
+        
         if(i++ == selectedRegionID)
         {
-            Rectangle<float> bounds = Rectangle<float>(width * float(r[0]), height * float(r[1]), width * float(r[2]), height * float(r[3]));
-            
-            g.setColour(Colours::blue.withAlpha(0.1f));
+            g.setColour(Colours::blue.withAlpha(0.05f));
             g.fillRect(bounds);
 
             dragHandles.getUnchecked(0)->setCentrePosition(int((bounds.getX() + bounds.getWidth() * 0.5f)), int(bounds.getY()));
@@ -74,13 +74,27 @@ void Polytempo_RegionEditorView::paint(Graphics& g)
             dragHandles.getUnchecked(3)->setCentrePosition(int(bounds.getX()), int((bounds.getY() + bounds.getHeight() * 0.5f)));
 
             g.setColour(Colours::blue);
-            g.drawRect(width * float(r[0]), height * float(r[1]), width * float(r[2]), height * float(r[3]), 2.0f);
+            g.drawRect(bounds, 2.0f);
+            
+            if(bounds.getHeight() < bounds.getWidth() * 2)
+                g.setFont(bounds.getHeight());
+            else
+                g.setFont(bounds.getWidth() * 2);
+            g.setColour(Colours::blue.withAlpha(0.2f));
+            g.drawFittedText(addRegionEvent->getProperty(eventPropertyString_RegionID).toString(), bounds, Justification::centred, 0.1f);
         }
         else
         {
-            g.setColour(Colours::blue);
+            g.setColour(Colours::blue.withAlpha(0.7f));
             g.drawRect(width * float(r[0]) + 1, height * float(r[1]) + 1, width * float(r[2]) - 2, height * float(r[3]) - 2, 1.0f);
-        }
+
+            if(bounds.getHeight() < bounds.getWidth() * 2)
+                g.setFont(bounds.getHeight());
+            else
+                g.setFont(bounds.getWidth() * 2);
+            g.setColour(Colours::blue.withAlpha(0.05f));
+            g.drawFittedText(addRegionEvent->getProperty(eventPropertyString_RegionID).toString(), bounds, Justification::centred, 0.1f);
+}
     }
 }
 
@@ -124,6 +138,40 @@ void Polytempo_RegionEditorView::mouseDown(const MouseEvent& event)
     }
 }
 
+void Polytempo_RegionEditorView::addRegion()
+{
+    // find new id
+    int newID = 0;
+    bool success = false;
+    
+    while(!success)
+    {
+        newID++;
+        success = true;
+        for(Polytempo_Event *addRegionEvent : addRegionEvents)
+        {
+            if(addRegionEvent->getProperty(eventPropertyString_RegionID).equals(var(newID)))
+            {
+                success = false;
+                break;
+            }
+        }
+    }
+
+    Polytempo_Event* event = Polytempo_Event::makeEvent(eventType_AddRegion);
+    Array < var > r;
+    r.set(0,0); r.set(1,0); r.set(2,1); r.set(3,1);
+    event->setProperty(eventPropertyString_Rect, r);
+    event->setProperty(eventPropertyString_RegionID, var(newID));
+
+    score->addEvent(event, true);
+    score->setDirty();
+    
+    addRegionEvents.add(event);
+    selectedRegionID = addRegionEvents.size() - 1;
+    
+    repaint();
+}
 
 //------------------------------------------------------------------------------
 #pragma mark -

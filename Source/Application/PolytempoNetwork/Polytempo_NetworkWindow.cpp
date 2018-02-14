@@ -116,6 +116,7 @@ Component* Polytempo_NetworkWindow::getContentComponent()
 {
     if(currentContentID == mainViewID) return mainView;
     if(currentContentID == pageEditorViewID)  return pageEditorView;
-    
+    if(currentContentID == regionEditorViewID)  return regionEditorView;
+
     return nullptr;
 }

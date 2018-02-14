@@ -130,6 +130,8 @@ PopupMenu Polytempo_MenuBarModel::getMenuForIndex(int, const String& menuName)
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::addSection);
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::addInstance);
         menu.addSeparator();
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::addRegion);
+        menu.addSeparator();
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::deleteSelected);
     }
     else if (menuName == "View")
@@ -229,11 +231,12 @@ void Polytempo_MenuBarModel::getAllCommands(Array <CommandID>& commands)
         Polytempo_CommandIDs::saveAs,
         Polytempo_CommandIDs::close,
         
-        Polytempo_CommandIDs::deleteSelected,
         Polytempo_CommandIDs::loadImage,
         Polytempo_CommandIDs::addSection,
         Polytempo_CommandIDs::addInstance,
-        
+        Polytempo_CommandIDs::addRegion,
+        Polytempo_CommandIDs::deleteSelected,
+
         Polytempo_CommandIDs::showMainView,
         Polytempo_CommandIDs::showPageEditor,
         Polytempo_CommandIDs::showRegionEditor,
@@ -325,11 +328,6 @@ void Polytempo_MenuBarModel::getCommandInfo(CommandID commandID, ApplicationComm
             
         /* edit menu
          ----------------------------------*/
-        case Polytempo_CommandIDs::deleteSelected:
-            result.setInfo("Delete selected", "Delete the selected item", infoCategory, 0);
-            result.setActive(window->getContentID() == Polytempo_NetworkWindow::pageEditorViewID);
-            break;
-            
         case Polytempo_CommandIDs::loadImage:
             result.setInfo("Load Image", "Load an image", infoCategory, 0);
             result.setActive(window->getContentID() == Polytempo_NetworkWindow::pageEditorViewID);
@@ -345,6 +343,17 @@ void Polytempo_MenuBarModel::getCommandInfo(CommandID commandID, ApplicationComm
             result.setActive(window->getContentID() == Polytempo_NetworkWindow::pageEditorViewID && ((Polytempo_PageEditorView*)window->getContentComponent())->hasSelectedSection());
             break;
             
+        case Polytempo_CommandIDs::addRegion:
+            result.setInfo("Add Region", "Add a region", infoCategory, 0);
+            result.setActive(window->getContentID() == Polytempo_NetworkWindow::regionEditorViewID);
+            break;
+            
+        case Polytempo_CommandIDs::deleteSelected:
+            result.setInfo("Delete selected", "Delete the selected item", infoCategory, 0);
+            result.setActive(window->getContentID() == Polytempo_NetworkWindow::pageEditorViewID);
+            break;
+            
+
         /* view menu
          ----------------------------------*/
         case Polytempo_CommandIDs::showMainView:
@@ -538,10 +547,6 @@ bool Polytempo_MenuBarModel::perform(const InvocationInfo& info)
             
         /* edit menu
          ----------------------------------*/
-        case Polytempo_CommandIDs::deleteSelected:
-            ((Polytempo_PageEditorView*)window->getContentComponent())->deleteSelected();
-            break;
-            
         case Polytempo_CommandIDs::loadImage:
             ((Polytempo_PageEditorView*)window->getContentComponent())->loadImage();
             break;
@@ -553,8 +558,16 @@ bool Polytempo_MenuBarModel::perform(const InvocationInfo& info)
         case Polytempo_CommandIDs::addInstance:
             ((Polytempo_PageEditorView*)window->getContentComponent())->addInstance();
             break;
-
             
+        case Polytempo_CommandIDs::addRegion:
+            ((Polytempo_RegionEditorView*)window->getContentComponent())->addRegion();
+            break;
+
+        case Polytempo_CommandIDs::deleteSelected:
+            ((Polytempo_PageEditorView*)window->getContentComponent())->deleteSelected();
+            break;
+            
+
         /* view menu
          ----------------------------------*/
         case Polytempo_CommandIDs::showMainView:

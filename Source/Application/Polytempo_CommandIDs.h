@@ -57,10 +57,11 @@ namespace Polytempo_CommandIDs
         showPageEditor,
         showRegionEditor,
 
-        deleteSelected,
         loadImage,
         addSection,
         addInstance,
+        addRegion,
+        deleteSelected,
 
         
         // composer
