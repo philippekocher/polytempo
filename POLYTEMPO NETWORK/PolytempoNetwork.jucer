@@ -190,6 +190,10 @@
               resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_SectionInstancesComponent.cpp"/>
         <FILE id="CwU7hS" name="Polytempo_SectionInstancesComponent.h" compile="0"
               resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_SectionInstancesComponent.h"/>
+        <FILE id="YFAxUY" name="Polytempo_RegionEditorView.cpp" compile="1"
+              resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_RegionEditorView.cpp"/>
+        <FILE id="ZZpUyX" name="Polytempo_RegionEditorView.h" compile="0" resource="0"
+              file="../Source/Views/PolytempoNetwork/Polytempo_RegionEditorView.h"/>
         <FILE id="wYVHeb" name="Polytempo_ImageManager.cpp" compile="1" resource="0"
               file="../Source/Views/PolytempoNetwork/Polytempo_ImageManager.cpp"/>
         <FILE id="knovRA" name="Polytempo_ImageManager.h" compile="0" resource="0"

@@ -25,6 +25,7 @@
 #pragma once
 
 #include "../../Views/PolytempoNetwork/Polytempo_PageEditorView.h"
+#include "../../Views/PolytempoNetwork/Polytempo_RegionEditorView.h"
 #include "../../Views/PolytempoNetwork/Polytempo_NetworkMainView.h"
 
 
@@ -40,6 +41,7 @@ public:
     {
         mainViewID = 0,
         pageEditorViewID,
+        regionEditorViewID,
     };
     
     void setContentID(contentID);
@@ -50,6 +52,7 @@ public:
 private:
     ScopedPointer <Polytempo_NetworkMainView> mainView;
     ScopedPointer <Polytempo_PageEditorView> pageEditorView;
+    ScopedPointer <Polytempo_RegionEditorView> regionEditorView;
 
     OpenGLContext openGLContext;
     

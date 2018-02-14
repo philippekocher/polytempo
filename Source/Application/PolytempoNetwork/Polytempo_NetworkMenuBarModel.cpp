@@ -136,6 +136,7 @@ PopupMenu Polytempo_MenuBarModel::getMenuForIndex(int, const String& menuName)
     {
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::showMainView);
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::showPageEditor);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::showRegionEditor);
         menu.addSeparator();
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::zoomIn);
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::zoomOut);
@@ -235,6 +236,7 @@ void Polytempo_MenuBarModel::getAllCommands(Array <CommandID>& commands)
         
         Polytempo_CommandIDs::showMainView,
         Polytempo_CommandIDs::showPageEditor,
+        Polytempo_CommandIDs::showRegionEditor,
         //Polytempo_CommandIDs::showScoreEditor,
         Polytempo_CommandIDs::zoomIn,
         Polytempo_CommandIDs::zoomOut,
@@ -355,6 +357,12 @@ void Polytempo_MenuBarModel::getCommandInfo(CommandID commandID, ApplicationComm
             result.setInfo("Show Page Editor", String::empty, infoCategory, 0);
             result.addDefaultKeypress('2', ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
             result.addDefaultKeypress(KeyPress::numberPad2, ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
+            break;
+            
+        case Polytempo_CommandIDs::showRegionEditor:
+            result.setInfo("Show Region Editor", String::empty, infoCategory, 0);
+            result.addDefaultKeypress('3', ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
+            result.addDefaultKeypress(KeyPress::numberPad3, ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
             break;
             
         case Polytempo_CommandIDs::zoomIn:
@@ -555,6 +563,10 @@ bool Polytempo_MenuBarModel::perform(const InvocationInfo& info)
             
         case Polytempo_CommandIDs::showPageEditor:
             window->setContentID(Polytempo_NetworkWindow::pageEditorViewID);
+            break;
+            
+        case Polytempo_CommandIDs::showRegionEditor:
+            window->setContentID(Polytempo_NetworkWindow::regionEditorViewID);
             break;
             
         case Polytempo_CommandIDs::zoomIn:

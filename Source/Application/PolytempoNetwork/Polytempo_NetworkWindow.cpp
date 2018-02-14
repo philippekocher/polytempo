@@ -42,7 +42,8 @@ Polytempo_NetworkWindow::Polytempo_NetworkWindow()
 
     mainView = new Polytempo_NetworkMainView();
     pageEditorView = new Polytempo_PageEditorView();
-    
+    regionEditorView = new Polytempo_RegionEditorView();
+
     // sets the main content component for the window
     setContentNonOwned(mainView, false);
 
@@ -89,6 +90,11 @@ void Polytempo_NetworkWindow::setContentID(contentID newContentID)
         {
             pageEditorView->refresh();
             setContentNonOwned(pageEditorView, false);
+        }
+        else if(currentContentID == regionEditorViewID)
+        {
+            regionEditorView->refresh();
+            setContentNonOwned(regionEditorView, false);
         }
         else
         {
