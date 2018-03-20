@@ -46,7 +46,6 @@ Polytempo_NetworkSupervisor::~Polytempo_NetworkSupervisor()
 {
 	stopTimer();
 
-    localName = nullptr;
     connectedPeersMap = nullptr;
     tempConnectedPeersMap = nullptr;
     
@@ -65,9 +64,7 @@ void Polytempo_NetworkSupervisor::timerCallback()
     socket->renewBroadcaster();
     
     // broadcast a heartbeat
-    ScopedPointer<String> name;
-    if(localName == nullptr) name = new String("Unnamed");
-    else                     name = new String(getLocalName());
+    ScopedPointer<String> name = new String(getLocalName());
     
 	socket->write(
 		OSCMessage(
@@ -114,7 +111,7 @@ Uuid Polytempo_NetworkSupervisor::getUniqueId()
 
 String Polytempo_NetworkSupervisor::getLocalName()
 {
-    if(localName == nullptr) return "Local";
+    if(localName == nullptr) return "Untitled";
     else                     return *localName;
 }
 

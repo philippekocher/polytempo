@@ -105,10 +105,10 @@ void Polytempo_AuxiliaryView::resized()
     yPosition +=75;
     
     tempoFactorTextbox->setBounds(10, yPosition, getWidth() - 20, 34);
-	yPosition += 70;
+	yPosition += 60;
 
-	timeSyncControl->setBounds(10, yPosition, getWidth() - 20, 60);
-	yPosition += 70;
+	timeSyncControl->setBounds(10, yPosition, getWidth() - 20, 50);
+	yPosition += 55;
 
 	networkInfoView->setBounds(10, yPosition, getWidth() - 20, getHeight() - yPosition);
 }

@@ -62,7 +62,7 @@ void Polytempo_OSCListener::oscMessageReceived(const OSCMessage & message)
 		Polytempo_NetworkSupervisor::getInstance()->handlePeer(argIp, argName);
 
 		bool isMaster = false;
-		if (argumentIterator)
+		if (argumentIterator && (*argumentIterator).isInt32())
 			isMaster = (bool)argumentIterator->getInt32();
 		Polytempo_TimeProvider::getInstance()->setRemoteMasterPeer(argIp, senderId, isMaster);
 	}

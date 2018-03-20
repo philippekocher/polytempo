@@ -11,7 +11,7 @@
 #pragma once
 
 #include "JuceHeader.h"
-#define DISPLAY_DURATION	3000
+#define DISPLAY_DURATION	4000
 #define DISPLAY_DELAY		100
 #define TIMER_ID_DELAY		1
 #define TIMER_ID_DURATION	2
