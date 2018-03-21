@@ -243,6 +243,8 @@ void Polytempo_TimeProvider::timerCallback()
 		if(!ok)
 			displayMessage("send TS request failed", MessageType_Warning);
 	}
+    
+    lastMasterIp = String::empty;
 }
 
 void Polytempo_TimeProvider::displayMessage(String message, MessageType messageType)
