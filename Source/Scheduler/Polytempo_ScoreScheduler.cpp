@@ -94,7 +94,7 @@ void Polytempo_ScoreScheduler::stop()
     //DBG("stop");
     engine->stop();
     engine->pause(false);
-    Polytempo_EventScheduler::getInstance()->deletePendingScoreEvents();
+    Polytempo_EventScheduler::getInstance()->deletePendingEvents();
 }
 
 void Polytempo_ScoreScheduler::pause(Polytempo_Event* event)

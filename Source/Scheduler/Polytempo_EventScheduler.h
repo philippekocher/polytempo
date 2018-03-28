@@ -40,7 +40,7 @@ public:
      --------------------------------------- */
 
     void scheduleScoreEvent(Polytempo_Event *event);
-    void deletePendingScoreEvents();
+    void deletePendingEvents();
 
     void scheduleEvent(Polytempo_Event *event);
 
@@ -58,7 +58,7 @@ private:
     Array < class Polytempo_EventObserver * > observers;
     Array < Polytempo_Event* > scheduledScoreEvents;
     Array < Polytempo_Event* > scheduledEvents;
-    bool deleteScoreEvents = false;
+    bool deleteEvents = false;
 
 };
 
