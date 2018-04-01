@@ -34,7 +34,7 @@ struct Polytempo_LookAndFeel : public LookAndFeel_V3
 {
     void drawTableHeaderBackground (Graphics& g, TableHeaderComponent&)
     {
-        g.fillAll(Colour::Colour(245,245,245));
+        g.fillAll(Colour(245,245,245));
     }
     
     void drawTableHeaderColumn (Graphics& g, const String& columnName, int /*columnId*/,

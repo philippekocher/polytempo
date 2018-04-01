@@ -31,7 +31,7 @@
 
 
 class Polytempo_ComposerToolbarComponent : public Component,
-                                           public ButtonListener
+                                           public Button::Listener
 {
 public:
     Polytempo_ComposerToolbarComponent();
