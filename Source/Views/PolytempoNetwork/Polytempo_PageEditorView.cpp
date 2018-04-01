@@ -166,7 +166,7 @@ void Polytempo_PageEditorView::refresh()
     tree->setMultiSelectEnabled(false);
     tree->setRootItem(rootItem = new TreeItem(vt,this));
     tree->setRootItemVisible(false);
-    tree->setColour(TreeView::backgroundColourId, Colour::Colour(245,245,245));
+    tree->setColour(TreeView::backgroundColourId, Colour(245,245,245));
     
     if(selectedItem)
     {
@@ -285,7 +285,7 @@ void Polytempo_PageEditorView::update()
 
 void Polytempo_PageEditorView::paint(Graphics& g)
 {
-    g.fillAll(Colour::Colour(245,245,245));
+    g.fillAll(Colour(245,245,245));
  
     if(tree->getNumSelectedItems() > 0)
     {
@@ -298,7 +298,7 @@ void Polytempo_PageEditorView::paint(Graphics& g)
     
     Rectangle<int> r (getLocalBounds());
     
-    g.setColour(Colour::Colour(245,245,245));
+    g.setColour(Colour(245,245,245));
     g.fillRect(r.removeFromRight(TREE_VIEW_WIDTH));
     g.setColour(Colours::grey);
     if(sectionID != var::null)
