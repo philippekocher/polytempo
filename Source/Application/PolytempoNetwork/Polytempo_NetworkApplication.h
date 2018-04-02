@@ -32,6 +32,7 @@
 #include "../../Network/Polytempo_OSCListener.h"
 #include "../../Data/Polytempo_Score.h"
 #include "../../Audio+Midi/Polytempo_MidiInput.h"
+#include "../../Misc/Polytempo_Alerts.h"
 
 
 class Polytempo_NetworkApplication : public JUCEApplication
@@ -53,8 +54,8 @@ public:
     Polytempo_Score* getScore() { return score; };
     bool scoreFileExists() { return scoreFile != File::nonexistent; }
     Polytempo_NetworkWindow* getMainWindow() { return mainWindow; }
-
-    void unsavedChangesAlert(double customValue);
+    
+    void unsavedChangesAlert(Polytempo_YesNoCancelAlert::callbackTag);
     void newScore();
     void openFileDialog();
     void openScoreFilePath(String filePath = String::empty);

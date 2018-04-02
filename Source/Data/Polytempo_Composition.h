@@ -27,6 +27,7 @@
 
 #include "../../JuceLibraryCode/JuceHeader.h"
 #include "Polytempo_Sequence.h"
+#include "../Misc/Polytempo_Alerts.h"
 
 
 class Polytempo_Composition
@@ -60,7 +61,7 @@ public:
     void updateScore();
     void findCoincidingControlPoints();
     
-    void unsavedChangesAlert(double customValue);
+    void unsavedChangesAlert(Polytempo_YesNoCancelAlert::callbackTag tag);
     void newComposition();
     void openFile();
     void openFile(File file);

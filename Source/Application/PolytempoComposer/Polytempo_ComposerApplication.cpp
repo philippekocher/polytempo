@@ -110,7 +110,7 @@ void Polytempo_ComposerApplication::applicationShouldQuit()
     
     if(Polytempo_Composition::getInstance()->isDirty())
     {
-        Polytempo_Composition::getInstance()->unsavedChangesAlert(0.0);
+        Polytempo_Composition::getInstance()->unsavedChangesAlert(Polytempo_YesNoCancelAlert::applicationQuitTag);
         return;
 
         // after the score will have been saved

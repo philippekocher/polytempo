@@ -70,6 +70,13 @@ public:
                                         callback);
     }
 
+    enum callbackTag
+    {
+        applicationQuitTag = 0,
+        openDocumentTag,
+        newDocumentTag,
+    };
+
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_YesNoCancelAlert)
 };

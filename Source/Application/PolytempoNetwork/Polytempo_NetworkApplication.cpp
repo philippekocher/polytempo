@@ -32,7 +32,6 @@
 #include "../../Audio+Midi/Polytempo_MidiClick.h"
 #include "../../Views/PolytempoNetwork/Polytempo_ImageManager.h"
 #include "../../Network/Polytempo_NetworkSupervisor.h"
-#include "../../Misc/Polytempo_Alerts.h"
 #include "../../Views/PolytempoNetwork/Polytempo_GraphicsAnnotationManager.h"
 #include "../../Network/Polytempo_TimeProvider.h"
 
@@ -161,7 +160,7 @@ void Polytempo_NetworkApplication::systemRequestedQuit()
     applicationShouldQuit();
 }
 
-static void unsavedChangesCallback(int modalResult, double customValue)
+static void unsavedChangesCallback(int modalResult, Polytempo_YesNoCancelAlert::callbackTag tag)
 {
     Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
     
@@ -170,10 +169,9 @@ static void unsavedChangesCallback(int modalResult, double customValue)
     else if(modalResult == 2) app->getScore()->setDirty(false);     // no
 
 
-    if(customValue == 0)      app->applicationShouldQuit();
-    else if(customValue == 1) app->openScoreFile();
-    else if(customValue == 2) app->newScore();
-
+    if     (tag == Polytempo_YesNoCancelAlert::applicationQuitTag) app->applicationShouldQuit();
+    else if(tag == Polytempo_YesNoCancelAlert::openDocumentTag)    app->openScoreFile();
+    else if(tag == Polytempo_YesNoCancelAlert::newDocumentTag)     app->newScore();
 }
 
 void Polytempo_NetworkApplication::applicationShouldQuit()
@@ -190,7 +188,7 @@ void Polytempo_NetworkApplication::applicationShouldQuit()
     
     if(score && score->isDirty())
     {
-        unsavedChangesAlert(0.0);
+        unsavedChangesAlert(Polytempo_YesNoCancelAlert::applicationQuitTag);
         return;
 
         // after the score will have been saved
@@ -207,18 +205,18 @@ void Polytempo_NetworkApplication::anotherInstanceStarted (const String&)
     // the other instance's command-line arguments were.
 }
 
-void Polytempo_NetworkApplication::unsavedChangesAlert(double customValue)
+void Polytempo_NetworkApplication::unsavedChangesAlert(Polytempo_YesNoCancelAlert::callbackTag tag)
 {
     String title;
 
-    Polytempo_YesNoCancelAlert::show(title << "Do you want to save the changes to \"" << scoreFile.getFileName().toRawUTF8() << "\"?", "If you don't save your changes will be lost.", ModalCallbackFunction::create(unsavedChangesCallback, customValue));
+    Polytempo_YesNoCancelAlert::show(title << "Do you want to save the changes to \"" << scoreFile.getFileName().toRawUTF8() << "\"?", "If you don't save your changes will be lost.", ModalCallbackFunction::create(unsavedChangesCallback, tag));
 }
 
 void Polytempo_NetworkApplication::newScore()
 {
     if(score && score->isDirty())
     {
-        unsavedChangesAlert(2.0);
+        unsavedChangesAlert(Polytempo_YesNoCancelAlert::newDocumentTag);
         return;
     }
     
@@ -288,7 +286,7 @@ void Polytempo_NetworkApplication::openScoreFile(File aFile)
 
     if(score && score->isDirty())
     {
-        unsavedChangesAlert(1.0);
+        unsavedChangesAlert(Polytempo_YesNoCancelAlert::openDocumentTag);
         return;
     }
     
