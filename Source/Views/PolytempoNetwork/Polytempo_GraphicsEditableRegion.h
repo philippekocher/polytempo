@@ -27,7 +27,7 @@ class FontSizeCallback;
 //==============================================================================
 /*
 */
-class Polytempo_GraphicsEditableRegion : public Component, MultiTimer, ButtonListener, KeyListener, ChangeListener
+class Polytempo_GraphicsEditableRegion : public Component, MultiTimer, Button::Listener, KeyListener, ChangeListener
 {
 public:
 	Polytempo_GraphicsEditableRegion();

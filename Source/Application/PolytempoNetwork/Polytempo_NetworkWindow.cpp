@@ -23,9 +23,11 @@
  ============================================================================== */
 
 #include "Polytempo_NetworkWindow.h"
+#include "../../Application/PolytempoNetwork/Polytempo_NetworkApplication.h"
 #include "../../Views/PolytempoNetwork/Polytempo_NetworkMainView.h"
 #include "../../Preferences/Polytempo_StoredPreferences.h"
 #include "../../Scheduler/Polytempo_ScoreScheduler.h"
+#include "../../Misc/Polytempo_Alerts.h"
 
 
 Polytempo_NetworkWindow::Polytempo_NetworkWindow()
@@ -39,8 +41,9 @@ Polytempo_NetworkWindow::Polytempo_NetworkWindow()
     setResizeLimits(800, 450, 99999, 99999);
 
     mainView = new Polytempo_NetworkMainView();
-    imageEditorView = new Polytempo_ImageEditorView();
-    
+    pageEditorView = new Polytempo_PageEditorView();
+    regionEditorView = new Polytempo_RegionEditorView();
+
     // sets the main content component for the window
     setContentNonOwned(mainView, false);
 
@@ -71,12 +74,27 @@ void Polytempo_NetworkWindow::setContentID(contentID newContentID)
 {
     if(newContentID != currentContentID)
     {
+        Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
+
+        if(newContentID == pageEditorViewID && !app->scoreFileExists())
+        {
+            if(Polytempo_OkCancelAlert::show("You must first save the document before using the Page Editor", String::empty))
+                app->saveScoreFile(true);
+            if(!app->scoreFileExists()) // the user has aborted the save process
+                return;
+        }
+        
         currentContentID = newContentID;
         
-        if(currentContentID == imageEditorViewID)
+        if(currentContentID == pageEditorViewID)
         {
-            imageEditorView->refresh();
-            setContentNonOwned(imageEditorView, false);
+            pageEditorView->refresh();
+            setContentNonOwned(pageEditorView, false);
+        }
+        else if(currentContentID == regionEditorViewID)
+        {
+            regionEditorView->refresh();
+            setContentNonOwned(regionEditorView, false);
         }
         else
         {
@@ -97,7 +115,8 @@ int Polytempo_NetworkWindow::getContentID()
 Component* Polytempo_NetworkWindow::getContentComponent()
 {
     if(currentContentID == mainViewID) return mainView;
-    if(currentContentID == imageEditorViewID)  return imageEditorView;
-    
+    if(currentContentID == pageEditorViewID)  return pageEditorView;
+    if(currentContentID == regionEditorViewID)  return regionEditorView;
+
     return nullptr;
 }

@@ -32,6 +32,7 @@
 #include "../../Network/Polytempo_OSCListener.h"
 #include "../../Data/Polytempo_Score.h"
 #include "../../Audio+Midi/Polytempo_MidiInput.h"
+#include "../../Misc/Polytempo_Alerts.h"
 
 
 class Polytempo_NetworkApplication : public JUCEApplication
@@ -51,16 +52,20 @@ public:
     void anotherInstanceStarted(const String& commandLine);
     
     Polytempo_Score* getScore() { return score; };
+    bool scoreFileExists() { return scoreFile != File::nonexistent; }
     Polytempo_NetworkWindow* getMainWindow() { return mainWindow; }
-
+    
+    void unsavedChangesAlert(Polytempo_YesNoCancelAlert::callbackTag);
+    void newScore();
     void openFileDialog();
-
     void openScoreFilePath(String filePath = String::empty);
     void openScoreFile(File aFile = File::nonexistent);
     void saveScoreFile(bool showFileDialog);
     
     void commandStatusChanged();
     
+    static ApplicationCommandManager* getCommandManager();
+
 private:
 	ScopedPointer<Polytempo_NetworkWindow> mainWindow;
     ScopedPointer<Polytempo_MenuBarModel> menuBarModel;
@@ -69,6 +74,7 @@ private:
     ScopedPointer<Polytempo_MidiInput> midiInput;
     ScopedPointer<Polytempo_Score> score;
     
+    ApplicationCommandManager commandManager;
     File scoreFile, newScoreFile;
     LookAndFeel_V3 lookAndFeelV3;
 };

@@ -28,7 +28,6 @@
 #include "../Preferences/Polytempo_StoredPreferences.h"
 #include "../Views/PolytempoComposer/Polytempo_DialogWindows.h"
 #include "../Audio+Midi/Polytempo_AudioClick.h"
-#include "../Misc/Polytempo_Alerts.h"
 
 
 Polytempo_Composition::Polytempo_Composition()
@@ -210,28 +209,28 @@ void Polytempo_Composition::findCoincidingControlPoints()
 #pragma mark -
 #pragma mark file i/o
 
-static void unsavedChangesCallback(int modalResult, double customValue)
+static void unsavedChangesCallback(int modalResult, Polytempo_YesNoCancelAlert::callbackTag tag)
 {
     if(modalResult == 0)      return;                                                   // cancel
     else if(modalResult == 1) Polytempo_Composition::getInstance()->saveToFile();       // yes
     else if(modalResult == 2) Polytempo_Composition::getInstance()->setDirty(false);    // no
     
-    if(customValue == 0) dynamic_cast<Polytempo_ComposerApplication*>(JUCEApplication::getInstance())->applicationShouldQuit();
-    if(customValue == 1) Polytempo_Composition::getInstance()->openFile();
-    if(customValue == 2) Polytempo_Composition::getInstance()->newComposition();
+    if(tag == Polytempo_YesNoCancelAlert::applicationQuitTag) dynamic_cast<Polytempo_ComposerApplication*>(JUCEApplication::getInstance())->applicationShouldQuit();
+    else if(tag == Polytempo_YesNoCancelAlert::openDocumentTag) Polytempo_Composition::getInstance()->openFile();
+    else if(tag == Polytempo_YesNoCancelAlert::newDocumentTag) Polytempo_Composition::getInstance()->newComposition();
 }
 
-void Polytempo_Composition::unsavedChangesAlert(double customValue)
+void Polytempo_Composition::unsavedChangesAlert(Polytempo_YesNoCancelAlert::callbackTag tag)
 {
     String title;
-    Polytempo_YesNoCancelAlert::show(title << "Do you want to save the changes to \"" << compositionFile.getFileNameWithoutExtension().toRawUTF8() << "\"?", "If you don't save your changes will be lost.", ModalCallbackFunction::create(unsavedChangesCallback, customValue));
+    Polytempo_YesNoCancelAlert::show(title << "Do you want to save the changes to \"" << compositionFile.getFileNameWithoutExtension().toRawUTF8() << "\"?", "If you don't save your changes will be lost.", ModalCallbackFunction::create(unsavedChangesCallback, tag));
 }
 
 void Polytempo_Composition::newComposition()
 {
     if(dirty)
     {
-        unsavedChangesAlert(2.0);
+        unsavedChangesAlert(Polytempo_YesNoCancelAlert::newDocumentTag);
         return;
     }
 
@@ -239,6 +238,7 @@ void Polytempo_Composition::newComposition()
     Polytempo_Composition::getInstance()->addSequence(); // one sequence to start with
     setDirty(false);
     
+    compositionFile = File::nonexistent;
     mainWindow->setName("Untitled");
 }
 
@@ -246,7 +246,7 @@ void Polytempo_Composition::openFile()
 {
     if(dirty)
     {
-        unsavedChangesAlert(1.0);
+        unsavedChangesAlert(Polytempo_YesNoCancelAlert::openDocumentTag);
         return;
     }
        

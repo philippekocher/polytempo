@@ -23,22 +23,20 @@
  ============================================================================== */
 
 
-#ifndef __Polytempo_ImageEditorComponent__
-#define __Polytempo_ImageEditorComponent__
+#pragma once
 
-//#include "../../JuceLibraryCode/JuceHeader.h"
 #include "../../Scheduler/Polytempo_Event.h"
 #include "../../Data/Polytempo_Score.h"
 #include "../../Misc/DragHandle.h"
 
 
-class Polytempo_ImageEditorComponent : public Component,
-                                       public ChangeListener,
-                                       public DragHandleListener
+class Polytempo_PageEditorComponent : public Component,
+                                      public ChangeListener,
+                                      public DragHandleListener
 {
 public:
-    Polytempo_ImageEditorComponent();
-    ~Polytempo_ImageEditorComponent();
+    Polytempo_PageEditorComponent();
+    ~Polytempo_PageEditorComponent();
     
     void update();
     void paint(Graphics&);
@@ -63,7 +61,3 @@ private:
     Polytempo_Event *editedEvent;
     Polytempo_Score *score;
 };
-
-
-
-#endif  // __Polytempo_ImageEditorComponent__

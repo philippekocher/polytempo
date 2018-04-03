@@ -48,10 +48,6 @@ public:
     {
         return AlertWindow::showOkCancelBox (AlertWindow::QuestionIcon,
                                              title, message);
-//                                             String::empty,
-//                                      String::empty,
-//                                      nullptr,
-//                                      nullptr);
     }
 
 private:
@@ -73,6 +69,13 @@ public:
                                         nullptr,
                                         callback);
     }
+
+    enum callbackTag
+    {
+        applicationQuitTag = 0,
+        openDocumentTag,
+        newDocumentTag,
+    };
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_YesNoCancelAlert)

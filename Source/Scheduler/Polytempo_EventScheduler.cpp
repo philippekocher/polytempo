@@ -63,9 +63,9 @@ void Polytempo_EventScheduler::scheduleScoreEvent(Polytempo_Event *event)
     // DBG("scheduled score events: "<<scheduledScoreEvents.size());
 }
 
-void Polytempo_EventScheduler::deletePendingScoreEvents()
+void Polytempo_EventScheduler::deletePendingEvents()
 {
-    deleteScoreEvents = true;
+    deleteEvents = true;
 }
 
 void Polytempo_EventScheduler::scheduleEvent(Polytempo_Event *event)
@@ -100,8 +100,12 @@ void Polytempo_EventScheduler::run()
     {
         // get current sync time
 		Polytempo_TimeProvider::getInstance()->getSyncTime(&currentSyncTime);
-		if(deleteScoreEvents) scheduledScoreEvents.clear();
-        deleteScoreEvents = false;
+		if(deleteEvents)
+        {
+            scheduledScoreEvents.clear();
+            scheduledEvents.clear();
+            deleteEvents = false;
+        }
         
         for(int i=0;i<scheduledScoreEvents.size();)
         {

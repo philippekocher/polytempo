@@ -32,7 +32,6 @@
 #include "../../Audio+Midi/Polytempo_MidiClick.h"
 #include "../../Views/PolytempoNetwork/Polytempo_ImageManager.h"
 #include "../../Network/Polytempo_NetworkSupervisor.h"
-#include "../../Misc/Polytempo_Alerts.h"
 #include "../../Views/PolytempoNetwork/Polytempo_GraphicsAnnotationManager.h"
 #include "../../Network/Polytempo_TimeProvider.h"
 
@@ -52,7 +51,7 @@ void Polytempo_NetworkApplication::initialise(const String&)
     menuBarModel = new Polytempo_MenuBarModel(mainWindow);
     
     // use keypresses that arrive in the windows to send out commands
-    mainWindow->addKeyListener(menuBarModel->commandManager.getKeyMappings());
+    mainWindow->addKeyListener(commandManager.getKeyMappings());
     
     // scheduler
     Polytempo_ScoreScheduler::getInstance()->setEngine(new Polytempo_NetworkEngine());
@@ -110,8 +109,7 @@ void Polytempo_NetworkApplication::initialise(const String&)
     }
     else
     {
-        score = new Polytempo_Score();
-        Polytempo_ScoreScheduler::getInstance()->setScore(score);
+        newScore();
     }
 }
 
@@ -152,6 +150,7 @@ void Polytempo_NetworkApplication::shutdown()
     Polytempo_EventScheduler::deleteInstance();
 	Polytempo_GraphicsAnnotationManager::deleteInstance();
 	Polytempo_TimeProvider::deleteInstance();
+    Polytempo_EventDispatcher::deleteInstance();
 }
 
 //------------------------------------------------------------------------------
@@ -161,7 +160,7 @@ void Polytempo_NetworkApplication::systemRequestedQuit()
     applicationShouldQuit();
 }
 
-static void unsavedChangesCallback(int modalResult, double customValue)
+static void unsavedChangesCallback(int modalResult, Polytempo_YesNoCancelAlert::callbackTag tag)
 {
     Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
     
@@ -170,8 +169,9 @@ static void unsavedChangesCallback(int modalResult, double customValue)
     else if(modalResult == 2) app->getScore()->setDirty(false);     // no
 
 
-    if(customValue == 0)      app->applicationShouldQuit();
-    else if(customValue == 1) app->openScoreFile();
+    if     (tag == Polytempo_YesNoCancelAlert::applicationQuitTag) app->applicationShouldQuit();
+    else if(tag == Polytempo_YesNoCancelAlert::openDocumentTag)    app->openScoreFile();
+    else if(tag == Polytempo_YesNoCancelAlert::newDocumentTag)     app->newScore();
 }
 
 void Polytempo_NetworkApplication::applicationShouldQuit()
@@ -188,9 +188,7 @@ void Polytempo_NetworkApplication::applicationShouldQuit()
     
     if(score && score->isDirty())
     {
-        DBG("save score");
-        String title;
-        Polytempo_YesNoCancelAlert::show(title << "Do you want to save the changes to \"" << scoreFile.getFileName().toRawUTF8() << "\"?", "If you don't save your changes will be lost.",ModalCallbackFunction::create(unsavedChangesCallback,0.0));
+        unsavedChangesAlert(Polytempo_YesNoCancelAlert::applicationQuitTag);
         return;
 
         // after the score will have been saved
@@ -207,6 +205,27 @@ void Polytempo_NetworkApplication::anotherInstanceStarted (const String&)
     // the other instance's command-line arguments were.
 }
 
+void Polytempo_NetworkApplication::unsavedChangesAlert(Polytempo_YesNoCancelAlert::callbackTag tag)
+{
+    String title;
+
+    Polytempo_YesNoCancelAlert::show(title << "Do you want to save the changes to \"" << scoreFile.getFileName().toRawUTF8() << "\"?", "If you don't save your changes will be lost.", ModalCallbackFunction::create(unsavedChangesCallback, tag));
+}
+
+void Polytempo_NetworkApplication::newScore()
+{
+    if(score && score->isDirty())
+    {
+        unsavedChangesAlert(Polytempo_YesNoCancelAlert::newDocumentTag);
+        return;
+    }
+    
+    score = new Polytempo_Score();
+    Polytempo_ScoreScheduler::getInstance()->setScore(score);
+    
+    mainWindow->setName("Untitled");
+}
+
 void Polytempo_NetworkApplication::openFileDialog()
 {
     File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("scoreFileDirectory"));
@@ -221,7 +240,7 @@ void Polytempo_NetworkApplication::openFileDialog()
 void Polytempo_NetworkApplication::saveScoreFile(bool showFileDialog)
 {
     if(score == nullptr) return;
-    if(scoreFile == File::nonexistent && !showFileDialog) return;
+    if(scoreFile == File::nonexistent) showFileDialog = true;
     
     File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("scoreFileDirectory"));
     FileChooser fileChooser("Save Score File", scoreFile, "*.ptsco", true);
@@ -245,6 +264,7 @@ void Polytempo_NetworkApplication::saveScoreFile(bool showFileDialog)
         tempFile.copyFileTo(scoreFile);
     }
     tempFile.deleteFile();
+    mainWindow->setName(scoreFile.getFileNameWithoutExtension());
 }
 
 void Polytempo_NetworkApplication::openScoreFilePath(String filePath)
@@ -258,7 +278,6 @@ void Polytempo_NetworkApplication::openScoreFile(File aFile)
 {
     if(aFile != File::nonexistent) newScoreFile = aFile;
     
-    if(newScoreFile == scoreFile) return; // file already open
     if(!newScoreFile.existsAsFile())
     {
         Polytempo_Alert::show("Error", "File does not exist:\n" + newScoreFile.getFullPathName());
@@ -267,9 +286,7 @@ void Polytempo_NetworkApplication::openScoreFile(File aFile)
 
     if(score && score->isDirty())
     {
-        DBG("save score");
-        String title;
-        Polytempo_YesNoCancelAlert::show(title << "Do you want to save the changes to \"" << scoreFile.getFileName().toRawUTF8() << "\"?", "If you don't save your changes will be lost.", ModalCallbackFunction::create(unsavedChangesCallback, 1.0));
+        unsavedChangesAlert(Polytempo_YesNoCancelAlert::openDocumentTag);
         return;
     }
     
@@ -301,7 +318,14 @@ void Polytempo_NetworkApplication::openScoreFile(File aFile)
 
 void Polytempo_NetworkApplication::commandStatusChanged()
 {
-    menuBarModel->commandManager.commandStatusChanged();
+    commandManager.commandStatusChanged();
+}
+
+ApplicationCommandManager* Polytempo_NetworkApplication::getCommandManager()
+{
+    Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
+    
+    return &(app->commandManager);
 }
 
 //------------------------------------------------------------------------------

@@ -22,14 +22,14 @@
  
  ============================================================================== */
 
-#ifndef __Polytempo_ImageEditorView__
-#define __Polytempo_ImageEditorView__
+#pragma once
 
 #include "../../Scheduler/Polytempo_EventObserver.h"
 #include "../../Misc/Polytempo_Textbox.h"
 #include "../../Data/Polytempo_Score.h"
 #include "Polytempo_ImageManager.h"
-#include "Polytempo_ImageEditorComponent.h"
+#include "Polytempo_PageEditorComponent.h"
+#include "Polytempo_SectionInstancesComponent.h"
 
 
 class TreeItem : public TreeViewItem, private ValueTree::Listener
@@ -107,29 +107,43 @@ private:
     
 };
 
-class Polytempo_ImageEditorViewport : public Viewport
+class Polytempo_PageEditorViewport : public Viewport
 {
 public:
-    Polytempo_ImageEditorViewport()
+    Polytempo_PageEditorViewport()
     {
-        setViewedComponent(component = new Polytempo_ImageEditorComponent());
+        setViewedComponent(component = new Polytempo_PageEditorComponent());
     }
-    ~Polytempo_ImageEditorViewport() {}
-    Polytempo_ImageEditorComponent* getComponent() { return component; }
+    ~Polytempo_PageEditorViewport() {}
+    Polytempo_PageEditorComponent* getComponent() { return component; }
 
 private:
-    Polytempo_ImageEditorComponent *component;
+    Polytempo_PageEditorComponent *component;
 };
 
-
-class Polytempo_ImageEditorView : public Component,
-                                  public Label::Listener,
-                                  public ButtonListener,
-                                  public Polytempo_EventObserver
+class Polytempo_SectionInstancesViewport : public Viewport
 {
 public:
-    Polytempo_ImageEditorView();
-    ~Polytempo_ImageEditorView();
+    Polytempo_SectionInstancesViewport()
+    {
+        setViewedComponent(component = new Polytempo_SectionInstancesComponent());
+    }
+    ~Polytempo_SectionInstancesViewport() {}
+    Polytempo_SectionInstancesComponent* getComponent() { return component; }
+    void resized() { component->setBounds(getBounds()); }
+    
+private:
+    Polytempo_SectionInstancesComponent *component;
+};
+
+class Polytempo_PageEditorView : public Component,
+                                 public Label::Listener,
+                                 public Button::Listener,
+                                 public Polytempo_EventObserver
+{
+public:
+    Polytempo_PageEditorView();
+    ~Polytempo_PageEditorView();
     
     void refresh();
     void update();
@@ -138,12 +152,14 @@ public:
     void resized();
     
     // actions
+    void mouseDown(const MouseEvent &);
     void deleteSelected();
     void loadImage();
     void addSection();
     void addInstance();
     
     // retrieve state
+    bool hasSelectedImage();
     bool hasSelectedSection();
 
     // Label Listener
@@ -180,15 +196,11 @@ private:
     Polytempo_Event *selectedAddSectionEvent;
     Polytempo_Event *selectedImageEvent;
     
-    Polytempo_ImageEditorViewport* imageEditorViewport;
+    Polytempo_PageEditorViewport* pageEditorViewport;
     
     Label *imageFileLabel;
     Polytempo_Textbox *imageFileTextbox;
     TextButton *chooseImageFile;
-    
-    Polytempo_Textbox *markerTextbox;
-    Polytempo_Textbox *timeTextbox;
-    Polytempo_Textbox *regionTextbox;
     
     Label *relativePositionLabel;
     Polytempo_Textbox *xTextbox;
@@ -196,7 +208,8 @@ private:
     Polytempo_Textbox *wTextbox;
     Polytempo_Textbox *hTextbox;
     
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_ImageEditorView)
+    Label *sectionInstancesLabel;
+    Polytempo_SectionInstancesViewport* sectionInstancesViewport;
+    
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_PageEditorView)
 };
-
-#endif  // __Polytempo_ImageEditorView__

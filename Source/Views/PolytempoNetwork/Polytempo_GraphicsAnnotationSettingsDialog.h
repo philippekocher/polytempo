@@ -16,7 +16,7 @@
 //==============================================================================
 /*
 */
-class Polytempo_GraphicsAnnotationSettingsDialog    : public Component, public TableListBoxModel, private ButtonListener
+class Polytempo_GraphicsAnnotationSettingsDialog : public Component, public TableListBoxModel, private Button::Listener
 {
 public:
 	static void show(OwnedArray < Polytempo_GraphicsAnnotationSet>* pAnnotationSet);

@@ -103,10 +103,15 @@ void Polytempo_Score::addEvent(Polytempo_Event *event, bool addToInit)
     if(addToInit)
     {
         initSection->events.add(event);
-        Polytempo_EventScheduler::getInstance()->scheduleScoreEvent(event);
     }
     else
     {
+        if(currentSectionIndex == -1)
+        {
+            sectionMap->add("default");
+            sections.add(new Polytempo_Score_Section());
+            currentSectionIndex = sectionMap->indexOf("default");
+        }
         sections[currentSectionIndex]->events.add(event);
         sortSection(currentSectionIndex);
     }

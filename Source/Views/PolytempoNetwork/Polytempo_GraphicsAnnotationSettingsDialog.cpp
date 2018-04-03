@@ -17,8 +17,7 @@
 #define COLUMN_ID_EDIT 2
 
 
-class ToggleColumnCustomComponent : public Component,
-	private ButtonListener
+class ToggleColumnCustomComponent : public Component, private Button::Listener
 {
 public:
 	ToggleColumnCustomComponent(Polytempo_GraphicsAnnotationSettingsDialog& td) : owner(td)

@@ -71,8 +71,8 @@ private:
 
 
 class Polytempo_SequenceControlComponent : public Component,
-                                           public TextEditorListener,
-                                           public ButtonListener
+                                           public TextEditor::Listener,
+                                           public Button::Listener
 {
 public:
     Polytempo_SequenceControlComponent(int);

@@ -30,8 +30,8 @@
 namespace Polytempo_DialogWindows
 {
     class Basic : public DocumentWindow,
-                  public ButtonListener,
-                  public LabelListener,
+                  public Button::Listener,
+                  public Label::Listener,
                   public TextEditor::Listener
     {
     public:

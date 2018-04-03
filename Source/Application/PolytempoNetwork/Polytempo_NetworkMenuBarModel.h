@@ -44,9 +44,6 @@ public:
     void getAllCommands (Array <CommandID>& commands);
     void getCommandInfo (CommandID commandID, ApplicationCommandInfo& result);
 	bool perform (const InvocationInfo& info);
-
-    // the command manager object used to dispatch command events
-    ApplicationCommandManager commandManager;
     
     void showAboutWindow();
     

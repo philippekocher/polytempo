@@ -54,12 +54,14 @@ namespace Polytempo_CommandIDs
         zoomIn, zoomOut,
  
         showMainView,
-        showImageEditor,
-        
-        deleteSelected,
+        showPageEditor,
+        showRegionEditor,
+
         loadImage,
         addSection,
         addInstance,
+        addRegion,
+        deleteSelected,
 
         
         // composer

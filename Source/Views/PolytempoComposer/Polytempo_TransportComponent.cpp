@@ -65,7 +65,7 @@ Polytempo_TransportComponent::~Polytempo_TransportComponent()
 
 void Polytempo_TransportComponent::paint (Graphics& g)
 {
-    g.fillAll(Colour::Colour(245,245,245));
+    g.fillAll(Colour(245,245,245));
     
     g.setColour(Colour(170,170,170));
     g.drawHorizontalLine(0,0,getWidth());

@@ -29,6 +29,7 @@
 #include "../../Audio+Midi/Polytempo_MidiClick.h"
 #include "../../Scheduler/Polytempo_ScoreScheduler.h"
 #include "../../Scheduler/Polytempo_EventScheduler.h"
+#include "../../Scheduler/Polytempo_EventDispatcher.h"
 #include "../../Network/Polytempo_NetworkSupervisor.h"
 #include "../../Network/Polytempo_TimeProvider.h"
 #include "../../Misc/Polytempo_Alerts.h"
@@ -92,6 +93,7 @@ void Polytempo_ComposerApplication::shutdown()
     Polytempo_ScoreScheduler::deleteInstance(); // delete after observers!
     Polytempo_EventScheduler::deleteInstance();
     Polytempo_TimeProvider::deleteInstance();
+    Polytempo_EventDispatcher::deleteInstance();
 }
     
 void Polytempo_ComposerApplication::systemRequestedQuit()
@@ -108,7 +110,7 @@ void Polytempo_ComposerApplication::applicationShouldQuit()
     
     if(Polytempo_Composition::getInstance()->isDirty())
     {
-        Polytempo_Composition::getInstance()->unsavedChangesAlert(0.0);
+        Polytempo_Composition::getInstance()->unsavedChangesAlert(Polytempo_YesNoCancelAlert::applicationQuitTag);
         return;
 
         // after the score will have been saved

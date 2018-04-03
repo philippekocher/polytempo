@@ -31,8 +31,8 @@
 
 
 class Polytempo_SequencePlaybackSettings : public Component,
-                                           public ButtonListener,
-                                           public LabelListener
+                                           public Button::Listener,
+                                           public Label::Listener
 {
 public:
     Polytempo_SequencePlaybackSettings(Polytempo_Sequence*);

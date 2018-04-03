@@ -32,7 +32,7 @@
 
 
 class Polytempo_TransportComponent : public Component,
-                                     public ButtonListener,
+                                     public Button::Listener,
                                      public Label::Listener,
                                      public Polytempo_EventObserver
 {

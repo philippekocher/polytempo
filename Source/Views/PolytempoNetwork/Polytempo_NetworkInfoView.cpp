@@ -25,13 +25,13 @@ Polytempo_NetworkInfoView::~Polytempo_NetworkInfoView()
 void Polytempo_NetworkInfoView::paint (Graphics& g)
 {
 	AttributedString attributedPeers;
-	attributedPeers.append("Network\n", Font(14.0f, Font::plain));
-	attributedPeers.append(" \n", Font(8.0f, Font::plain));
-	attributedPeers.append(Polytempo_NetworkSupervisor::getInstance()->getLocalName() + "\n", Font(12.0f, Font::bold));
-	attributedPeers.append(" \n", Font(8.0f, Font::plain));
-	attributedPeers.append(Polytempo_NetworkSupervisor::getInstance()->getAdapterInfo() + "\n", Font(12.0f, Font::plain));
-	attributedPeers.append(" \n", Font(22.0f, Font::plain));
-	attributedPeers.append(Polytempo_TimeProvider::getInstance()->isMaster() ? "Master: yes \n" : "Master: no \n", Font(14.0f, Font::plain));
+    attributedPeers.append("Network:\n", Font(12.0f, Font::bold));
+	attributedPeers.append(" \n", Font(4.0f, Font::plain));
+	attributedPeers.append(Polytempo_NetworkSupervisor::getInstance()->getAdapterInfo() + "\n\n", Font(12.0f, Font::plain));
+    attributedPeers.append("Local:\n", Font(12.0f, Font::bold));
+    attributedPeers.append(" \n", Font(4.0f, Font::plain));
+    attributedPeers.append(Polytempo_NetworkSupervisor::getInstance()->getLocalName() + "\n", Font(12.0f, Font::plain));
+	attributedPeers.append(" \n", Font(12.0f, Font::plain));
 	attributedPeers.append("Connected peers:\n", Font(12, Font::bold));
 	HashMap < String, String >::Iterator it(*Polytempo_NetworkSupervisor::getInstance()->getPeers());
 	while (it.next())

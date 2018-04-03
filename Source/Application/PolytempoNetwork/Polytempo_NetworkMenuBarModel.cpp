@@ -37,21 +37,23 @@ Polytempo_MenuBarModel::Polytempo_MenuBarModel(Polytempo_NetworkWindow *theWindo
 {
     window = theWindow;
     
-    commandManager.registerAllCommandsForTarget(this);
-    commandManager.registerAllCommandsForTarget(JUCEApplication::getInstance());
-    commandManager.setFirstCommandTarget(this);
+    ApplicationCommandManager *commandManager = Polytempo_NetworkApplication::getCommandManager();
+
+    commandManager->registerAllCommandsForTarget(this);
+    commandManager->registerAllCommandsForTarget(JUCEApplication::getInstance());
+    commandManager->setFirstCommandTarget(this);
     
     // tells our menu bar model that it should watch this command manager for
     // changes, and send change messages accordingly.
-    setApplicationCommandManagerToWatch (&commandManager);
+    setApplicationCommandManagerToWatch (commandManager);
     
 #if JUCE_MAC
     // extra menu to be added to the mac osx app-menu
     extraAppleMenuItems = new PopupMenu();
     
-    extraAppleMenuItems->addCommandItem(&commandManager, Polytempo_CommandIDs::aboutWindow);
+    extraAppleMenuItems->addCommandItem(commandManager, Polytempo_CommandIDs::aboutWindow);
     extraAppleMenuItems->addSeparator();
-    extraAppleMenuItems->addCommandItem(&commandManager, Polytempo_CommandIDs::preferencesWindow);
+    extraAppleMenuItems->addCommandItem(commandManager, Polytempo_CommandIDs::preferencesWindow);
 
     MenuBarModel::setMacMainMenu(this, extraAppleMenuItems);
 #else
@@ -91,82 +93,88 @@ StringArray Polytempo_MenuBarModel::getMenuBarNames()
 
 PopupMenu Polytempo_MenuBarModel::getMenuForIndex(int, const String& menuName)
 {
+    ApplicationCommandManager *commandManager = Polytempo_NetworkApplication::getCommandManager();
     PopupMenu menu;
     
 #ifdef WIN32
     if (menuName == "PolytempoNetwork")
     {
-        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::aboutWindow);
-        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::preferencesWindow);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::aboutWindow);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::preferencesWindow);
         menu.addSeparator();
-        menu.addCommandItem(&commandManager, StandardApplicationCommandIDs::quit);
+        menu.addCommandItem(commandManager, StandardApplicationCommandIDs::quit);
     }
 #endif
 
     if (menuName == "File")
     {
-        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::open);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::newDocument);
+        menu.addSeparator();
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::open);
 
         PopupMenu recentFilesMenu;
         Polytempo_StoredPreferences::getInstance()->recentFiles.createPopupMenuItems(recentFilesMenu, Polytempo_CommandIDs::openRecent, false, true);
         recentFilesMenu.addSeparator();
-        recentFilesMenu.addCommandItem(&commandManager, Polytempo_CommandIDs::clearOpenRecent);
+        recentFilesMenu.addCommandItem(commandManager, Polytempo_CommandIDs::clearOpenRecent);
         menu.addSubMenu("Open Recent", recentFilesMenu);
         
         menu.addSeparator();
-        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::save);
-        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::saveAs);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::save);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::saveAs);
         menu.addSeparator();
-        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::close);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::close);
     }
     else if (menuName == "Edit")
     {
-        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::deleteSelected);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::loadImage);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::addSection);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::addInstance);
         menu.addSeparator();
-        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::loadImage);
-        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::addSection);
-        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::addInstance);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::addRegion);
+        menu.addSeparator();
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::deleteSelected);
     }
     else if (menuName == "View")
     {
-        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::showMainView);
-        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::showImageEditor);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::showMainView);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::showPageEditor);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::showRegionEditor);
         menu.addSeparator();
-        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::zoomIn);
-        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::zoomOut);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::zoomIn);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::zoomOut);
         menu.addSeparator();
 #if ! JUCE_LINUX
-        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::fullScreen);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::fullScreen);
 #endif
     }    
     else if (menuName == "Scheduler")
     {
-        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::startStop);
-        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::returnToLoc);
-        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::returnToBeginning);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::startStop);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::returnToLoc);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::returnToBeginning);
 
         menu.addSeparator();
         
-        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::markerFwd);
-        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::markerBwd);
-        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::imageFwd);
-        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::imageBwd);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::markerFwd);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::markerBwd);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::imageFwd);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::imageBwd);
 
         menu.addSeparator();
         
-        menu.addCommandItem(&commandManager, Polytempo_CommandIDs::gotoTime);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::gotoTime);
     }
 	else if (menuName == "Annotations")
 	{
-		menu.addCommandItem(&commandManager, Polytempo_CommandIDs::annotationAccept);
-		menu.addCommandItem(&commandManager, Polytempo_CommandIDs::annotationCancel);
+		menu.addCommandItem(commandManager, Polytempo_CommandIDs::annotationAccept);
+		menu.addCommandItem(commandManager, Polytempo_CommandIDs::annotationCancel);
 
 		menu.addSeparator();
 
-		menu.addCommandItem(&commandManager, Polytempo_CommandIDs::annotationColor);
-		menu.addCommandItem(&commandManager, Polytempo_CommandIDs::annotationTextSize);
-		menu.addCommandItem(&commandManager, Polytempo_CommandIDs::annotationLayerSettings);
-		menu.addCommandItem(&commandManager, Polytempo_CommandIDs::annotationLayerEditMode);
+		menu.addCommandItem(commandManager, Polytempo_CommandIDs::annotationColor);
+		menu.addCommandItem(commandManager, Polytempo_CommandIDs::annotationTextSize);
+		menu.addCommandItem(commandManager, Polytempo_CommandIDs::annotationLayerSettings);
+		menu.addCommandItem(commandManager, Polytempo_CommandIDs::annotationLayerEditMode);
 	}
 	else if (menuName == "Window")
     {
@@ -175,11 +183,11 @@ PopupMenu Polytempo_MenuBarModel::getMenuForIndex(int, const String& menuName)
     else if (menuName == "Help")
     {
 #if ! JUCE_MAC
-        menu.addCommandItem (&commandManager, Polytempo_CommandIDs::aboutWindow);
+        menu.addCommandItem (commandManager, Polytempo_CommandIDs::aboutWindow);
 #endif
-        menu.addCommandItem (&commandManager, Polytempo_CommandIDs::help);
+        menu.addCommandItem (commandManager, Polytempo_CommandIDs::help);
         menu.addSeparator();
-        menu.addCommandItem (&commandManager, Polytempo_CommandIDs::visitWebsite);
+        menu.addCommandItem (commandManager, Polytempo_CommandIDs::visitWebsite);
     }
     
     return menu;
@@ -216,19 +224,22 @@ void Polytempo_MenuBarModel::getAllCommands(Array <CommandID>& commands)
 {
     // this returns the set of all commands that this target can perform..
     const CommandID ids[] = {
+        Polytempo_CommandIDs::newDocument,
         Polytempo_CommandIDs::open,
         Polytempo_CommandIDs::clearOpenRecent,
         Polytempo_CommandIDs::save,
         Polytempo_CommandIDs::saveAs,
         Polytempo_CommandIDs::close,
         
-        Polytempo_CommandIDs::deleteSelected,
         Polytempo_CommandIDs::loadImage,
         Polytempo_CommandIDs::addSection,
         Polytempo_CommandIDs::addInstance,
-        
+        Polytempo_CommandIDs::addRegion,
+        Polytempo_CommandIDs::deleteSelected,
+
         Polytempo_CommandIDs::showMainView,
-        Polytempo_CommandIDs::showImageEditor,
+        Polytempo_CommandIDs::showPageEditor,
+        Polytempo_CommandIDs::showRegionEditor,
         //Polytempo_CommandIDs::showScoreEditor,
         Polytempo_CommandIDs::zoomIn,
         Polytempo_CommandIDs::zoomOut,
@@ -283,6 +294,11 @@ void Polytempo_MenuBarModel::getCommandInfo(CommandID commandID, ApplicationComm
             
         /* file menu
          ----------------------------------*/
+        case Polytempo_CommandIDs::newDocument:
+            result.setInfo("New", String::empty, infoCategory, 0);
+            result.addDefaultKeypress('n', ModifierKeys::commandModifier);
+            break;
+
         case Polytempo_CommandIDs::open:
             result.setInfo("Open...", "Opens a Polytempo score file", infoCategory, 0);
             result.addDefaultKeypress('o', ModifierKeys::commandModifier);
@@ -312,29 +328,32 @@ void Polytempo_MenuBarModel::getCommandInfo(CommandID commandID, ApplicationComm
             
         /* edit menu
          ----------------------------------*/
-        case Polytempo_CommandIDs::deleteSelected:
-            result.setInfo("Delete", "Delete the selected item", infoCategory, 0);
-            result.addDefaultKeypress('\b', 0);
-            result.addDefaultKeypress(KeyPress::backspaceKey, 0);
-            result.setActive(window->getContentID() == Polytempo_NetworkWindow::imageEditorViewID);
-            break;
-            
         case Polytempo_CommandIDs::loadImage:
             result.setInfo("Load Image", "Load an image", infoCategory, 0);
-            result.setActive(window->getContentID() == Polytempo_NetworkWindow::imageEditorViewID);
+            result.setActive(window->getContentID() == Polytempo_NetworkWindow::pageEditorViewID);
             break;
 
         case Polytempo_CommandIDs::addSection:
             result.setInfo("Add Section", "Add a section", infoCategory, 0);
-            result.setActive(window->getContentID() == Polytempo_NetworkWindow::imageEditorViewID);
+            result.setActive(window->getContentID() == Polytempo_NetworkWindow::pageEditorViewID && ((Polytempo_PageEditorView*)window->getContentComponent())->hasSelectedImage());
             break;
             
         case Polytempo_CommandIDs::addInstance:
             result.setInfo("Add Instance", "Add an instance of the section", infoCategory, 0);
-            result.setActive(window->getContentID() == Polytempo_NetworkWindow::imageEditorViewID &&
- ((Polytempo_ImageEditorView*)window->getContentComponent())->hasSelectedSection());
+            result.setActive(window->getContentID() == Polytempo_NetworkWindow::pageEditorViewID && ((Polytempo_PageEditorView*)window->getContentComponent())->hasSelectedSection());
             break;
             
+        case Polytempo_CommandIDs::addRegion:
+            result.setInfo("Add Region", "Add a region", infoCategory, 0);
+            result.setActive(window->getContentID() == Polytempo_NetworkWindow::regionEditorViewID);
+            break;
+            
+        case Polytempo_CommandIDs::deleteSelected:
+            result.setInfo("Delete selected", "Delete the selected item", infoCategory, 0);
+            result.setActive(window->getContentID() == Polytempo_NetworkWindow::pageEditorViewID);
+            break;
+            
+
         /* view menu
          ----------------------------------*/
         case Polytempo_CommandIDs::showMainView:
@@ -343,22 +362,28 @@ void Polytempo_MenuBarModel::getCommandInfo(CommandID commandID, ApplicationComm
             result.addDefaultKeypress(KeyPress::numberPad1, ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
             break;
     
-        case Polytempo_CommandIDs::showImageEditor:
+        case Polytempo_CommandIDs::showPageEditor:
             result.setInfo("Show Page Editor", String::empty, infoCategory, 0);
             result.addDefaultKeypress('2', ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
             result.addDefaultKeypress(KeyPress::numberPad2, ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
             break;
             
+        case Polytempo_CommandIDs::showRegionEditor:
+            result.setInfo("Show Region Editor", String::empty, infoCategory, 0);
+            result.addDefaultKeypress('3', ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
+            result.addDefaultKeypress(KeyPress::numberPad3, ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
+            break;
+            
         case Polytempo_CommandIDs::zoomIn:
             result.setInfo("Zoom In", String::empty, infoCategory, 0);
             result.addDefaultKeypress(KeyPress::upKey, ModifierKeys::commandModifier);
-            result.setActive(window->getContentID() == Polytempo_NetworkWindow::imageEditorViewID);
+            result.setActive(window->getContentID() == Polytempo_NetworkWindow::pageEditorViewID);
             break;
             
         case Polytempo_CommandIDs::zoomOut:
             result.setInfo("Zoom Out", String::empty, infoCategory, 0);
             result.addDefaultKeypress(KeyPress::downKey, ModifierKeys::commandModifier);
-            result.setActive(window->getContentID() == Polytempo_NetworkWindow::imageEditorViewID);
+            result.setActive(window->getContentID() == Polytempo_NetworkWindow::pageEditorViewID);
             break;
             
 #if ! JUCE_LINUX
@@ -495,6 +520,10 @@ bool Polytempo_MenuBarModel::perform(const InvocationInfo& info)
             
         /* file menu
          ----------------------------------*/
+        case Polytempo_CommandIDs::newDocument:
+            app->newScore();
+            break;
+
         case Polytempo_CommandIDs::open:
             app->openFileDialog();
             break;
@@ -518,31 +547,39 @@ bool Polytempo_MenuBarModel::perform(const InvocationInfo& info)
             
         /* edit menu
          ----------------------------------*/
-        case Polytempo_CommandIDs::deleteSelected:
-            ((Polytempo_ImageEditorView*)window->getContentComponent())->deleteSelected();
-            break;
-            
         case Polytempo_CommandIDs::loadImage:
-            ((Polytempo_ImageEditorView*)window->getContentComponent())->loadImage();
+            ((Polytempo_PageEditorView*)window->getContentComponent())->loadImage();
             break;
 
         case Polytempo_CommandIDs::addSection:
-            ((Polytempo_ImageEditorView*)window->getContentComponent())->addSection();
+            ((Polytempo_PageEditorView*)window->getContentComponent())->addSection();
             break;
 
         case Polytempo_CommandIDs::addInstance:
-            ((Polytempo_ImageEditorView*)window->getContentComponent())->addInstance();
+            ((Polytempo_PageEditorView*)window->getContentComponent())->addInstance();
+            break;
+            
+        case Polytempo_CommandIDs::addRegion:
+            ((Polytempo_RegionEditorView*)window->getContentComponent())->addRegion();
             break;
 
+        case Polytempo_CommandIDs::deleteSelected:
+            ((Polytempo_PageEditorView*)window->getContentComponent())->deleteSelected();
+            break;
             
+
         /* view menu
          ----------------------------------*/
         case Polytempo_CommandIDs::showMainView:
             window->setContentID(Polytempo_NetworkWindow::mainViewID);
             break;
             
-        case Polytempo_CommandIDs::showImageEditor:
-            window->setContentID(Polytempo_NetworkWindow::imageEditorViewID);
+        case Polytempo_CommandIDs::showPageEditor:
+            window->setContentID(Polytempo_NetworkWindow::pageEditorViewID);
+            break;
+            
+        case Polytempo_CommandIDs::showRegionEditor:
+            window->setContentID(Polytempo_NetworkWindow::regionEditorViewID);
             break;
             
         case Polytempo_CommandIDs::zoomIn:
@@ -556,17 +593,12 @@ bool Polytempo_MenuBarModel::perform(const InvocationInfo& info)
 #if ! JUCE_LINUX
         case Polytempo_CommandIDs::fullScreen:
         {
-            // Kiosk mode doesn't work properly
-            // problem occurs only with a native titlebar
-            
-            /*
             Desktop& desktop = Desktop::getInstance();
             
             if (desktop.getKioskModeComponent() == nullptr)
                 desktop.setKioskModeComponent(window->getTopLevelComponent());
             else
                 desktop.setKioskModeComponent(nullptr);
-            */
             break;
         }
 #endif

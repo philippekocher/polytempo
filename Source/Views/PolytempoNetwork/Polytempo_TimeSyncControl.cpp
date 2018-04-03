@@ -18,6 +18,8 @@ Polytempo_TimeSyncControl::Polytempo_TimeSyncControl()
 	syncMasterToggle->addListener(this);
 
 	addAndMakeVisible(infoField = new Label());
+    infoField->setMinimumHorizontalScale(0.1f);
+
 }
 
 Polytempo_TimeSyncControl::~Polytempo_TimeSyncControl()
@@ -32,8 +34,8 @@ void Polytempo_TimeSyncControl::paint (Graphics& g)
 
 void Polytempo_TimeSyncControl::resized()
 {
-    syncMasterToggle->setBounds(2, 2, getWidth()-4, 30);
-	infoField->setBounds(2, getHeight()-32, getWidth()-4, 30);
+    syncMasterToggle->setBounds(0, 5, getWidth(), 18);
+	infoField->setBounds(0, 24, getWidth(), 22);
 }
 
 void Polytempo_TimeSyncControl::showInfoMessage(String message, Colour color)

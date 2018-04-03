@@ -22,10 +22,10 @@
  
  ============================================================================== */
 
-#ifndef __Polytempo_NetworkWindow__
-#define __Polytempo_NetworkWindow__
+#pragma once
 
-#include "../../Views/PolytempoNetwork/Polytempo_ImageEditorView.h"
+#include "../../Views/PolytempoNetwork/Polytempo_PageEditorView.h"
+#include "../../Views/PolytempoNetwork/Polytempo_RegionEditorView.h"
 #include "../../Views/PolytempoNetwork/Polytempo_NetworkMainView.h"
 
 
@@ -40,7 +40,8 @@ public:
     enum contentID
     {
         mainViewID = 0,
-        imageEditorViewID,
+        pageEditorViewID,
+        regionEditorViewID,
     };
     
     void setContentID(contentID);
@@ -50,7 +51,8 @@ public:
 
 private:
     ScopedPointer <Polytempo_NetworkMainView> mainView;
-    ScopedPointer <Polytempo_ImageEditorView> imageEditorView;
+    ScopedPointer <Polytempo_PageEditorView> pageEditorView;
+    ScopedPointer <Polytempo_RegionEditorView> regionEditorView;
 
     OpenGLContext openGLContext;
     
@@ -58,6 +60,3 @@ private:
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_NetworkWindow)
 };
-
-
-#endif  // __Polytempo_NetworkWindow__
