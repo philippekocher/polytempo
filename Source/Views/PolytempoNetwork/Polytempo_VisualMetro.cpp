@@ -187,8 +187,15 @@ void Polytempo_VisualMetro::hiResTimerCallback()
     }
     else if(pos > 1.0f && linear)
     {
-        pattern = 0;
+        x = y = 0;
         stopTimer();
+
+        // because this is not the main message thread, we mustn't do
+        // any UI work without first grabbing a MessageManagerLock.
+        const MessageManagerLock mml (Thread::getCurrentThread());
+        hComponent->setPosition(x,subpos);
+        vComponent->setPosition(y,subpos);
+
         return;
     }
 
@@ -253,7 +260,6 @@ void Polytempo_VisualMetro::hiResTimerCallback()
 
     hComponent->setPosition(x,subpos);
     vComponent->setPosition(y,subpos);
-    repaint(0, 0, (int)width, (int)width);
 
     // position increment
     if(shouldStop && pos > 0.5)     pos -= increment;
