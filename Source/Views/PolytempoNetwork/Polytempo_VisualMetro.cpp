@@ -177,7 +177,7 @@ void Polytempo_VisualMetro::hiResTimerCallback()
     if(width == 0) return;
     
     // stop when a new beat event is overdue
-    if(pos > 1.1 && !linear)
+    if(pos > 1.1f && !linear)
     {
         shouldStop = true;
         // the bar moves back to 0 with the same speed as the last beat
@@ -187,11 +187,19 @@ void Polytempo_VisualMetro::hiResTimerCallback()
     }
     else if(pos > 1.0f && linear)
     {
-        pattern = 0;
+        x = y = 0;
         stopTimer();
+
+        // because this is not the main message thread, we mustn't do
+        // any UI work without first grabbing a MessageManagerLock.
+        const MessageManagerLock mml (Thread::getCurrentThread());
+        hComponent->setPosition(x,subpos);
+        vComponent->setPosition(y,subpos);
+
+        return;
     }
 
-    if(shouldStop && pos > 0.4 && pos < 0.6)
+    if(shouldStop && pos > 0.4f && pos < 0.6f)
     {
         pattern = 0;
         stopTimer();
@@ -252,7 +260,6 @@ void Polytempo_VisualMetro::hiResTimerCallback()
 
     hComponent->setPosition(x,subpos);
     vComponent->setPosition(y,subpos);
-    repaint(0, 0, (int)width, (int)width);
 
     // position increment
     if(shouldStop && pos > 0.5)     pos -= increment;
@@ -289,7 +296,7 @@ void Polytempo_VisualMetro::eventNotification(Polytempo_Event *event)
         else
             foregroundColour = normalColour;
         
-        if(int(event->getProperty(eventPropertyDefault_Linear)) != 0)
+        if(int(event->getProperty(eventPropertyString_Linear)) != 0)
             linear = true;
         else
             linear = false;
