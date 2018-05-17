@@ -14,7 +14,7 @@
 #include "Polytempo_GraphicsAnnotation.h"
 
 #define MIN_MOUSE_DOWN_TIME_MS 500
-#define MIN_INTERVAL_BETWEEN_REPAINTS_MS 100
+#define MIN_INTERVAL_BETWEEN_REPAINTS_MS 20
 #define FREE_HAND_LINE_THICKNESS 2
 #define BUTTON_SIZE 32
 #define DISTANCE_REFERENCEPOINT_TO_BUTTONS 50
@@ -65,7 +65,7 @@ private:
 	PopupMenu getTextSizePopupMenu() const;
 	void AddFontSizeToMenu(PopupMenu* m, int fontSize) const;
 	Image CreateImageWithSolidBackground(Image image, int targetWidth, int targetHeight) const;
-
+	void prepareAnnotationLayer();
     
 protected:
 	Rectangle<int> targetArea;
@@ -74,8 +74,10 @@ protected:
 	OwnedArray<Polytempo_GraphicsAnnotation> annotations;
 	Polytempo_GraphicsAnnotation temporaryAnnotation;
 	Point<int> lastPathPoint;
-	bool repaintRequired;
+	Atomic<bool> repaintRequired;
+	Atomic<bool> fullRepaintRequired;
 	bool allowAnnotations;
+	ScopedPointer<Image> annotationImage;
 
 	ScopedPointer<ImageButton> buttonOk;
 	ScopedPointer<ImageButton> buttonCancel;
@@ -90,6 +92,7 @@ protected:
 	ScopedPointer<ColourSelector> colorSelector;
 	AffineTransform imageToScreen;
 	AffineTransform screenToImage;
+	float imageLeft, imageTop, imageWidth, imageHeight;
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_GraphicsEditableRegion)
 };

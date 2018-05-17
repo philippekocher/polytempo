@@ -8,7 +8,7 @@
   ==============================================================================
 */
 
-#include "../../../POLYTEMPO NETWORK/JuceLibraryCode/JuceHeader.h"
+#include "JuceHeader.h"
 #include "Polytempo_GraphicsEditableRegion.h"
 #include "Polytempo_GraphicsAnnotationManager.h"
 
@@ -94,6 +94,19 @@ Image Polytempo_GraphicsEditableRegion::CreateImageWithSolidBackground(Image ima
 	return newImage;
 }
 
+void Polytempo_GraphicsEditableRegion::prepareAnnotationLayer()
+{
+	annotationImage = new Image(Image::ARGB, int(imageWidth), int(imageHeight), true);
+
+	Graphics g(*annotationImage);
+	bool anchorFlag = Polytempo_GraphicsAnnotationManager::getInstance()->getAnchorFlag();
+	for (Polytempo_GraphicsAnnotation* annotation : annotations)
+	{
+		if (currentImageRectangle.contains(annotation->referencePoint))
+			paintAnnotation(g, annotation, anchorFlag, Colours::blue);
+	}
+}
+
 void Polytempo_GraphicsEditableRegion::paintAnnotation(Graphics& g, const Polytempo_GraphicsAnnotation* annotation, bool anchorFlag, Colour anchorColor)
 {
 	PathStrokeType strokeType(PathStrokeType::rounded);
@@ -117,20 +130,30 @@ void Polytempo_GraphicsEditableRegion::paintAnnotation(Graphics& g, const Polyte
 
 void Polytempo_GraphicsEditableRegion::paint (Graphics& g)
 {
-	paintContent(g);
-	
-	g.addTransform(imageToScreen);
+	bool doRepaint = repaintRequired.compareAndSetBool(false, true);
+	bool doFullRepaint = fullRepaintRequired.compareAndSetBool(false, true);
+	if (doRepaint || doFullRepaint)
+	{
+
+		if (doFullRepaint)
+		{
+			prepareAnnotationLayer();
+			paintContent(g);
+
+			if (annotationImage != nullptr)
+			{
+				g.drawImage(*annotationImage,
+					targetArea.getX(), targetArea.getY(), targetArea.getWidth(), targetArea.getHeight(),
+					(int)0, (int)0, (int)annotationImage->getWidth(), (int)annotationImage->getHeight());
+			}
+		}
+	}
 
 	if (status == FreehandEditing)
 	{
-		paintAnnotation(g, &temporaryAnnotation, true, Colours::red);
-	}
+		g.addTransform(imageToScreen);
 
-	bool anchorFlag = Polytempo_GraphicsAnnotationManager::getInstance()->getAnchorFlag();
-	for (Polytempo_GraphicsAnnotation* annotation : annotations)
-	{
-		if(currentImageRectangle.contains(annotation->referencePoint))
-			paintAnnotation(g, annotation, anchorFlag, Colours::blue);
+		paintAnnotation(g, &temporaryAnnotation, true, Colours::red);
 	}
 }
 
@@ -149,6 +172,8 @@ void Polytempo_GraphicsEditableRegion::resized()
 		imageToScreen = screenToImage.inverted();
 		allowAnnotations = true;
 	}
+
+	fullRepaintRequired.set(true);
 }
 
 void Polytempo_GraphicsEditableRegion::setImage(Image* img, var rect, String imageId)
@@ -212,7 +237,7 @@ void Polytempo_GraphicsEditableRegion::mouseDown(const MouseEvent& e)
 
 void Polytempo_GraphicsEditableRegion::handleFreeHandPainting(const Point<int>& mousePosition)
 {
-	if (temporaryAnnotation.freeHandPath.isEmpty() || lastPathPoint.getDistanceFrom(mousePosition) > 5)
+	if (temporaryAnnotation.freeHandPath.isEmpty() || lastPathPoint.getDistanceFrom(mousePosition) > 1)
 	{
 		float x = float(mousePosition.getX());
 		float y = float(mousePosition.getY());
@@ -228,7 +253,7 @@ void Polytempo_GraphicsEditableRegion::handleFreeHandPainting(const Point<int>& 
 		}
 
 		lastPathPoint = mousePosition;
-		repaintRequired = true;
+		repaintRequired.set(true);
 	}
 }
 
@@ -328,7 +353,7 @@ void Polytempo_GraphicsEditableRegion::handleStartEditing(Point<int> mousePositi
 
 	grabKeyboardFocus();
 
-	repaintRequired = true;
+	repaintRequired.set(true);
 }
 
 void Polytempo_GraphicsEditableRegion::handleEndEditAccept()
@@ -362,8 +387,8 @@ void Polytempo_GraphicsEditableRegion::handleEndEdit()
 	setMouseCursor(MouseCursor::NormalCursor);
 	doPaletteHandling(false);
 	colorSelector->setVisible(false);
-	repaintRequired = true;
 	Polytempo_GraphicsAnnotationManager::getInstance()->resetAnnotationPending(this);
+	fullRepaintRequired.set(true);
 }
 
 void Polytempo_GraphicsEditableRegion::AddFontSizeToMenu(PopupMenu* m, int fontSize) const
@@ -421,12 +446,12 @@ void Polytempo_GraphicsEditableRegion::changeListenerCallback(ChangeBroadcaster*
 	if(source == colorSelector && status != Default)
 	{
 		temporaryAnnotation.color = colorSelector->getCurrentColour();
-		repaintRequired = true;
+		repaintRequired.set(true);
 	}
 	else if(source == Polytempo_GraphicsAnnotationManager::getInstance())
 	{
 		Polytempo_GraphicsAnnotationManager::getInstance()->getAnnotationsForImage(currentImageId, &annotations);
-		repaintRequired = true;
+		fullRepaintRequired.set(true);
 	}
 }
 
@@ -440,10 +465,10 @@ bool Polytempo_GraphicsEditableRegion::keyPressed(const KeyPress& key, Component
 			handleEndEditAccept();
 		else if(key == KeyPress::backspaceKey)
 		{
-			if (temporaryAnnotation.text.length() > 1)
+			if (temporaryAnnotation.text.length() > 0)
 				temporaryAnnotation.text = temporaryAnnotation.text.dropLastCharacters(1);
 			startTimer(TIMER_ID_AUTO_ACCEPT, AUTO_ACCEPT_INTERVAL_MS);
-			repaintRequired = true;
+			fullRepaintRequired.set(true);
 		}
 		else
 		{
@@ -453,7 +478,7 @@ bool Polytempo_GraphicsEditableRegion::keyPressed(const KeyPress& key, Component
 			if (!str.isEmpty())
 				temporaryAnnotation.text.append(str, 1);
 			startTimer(TIMER_ID_AUTO_ACCEPT, AUTO_ACCEPT_INTERVAL_MS);
-			repaintRequired = true;
+			repaintRequired.set(true);
 		}
 		return true;
 	}
@@ -464,7 +489,7 @@ bool Polytempo_GraphicsEditableRegion::keyPressed(const KeyPress& key, Component
 void Polytempo_GraphicsEditableRegion::setTemporaryFontSize(float fontSize)
 {
 	temporaryAnnotation.fontSize = fontSize;
-	repaintRequired = true;
+	fullRepaintRequired.set(true);
 }
 
 void Polytempo_GraphicsEditableRegion::timerCallback(int timerID)
@@ -472,20 +497,16 @@ void Polytempo_GraphicsEditableRegion::timerCallback(int timerID)
 	switch (timerID)
 	{
 	case TIMER_ID_REPAINT:
-		if (repaintRequired)
-		{
-			repaintRequired = false;
-			stopTimer(timerID);
-			repaint();
-			startTimer(timerID, MIN_INTERVAL_BETWEEN_REPAINTS_MS);
-		}
+		stopTimer(timerID);
+		repaint();
+		startTimer(timerID, MIN_INTERVAL_BETWEEN_REPAINTS_MS);
 		break;
 	case TIMER_ID_AUTO_ACCEPT:
 		stopTimer(timerID);
 		if (status == FreehandEditing)
 			handleEndEditAccept();
 		break;
-	default: 
+	default:
 		stopTimer(timerID);
 	}
 }
