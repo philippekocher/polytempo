@@ -22,52 +22,7 @@ Polytempo_GraphicsEditableRegion::Polytempo_GraphicsEditableRegion()
 	status = Default;
 	allowAnnotations = false;
 
-	Colour overColour = Colour(Colours::purple.getRed(), Colours::purple.getGreen(), Colours::purple.getBlue(), uint8(80));
-	float overOpacity = 1.0;
-	float downOpacity = 1.0;
-
-	Image imageColorPalette = CreateImageWithSolidBackground(ImageCache::getFromMemory(BinaryData::colorPalette_png, BinaryData::colorPalette_pngSize), BUTTON_SIZE, BUTTON_SIZE);
-	Image imageFontSize = CreateImageWithSolidBackground(ImageCache::getFromMemory(BinaryData::fontSize_png, BinaryData::fontSize_pngSize), BUTTON_SIZE, BUTTON_SIZE);
-	Image imageOk = CreateImageWithSolidBackground(ImageCache::getFromMemory(BinaryData::yes_png, BinaryData::yes_pngSize), BUTTON_SIZE, BUTTON_SIZE);
-	Image imageCancel = CreateImageWithSolidBackground(ImageCache::getFromMemory(BinaryData::no_png, BinaryData::no_pngSize), BUTTON_SIZE, BUTTON_SIZE);
-	Image imageSettings = CreateImageWithSolidBackground(ImageCache::getFromMemory(BinaryData::settings_png, BinaryData::settings_pngSize), BUTTON_SIZE, BUTTON_SIZE);
-
-	buttonColor = new ImageButton("Color");
-	buttonColor->setImages(false, false, false, imageColorPalette, 1.0f, Colours::transparentWhite, Image::null, overOpacity, overColour, Image::null, downOpacity, Colours::green);
-	buttonColor->setBounds(0, 0, BUTTON_SIZE, BUTTON_SIZE);
-	buttonColor->addListener(this);
-	addChildComponent(buttonColor);
-
-	buttonTextSize = new ImageButton("Size");
-	buttonTextSize->setImages(false, false, false, imageFontSize, 1.0f, Colours::transparentWhite, Image::null, overOpacity, overColour, Image::null, downOpacity, Colours::green);
-	buttonTextSize->setBounds(0, 0, BUTTON_SIZE, BUTTON_SIZE);
-	buttonTextSize->setTriggeredOnMouseDown(true);
-	buttonTextSize->addListener(this);
-	addChildComponent(buttonTextSize);
-
-	buttonSettings = new ImageButton("Settings");
-	buttonSettings->setImages(false, false, false, imageSettings, 1.0f, Colours::transparentWhite, Image::null, overOpacity, overColour, Image::null, downOpacity, Colours::green);
-	buttonSettings->setBounds(0, 0, BUTTON_SIZE, BUTTON_SIZE);
-	buttonSettings->addListener(this);
-	addChildComponent(buttonSettings);
-
-	buttonOk = new ImageButton("OK");
-	buttonOk->setImages(false, false, false, imageOk, 1.0f, Colours::transparentWhite, Image::null, overOpacity, overColour, Image::null, downOpacity, Colours::green);
-	buttonOk->setBounds(0, 0, BUTTON_SIZE, BUTTON_SIZE);
-	buttonOk->addListener(this);
-	addChildComponent(buttonOk);
-	
-	buttonCancel = new ImageButton("Cancel");
-	buttonCancel->setImages(false, false, false, imageCancel, 1.0f, Colours::transparentWhite, Image::null, overOpacity, overColour, Image::null, downOpacity, Colours::red);
-	buttonCancel->setBounds(0, 0, BUTTON_SIZE, BUTTON_SIZE);
-	buttonCancel->addListener(this);
-	addChildComponent(buttonCancel);
-
-	colorSelector = new ColourSelector(ColourSelector::ColourSelectorOptions::showAlphaChannel | ColourSelector::ColourSelectorOptions::showColourspace | ColourSelector::ColourSelectorOptions::showSliders);
-	colorSelector->setBounds(0, 0, 200, 200);
-	colorSelector->setCurrentColour(Colours::red);
-	colorSelector->addChangeListener(this);
-	addChildComponent(colorSelector);
+	palette = new Polytempo_GraphicsPalette(this);
 
 	addKeyListener(this);
 
@@ -83,16 +38,6 @@ Polytempo_GraphicsEditableRegion::~Polytempo_GraphicsEditableRegion()
 	stopTimer(TIMER_ID_AUTO_ACCEPT);
 }
 
-Image Polytempo_GraphicsEditableRegion::CreateImageWithSolidBackground(Image image, int targetWidth, int targetHeight) const
-{
-	Image newImage = Image(Image::RGB, targetWidth, targetHeight, false);
-	newImage.clear(newImage.getBounds(), Colours::lightyellow);
-
-	Graphics gFontSize(newImage);
-	gFontSize.drawImage(image, 0, 0, targetWidth, targetHeight, 0, 0, image.getWidth(), image.getHeight());
-
-	return newImage;
-}
 
 void Polytempo_GraphicsEditableRegion::prepareAnnotationLayer()
 {
@@ -212,7 +157,7 @@ void Polytempo_GraphicsEditableRegion::mouseUp(const MouseEvent& e)
 
 	if(status == FreehandEditing)
 	{
-		doPaletteHandling(true);
+		palette->show(true);
 		startTimer(TIMER_ID_AUTO_ACCEPT, AUTO_ACCEPT_INTERVAL_MS);
 	}
 }
@@ -305,26 +250,6 @@ bool Polytempo_GraphicsEditableRegion::TryGetExistingAnnotation(float x, float y
 	return false;
 }
 
-void Polytempo_GraphicsEditableRegion::doPaletteHandling(bool show)
-{
-	if (show)
-	{
-		buttonOk->setTopLeftPosition(0, 0);
-		buttonCancel->setTopLeftPosition(BUTTON_SIZE, 0);
-		buttonColor->setTopLeftPosition(2 * BUTTON_SIZE, 0);
-		buttonTextSize->setTopLeftPosition(3 * BUTTON_SIZE, 0);
-		buttonSettings->setTopLeftPosition(4 * BUTTON_SIZE, 0);
-	}
-
-	buttonOk->setVisible(show);
-	buttonCancel->setVisible(show);
-	buttonColor->setVisible(show);
-	buttonTextSize->setVisible(show);
-	buttonSettings->setVisible(show);
-
-	grabKeyboardFocus();
-}
-
 void Polytempo_GraphicsEditableRegion::handleStartEditing(Point<int> mousePosition)
 {
 	if (!allowAnnotations || !Polytempo_GraphicsAnnotationManager::getInstance()->trySetAnnotationPending(this))
@@ -341,7 +266,7 @@ void Polytempo_GraphicsEditableRegion::handleStartEditing(Point<int> mousePositi
 		temporaryAnnotation.id = Uuid();
 		temporaryAnnotation.imageId = currentImageId;
 		temporaryAnnotation.referencePoint = Point<float>(x, y);
-		temporaryAnnotation.color = colorSelector->getCurrentColour();
+		temporaryAnnotation.color = palette->getCurrentColour();
 		temporaryAnnotation.fontSize = STANDARD_FONT_SIZE;
 	}
 	
@@ -371,84 +296,48 @@ void Polytempo_GraphicsEditableRegion::handleEndEditCancel()
 	handleEndEdit();
 }
 
-void Polytempo_GraphicsEditableRegion::hitBtnColor()
+int Polytempo_GraphicsEditableRegion::getTemporaryFontSize() const
 {
-	buttonClicked(buttonColor);
+	return temporaryAnnotation.fontSize;
 }
 
-void Polytempo_GraphicsEditableRegion::hitBtnTextSize()
+void Polytempo_GraphicsEditableRegion::setTemporaryColor(Colour colour)
 {
-	buttonClicked(buttonTextSize);
+	if (status != Default)
+	{
+		temporaryAnnotation.color = colour;
+		fullRepaintRequired.set(true);
+	}
+}
+
+void Polytempo_GraphicsEditableRegion::stopAutoAccept()
+{
+	stopTimer(TIMER_ID_AUTO_ACCEPT);
+}
+
+void Polytempo_GraphicsEditableRegion::hitBtnColor() const
+{
+	palette->hitBtnColor();
+}
+
+void Polytempo_GraphicsEditableRegion::hitBtnTextSize() const
+{
+	palette->hitBtnTextSize();
 }
 
 void Polytempo_GraphicsEditableRegion::handleEndEdit()
 {
 	status = Default;
 	setMouseCursor(MouseCursor::NormalCursor);
-	doPaletteHandling(false);
-	colorSelector->setVisible(false);
+	palette->show(false);
+	
 	Polytempo_GraphicsAnnotationManager::getInstance()->resetAnnotationPending(this);
 	fullRepaintRequired.set(true);
 }
 
-void Polytempo_GraphicsEditableRegion::AddFontSizeToMenu(PopupMenu* m, int fontSize) const
-{
-	m->addItem(fontSize, std::to_string(fontSize), true, temporaryAnnotation.fontSize == fontSize);
-}
-
-PopupMenu Polytempo_GraphicsEditableRegion::getTextSizePopupMenu() const
-{
-	PopupMenu m;
-	AddFontSizeToMenu(&m, 10);
-	AddFontSizeToMenu(&m, 20);
-	AddFontSizeToMenu(&m, 30);
-	AddFontSizeToMenu(&m, 40);
-	AddFontSizeToMenu(&m, 50);
-	AddFontSizeToMenu(&m, 60);
-	AddFontSizeToMenu(&m, 70);
-	AddFontSizeToMenu(&m, 80);
-	AddFontSizeToMenu(&m, 90);
-	AddFontSizeToMenu(&m, 100);
-
-	return m;
-}
-
-void Polytempo_GraphicsEditableRegion::buttonClicked(Button* source)
-{
-	if(source == buttonOk)
-	{
-		handleEndEditAccept();
-	}
-	else if(source == buttonCancel)
-	{
-		handleEndEditCancel();
-	}
-	else if(source == buttonColor)
-	{
-		stopTimer(TIMER_ID_AUTO_ACCEPT);
-		colorSelector->setTopLeftPosition(buttonColor->getX(), buttonColor->getY() + buttonColor->getHeight());
-		colorSelector->setVisible(!colorSelector->isVisible());
-	}
-	else if(source == buttonTextSize)
-	{
-		stopTimer(TIMER_ID_AUTO_ACCEPT);
-		getTextSizePopupMenu().showMenuAsync(PopupMenu::Options().withTargetComponent(buttonTextSize), new FontSizeCallback(this));
-	}
-	else if(source == buttonSettings)
-	{
-		stopTimer(TIMER_ID_AUTO_ACCEPT);
-		Polytempo_GraphicsAnnotationManager::getInstance()->showSettingsDialog();
-	}
-}
-
 void Polytempo_GraphicsEditableRegion::changeListenerCallback(ChangeBroadcaster* source)
 {
-	if(source == colorSelector && status != Default)
-	{
-		temporaryAnnotation.color = colorSelector->getCurrentColour();
-		repaintRequired.set(true);
-	}
-	else if(source == Polytempo_GraphicsAnnotationManager::getInstance())
+	if(source == Polytempo_GraphicsAnnotationManager::getInstance())
 	{
 		Polytempo_GraphicsAnnotationManager::getInstance()->getAnnotationsForImage(currentImageId, &annotations);
 		fullRepaintRequired.set(true);

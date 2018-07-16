@@ -12,11 +12,11 @@
 
 #include "JuceHeader.h"
 #include "Polytempo_GraphicsAnnotation.h"
+#include "Polytempo_GraphicsPalette.h"
 
 #define MIN_MOUSE_DOWN_TIME_MS 500
 #define MIN_INTERVAL_BETWEEN_REPAINTS_MS 20
 #define FREE_HAND_LINE_THICKNESS 2
-#define BUTTON_SIZE 32
 #define DISTANCE_REFERENCEPOINT_TO_BUTTONS 50
 #define TIMER_ID_REPAINT 1000
 #define TIMER_ID_AUTO_ACCEPT 1001
@@ -27,7 +27,7 @@ class FontSizeCallback;
 //==============================================================================
 /*
 */
-class Polytempo_GraphicsEditableRegion : public Component, MultiTimer, Button::Listener, KeyListener, ChangeListener
+class Polytempo_GraphicsEditableRegion : public Component, MultiTimer, KeyListener, ChangeListener
 {
 public:
 	Polytempo_GraphicsEditableRegion();
@@ -46,25 +46,23 @@ public:
 	void mouseDrag(const MouseEvent& e) override;
 	void mouseDoubleClick(const MouseEvent& e) override;
 	bool TryGetExistingAnnotation(float x, float y);
-	void doPaletteHandling(bool show);
-	void buttonClicked(Button* source) override;
 	void changeListenerCallback(ChangeBroadcaster* source) override;
 	bool keyPressed(const KeyPress& key, Component* /*originatingComponent*/) override;
 	void setTemporaryFontSize(float fontSize);
 	void timerCallback(int timerID) override;
 	void handleEndEditAccept();
 	void handleEndEditCancel();
-	void hitBtnColor();
-	void hitBtnTextSize();
+	int getTemporaryFontSize() const;
+	void setTemporaryColor(Colour colour);
+	void stopAutoAccept();
+	void hitBtnColor() const;
+	void hitBtnTextSize() const;
 
 private:
 	virtual void setViewImage(Image *img, var) = 0;
 	void handleStartEditing(Point<int> mousePosition);
 	void handleEndEdit();
 	void handleFreeHandPainting(const Point<int>& mousePosition);
-	PopupMenu getTextSizePopupMenu() const;
-	void AddFontSizeToMenu(PopupMenu* m, int fontSize) const;
-	Image CreateImageWithSolidBackground(Image image, int targetWidth, int targetHeight) const;
 	void prepareAnnotationLayer();
     
 protected:
@@ -79,31 +77,12 @@ protected:
 	bool allowAnnotations;
 	ScopedPointer<Image> annotationImage;
 
-	ScopedPointer<ImageButton> buttonOk;
-	ScopedPointer<ImageButton> buttonCancel;
-	ScopedPointer<ImageButton> buttonColor;
-	ScopedPointer<ImageButton> buttonTextSize;
-	ScopedPointer<ImageButton> buttonSettings;
-	bool buttonsAboveReferencePoint;
-
 	Rectangle<float> currentImageRectangle;
 	String currentImageId;
 
-	ScopedPointer<ColourSelector> colorSelector;
 	AffineTransform imageToScreen;
 	AffineTransform screenToImage;
 	float imageLeft, imageTop, imageWidth, imageHeight;
-
+	ScopedPointer<Polytempo_GraphicsPalette> palette;
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_GraphicsEditableRegion)
-};
-
-
-class FontSizeCallback : public ModalComponentManager::Callback
-{
-public:
-	FontSizeCallback(Polytempo_GraphicsEditableRegion* pParent) :pParent(pParent) {};
-	void modalStateFinished(int returnValue) override { pParent->setTemporaryFontSize(float(returnValue)); };
-
-private:
-	Polytempo_GraphicsEditableRegion* pParent;
 };

@@ -146,6 +146,10 @@
     </GROUP>
     <GROUP id="{387130A6-2BE3-19EF-2CB5-6ADE3718BBBC}" name="Views">
       <GROUP id="{59998D8D-099D-1311-792D-74F9D735FAFF}" name="PolytempoNetwork">
+        <FILE id="aUdqwm" name="Polytempo_GraphicsPalette.cpp" compile="1"
+              resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_GraphicsPalette.cpp"/>
+        <FILE id="ZM5pn6" name="Polytempo_GraphicsPalette.h" compile="0" resource="0"
+              file="../Source/Views/PolytempoNetwork/Polytempo_GraphicsPalette.h"/>
         <FILE id="u9knYA" name="Polytempo_AuxiliaryView.cpp" compile="1" resource="0"
               file="../Source/Views/PolytempoNetwork/Polytempo_AuxiliaryView.cpp"/>
         <FILE id="yj74Xp" name="Polytempo_AuxiliaryView.h" compile="0" resource="0"
