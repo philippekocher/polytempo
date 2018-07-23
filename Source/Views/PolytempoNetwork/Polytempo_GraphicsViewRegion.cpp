@@ -35,6 +35,7 @@ Polytempo_GraphicsViewRegion::Polytempo_GraphicsViewRegion(var id)
 
     regionID = id;
     contentType = contentType_Empty;
+	allowAnnotations = false;
 }
 
 Polytempo_GraphicsViewRegion::~Polytempo_GraphicsViewRegion()
@@ -43,7 +44,7 @@ Polytempo_GraphicsViewRegion::~Polytempo_GraphicsViewRegion()
     progressbar = nullptr;
 }
 
-void Polytempo_GraphicsViewRegion::paintContent(Graphics& g)
+void Polytempo_GraphicsViewRegion::paint(Graphics& g)
 {    
     if(contentType == contentType_Empty)    return;
     
@@ -74,7 +75,7 @@ void Polytempo_GraphicsViewRegion::paintContent(Graphics& g)
     if(borderSize > 0.0) g.drawRect(getLocalBounds());
 }
 
-void Polytempo_GraphicsViewRegion::resizeContent()
+void Polytempo_GraphicsViewRegion::resized()
 {
     //DBG("region resized");
     Rectangle <int> parentBounds = getParentComponent()->getBounds();
@@ -102,6 +103,18 @@ void Polytempo_GraphicsViewRegion::resizeContent()
     {
         progressbar->setBounds(getLocalBounds().reduced(15,10));  // inset rect
     }
+
+	if (currentImageRectangle.isEmpty())
+		allowAnnotations = false;
+	else
+	{
+		screenToImage = AffineTransform::translation(-float(getX()), -float(getY()));
+		screenToImage = screenToImage.scale(currentImageRectangle.getWidth() / float(targetArea.getWidth()), currentImageRectangle.getHeight() / float(targetArea.getHeight()));
+		screenToImage = screenToImage.translated(currentImageRectangle.getX(), currentImageRectangle.getY() - targetArea.getY() / float(targetArea.getHeight()) * currentImageRectangle.getHeight());
+
+		imageToScreen = screenToImage.inverted();
+		allowAnnotations = true;
+	}
 }
 
 void Polytempo_GraphicsViewRegion::setRelativeBounds(const Rectangle <float> &newBounds)
@@ -117,6 +130,29 @@ void Polytempo_GraphicsViewRegion::clear()
     progressbar = nullptr;
 
     setVisible(false);
+}
+
+
+void Polytempo_GraphicsViewRegion::setImage(Image* img, var rect, String imageId)
+{
+	Array<var> r = *rect.getArray();
+	float relTopLeftX = float(r[0]);
+	float relTopLeftY = float(r[1]);
+	float relWidth = float(r[2]);
+	float relHeight = float(r[3]);
+	float imgWidth = float(img->getWidth());
+	float imgHeight = float(img->getHeight());
+	currentImageRectangle = Rectangle<float>(
+		imgWidth * relTopLeftX,
+		imgHeight * relTopLeftY,
+		imgWidth * relWidth,
+		imgHeight * relHeight);
+
+	currentImageId = imageId;
+
+	setViewImage(img, rect);
+
+	resized();
 }
 
 void Polytempo_GraphicsViewRegion::setViewImage(Image* img, var rect)
@@ -172,3 +208,36 @@ void Polytempo_GraphicsViewRegion::setMaxImageZoom(float maxZoom)
 
 
 Polytempo_ViewContentType Polytempo_GraphicsViewRegion::getContentType() { return contentType; }
+
+AffineTransform& Polytempo_GraphicsViewRegion::getImageToScreenTransform()
+{
+	return imageToScreen;
+}
+
+AffineTransform& Polytempo_GraphicsViewRegion::getScreenToImageTransform()
+{
+	return screenToImage;
+}
+
+bool Polytempo_GraphicsViewRegion::annotationsAllowed() const
+{
+	return allowAnnotations;
+}
+
+String Polytempo_GraphicsViewRegion::getImageID() const
+{
+	return currentImageId;
+}
+
+Point<float> Polytempo_GraphicsViewRegion::getImageCoordinatesAt(Point<int> screenPoint) const
+{
+	float x = float(screenPoint.getX());
+	float y = float(screenPoint.getY());
+	screenToImage.transformPoint<float>(x, y);
+	return Point<float>(x, y);
+}
+
+bool Polytempo_GraphicsViewRegion::imageRectangleContains(Point<float> point) const
+{
+	return currentImageRectangle.contains(point);
+}

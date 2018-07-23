@@ -177,7 +177,7 @@ bool Polytempo_GraphicsAnnotationManager::isAnnotationPending()
 	return ret;
 }
 
-bool Polytempo_GraphicsAnnotationManager::trySetAnnotationPending(Polytempo_GraphicsEditableRegion* pEditableRegion)
+bool Polytempo_GraphicsAnnotationManager::trySetAnnotationPending(Polytempo_GraphicsAnnotationLayer* pEditableRegion)
 {
 	bool ret;
 
@@ -186,25 +186,25 @@ bool Polytempo_GraphicsAnnotationManager::trySetAnnotationPending(Polytempo_Grap
 		ret = false;
 	else {
 		annotationPending = true;
-		pCurrentPendingEditableRegion = pEditableRegion;
+		pCurrentPendingAnnotationLyer = pEditableRegion;
 		ret = true;
 	}
 	csPendingAnnotation.exit();
 	return ret;
 }
 
-void Polytempo_GraphicsAnnotationManager::resetAnnotationPending(Polytempo_GraphicsEditableRegion* pEditableRegion)
+void Polytempo_GraphicsAnnotationManager::resetAnnotationPending(Polytempo_GraphicsAnnotationLayer* pEditableRegion)
 {
 	csPendingAnnotation.enter();
-	if (pEditableRegion == pCurrentPendingEditableRegion)
+	if (pEditableRegion == pCurrentPendingAnnotationLyer)
 	{
 		annotationPending = false;
-		pCurrentPendingEditableRegion = nullptr;
+		pCurrentPendingAnnotationLyer = nullptr;
 	}
 	csPendingAnnotation.exit();
 }
 
-Polytempo_GraphicsEditableRegion* Polytempo_GraphicsAnnotationManager::getCurrentPendingAnnotationRegion() const
+Polytempo_GraphicsAnnotationLayer* Polytempo_GraphicsAnnotationManager::getCurrentPendingAnnotationLayer() const
 {
-	return pCurrentPendingEditableRegion;
+	return pCurrentPendingAnnotationLyer;
 }

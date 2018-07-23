@@ -13,7 +13,7 @@
 #include "JuceHeader.h"
 #include "Polytempo_GraphicsAnnotation.h"
 #include "Polytempo_GraphicsAnnotationSet.h"
-#include "Polytempo_GraphicsEditableRegion.h"
+#include "Polytempo_GraphicsAnnotationLayer.h"
 
 class Polytempo_GraphicsAnnotationManager : public ChangeBroadcaster, public ChangeListener
 {
@@ -33,12 +33,12 @@ public:
 	void changeListenerCallback(ChangeBroadcaster*) override;
 	bool removeAnnotation(Uuid id, Polytempo_GraphicsAnnotation* pAnnotation);
 	bool isAnnotationPending();
-	bool trySetAnnotationPending(Polytempo_GraphicsEditableRegion* pEditableRegion);
-	void resetAnnotationPending(Polytempo_GraphicsEditableRegion* pEditableRegion);
-	Polytempo_GraphicsEditableRegion* getCurrentPendingAnnotationRegion() const;
+	bool trySetAnnotationPending(Polytempo_GraphicsAnnotationLayer* pEditableRegion);
+	void resetAnnotationPending(Polytempo_GraphicsAnnotationLayer* pEditableRegion);
+	Polytempo_GraphicsAnnotationLayer* getCurrentPendingAnnotationLayer() const;
 
 private:
-	Polytempo_GraphicsAnnotationManager() : showAnchorPoints(false), annotationPending(false), pCurrentPendingEditableRegion(nullptr)
+	Polytempo_GraphicsAnnotationManager() : showAnchorPoints(false), annotationPending(false), pCurrentPendingAnnotationLyer(nullptr)
 	{
 	};
 
@@ -49,5 +49,5 @@ private:
 	bool showAnchorPoints;
 	bool annotationPending;
 	CriticalSection csPendingAnnotation;
-	Polytempo_GraphicsEditableRegion* pCurrentPendingEditableRegion;
+	Polytempo_GraphicsAnnotationLayer* pCurrentPendingAnnotationLyer;
 };

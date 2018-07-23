@@ -13,7 +13,7 @@
 #include "JuceHeader.h"
 #define BUTTON_SIZE 32
 
-class Polytempo_GraphicsEditableRegion;
+class Polytempo_GraphicsAnnotationLayer;
 
 //==============================================================================
 /*
@@ -21,7 +21,7 @@ class Polytempo_GraphicsEditableRegion;
 class Polytempo_GraphicsPalette : public Button::Listener, ChangeListener
 {
 public:
-    Polytempo_GraphicsPalette(Polytempo_GraphicsEditableRegion* pParent);
+    Polytempo_GraphicsPalette(Polytempo_GraphicsAnnotationLayer* pParent);
     ~Polytempo_GraphicsPalette();
 	void show(bool show) const;
 	Colour getCurrentColour() const;
@@ -37,7 +37,7 @@ private:
 	void changeListenerCallback(ChangeBroadcaster* source) override;
 
 private:
-	Polytempo_GraphicsEditableRegion* pParent;
+	Polytempo_GraphicsAnnotationLayer* pParent;
 	ScopedPointer<ImageButton> buttonOk;
 	ScopedPointer<ImageButton> buttonCancel;
 	ScopedPointer<ImageButton> buttonColor;

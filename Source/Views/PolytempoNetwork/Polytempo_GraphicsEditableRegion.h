@@ -27,62 +27,15 @@ class FontSizeCallback;
 //==============================================================================
 /*
 */
-class Polytempo_GraphicsEditableRegion : public Component, MultiTimer, KeyListener, ChangeListener
+class Polytempo_GraphicsEditableRegion : public Component
 {
 public:
 	Polytempo_GraphicsEditableRegion();
     ~Polytempo_GraphicsEditableRegion();
-	
-	virtual void paintContent(Graphics& g) = 0;
-	virtual void resizeContent() = 0;
 
-	void paint (Graphics&) override;
-	void resized() override;
-	void paintAnnotation(Graphics& g, const Polytempo_GraphicsAnnotation* annotation, bool anchorFlag, Colour anchorColor);
 
-	void setImage(Image *img, var rect, String imageId);
-	void mouseUp(const MouseEvent& e) override;
-	void mouseDown(const MouseEvent& e) override;
-	void mouseDrag(const MouseEvent& e) override;
-	void mouseDoubleClick(const MouseEvent& e) override;
-	bool TryGetExistingAnnotation(float x, float y);
-	void changeListenerCallback(ChangeBroadcaster* source) override;
-	bool keyPressed(const KeyPress& key, Component* /*originatingComponent*/) override;
-	void setTemporaryFontSize(float fontSize);
-	void timerCallback(int timerID) override;
-	void handleEndEditAccept();
-	void handleEndEditCancel();
-	int getTemporaryFontSize() const;
-	void setTemporaryColor(Colour colour);
-	void stopAutoAccept();
-	void hitBtnColor() const;
-	void hitBtnTextSize() const;
-
-private:
-	virtual void setViewImage(Image *img, var) = 0;
-	void handleStartEditing(Point<int> mousePosition);
-	void handleEndEdit();
-	void handleFreeHandPainting(const Point<int>& mousePosition);
-	void prepareAnnotationLayer();
     
 protected:
-	Rectangle<int> targetArea;
-
-	enum Status { Default, FreehandEditing } status;
-	OwnedArray<Polytempo_GraphicsAnnotation> annotations;
-	Polytempo_GraphicsAnnotation temporaryAnnotation;
-	Point<int> lastPathPoint;
-	Atomic<bool> repaintRequired;
-	Atomic<bool> fullRepaintRequired;
-	bool allowAnnotations;
-	ScopedPointer<Image> annotationImage;
-
-	Rectangle<float> currentImageRectangle;
-	String currentImageId;
-
-	AffineTransform imageToScreen;
-	AffineTransform screenToImage;
-	float imageLeft, imageTop, imageWidth, imageHeight;
-	ScopedPointer<Polytempo_GraphicsPalette> palette;
+	
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_GraphicsEditableRegion)
 };

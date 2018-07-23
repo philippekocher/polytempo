@@ -14,7 +14,7 @@
 #include "Polytempo_GraphicsAnnotationManager.h"
 
 //==============================================================================
-Polytempo_GraphicsPalette::Polytempo_GraphicsPalette(Polytempo_GraphicsEditableRegion* pParent)
+Polytempo_GraphicsPalette::Polytempo_GraphicsPalette(Polytempo_GraphicsAnnotationLayer* pParent)
 {
 	this->pParent = pParent;
 
