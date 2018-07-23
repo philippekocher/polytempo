@@ -27,7 +27,6 @@
 
 
 #include "Polytempo_Progressbar.h"
-#include "Polytempo_GraphicsEditableRegion.h"
 
 
 enum Polytempo_ViewContentType
