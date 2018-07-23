@@ -133,7 +133,7 @@ void Polytempo_GraphicsAnnotationLayer::handleStartEditing(Point<int> mousePosit
 	if (!Polytempo_GraphicsAnnotationManager::getInstance()->trySetAnnotationPending(this))
 		return;
 
-	Point<int> imageCoordiantes = pRegion->getImageCoordinatesAt(mousePosition.translated(pRegion->getBounds().getX(), pRegion->getBounds().getY())).toInt();	
+	Point<float> imageCoordiantes = pRegion->getImageCoordinatesAt(mousePosition.translated(pRegion->getBounds().getX(), pRegion->getBounds().getY()));	
 	
 	if (!TryGetExistingAnnotation(imageCoordiantes))
 	{
@@ -312,7 +312,7 @@ bool Polytempo_GraphicsAnnotationLayer::keyPressed(const KeyPress& key, Componen
 
 int Polytempo_GraphicsAnnotationLayer::getTemporaryFontSize() const
 {
-	return temporaryAnnotation.fontSize;
+	return int(temporaryAnnotation.fontSize);
 }
 
 void Polytempo_GraphicsAnnotationLayer::setTemporaryColor(Colour colour)
@@ -354,14 +354,14 @@ void Polytempo_GraphicsAnnotationLayer::changeListenerCallback(ChangeBroadcaster
 }
 
 
-bool Polytempo_GraphicsAnnotationLayer::TryGetExistingAnnotation(Point<int> point)
+bool Polytempo_GraphicsAnnotationLayer::TryGetExistingAnnotation(Point<float> point)
 {
 	if (Polytempo_GraphicsAnnotationManager::getInstance()->getAnchorFlag())
 	{
 		Polytempo_GraphicsAnnotation* nearestAnnotation = nullptr;
 		float nearestAnnotationDistance = FLT_MAX;
 
-		Polytempo_GraphicsViewRegion* pRegion = getRegionAt(point);
+		Polytempo_GraphicsViewRegion* pRegion = getRegionAt(point.toInt());
 		OwnedArray<Polytempo_GraphicsAnnotation> annotations;
 		Polytempo_GraphicsAnnotationManager::getInstance()->getAnnotationsForImage(pRegion->getImageID(), &annotations);
 
