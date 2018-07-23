@@ -108,10 +108,10 @@ void Polytempo_GraphicsViewRegion::resized()
 		allowAnnotations = false;
 	else
 	{
-		screenToImage = AffineTransform::translation(-float(getX()), -float(getY()));
-		screenToImage = screenToImage.scale(currentImageRectangle.getWidth() / float(targetArea.getWidth()), currentImageRectangle.getHeight() / float(targetArea.getHeight()));
-		screenToImage = screenToImage.translated(currentImageRectangle.getX(), currentImageRectangle.getY() - targetArea.getY() / float(targetArea.getHeight()) * currentImageRectangle.getHeight());
-
+		screenToImage = AffineTransform::translation(-float(getX() + targetArea.getX()), -float(getY() + targetArea.getY()));
+		screenToImage = screenToImage.followedBy(AffineTransform::scale(currentImageRectangle.getWidth() / float(targetArea.getWidth()), currentImageRectangle.getHeight() / float(targetArea.getHeight())));
+		screenToImage = screenToImage.followedBy(AffineTransform::translation(currentImageRectangle.getX(), currentImageRectangle.getY()));
+	
 		imageToScreen = screenToImage.inverted();
 		allowAnnotations = true;
 	}

@@ -47,8 +47,9 @@ void Polytempo_GraphicsAnnotationLayer::paint (Graphics& g)
 			int(0), int(0), int(annotationImage->getWidth()), int(annotationImage->getHeight()));
 	}
 	
-	if(status == FreehandEditing)
+	if(status == FreehandEditing && temporaryAnnotation.pRegion != nullptr)
 	{
+		g.addTransform(temporaryAnnotation.pRegion->getImageToScreenTransform());
 		paintAnnotation(g, &temporaryAnnotation, true, Colours::red);
 	}
 }
@@ -63,15 +64,15 @@ void Polytempo_GraphicsAnnotationLayer::prepareAnnotationLayer()
 {
 	annotationImage = new Image(Image::ARGB, getWidth(), getHeight(), true);
 
-	Graphics g(*annotationImage);
 	bool anchorFlag = Polytempo_GraphicsAnnotationManager::getInstance()->getAnchorFlag();
-
+	
 	HashMap < String, Polytempo_GraphicsViewRegion* >::Iterator it1(*pRegionMap);
 	while (it1.next())
 	{
 		OwnedArray<Polytempo_GraphicsAnnotation> annotations;
-		Polytempo_GraphicsAnnotationManager::getInstance()->getAnnotationsForImage(it1.getKey(), &annotations);
+		Polytempo_GraphicsAnnotationManager::getInstance()->getAnnotationsForImage(it1.getValue()->getImageID(), &annotations);
 		
+		Graphics g(*annotationImage);
 		g.addTransform(it1.getValue()->getImageToScreenTransform());
 		
 		for (Polytempo_GraphicsAnnotation* annotation : annotations)
@@ -135,14 +136,15 @@ void Polytempo_GraphicsAnnotationLayer::handleStartEditing(Point<int> mousePosit
 
 	Point<float> imageCoordiantes = pRegion->getImageCoordinatesAt(mousePosition.translated(pRegion->getBounds().getX(), pRegion->getBounds().getY()));	
 	
-	if (!TryGetExistingAnnotation(imageCoordiantes))
+	if (!TryGetExistingAnnotation(imageCoordiantes, pRegion))
 	{
 		temporaryAnnotation.clear();
 		temporaryAnnotation.id = Uuid();
 		temporaryAnnotation.imageId = pRegion->getImageID();
-		temporaryAnnotation.referencePoint = mousePosition.toFloat();
+		temporaryAnnotation.referencePoint = pRegion->getImageCoordinatesAt(mousePosition);
 		temporaryAnnotation.color = palette->getCurrentColour();
 		temporaryAnnotation.fontSize = STANDARD_FONT_SIZE;
+		temporaryAnnotation.pRegion = pRegion;
 	}
 
 	if (!temporaryAnnotation.freeHandPath.isEmpty())
@@ -159,8 +161,9 @@ void Polytempo_GraphicsAnnotationLayer::handleFreeHandPainting(const Point<int>&
 {
 	if (temporaryAnnotation.freeHandPath.isEmpty() || lastPathPoint.getDistanceFrom(mousePosition) > 1)
 	{
-		float x = float(mousePosition.getX());
-		float y = float(mousePosition.getY());
+		Point<float> imagePt = temporaryAnnotation.pRegion->getImageCoordinatesAt(mousePosition);
+		float x = imagePt.getX();
+		float y = imagePt.getY();
 
 		if (temporaryAnnotation.freeHandPath.isEmpty())
 		{
@@ -181,10 +184,6 @@ void Polytempo_GraphicsAnnotationLayer::handleEndEditAccept()
 	if (temporaryAnnotation.freeHandPath.isEmpty() && temporaryAnnotation.text.isEmpty())
 		return; // noting to add
 
-	// transform points
-	Polytempo_GraphicsViewRegion* pRegion = pRegionMap->getReference(temporaryAnnotation.imageId);
-	temporaryAnnotation.referencePoint = pRegion->getImageCoordinatesAt(temporaryAnnotation.referencePoint.toInt());
-	temporaryAnnotation.freeHandPath.applyTransform(pRegion->getScreenToImageTransform());
 	Polytempo_GraphicsAnnotationManager::getInstance()->addAnnotation(temporaryAnnotation);
 	handleEndEdit();
 }
@@ -211,10 +210,10 @@ void Polytempo_GraphicsAnnotationLayer::mouseDown(const MouseEvent& event)
 	{
 		handleStartEditing(event.getPosition());
 	}
-	if (status == FreehandEditing)
+	else if (status == FreehandEditing)
 	{
 		Polytempo_GraphicsViewRegion* pRegion = getRegionAt(event.getPosition());
-		if (pRegion == nullptr || pRegion->getImageID() != temporaryAnnotation.imageId)
+		if (pRegion == nullptr || pRegion->getImageID() != temporaryAnnotation.imageId || pRegion != temporaryAnnotation.pRegion)
 		{
 			handleEndEditAccept();
 			handleStartEditing(event.getPosition());
@@ -354,14 +353,13 @@ void Polytempo_GraphicsAnnotationLayer::changeListenerCallback(ChangeBroadcaster
 }
 
 
-bool Polytempo_GraphicsAnnotationLayer::TryGetExistingAnnotation(Point<float> point)
+bool Polytempo_GraphicsAnnotationLayer::TryGetExistingAnnotation(Point<float> point, Polytempo_GraphicsViewRegion* pRegion)
 {
 	if (Polytempo_GraphicsAnnotationManager::getInstance()->getAnchorFlag())
 	{
 		Polytempo_GraphicsAnnotation* nearestAnnotation = nullptr;
 		float nearestAnnotationDistance = FLT_MAX;
 
-		Polytempo_GraphicsViewRegion* pRegion = getRegionAt(point.toInt());
 		OwnedArray<Polytempo_GraphicsAnnotation> annotations;
 		Polytempo_GraphicsAnnotationManager::getInstance()->getAnnotationsForImage(pRegion->getImageID(), &annotations);
 
@@ -379,7 +377,10 @@ bool Polytempo_GraphicsAnnotationLayer::TryGetExistingAnnotation(Point<float> po
 		if (nearestAnnotationDistance < 15.0f)
 		{
 			if (Polytempo_GraphicsAnnotationManager::getInstance()->removeAnnotation(nearestAnnotation->id, &temporaryAnnotation))
+			{
+				temporaryAnnotation.pRegion = pRegion;
 				return true;
+			}
 
 			return false;
 		}

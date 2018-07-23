@@ -46,7 +46,7 @@ private:
 	Polytempo_GraphicsViewRegion* getRegionAt(Point<int> point) const;
 	static void paintAnnotation(Graphics& g, const Polytempo_GraphicsAnnotation* annotation, bool anchorFlag, Colour anchorColor);
 	void prepareAnnotationLayer();
-	bool TryGetExistingAnnotation(Point<float> point);
+	bool TryGetExistingAnnotation(Point<float> point, Polytempo_GraphicsViewRegion* pRegion);
 	void handleStartEditing(Point<int> point);
 	void handleFreeHandPainting(const Point<int>& mousePosition);
 	void handleEndEdit();
