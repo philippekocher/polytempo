@@ -134,9 +134,9 @@ void Polytempo_GraphicsAnnotationLayer::handleStartEditing(Point<int> mousePosit
 	if (!Polytempo_GraphicsAnnotationManager::getInstance()->trySetAnnotationPending(this))
 		return;
 
-	Point<float> imageCoordiantes = pRegion->getImageCoordinatesAt(mousePosition.translated(pRegion->getBounds().getX(), pRegion->getBounds().getY()));	
+	Point<float> imageCoordiantes = pRegion->getImageCoordinatesAt(mousePosition);	
 	
-	if (!TryGetExistingAnnotation(imageCoordiantes, pRegion))
+	if (!tryGetExistingAnnotation(imageCoordiantes, pRegion))
 	{
 		temporaryAnnotation.clear();
 		temporaryAnnotation.id = Uuid();
@@ -353,7 +353,7 @@ void Polytempo_GraphicsAnnotationLayer::changeListenerCallback(ChangeBroadcaster
 }
 
 
-bool Polytempo_GraphicsAnnotationLayer::TryGetExistingAnnotation(Point<float> point, Polytempo_GraphicsViewRegion* pRegion)
+bool Polytempo_GraphicsAnnotationLayer::tryGetExistingAnnotation(Point<float> point, Polytempo_GraphicsViewRegion* pRegion)
 {
 	if (Polytempo_GraphicsAnnotationManager::getInstance()->getAnchorFlag())
 	{
