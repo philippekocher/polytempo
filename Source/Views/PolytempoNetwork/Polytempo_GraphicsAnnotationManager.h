@@ -31,8 +31,9 @@ public:
 	void setAnchorFlag(bool anchorFlag);
 
 	void changeListenerCallback(ChangeBroadcaster*) override;
-	bool removeAnnotation(Uuid id, Polytempo_GraphicsAnnotation* pAnnotation);
-	bool isAnnotationPending();
+	bool getAnnotation(Uuid id, Polytempo_GraphicsAnnotation* pAnnotation);
+	bool removeAnnotation(Uuid id);
+	bool isAnnotationPending() const;
 	bool trySetAnnotationPending(Polytempo_GraphicsAnnotationLayer* pEditableRegion);
 	void resetAnnotationPending(Polytempo_GraphicsAnnotationLayer* pEditableRegion);
 	Polytempo_GraphicsAnnotationLayer* getCurrentPendingAnnotationLayer() const;

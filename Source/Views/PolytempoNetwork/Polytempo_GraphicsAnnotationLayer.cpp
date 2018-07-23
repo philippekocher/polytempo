@@ -77,7 +77,7 @@ void Polytempo_GraphicsAnnotationLayer::prepareAnnotationLayer()
 		
 		for (Polytempo_GraphicsAnnotation* annotation : annotations)
 		{
-			if(it1.getValue()->imageRectangleContains(annotation->referencePoint))
+			if(it1.getValue()->imageRectangleContains(annotation->referencePoint) && (status != FreehandEditing || temporaryAnnotation.id != annotation->id))
 				paintAnnotation(g, annotation, anchorFlag, Colours::blue);
 		}
 	}
@@ -204,6 +204,12 @@ void Polytempo_GraphicsAnnotationLayer::handleEndEdit()
 	fullUpdateRequired.set(true);
 }
 
+void Polytempo_GraphicsAnnotationLayer::handleDeleteSelected()
+{
+	Polytempo_GraphicsAnnotationManager::getInstance()->removeAnnotation(temporaryAnnotation.id);
+	handleEndEditCancel();
+}
+
 void Polytempo_GraphicsAnnotationLayer::mouseDown(const MouseEvent& event)
 {
 	if (status == Default)
@@ -220,7 +226,7 @@ void Polytempo_GraphicsAnnotationLayer::mouseDown(const MouseEvent& event)
 		}
 		else
 		{
-			temporaryAnnotation.freeHandPath.startNewSubPath(event.getPosition().toFloat());
+			temporaryAnnotation.freeHandPath.startNewSubPath(pRegion->getImageCoordinatesAt(event.getPosition()));
 		}
 		stopTimer(TIMER_ID_AUTO_ACCEPT);
 	}
@@ -292,6 +298,10 @@ bool Polytempo_GraphicsAnnotationLayer::keyPressed(const KeyPress& key, Componen
 				temporaryAnnotation.text = temporaryAnnotation.text.dropLastCharacters(1);
 			startTimer(TIMER_ID_AUTO_ACCEPT, AUTO_ACCEPT_INTERVAL_MS);
 			fullUpdateRequired.set(true);
+		}
+		else if (key == KeyPress::deleteKey)
+		{
+			return false;
 		}
 		else
 		{
@@ -376,7 +386,7 @@ bool Polytempo_GraphicsAnnotationLayer::tryGetExistingAnnotation(Point<float> po
 
 		if (nearestAnnotationDistance < 15.0f)
 		{
-			if (Polytempo_GraphicsAnnotationManager::getInstance()->removeAnnotation(nearestAnnotation->id, &temporaryAnnotation))
+			if (Polytempo_GraphicsAnnotationManager::getInstance()->getAnnotation(nearestAnnotation->id, &temporaryAnnotation))
 			{
 				temporaryAnnotation.pRegion = pRegion;
 				return true;

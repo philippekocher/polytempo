@@ -43,6 +43,7 @@ private:
 	ScopedPointer<ImageButton> buttonColor;
 	ScopedPointer<ImageButton> buttonTextSize;
 	ScopedPointer<ImageButton> buttonSettings;
+	ScopedPointer<ImageButton> buttonDelete;
 	ScopedPointer<ColourSelector> colorSelector;
 
 private:

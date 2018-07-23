@@ -34,6 +34,7 @@ public:
 	void requireUpdate();
 	void handleEndEditAccept();
 	void handleEndEditCancel();
+	void handleDeleteSelected();
 	void setTemporaryFontSize(float fontSize);
 	int getTemporaryFontSize() const;
 	void setTemporaryColor(Colour colour);

@@ -151,13 +151,13 @@ void Polytempo_GraphicsAnnotationManager::changeListenerCallback(ChangeBroadcast
 	sendChangeMessage();
 }
 
-bool Polytempo_GraphicsAnnotationManager::removeAnnotation(Uuid id, Polytempo_GraphicsAnnotation* pAnnotation)
+bool Polytempo_GraphicsAnnotationManager::getAnnotation(Uuid id, Polytempo_GraphicsAnnotation* pAnnotation)
 {
 	for(int iSet = 0; iSet < annotationSets.size(); iSet++)
 	{
 		if (annotationSets[iSet]->getEdit())
 		{
-			if (annotationSets[iSet]->removeAnnotation(id, pAnnotation))
+			if (annotationSets[iSet]->getAnnotation(id, pAnnotation))
 			{
 				annotationSets[iSet]->SaveToFile();
 				sendChangeMessage();
@@ -169,7 +169,25 @@ bool Polytempo_GraphicsAnnotationManager::removeAnnotation(Uuid id, Polytempo_Gr
 	return false;
 }
 
-bool Polytempo_GraphicsAnnotationManager::isAnnotationPending()
+bool Polytempo_GraphicsAnnotationManager::removeAnnotation(Uuid id)
+{
+	for (int iSet = 0; iSet < annotationSets.size(); iSet++)
+	{
+		if (annotationSets[iSet]->getEdit())
+		{
+			if (annotationSets[iSet]->removeAnnotation(id))
+			{
+				annotationSets[iSet]->SaveToFile();
+				sendChangeMessage();
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+bool Polytempo_GraphicsAnnotationManager::isAnnotationPending() const
 {
 	csPendingAnnotation.enter();
 	bool ret = annotationPending;

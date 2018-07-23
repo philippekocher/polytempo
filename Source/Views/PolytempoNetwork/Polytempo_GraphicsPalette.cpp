@@ -27,6 +27,7 @@ Polytempo_GraphicsPalette::Polytempo_GraphicsPalette(Polytempo_GraphicsAnnotatio
 	Image imageOk = CreateImageWithSolidBackground(ImageCache::getFromMemory(BinaryData::yes_png, BinaryData::yes_pngSize), BUTTON_SIZE, BUTTON_SIZE);
 	Image imageCancel = CreateImageWithSolidBackground(ImageCache::getFromMemory(BinaryData::no_png, BinaryData::no_pngSize), BUTTON_SIZE, BUTTON_SIZE);
 	Image imageSettings = CreateImageWithSolidBackground(ImageCache::getFromMemory(BinaryData::settings_png, BinaryData::settings_pngSize), BUTTON_SIZE, BUTTON_SIZE);
+	Image imageDelete = CreateImageWithSolidBackground(ImageCache::getFromMemory(BinaryData::delete_png, BinaryData::delete_pngSize), BUTTON_SIZE, BUTTON_SIZE);
 
 	buttonColor = new ImageButton("Color");
 	buttonColor->setImages(false, false, false, imageColorPalette, 1.0f, Colours::transparentWhite, Image::null, overOpacity, overColour, Image::null, downOpacity, Colours::green);
@@ -58,6 +59,12 @@ Polytempo_GraphicsPalette::Polytempo_GraphicsPalette(Polytempo_GraphicsAnnotatio
 	buttonCancel->setBounds(0, 0, BUTTON_SIZE, BUTTON_SIZE);
 	buttonCancel->addListener(this);
 	pParent->addChildComponent(buttonCancel);
+
+	buttonDelete = new ImageButton("Delete");
+	buttonDelete->setImages(false, false, false, imageDelete, 1.0f, Colours::transparentWhite, Image::null, overOpacity, overColour, Image::null, downOpacity, Colours::red);
+	buttonDelete->setBounds(0, 0, BUTTON_SIZE, BUTTON_SIZE);
+	buttonDelete->addListener(this);
+	pParent->addChildComponent(buttonDelete);
 
 	colorSelector = new ColourSelector(ColourSelector::ColourSelectorOptions::showAlphaChannel | ColourSelector::ColourSelectorOptions::showColourspace | ColourSelector::ColourSelectorOptions::showSliders);
 	colorSelector->setBounds(0, 0, 200, 200);
@@ -91,6 +98,7 @@ void Polytempo_GraphicsPalette::show(bool show) const
 		buttonColor->setTopLeftPosition(2 * BUTTON_SIZE, 0);
 		buttonTextSize->setTopLeftPosition(3 * BUTTON_SIZE, 0);
 		buttonSettings->setTopLeftPosition(4 * BUTTON_SIZE, 0);
+		buttonDelete->setTopLeftPosition(5 * BUTTON_SIZE, 0);
 	}
 
 	buttonOk->setVisible(show);
@@ -98,6 +106,8 @@ void Polytempo_GraphicsPalette::show(bool show) const
 	buttonColor->setVisible(show);
 	buttonTextSize->setVisible(show);
 	buttonSettings->setVisible(show);
+	if (Polytempo_GraphicsAnnotationManager::getInstance()->getAnchorFlag())
+		buttonDelete->setVisible(show);
 
 	if(!show)
 		colorSelector->setVisible(false);
@@ -167,6 +177,10 @@ void Polytempo_GraphicsPalette::buttonClicked(Button* source)
 	{
 		pParent->stopAutoAccept();
 		Polytempo_GraphicsAnnotationManager::getInstance()->showSettingsDialog();
+	}
+	else if(source == buttonDelete)
+	{
+		pParent->handleDeleteSelected();
 	}
 }
 

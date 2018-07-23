@@ -90,6 +90,7 @@ namespace Polytempo_CommandIDs
         
 		annotationAccept,
 		annotationCancel,
+		annotationDelete,
 		annotationColor,
 		annotationTextSize,
 		annotationLayerSettings,

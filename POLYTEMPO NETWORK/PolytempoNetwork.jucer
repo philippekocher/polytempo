@@ -10,6 +10,7 @@
     <GROUP id="{380F2332-7EED-CAEF-0B98-BEC0BC16E53A}" name="Resources">
       <FILE id="Z9EfR9" name="colorPalette.png" compile="0" resource="1"
             file="../Resources/colorPalette.png"/>
+      <FILE id="YnUEiS" name="delete.png" compile="0" resource="1" file="../Resources/delete.png"/>
       <FILE id="i2gAFH" name="fontSize.png" compile="0" resource="1" file="../Resources/fontSize.png"/>
       <FILE id="KOwPbh" name="icon.png" compile="0" resource="1" file="../Resources/icon.png"/>
       <FILE id="H1LQCA" name="no.png" compile="0" resource="1" file="../Resources/no.png"/>
