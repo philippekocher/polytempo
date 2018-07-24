@@ -14,10 +14,10 @@
 #include "../JuceLibraryCode/modules/juce_core/native/juce_BasicNativeHeaders.h"
 #else
 #include "sys/socket.h"
-#include "sys/sockio.h"
 #include "sys/ioctl.h"
 #include "net/if.h"
 #include "netinet/in.h"
+#include <unistd.h>
 #endif
 
 Polytempo_IPAddress::Polytempo_IPAddress() noexcept
@@ -176,12 +176,12 @@ static void findIPAddresses(int sock, Array<Polytempo_IPAddress>& result)
             memset(&conf, 0, sizeof(conf)); // fill confs with zero's
             strncpy(conf.ifr_name, cfg.ifc_req->ifr_name, IFNAMSIZ - 1);
             conf.ifr_addr.sa_family = cfg.ifc_req->ifr_addr.sa_family;
-            
+
             if (ioctl(sock, SIOCGIFNETMASK, &conf) < 0) {
                 printf("Could not get the subnet mask. Errorcode : %d %s\n", errno,
                        strerror(errno));
             }
-            
+
             String ifName = String(conf.ifr_name);
 			addAddress((const sockaddr_in*)&cfg.ifc_req->ifr_addr, (const sockaddr_in*)&conf.ifr_addr, ifName, result);
         }
@@ -194,7 +194,7 @@ static void findIPAddresses(int sock, Array<Polytempo_IPAddress>& result)
 		const ifreq& item = cfg.ifc_req[i];
 
 		if (item.ifr_addr.sa_family == AF_INET)
-			addAddress((const sockaddr_in*)&item.ifr_addr, result);
+			addAddress((const sockaddr_in*)&item.ifr_addr, (const sockaddr_in*)&item.ifr_netmask, item.ifr_name, result);
 	}
 #endif
 }

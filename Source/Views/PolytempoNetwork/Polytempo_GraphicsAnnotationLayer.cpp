@@ -11,6 +11,7 @@
 #include "JuceHeader.h"
 #include "Polytempo_GraphicsAnnotationLayer.h"
 #include "Polytempo_GraphicsAnnotationManager.h"
+#include <float.h>
 
 //==============================================================================
 Polytempo_GraphicsAnnotationLayer::Polytempo_GraphicsAnnotationLayer(HashMap < String, Polytempo_GraphicsViewRegion* >* pRegionMap)
@@ -46,7 +47,7 @@ void Polytempo_GraphicsAnnotationLayer::paint (Graphics& g)
 			0, 0, getWidth(), getHeight(),
 			int(0), int(0), int(annotationImage->getWidth()), int(annotationImage->getHeight()));
 	}
-	
+
 	if(status == FreehandEditing && temporaryAnnotation.pRegion != nullptr)
 	{
 		g.addTransform(temporaryAnnotation.pRegion->getImageToScreenTransform());
@@ -65,16 +66,16 @@ void Polytempo_GraphicsAnnotationLayer::prepareAnnotationLayer()
 	annotationImage = new Image(Image::ARGB, getWidth(), getHeight(), true);
 
 	bool anchorFlag = Polytempo_GraphicsAnnotationManager::getInstance()->getAnchorFlag();
-	
+
 	HashMap < String, Polytempo_GraphicsViewRegion* >::Iterator it1(*pRegionMap);
 	while (it1.next())
 	{
 		OwnedArray<Polytempo_GraphicsAnnotation> annotations;
 		Polytempo_GraphicsAnnotationManager::getInstance()->getAnnotationsForImage(it1.getValue()->getImageID(), &annotations);
-		
+
 		Graphics g(*annotationImage);
 		g.addTransform(it1.getValue()->getImageToScreenTransform());
-		
+
 		for (Polytempo_GraphicsAnnotation* annotation : annotations)
 		{
 			if(it1.getValue()->imageRectangleContains(annotation->referencePoint) && (status != FreehandEditing || temporaryAnnotation.id != annotation->id))
@@ -127,15 +128,15 @@ Polytempo_GraphicsViewRegion* Polytempo_GraphicsAnnotationLayer::getRegionAt(Poi
 void Polytempo_GraphicsAnnotationLayer::handleStartEditing(Point<int> mousePosition)
 {
 	Polytempo_GraphicsViewRegion * pRegion = getRegionAt(mousePosition);
-	
+
 	if (pRegion == nullptr || !pRegion->annotationsAllowed())
 		return;
 
 	if (!Polytempo_GraphicsAnnotationManager::getInstance()->trySetAnnotationPending(this))
 		return;
 
-	Point<float> imageCoordiantes = pRegion->getImageCoordinatesAt(mousePosition);	
-	
+	Point<float> imageCoordiantes = pRegion->getImageCoordinatesAt(mousePosition);
+
 	if (!tryGetExistingAnnotation(imageCoordiantes, pRegion))
 	{
 		temporaryAnnotation.clear();
