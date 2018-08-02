@@ -33,7 +33,7 @@ public:
                      const String& message,
                      Component* associatedComponent = nullptr)
     {
-        AlertWindow::showMessageBox(AlertWindow::WarningIcon, title, message, "OK", associatedComponent);        
+        AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, title, message, "OK", associatedComponent);
     };
     
 private:

@@ -137,7 +137,7 @@ void Polytempo_GraphicsAnnotationManager::initialize(String folder, String score
 	}
 	if(multipleEditableLayers)
 	{
-		AlertWindow::showMessageBox(AlertWindow::WarningIcon, "Annotation Layers", "More than one editable layers found! Using layer " + highestPriorityEditableLayer->getAnnotationLayerName() + " only");
+		AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Annotation Layers", "More than one editable layers found! Using layer " + highestPriorityEditableLayer->getAnnotationLayerName() + " only");
 	}
 }
 

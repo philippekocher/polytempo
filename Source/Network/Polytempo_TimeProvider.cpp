@@ -46,11 +46,11 @@ void Polytempo_TimeProvider::initialize(bool master, int port)
 
 	bool ok = oscSender->connect(Polytempo_NetworkInterfaceManager::getInstance()->getSelectedIpAddress().ipAddress.toString(), 0);
 	if (!ok)
-		AlertWindow::showMessageBox(AlertWindow::WarningIcon, "Time Sync", "Error setting up time sync OSC sender");
+		AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Time Sync", "Error setting up time sync OSC sender");
 
 	ok = oscReceiver->connect(oscPort);
 	if (!ok)
-		AlertWindow::showMessageBox(AlertWindow::WarningIcon, "Time Sync", "Error setting up time sync OSC receiver");
+		AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Time Sync", "Error setting up time sync OSC receiver");
 
 	oscReceiver->addListener(this);
 

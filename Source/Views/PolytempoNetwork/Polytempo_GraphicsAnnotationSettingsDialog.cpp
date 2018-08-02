@@ -165,7 +165,7 @@ bool Polytempo_GraphicsAnnotationSettingsDialog::setText(const int rowNumber, St
 	bool ok = pAnnotationSet->getUnchecked(rowNumber)->setAnnotationLayerName(newText);
 	if (!ok)
 	{
-		AlertWindow::showMessageBox(AlertWindow::WarningIcon, "Layer renaming", "Renaming layer failed");
+		AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Layer renaming", "Renaming layer failed");
 		return false;
 	}
 
@@ -186,14 +186,14 @@ bool Polytempo_GraphicsAnnotationSettingsDialog::setShowInfo(int row, bool state
 {
 	if(!state && pAnnotationSet->getUnchecked(row)->getEdit())
 	{
-		AlertWindow::showMessageBox(AlertWindow::WarningIcon, "Set visibility state", "Editable layer has to be visible");
+		AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Set visibility state", "Editable layer has to be visible");
 		return false;
 	}
 
 	bool ok = pAnnotationSet->getUnchecked(row)->setShow(state);
 	if (!ok)
 	{
-		AlertWindow::showMessageBox(AlertWindow::WarningIcon, "Set visibility state", "Setting visibility state failed");
+		AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Set visibility state", "Setting visibility state failed");
 		return false;
 	}
 
