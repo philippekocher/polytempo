@@ -61,10 +61,12 @@ public:
     void openScoreFilePath(String filePath = String::empty);
     void openScoreFile(File aFile = File::nonexistent);
     void saveScoreFile(bool showFileDialog);
-    
     void commandStatusChanged();
     
     static ApplicationCommandManager* getCommandManager();
+
+private:
+	void saveAs(File targetFile);
 
 private:
 	ScopedPointer<Polytempo_NetworkWindow> mainWindow;
