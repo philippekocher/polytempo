@@ -229,12 +229,22 @@ void Polytempo_NetworkApplication::newScore()
 void Polytempo_NetworkApplication::openFileDialog()
 {
     File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("scoreFileDirectory"));
-    FileChooser fileChooser("Open Score File", directory, "*.json;*.ptsco", true);
+#ifdef JUCE_ANDROID
+	fc.reset(new FileChooser("Open Score File", directory, "*.json;*.ptsco", true));
+	fc->launchAsync(FileBrowserComponent::openMode | FileBrowserComponent::canSelectFiles,
+		[this](const FileChooser& chooser)
+	{
+		File result = chooser.getResult();
+		openScoreFile(result);
+	});
+#else
+	FileChooser fileChooser("Open Score File", directory, "*.json;*.ptsco", true);
     
     if(fileChooser.browseForFileToOpen())
     {
         openScoreFile(fileChooser.getResult());
     }
+#endif
 }
 
 void Polytempo_NetworkApplication::saveScoreFile(bool showFileDialog)

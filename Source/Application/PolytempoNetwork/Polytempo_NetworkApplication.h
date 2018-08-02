@@ -73,7 +73,11 @@ private:
     ScopedPointer<Polytempo_OSCListener> oscListener;
     ScopedPointer<Polytempo_MidiInput> midiInput;
     ScopedPointer<Polytempo_Score> score;
-    
+
+#ifdef JUCE_ANDROID
+	ScopedPointer<FileChooser> fc;
+#endif
+
     ApplicationCommandManager commandManager;
     File scoreFile, newScoreFile;
     LookAndFeel_V3 lookAndFeelV3;
