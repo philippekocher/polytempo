@@ -47,7 +47,12 @@ Polytempo_NetworkWindow::Polytempo_NetworkWindow()
     // sets the main content component for the window
     setContentNonOwned(mainView, false);
 
+#ifdef JUCE_ANDROID
+    setFullScreen(true);
+#else
     setBounds(50, 50, 800, 500);
+#endif
+
     setVisible(true);
 
     // restore the last size and position from our settings file...
