@@ -591,13 +591,26 @@ void Polytempo_PageEditorView::labelTextChanged(Label* label)
 #pragma mark -
 #pragma mark button listener
 
-void Polytempo_PageEditorView::buttonClicked(Button* button)
-{
-    if(button == chooseImageFile)
-    {
-        File directory (Polytempo_StoredPreferences::getInstance()->getProps().getValue("scoreFileDirectory"));
+void Polytempo_PageEditorView::buttonClicked(Button* button) {
+    if (button == chooseImageFile) {
+        File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue(
+                "scoreFileDirectory"));
+
+#ifdef JUCE_ANDROID
+        fc.reset(new FileChooser("Open Image File", directory, "*.png;*.jpg", true));
+        fc->launchAsync(FileBrowserComponent::openMode | FileBrowserComponent::canSelectFiles,
+                        [this, directory](const FileChooser &chooser) {
+                            File result = chooser.getResult();
+                            if (Polytempo_ImageManager::getInstance()->replaceImage(
+                                    imageID,
+                                    result.getRelativePathFrom(directory)))
+                            {
+                                score->setDirty();
+                            }
+                            refresh();
+                        });
+#else
         FileChooser fileChooser ("Open Image File", directory, "*.png;*.jpg");
-        
         if(fileChooser.browseForFileToOpen())
         {
             if(Polytempo_ImageManager::getInstance()->replaceImage(imageID, fileChooser.getResult().getRelativePathFrom(directory)))
@@ -606,6 +619,7 @@ void Polytempo_PageEditorView::buttonClicked(Button* button)
             }
             refresh();
         }
+#endif
     }
 }
 
