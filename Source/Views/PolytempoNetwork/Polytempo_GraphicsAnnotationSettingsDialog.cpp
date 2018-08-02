@@ -292,9 +292,12 @@ void Polytempo_GraphicsAnnotationSettingsDialog::show(OwnedArray < Polytempo_Gra
 	options.dialogTitle = "Annotation settings";
 	options.dialogBackgroundColour = Colours::white;
 	options.escapeKeyTriggersCloseButton = true;
-	options.useNativeTitleBar = true;
 	options.resizable = false;
-
+#ifdef JUCE_ANDROID
+	options.useNativeTitleBar = false;
+#else
+	options.useNativeTitleBar = true;
+#endif
 	options.launchAsync();
 }
 

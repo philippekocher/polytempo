@@ -1111,11 +1111,14 @@ void Polytempo_NetworkPreferencesPanel::show()
     options.content.setOwned(p);
     options.dialogTitle                   = "Polytempo Network Preferences";
     options.dialogBackgroundColour        = Colours::white;
-    //options.componentToCentreAround       = ;
     options.escapeKeyTriggersCloseButton  = true;
-    options.useNativeTitleBar             = true;
     options.resizable                     = false;
-    
+#ifdef JUCE_ANDROID
+    options.useNativeTitleBar             = false;
+#else
+    options.useNativeTitleBar             = true;
+#endif
+
     options.launchAsync();
 }
 
