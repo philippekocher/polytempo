@@ -465,25 +465,41 @@ int Polytempo_PageEditorView::findNewID(String eventPropertyString, Array < Poly
 void Polytempo_PageEditorView::loadImage()
 {
     File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("scoreFileDirectory"));
-    FileChooser fileChooser("Open Score File", directory, "*.jpg;*.png", true);
-    
+    FileChooser fileChooser("Open Image File", directory, "*.jpg;*.png", true);
+
+#ifdef JUCE_ANDROID
+    fc.reset(new FileChooser("Open Image File", directory, "*.png;*.jpg", true));
+    fc->launchAsync(FileBrowserComponent::openMode | FileBrowserComponent::canSelectFiles,
+                    [this](const FileChooser &chooser) {
+                        File result = chooser.getResult();
+                        loadImage(result);
+                    });
+#else
     if(fileChooser.browseForFileToOpen())
     {
-        String url = fileChooser.getResult().getRelativePathFrom(directory);
-        
-        Polytempo_Event *event = Polytempo_Event::makeEvent(eventType_LoadImage);
-        event->setProperty(eventPropertyString_URL, url);
-        
-        event->setProperty(eventPropertyString_ImageID, findNewID(eventPropertyString_ImageID, loadImageEvents));
-        
-        score->addEvent(event, true); // add to init
-        score->setDirty();
-        
-        Polytempo_EventScheduler::getInstance()->scheduleEvent(event); // execute event
-        
-        selectedEvent = event;
-        refresh();
+        loadImage(fileChooser.getResult());
     }
+#endif
+}
+
+void Polytempo_PageEditorView::loadImage(File file)
+{
+    File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("scoreFileDirectory"));
+    String url = file.getRelativePathFrom(directory);
+
+    Polytempo_Event *event = Polytempo_Event::makeEvent(eventType_LoadImage);
+    event->setProperty(eventPropertyString_URL, url);
+
+    event->setProperty(eventPropertyString_ImageID,
+                       findNewID(eventPropertyString_ImageID, loadImageEvents));
+
+    score->addEvent(event, true); // add to init
+    score->setDirty();
+
+    Polytempo_EventScheduler::getInstance()->scheduleEvent(event); // execute event
+
+    selectedEvent = event;
+    refresh();
 }
 
 void Polytempo_PageEditorView::addSection()

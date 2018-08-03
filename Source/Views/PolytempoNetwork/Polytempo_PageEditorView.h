@@ -177,7 +177,7 @@ public:
     
 private:
     int findNewID(String eventPropertyString, Array < Polytempo_Event* > events);
-    
+    void loadImage(File file);
     
     TreeView *tree;
     ScopedPointer < TreeItem > rootItem;
