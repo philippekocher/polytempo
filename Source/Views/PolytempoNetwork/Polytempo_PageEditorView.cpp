@@ -333,21 +333,33 @@ void Polytempo_PageEditorView::resized()
 #pragma mark -
 #pragma mark actions
 
+#ifdef JUCE_ANDROID
+void Polytempo_PageEditorView::mouseDoubleClick(const MouseEvent &event)
+{
+    showMenu();
+}
+#else
 void Polytempo_PageEditorView::mouseDown(const MouseEvent &event)
 {
-    if(event.mods.isPopupMenu())
+    if (event.mods.isPopupMenu())
     {
-        ApplicationCommandManager* commandManager = Polytempo_NetworkApplication::getCommandManager();
-        PopupMenu m;
-        
-        m.addCommandItem(commandManager, Polytempo_CommandIDs::loadImage);
-        m.addCommandItem(commandManager, Polytempo_CommandIDs::addSection);
-        m.addCommandItem(commandManager, Polytempo_CommandIDs::addInstance);
-        m.addSeparator();
-        m.addCommandItem(commandManager, Polytempo_CommandIDs::deleteSelected);
-        
-        m.show();
+        showMenu();
     }
+}
+#endif
+
+void Polytempo_PageEditorView::showMenu()
+{
+    ApplicationCommandManager *commandManager = Polytempo_NetworkApplication::getCommandManager();
+    PopupMenu m;
+
+    m.addCommandItem(commandManager, Polytempo_CommandIDs::loadImage);
+    m.addCommandItem(commandManager, Polytempo_CommandIDs::addSection);
+    m.addCommandItem(commandManager, Polytempo_CommandIDs::addInstance);
+    m.addSeparator();
+    m.addCommandItem(commandManager, Polytempo_CommandIDs::deleteSelected);
+
+    m.showMenuAsync(PopupMenu::Options(), nullptr);
 }
 
 void Polytempo_PageEditorView::deleteSelected()

@@ -152,7 +152,12 @@ public:
     void resized();
     
     // actions
-    void mouseDown(const MouseEvent &);
+#ifdef JUCE_ANDROID
+	void mouseDoubleClick(const MouseEvent &) override;
+#else
+	void mouseDown(const MouseEvent &) override; 
+#endif
+
     void deleteSelected();
     void loadImage();
     void addSection();
@@ -178,7 +183,8 @@ public:
 private:
     int findNewID(String eventPropertyString, Array < Polytempo_Event* > events);
     void loadImage(File file);
-    
+    void showMenu();
+
     TreeView *tree;
     ScopedPointer < TreeItem > rootItem;
     TreeItem *selectedItem;
