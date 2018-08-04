@@ -27,7 +27,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-class Polytempo_AboutWindow : public DialogWindow
+class Polytempo_AboutWindow: public Component
 {
 public:
     Polytempo_AboutWindow();
@@ -44,6 +44,7 @@ private:
     ScopedPointer<ImageComponent> iconComponent;
     ScopedPointer<HyperlinkButton> link1;
     ScopedPointer<HyperlinkButton> link2;
+    ScopedPointer<Component> aboutComponent;
 };
 
 
