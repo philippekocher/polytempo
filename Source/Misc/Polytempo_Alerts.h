@@ -43,11 +43,12 @@ private:
 class Polytempo_OkCancelAlert
 {
 public:
-    static bool show(const String& title,
-                     const String& message)
+    static void show(const String& title,
+                     const String& message,
+                     ModalComponentManager::Callback *callback)
     {
-        return AlertWindow::showOkCancelBox (AlertWindow::QuestionIcon,
-                                             title, message);
+        AlertWindow::showOkCancelBox (AlertWindow::QuestionIcon, title, message,
+        {}, {}, nullptr, callback);
     }
 
 private:

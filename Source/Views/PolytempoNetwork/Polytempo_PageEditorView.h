@@ -159,6 +159,7 @@ public:
 #endif
 
     void deleteSelected();
+	void performDeleteSelected();
     void loadImage();
     void addSection();
     void addInstance();
