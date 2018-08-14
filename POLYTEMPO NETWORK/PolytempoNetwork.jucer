@@ -378,5 +378,6 @@
   <LIVE_SETTINGS>
     <OSX enableCxx11="1"/>
     <LINUX/>
+    <WINDOWS/>
   </LIVE_SETTINGS>
 </JUCERPROJECT>
