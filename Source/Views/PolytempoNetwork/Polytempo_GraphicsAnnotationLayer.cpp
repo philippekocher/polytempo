@@ -142,14 +142,14 @@ void Polytempo_GraphicsAnnotationLayer::handleStartEditing(Point<int> mousePosit
 		temporaryAnnotation.clear();
 		temporaryAnnotation.id = Uuid();
 		temporaryAnnotation.imageId = pRegion->getImageID();
-		temporaryAnnotation.referencePoint = pRegion->getImageCoordinatesAt(mousePosition);
+		temporaryAnnotation.referencePoint = imageCoordiantes;
 		temporaryAnnotation.color = palette->getCurrentColour();
 		temporaryAnnotation.fontSize = STANDARD_FONT_SIZE;
 		temporaryAnnotation.pRegion = pRegion;
 	}
 
 	if (!temporaryAnnotation.freeHandPath.isEmpty())
-		temporaryAnnotation.freeHandPath.startNewSubPath(mousePosition.toFloat());
+        temporaryAnnotation.freeHandPath.startNewSubPath(imageCoordiantes);
 
 	status = FreehandEditing;
 	setMouseCursor(MouseCursor::CrosshairCursor);
