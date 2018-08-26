@@ -31,11 +31,15 @@
 Polytempo_GraphicsView::Polytempo_GraphicsView()
 {
     setOpaque (true);
+	annotationLayer = new Polytempo_GraphicsAnnotationLayer(&regionsMap);
+	annotationLayer->setVisible(true);
+	addChildComponent(annotationLayer);
 }
 
 Polytempo_GraphicsView::~Polytempo_GraphicsView()
 {
     deleteAll();
+	annotationLayer = nullptr;
 }
     
 void Polytempo_GraphicsView::paint(Graphics& g)
@@ -47,6 +51,8 @@ void Polytempo_GraphicsView::resized()
 {
     HashMap < String, Polytempo_GraphicsViewRegion* >::Iterator it1(regionsMap);
     while(it1.next()) { it1.getValue()->resized(); }
+
+	annotationLayer->setBounds(getLocalBounds());
 }
 
 void Polytempo_GraphicsView::eventNotification(Polytempo_Event *event)
@@ -62,9 +68,10 @@ void Polytempo_GraphicsView::eventNotification(Polytempo_Event *event)
 
 void Polytempo_GraphicsView::deleteAll()
 {    
-    regionsMap.clear();
-    deleteAllChildren();
-    
+    HashMap < String, Polytempo_GraphicsViewRegion* >::Iterator it1(regionsMap);
+	while (it1.next()) { removeChildComponent(it1.getValue()); delete(it1.getValue()); }
+	regionsMap.clear();
+
     sectionBoundsMap.clear();
     sectionImageIDMap.clear();
 }
@@ -142,6 +149,7 @@ void Polytempo_GraphicsView::displayImage(Polytempo_Event *event)
     region->setImage(image, rect, imageId);
     region->setVisible(true);
     region->repaint();
+	annotationLayer->requireUpdate();
 }
 
 void Polytempo_GraphicsView::displayText(Polytempo_Event *event)

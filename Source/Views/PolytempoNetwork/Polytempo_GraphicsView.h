@@ -27,6 +27,7 @@
 
 #include "Polytempo_GraphicsViewRegion.h"
 #include "../../Scheduler/Polytempo_EventObserver.h"
+#include "Polytempo_GraphicsAnnotationLayer.h"
 
 
 class Polytempo_GraphicsView : public Component,
@@ -55,6 +56,7 @@ private:
     HashMap < String, String > sectionImageIDMap;
     
     ScopedPointer < Polytempo_Progressbar > progressbar;
+	ScopedPointer < Polytempo_GraphicsAnnotationLayer > annotationLayer;
 };
     
 

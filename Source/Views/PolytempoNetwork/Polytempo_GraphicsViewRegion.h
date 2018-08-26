@@ -27,7 +27,6 @@
 
 
 #include "Polytempo_Progressbar.h"
-#include "Polytempo_GraphicsEditableRegion.h"
 
 
 enum Polytempo_ViewContentType
@@ -38,15 +37,16 @@ enum Polytempo_ViewContentType
     contentType_Progressbar
 };
 
-class Polytempo_GraphicsViewRegion : public Polytempo_GraphicsEditableRegion
+class Polytempo_GraphicsViewRegion : public Component
 {
 public:
     Polytempo_GraphicsViewRegion(var = var::null);
     ~Polytempo_GraphicsViewRegion();
 
-    void paintContent(Graphics& g) override;
-    void resizeContent() override;
-    
+    void paint(Graphics& g) override;
+    void resized() override;
+	void setImage(Image *img, var rect, String imageId);
+
     void setRelativeBounds(const Rectangle <float> &newBounds);
     
     void clear();
@@ -59,9 +59,16 @@ public:
     void setMaxImageZoom(float maxZoom);
     
     Polytempo_ViewContentType getContentType();
-    
+	AffineTransform& getImageToScreenTransform();
+	AffineTransform& getScreenToImageTransform(); 
+	bool annotationsAllowed() const;
+	String getImageID() const;
+	Point<float> getImageCoordinatesAt(Point<int> screenPoint) const;
+	bool imageRectangleContains(Point<float> point) const;
+
+
 private:
-	void setViewImage(Image* img, var rect) override;
+	void setViewImage(Image* img, var rect);
 
     var regionID;
     Polytempo_ViewContentType contentType;
@@ -71,9 +78,18 @@ private:
     Image  *image;
     ScopedPointer < String > text;
     ScopedPointer < Polytempo_Progressbar > progressbar;
-    float imageLeft, imageTop, imageWidth, imageHeight;
-    float imageZoom = 1;
-    float maxImageZoom = -1;
+	float imageZoom = 1;
+	float maxImageZoom = -1;    
+
+	Rectangle<int> targetArea;
+	bool allowAnnotations;
+
+	Rectangle<float> currentImageRectangle;
+	String currentImageId;
+
+	AffineTransform imageToScreen;
+	AffineTransform screenToImage;
+	float imageLeft, imageTop, imageWidth, imageHeight;
 };
     
 
