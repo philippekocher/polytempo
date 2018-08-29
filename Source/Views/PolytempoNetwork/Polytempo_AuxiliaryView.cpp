@@ -48,7 +48,11 @@ Polytempo_AuxiliaryView::Polytempo_AuxiliaryView()
     addAndMakeVisible(imageForwards = new Polytempo_Button(">>", Polytempo_Button::buttonType_black));
     imageForwards->setConnectedEdges(Button::ConnectedOnTop | Button::ConnectedOnLeft);
     imageForwards->addListener(this);
-    
+ 
+	addAndMakeVisible(startStop = new Polytempo_Button("Start / Stop", Polytempo_Button::buttonType_black));
+	startStop->setConnectedEdges(Button::ConnectedOnTop | Button::ConnectedOnRight | Button::ConnectedOnLeft);
+	startStop->addListener(this);
+
     addAndMakeVisible(markerTextbox = new Polytempo_Textbox("Marker", Polytempo_Textbox::textboxType_black));
     markerTextbox->setFont(Font (56.0f, Font::plain));
     markerTextbox->addListener(this);
@@ -95,7 +99,9 @@ void Polytempo_AuxiliaryView::resized()
     
     int buttonWidth = (int)(getWidth() * 0.25f - 5.0f);
     int widthCorrection = getWidth() - 20 - buttonWidth * 4;
-    imageBackwards->setBounds (10,                   yPosition, buttonWidth, 20);
+	startStop->setBounds(10, yPosition, 4 * buttonWidth + widthCorrection, 20);
+	yPosition += 20;
+	imageBackwards->setBounds (10,                   yPosition, buttonWidth, 20);
     markerBackwards->setBounds(10 + buttonWidth * 1, yPosition, buttonWidth, 20);
     markerForwards->setBounds (10 + buttonWidth * 2, yPosition, buttonWidth, 20);
     imageForwards->setBounds  (10 + buttonWidth * 3, yPosition, buttonWidth + widthCorrection, 20);
@@ -177,6 +183,8 @@ void Polytempo_AuxiliaryView::buttonClicked(Button *button)
         Polytempo_ScoreScheduler::getInstance()->skipToEvent(eventType_Image, true);
     if(button == imageForwards)
         Polytempo_ScoreScheduler::getInstance()->skipToEvent(eventType_Image, false);
+	if (button == startStop)
+		Polytempo_ScoreScheduler::getInstance()->startStop();
 }
 
 void Polytempo_AuxiliaryView::buttonStateChanged(Button*)
