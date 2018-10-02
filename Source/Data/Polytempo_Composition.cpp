@@ -347,6 +347,7 @@ bool Polytempo_Composition::readJSONfromFile(File file)
     {
         Polytempo_Sequence *sequence = new Polytempo_Sequence();
         sequence->setObject(jsonObject = jsonSequences.getValueAt(i).getDynamicObject());
+        sequence->setIndex(i);
         sequences.add(sequence);
     }
     
