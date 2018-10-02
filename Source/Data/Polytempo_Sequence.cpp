@@ -480,6 +480,8 @@ void Polytempo_Sequence::updateEvents()
                 event->setProperty(eventPropertyString_Duration, float(event->getValue()) / Polytempo_TempoInterpolation::getTempo(event->getPosition(), cp1, cp2));
             }
         }
+        if(event->getType() == eventType_Marker)
+            event->setProperty("~sequence", sequenceIndex);
     }
 }
 
