@@ -154,7 +154,7 @@ Polytempo_PositionRuler::Polytempo_PositionRuler()
 {
     setScrollBarsShown(false, false, true, true);
     setViewedComponent(&rulerComponent, false);
-    rulerComponent.setBounds(Rectangle<int>(65, 2800));
+    rulerComponent.setBounds(Rectangle<int>(65, 3800));
     //setViewPositionProportionately (0.0, 1.0);
 }
 
