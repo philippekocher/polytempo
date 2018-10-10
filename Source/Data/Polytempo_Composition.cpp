@@ -571,7 +571,10 @@ void Polytempo_Composition::exportAsPolytempoScore()
                     if(event->hasProperty("~sequence") && (int)event->getProperty("~sequence") == i)
                     {
                         tempEvent = new Polytempo_Event(*event);
-                        tempEvent->removeProperty(eventPropertyString_Value);
+
+                        if(tempEvent->getType() == eventType_Beat)
+                            tempEvent->removeProperty(eventPropertyString_Value);
+
                         tempEvent->removeProperty("~sequence");
                         
                         tempScore->addEvent(tempEvent);
