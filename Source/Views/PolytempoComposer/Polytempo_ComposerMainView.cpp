@@ -120,7 +120,7 @@ void Polytempo_ComposerMainView::setLeftComponent(componentType type)
     
     float position = float(stretchableManager.getItemCurrentPosition(1)) / getWidth();
     if(position > 0 && position < 1)
-        resizerBarPosition = float(stretchableManager.getItemCurrentPosition(1) / getWidth() - stretchableManager.getItemCurrentRelativeSize(1)); // to restore it later
+        resizerBarPosition = position; // to restore it later
     
     if(leftComponentType == componentType_None)
     {
@@ -134,8 +134,8 @@ void Polytempo_ComposerMainView::setLeftComponent(componentType type)
     }
     else
     {
-        stretchableManager.setItemLayout(0,-0.3,-0.7,-resizerBarPosition);
-        stretchableManager.setItemLayout(2,-0.3,-0.7,resizerBarPosition-1.0);
+        stretchableManager.setItemLayout(0,-0.1,-1.0,-resizerBarPosition);
+        stretchableManager.setItemLayout(2,250,400,resizerBarPosition-1.0);
     }
     
     if(leftComponentType == componentType_TimeMap)       leftComponent.addAndMakeVisible(timeMapComponent);
@@ -160,7 +160,7 @@ void Polytempo_ComposerMainView::setRightComponent(componentType type)
 
     float position = float(stretchableManager.getItemCurrentPosition(1)) / getWidth();
     if(position > 0 && position < 1)
-        resizerBarPosition = float(stretchableManager.getItemCurrentPosition(1) / getWidth() - stretchableManager.getItemCurrentRelativeSize(1)); // to restore it later
+        resizerBarPosition = position; // to restore it later
 
     if(rightComponentType == componentType_None)
     {
@@ -174,8 +174,8 @@ void Polytempo_ComposerMainView::setRightComponent(componentType type)
     }
     else
     {
-        stretchableManager.setItemLayout(0,-0.3,-0.7,-resizerBarPosition);
-        stretchableManager.setItemLayout(2,-0.3,-0.7,resizerBarPosition-1);
+        stretchableManager.setItemLayout(0,-0.1,-1.0,-resizerBarPosition);
+        stretchableManager.setItemLayout(2,250,400,resizerBarPosition-1);
     }
     
     if(rightComponentType == componentType_PatternList)    rightComponent.addAndMakeVisible(beatPatternListComponent);
