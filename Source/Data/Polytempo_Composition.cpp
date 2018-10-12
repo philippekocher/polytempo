@@ -316,7 +316,7 @@ void Polytempo_Composition::writeJSONtoFile(File file)
         scoreObject->setProperty(String(i++),seq->getObject());
     }
     
-    String jsonString = JSON::toString(json,false,4);
+    String jsonString = JSON::toString(json,false);
 
     FileOutputStream stream(file);
     stream.writeString(jsonString);
