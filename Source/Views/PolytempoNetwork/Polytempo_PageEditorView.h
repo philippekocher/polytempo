@@ -152,8 +152,14 @@ public:
     void resized();
     
     // actions
-    void mouseDown(const MouseEvent &);
+#ifdef JUCE_ANDROID
+	void mouseDoubleClick(const MouseEvent &) override;
+#else
+	void mouseDown(const MouseEvent &) override; 
+#endif
+
     void deleteSelected();
+	void performDeleteSelected();
     void loadImage();
     void addSection();
     void addInstance();
@@ -177,8 +183,9 @@ public:
     
 private:
     int findNewID(String eventPropertyString, Array < Polytempo_Event* > events);
-    
-    
+    void loadImage(File file);
+    void showMenu();
+
     TreeView *tree;
     ScopedPointer < TreeItem > rootItem;
     TreeItem *selectedItem;
@@ -210,6 +217,8 @@ private:
     
     Label *sectionInstancesLabel;
     Polytempo_SectionInstancesViewport* sectionInstancesViewport;
+    
+    ScopedPointer<FileChooser> fc;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_PageEditorView)
 };

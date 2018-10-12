@@ -48,6 +48,18 @@ Polytempo_AuxiliaryView::Polytempo_AuxiliaryView()
     addAndMakeVisible(imageForwards = new Polytempo_Button(">>", Polytempo_Button::buttonType_black));
     imageForwards->setConnectedEdges(Button::ConnectedOnTop | Button::ConnectedOnLeft);
     imageForwards->addListener(this);
+ 
+    addAndMakeVisible(startStop = new Polytempo_Button("Start / Stop", Polytempo_Button::buttonType_black));
+    startStop->setConnectedEdges(Button::ConnectedOnBottom);
+    startStop->addListener(this);
+    
+    addAndMakeVisible(returnToLocator = new Polytempo_Button("RTL", Polytempo_Button::buttonType_black));
+    returnToLocator->setConnectedEdges(Button::ConnectedOnTop | Button::ConnectedOnRight);
+    returnToLocator->addListener(this);
+    
+    addAndMakeVisible(returnToBeginning = new Polytempo_Button("RTB", Polytempo_Button::buttonType_black));
+    returnToBeginning->setConnectedEdges(Button::ConnectedOnTop | Button::ConnectedOnLeft);
+    returnToBeginning->addListener(this);
     
     addAndMakeVisible(markerTextbox = new Polytempo_Textbox("Marker", Polytempo_Textbox::textboxType_black));
     markerTextbox->setFont(Font (56.0f, Font::plain));
@@ -81,34 +93,41 @@ void Polytempo_AuxiliaryView::paint (Graphics& g)
 	networkInfoView->repaint();
 
     g.setColour(Colours::black);
-    g.drawHorizontalLine(275, 0.0f, (float)getWidth());
+    g.drawHorizontalLine(290, 0.0f, (float)getWidth());
     g.setColour(Colours::grey);
     g.drawVerticalLine(0, 0.0f, (float)getHeight());
 }
 
 void Polytempo_AuxiliaryView::resized()
 {
-    int yPosition = 25;
+    int yPosition = 10;
+    
+    int buttonWidth = (int)((getWidth() - 20) * 0.5f);
+    int widthCorrection = getWidth() - 20 - buttonWidth * 2;
+    startStop->setBounds        (10, yPosition, getWidth() - 20, 22);
+    returnToLocator->setBounds  (10, yPosition + 22, buttonWidth, 22);
+    returnToBeginning->setBounds(10 + buttonWidth, yPosition + 22, buttonWidth + widthCorrection, 22);
+    yPosition += 65;
     
     markerTextbox->setBounds(10, yPosition, getWidth() - 20, 66);
     yPosition +=66;
     
-    int buttonWidth = (int)(getWidth() * 0.25f - 5.0f);
-    int widthCorrection = getWidth() - 20 - buttonWidth * 4;
-    imageBackwards->setBounds (10,                   yPosition, buttonWidth, 20);
+    buttonWidth = (int)(getWidth() * 0.25f - 5.0f);
+    widthCorrection = getWidth() - 20 - buttonWidth * 4;
+	imageBackwards->setBounds (10,                   yPosition, buttonWidth, 20);
     markerBackwards->setBounds(10 + buttonWidth * 1, yPosition, buttonWidth, 20);
     markerForwards->setBounds (10 + buttonWidth * 2, yPosition, buttonWidth, 20);
     imageForwards->setBounds  (10 + buttonWidth * 3, yPosition, buttonWidth + widthCorrection, 20);
-    yPosition +=55;
+    yPosition +=43;
     
     timeTextbox->setBounds(10, yPosition, getWidth() - 20, 34);
-    yPosition +=75;
+    yPosition +=55;
     
     tempoFactorTextbox->setBounds(10, yPosition, getWidth() - 20, 34);
 	yPosition += 60;
 
 	timeSyncControl->setBounds(10, yPosition, getWidth() - 20, 50);
-	yPosition += 55;
+	yPosition += 45;
 
 	networkInfoView->setBounds(10, yPosition, getWidth() - 20, getHeight() - yPosition);
 }
@@ -177,6 +196,12 @@ void Polytempo_AuxiliaryView::buttonClicked(Button *button)
         Polytempo_ScoreScheduler::getInstance()->skipToEvent(eventType_Image, true);
     if(button == imageForwards)
         Polytempo_ScoreScheduler::getInstance()->skipToEvent(eventType_Image, false);
+    if (button == startStop)
+        Polytempo_ScoreScheduler::getInstance()->startStop();
+    if (button == returnToLocator)
+        Polytempo_ScoreScheduler::getInstance()->returnToLocator();
+    if (button == returnToBeginning)
+        Polytempo_ScoreScheduler::getInstance()->returnToBeginning();
 }
 
 void Polytempo_AuxiliaryView::buttonStateChanged(Button*)

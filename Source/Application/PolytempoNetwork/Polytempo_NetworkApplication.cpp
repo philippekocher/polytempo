@@ -229,42 +229,65 @@ void Polytempo_NetworkApplication::newScore()
 void Polytempo_NetworkApplication::openFileDialog()
 {
     File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("scoreFileDirectory"));
-    FileChooser fileChooser("Open Score File", directory, "*.json;*.ptsco", true);
+#ifdef JUCE_ANDROID
+	fc.reset(new FileChooser("Open Score File", directory, "*.json;*.ptsco", true));
+	fc->launchAsync(FileBrowserComponent::openMode | FileBrowserComponent::canSelectFiles,
+		[this](const FileChooser& chooser)
+	{
+		File result = chooser.getResult();
+		openScoreFile(result);
+	});
+#else
+	FileChooser fileChooser("Open Score File", directory, "*.json;*.ptsco", true);
     
     if(fileChooser.browseForFileToOpen())
     {
         openScoreFile(fileChooser.getResult());
     }
+#endif
+}
+
+void Polytempo_NetworkApplication::saveAs(File targetFile)
+{
+    File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("scoreFileDirectory"));
+    
+    String tempurl(directory.getFullPathName());
+    File tempFile(tempurl<<"/~temp.ptsco");
+
+    scoreFile = targetFile;
+    score->writeToFile(tempFile);
+    tempFile.copyFileTo(scoreFile);
+    tempFile.deleteFile();
+    mainWindow->setName(scoreFile.getFileNameWithoutExtension());
 }
 
 void Polytempo_NetworkApplication::saveScoreFile(bool showFileDialog)
 {
     if(score == nullptr) return;
     if(scoreFile == File::nonexistent) showFileDialog = true;
-    
-    File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("scoreFileDirectory"));
-    FileChooser fileChooser("Save Score File", scoreFile, "*.ptsco", true);
-    
-    String tempurl(directory.getFullPathName());
-    File tempFile(tempurl<<"/~temp.ptsco");
-    
-                  
+
     if(showFileDialog)
     {
-        if(fileChooser.browseForFileToSave(true))
+#ifdef JUCE_ANDROID
+        fc.reset(new FileChooser("Save Score File", scoreFile, "*.ptsco", true));
+        fc->launchAsync(FileBrowserComponent::saveMode | FileBrowserComponent::canSelectFiles | FileBrowserComponent::warnAboutOverwriting,
+                        [this](const FileChooser& chooser)
+                        {
+                            File result = chooser.getResult();
+                            saveAs(result);
+                        });
+#else
+		FileChooser fileChooser("Save Score File", scoreFile, "*.ptsco", true);
+		if(fileChooser.browseForFileToSave(true))
         {
-            scoreFile = fileChooser.getResult();
-            score->writeToFile(tempFile);
-            tempFile.copyFileTo(scoreFile);
+            saveAs(fileChooser.getResult());
         }
+#endif
     }
     else
     {
-        score->writeToFile(tempFile);
-        tempFile.copyFileTo(scoreFile);
+        saveAs(scoreFile);
     }
-    tempFile.deleteFile();
-    mainWindow->setName(scoreFile.getFileNameWithoutExtension());
 }
 
 void Polytempo_NetworkApplication::openScoreFilePath(String filePath)

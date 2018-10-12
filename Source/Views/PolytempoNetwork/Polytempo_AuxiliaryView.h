@@ -60,6 +60,10 @@ private:
     Polytempo_Button  *imageBackwards;
     Polytempo_Button  *imageForwards;
     
+    Polytempo_Button  *startStop;
+    Polytempo_Button  *returnToLocator;
+    Polytempo_Button  *returnToBeginning;
+
     Polytempo_Textbox *timeTextbox;
     
 //  Polytempo_Textbox *realTimeTextbox;
