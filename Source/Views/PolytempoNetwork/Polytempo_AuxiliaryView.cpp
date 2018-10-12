@@ -50,15 +50,15 @@ Polytempo_AuxiliaryView::Polytempo_AuxiliaryView()
     imageForwards->addListener(this);
  
     addAndMakeVisible(startStop = new Polytempo_Button("Start / Stop", Polytempo_Button::buttonType_black));
-    startStop->setConnectedEdges(Button::ConnectedOnRight);
+    startStop->setConnectedEdges(Button::ConnectedOnBottom);
     startStop->addListener(this);
     
     addAndMakeVisible(returnToLocator = new Polytempo_Button("RTL", Polytempo_Button::buttonType_black));
-    returnToLocator->setConnectedEdges(Button::ConnectedOnRight | Button::ConnectedOnLeft);
+    returnToLocator->setConnectedEdges(Button::ConnectedOnTop | Button::ConnectedOnRight);
     returnToLocator->addListener(this);
     
     addAndMakeVisible(returnToBeginning = new Polytempo_Button("RTB", Polytempo_Button::buttonType_black));
-    returnToBeginning->setConnectedEdges(Button::ConnectedOnLeft);
+    returnToBeginning->setConnectedEdges(Button::ConnectedOnTop | Button::ConnectedOnLeft);
     returnToBeginning->addListener(this);
     
     addAndMakeVisible(markerTextbox = new Polytempo_Textbox("Marker", Polytempo_Textbox::textboxType_black));
@@ -93,33 +93,33 @@ void Polytempo_AuxiliaryView::paint (Graphics& g)
 	networkInfoView->repaint();
 
     g.setColour(Colours::black);
-    g.drawHorizontalLine(285, 0.0f, (float)getWidth());
+    g.drawHorizontalLine(290, 0.0f, (float)getWidth());
     g.setColour(Colours::grey);
     g.drawVerticalLine(0, 0.0f, (float)getHeight());
 }
 
 void Polytempo_AuxiliaryView::resized()
 {
-    int yPosition = 25;
+    int yPosition = 10;
+    
+    int buttonWidth = (int)((getWidth() - 20) * 0.5f);
+    int widthCorrection = getWidth() - 20 - buttonWidth * 2;
+    startStop->setBounds        (10, yPosition, getWidth() - 20, 22);
+    returnToLocator->setBounds  (10, yPosition + 22, buttonWidth, 22);
+    returnToBeginning->setBounds(10 + buttonWidth, yPosition + 22, buttonWidth + widthCorrection, 22);
+    yPosition += 65;
     
     markerTextbox->setBounds(10, yPosition, getWidth() - 20, 66);
     yPosition +=66;
     
-    int buttonWidth = (int)(getWidth() * 0.25f - 5.0f);
-    int widthCorrection = getWidth() - 20 - buttonWidth * 4;
+    buttonWidth = (int)(getWidth() * 0.25f - 5.0f);
+    widthCorrection = getWidth() - 20 - buttonWidth * 4;
 	imageBackwards->setBounds (10,                   yPosition, buttonWidth, 20);
     markerBackwards->setBounds(10 + buttonWidth * 1, yPosition, buttonWidth, 20);
     markerForwards->setBounds (10 + buttonWidth * 2, yPosition, buttonWidth, 20);
     imageForwards->setBounds  (10 + buttonWidth * 3, yPosition, buttonWidth + widthCorrection, 20);
-    yPosition +=35;
+    yPosition +=43;
     
-    buttonWidth = (int)(getWidth() * 0.33f - 5.0f);
-    widthCorrection = getWidth() - 20 - buttonWidth * 3;
-    startStop->setBounds        (10, yPosition, buttonWidth, 30);
-    returnToLocator->setBounds  (10 + buttonWidth * 1, yPosition, buttonWidth, 30);
-    returnToBeginning->setBounds(10 + buttonWidth * 2, yPosition, buttonWidth + widthCorrection, 30);
-    yPosition += 50;
-
     timeTextbox->setBounds(10, yPosition, getWidth() - 20, 34);
     yPosition +=55;
     
