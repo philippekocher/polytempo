@@ -165,11 +165,9 @@ void Polytempo_Sequence::setControlPointValues(int index, float t, Rational pos,
     if(inTempoWeight < 0)   inTempoWeight = controlPoints[index]->tempoInWeight;
     if(outTempoWeight < 0)  outTempoWeight = controlPoints[index]->tempoOutWeight;
     
-    // first and last point
+    // first point
     if(index == 0)
         pos = 0;
-    else if(index == controlPoints.size() - 1)
-        pos = controlPoints[index]->position;  // don't change;
     
     // validate time and position
     Polytempo_ControlPoint* tempPoint = new Polytempo_ControlPoint();
@@ -209,12 +207,10 @@ void Polytempo_Sequence::setControlPointPosition(int index, float t, Rational po
     if(t   < 0) t   = controlPoints[index]->time;
     if(pos < 0) pos = controlPoints[index]->position;
     
-    // first and last point
+    // first point
     if(index == 0)
         pos = 0;
-    else if(index == controlPoints.size() - 1)
-        pos = controlPoints[index]->position;  // don't change;
-    
+
     // validate time and position
     if(!validateControlPoint(index, t, pos)) return;
 
@@ -442,19 +438,8 @@ void Polytempo_Sequence::buildBeatPattern()
     event->setProperty(eventPropertyString_Pattern, 10);
     events.add(event);
     
-    // remove control points outside the beat pattern
-    // (after the beat pattern has been shortened)
-    for(int i=controlPoints.size()-1;i>0;i--)
-    {
-        if(controlPoints[i-1]->position > position)
-            controlPoints.remove(i);
-        else
-            break;
-    }
-
-    // adjust the last control point to match the last event's position
-    controlPoints[controlPoints.size()-1]->position = position;
-    adjustTime(controlPoints.size()-1);
+    Polytempo_Composition::getInstance()->updateContent();
+    Polytempo_Composition::getInstance()->setDirty(true);
 }
 
 void Polytempo_Sequence::updateEvents()
@@ -465,7 +450,9 @@ void Polytempo_Sequence::updateEvents()
     {
         Polytempo_Event *event = events[i];
         
-       if(event->getPosition() > controlPoints[cpIndex+1]->position) cpIndex++;
+       if(event->getPosition() > controlPoints[cpIndex+1]->position &&
+          controlPoints.size() > cpIndex + 2)
+          cpIndex++;
         
         Polytempo_ControlPoint *cp1 = controlPoints[cpIndex];
         Polytempo_ControlPoint *cp2 = controlPoints[cpIndex+1];
