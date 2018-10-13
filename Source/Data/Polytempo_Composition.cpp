@@ -151,7 +151,7 @@ int Polytempo_Composition::getSelectedControlPointIndex()
 bool Polytempo_Composition::isSelectedControlPointRemovable()
 {
     if(selectedControlPointIndex < 1 ||
-       selectedControlPointIndex == getSelectedSequence()->getControlPoints()->size()-1)
+       getSelectedSequence()->getControlPoints()->size() == 2)
         return false;
     else
         return true;

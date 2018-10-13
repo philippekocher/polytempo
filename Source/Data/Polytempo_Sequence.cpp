@@ -140,6 +140,11 @@ bool Polytempo_Sequence::validateNewControlPointPosition(float t, Rational pos)
             
            return true;
     }
+    // a new point at the end
+    if(t > controlPoints.getLast()->time &&
+       pos > controlPoints.getLast()->position)
+        return true;
+    
     return false;
 }
 
