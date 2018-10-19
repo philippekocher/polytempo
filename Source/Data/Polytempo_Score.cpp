@@ -46,8 +46,8 @@ public:
             Polytempo_EventType type1 = e1->getType();
             Polytempo_EventType type2 = e2->getType();
             
-            if(type1 == eventType_Beat && type2 != eventType_Beat) result = -1;
-            if(type1 != eventType_Beat && type2 == eventType_Beat) result = 1;
+            if(type1 == eventType_Beat && type2 != eventType_Beat) result = 1;
+            if(type1 != eventType_Beat && type2 == eventType_Beat) result = -1;
         }
         
         return result;
@@ -488,7 +488,8 @@ void Polytempo_Score::writeToFile(File& file)
             for(int k=0;k<properties->size();k++)
             {
                 Identifier key = properties->getName(k);
-                if(key.toString()[0] != '~')
+                if(key.toString()[0] != '~' &&
+                   key.toString() != eventPropertyString_TimeTag)
                     jsonEventProperties->setProperty(key, properties->getValueAt(k));
             }
             
