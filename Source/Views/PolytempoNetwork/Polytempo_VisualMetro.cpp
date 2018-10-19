@@ -261,7 +261,10 @@ void Polytempo_VisualMetro::timerCallback()
     
     // cue colour changes to normal colour on downbeat
     if(pos > 0.5 && (pattern == 11 || pattern == 21))
+    {
         foregroundColour = normalColour;
+        repaint(); // the square in the top left corner
+    }
 }
 
 void Polytempo_VisualMetro::eventNotification(Polytempo_Event *event)
@@ -319,6 +322,7 @@ void Polytempo_VisualMetro::eventNotification(Polytempo_Event *event)
         else            pos = 0.5f;
         
         startTimer(timeInterval);
+        repaint(); // the square in the top left corner
     }
     else if(event->getType() == eventType_TempoFactor)
     {
