@@ -614,10 +614,7 @@ bool Polytempo_MenuBarModel::perform(const InvocationInfo& info)
         /* scheduler menu
          ----------------------------------*/
         case Polytempo_CommandIDs::startStop:
-            if(Polytempo_ScoreScheduler::getInstance()->isRunning())
-                Polytempo_EventDispatcher::getInstance()->broadcastEvent(Polytempo_Event::makeEvent(eventType_Stop));
-            else
-                Polytempo_EventDispatcher::getInstance()->broadcastEvent(Polytempo_Event::makeEvent(eventType_Start));
+            Polytempo_ScoreScheduler::getInstance()->startStop();
             break;
 
         case Polytempo_CommandIDs::returnToLoc:
