@@ -441,6 +441,7 @@ void Polytempo_Sequence::buildBeatPattern()
     event->setOwned(true);
     event->setPosition(position);
     event->setProperty(eventPropertyString_Pattern, 10);
+    event->setValue(events.getLast()->getValue());
     events.add(event);
     
     Polytempo_Composition::getInstance()->updateContent();
@@ -450,12 +451,12 @@ void Polytempo_Sequence::buildBeatPattern()
 void Polytempo_Sequence::updateEvents()
 {
 //    DBG("sequence: update events");
-    int cpIndex = 0;
+    int cpIndex = -1;
     for(int i=0;i<events.size();i++)
     {
         Polytempo_Event *event = events[i];
         
-       if(event->getPosition() > controlPoints[cpIndex+1]->position &&
+       if(event->getPosition() >= controlPoints[cpIndex+1]->position &&
           controlPoints.size() > cpIndex + 2)
           cpIndex++;
         
@@ -467,7 +468,7 @@ void Polytempo_Sequence::updateEvents()
         if(event->getType() == eventType_Beat)
         {
             event->setProperty("~sequence", sequenceIndex);
-            if(event->hasProperty("value"))
+            if(event->hasProperty(eventPropertyString_Value))
             {
                 event->setProperty(eventPropertyString_Duration, float(event->getValue()) / Polytempo_TempoInterpolation::getTempo(event->getPosition(), cp1, cp2));
             }

@@ -317,7 +317,7 @@ bool Polytempo_Score::getTimeForMarker(String marker, int *time)
     for(int i=0;i<sections[currentSectionIndex]->events.size();i++)
     {
         Polytempo_Event *event = sections[currentSectionIndex]->events[i];
-        if(event->getType() == eventType_Marker && event->getProperty("value").toString() == marker)
+        if(event->getType() == eventType_Marker && event->getProperty(eventPropertyString_Value).toString() == marker)
         {
             *time = event->getTime();
             return true;
@@ -334,7 +334,7 @@ bool Polytempo_Score::getMarkerForTime(int time, String* marker)
         Polytempo_Event *event = sections[currentSectionIndex]->events[i];
         if(event->getType() == eventType_Marker && event->getTime() == time)
         {
-            *marker = event->getProperty("value").toString();
+            *marker = event->getProperty(eventPropertyString_Value).toString();
             return true;
         }
     }
@@ -456,17 +456,6 @@ void Polytempo_Score::parseJSON(File& JSONFile, Polytempo_Score** score)
 
 void Polytempo_Score::writeToFile(File& file)
 {
-    //    DynamicObject* obj = new DynamicObject();
-    //    obj->setProperty("foo","bar");
-    //    obj->setProperty("num",123);
-    //    DynamicObject* nestedObj = new DynamicObject();
-    //    nestedObj->setProperty("inner","value");
-    //    obj->setProperty("nested",nestedObj);
-    //    var json (obj); // store the outer object in a var [we could have done this earlier]
-    //    String s = JSON::toString(json);
-    //    DBG(s);
-    
-    
     DynamicObject* jsonSections = new DynamicObject();
     
     for(int i=-1;i<sections.size();i++)
