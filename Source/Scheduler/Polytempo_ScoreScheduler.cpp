@@ -187,7 +187,7 @@ void Polytempo_ScoreScheduler::gotoTime(int time)
     // update locator in all components
     Polytempo_Event *schedulerTick = Polytempo_Event::makeEvent(eventType_Tick);
     schedulerTick->setValue(time * 0.001f);
-    Polytempo_EventScheduler::getInstance()->scheduleEvent(schedulerTick);
+    Polytempo_EventScheduler::getInstance()->executeEvent(schedulerTick);
 }
 
 void Polytempo_ScoreScheduler::storeLocator(int loc)

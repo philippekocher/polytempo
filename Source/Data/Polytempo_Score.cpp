@@ -237,25 +237,35 @@ bool Polytempo_Score::setTime(int time, Array<Polytempo_Event*> *events, float *
         }
     }
     
+    // events to be executed immediately to update the internal state
     
-    // is there a more elegant solution...?
+    Polytempo_Event *marker;               // the last marker is enough;
+    HashMap<var, Polytempo_Event*> images; // one image per region is enough;
+    
     for(i=0;i<sections[currentSectionIndex]->events.size();i++)
     {
         event = sections[currentSectionIndex]->events[i];
         if(event->getTime() > time + *waitBeforStart)
             break;
-        if(event->getType() != eventType_Beat &&
-           event->getType() != eventType_Osc)
-        {
+        
+        if(event->getType() == eventType_Beat ||
+           event->getType() == eventType_Osc)   continue;
+        
+        else if(event->getType() == eventType_Marker)
+            marker = event;
+        
+        else if(event->getType() == eventType_Image)
+            images.set(event->getProperty(eventPropertyString_RegionID), event);
+        
+        else
             events->add(event);
-        }
-        // necessary??
-        //        if(event->getType() == eventType_Osc && event->getTime() == time)
-        //        {
-        //            // TODO: events to be executed upon start
-        //            DBG("event..."<< event->getType());
-        //        }
+
     }
+    // add the necessary images and the last marker
+    events->add(marker);
+    for(Polytempo_Event *image : images)
+        events->add(image);
+    
     return true;
 }
 
