@@ -33,7 +33,7 @@
 class Polytempo_VisualConductorComponent;
 
 class Polytempo_VisualMetro : public  Component,
-                              private HighResolutionTimer,
+                              private Timer,
                               public  Polytempo_EventObserver
 {
 public:
@@ -47,7 +47,7 @@ public:
     void setFrameColour (Colour& colour);
     void setWidth (float val);
     
-    void hiResTimerCallback();
+    void timerCallback();
     void eventNotification(Polytempo_Event *event);
 
 private:

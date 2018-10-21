@@ -171,8 +171,7 @@ void Polytempo_VisualMetro::paint(Graphics& g)
     g.fillRect(0, 0, (int)width, (int)width);
 }
 
-/* Unlike the normal Timer class, the hiRes Timer uses a dedicated thread, not the message thread */
-void Polytempo_VisualMetro::hiResTimerCallback()
+void Polytempo_VisualMetro::timerCallback()
 {
     if(width == 0) return;
     
@@ -190,9 +189,6 @@ void Polytempo_VisualMetro::hiResTimerCallback()
         x = y = 0;
         stopTimer();
 
-        // because this is not the main message thread, we mustn't do
-        // any UI work without first grabbing a MessageManagerLock.
-        const MessageManagerLock mml (Thread::getCurrentThread());
         hComponent->setPosition(x,subpos);
         vComponent->setPosition(y,subpos);
 
@@ -250,10 +246,6 @@ void Polytempo_VisualMetro::hiResTimerCallback()
     {
         x = y = 0;
     }
-
-    // because this is not the main message thread, we mustn't do
-    // any UI work without first grabbing a MessageManagerLock.
-    const MessageManagerLock mml (Thread::getCurrentThread());
 
     hComponent->setForegroundColour(foregroundColour);
     vComponent->setForegroundColour(foregroundColour);
