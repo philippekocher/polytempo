@@ -61,10 +61,12 @@ public:
     void openScoreFilePath(String filePath = String::empty);
     void openScoreFile(File aFile = File::nonexistent);
     void saveScoreFile(bool showFileDialog);
-    
     void commandStatusChanged();
     
     static ApplicationCommandManager* getCommandManager();
+
+private:
+	void saveAs(File targetFile);
 
 private:
 	ScopedPointer<Polytempo_NetworkWindow> mainWindow;
@@ -73,7 +75,11 @@ private:
     ScopedPointer<Polytempo_OSCListener> oscListener;
     ScopedPointer<Polytempo_MidiInput> midiInput;
     ScopedPointer<Polytempo_Score> score;
-    
+
+#ifdef JUCE_ANDROID
+	ScopedPointer<FileChooser> fc;
+#endif
+
     ApplicationCommandManager commandManager;
     File scoreFile, newScoreFile;
     LookAndFeel_V3 lookAndFeelV3;

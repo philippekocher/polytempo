@@ -47,7 +47,12 @@ Polytempo_NetworkWindow::Polytempo_NetworkWindow()
     // sets the main content component for the window
     setContentNonOwned(mainView, false);
 
+#ifdef JUCE_ANDROID
+    setFullScreen(true);
+#else
     setBounds(50, 50, 800, 500);
+#endif
+
     setVisible(true);
 
     // restore the last size and position from our settings file...
@@ -70,40 +75,57 @@ void Polytempo_NetworkWindow::closeButtonPressed()
     JUCEApplication::getInstance()->systemRequestedQuit();
 }
 
-void Polytempo_NetworkWindow::setContentID(contentID newContentID)
+static void saveOkCancelCallback (int result, Polytempo_NetworkWindow* pParent)
 {
-    if(newContentID != currentContentID)
+    if(result)
     {
-        Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
+        Polytempo_NetworkApplication *const app = dynamic_cast<Polytempo_NetworkApplication *>(JUCEApplication::getInstance());
+        app->saveScoreFile(true);
+        if(app->scoreFileExists())
+        {
+            pParent->performSetContentID();
+        }
+    }
+}
 
-        if(newContentID == pageEditorViewID && !app->scoreFileExists())
-        {
-            if(Polytempo_OkCancelAlert::show("You must first save the document before using the Page Editor", String::empty))
-                app->saveScoreFile(true);
-            if(!app->scoreFileExists()) // the user has aborted the save process
-                return;
-        }
-        
-        currentContentID = newContentID;
-        
-        if(currentContentID == pageEditorViewID)
-        {
-            pageEditorView->refresh();
-            setContentNonOwned(pageEditorView, false);
-        }
-        else if(currentContentID == regionEditorViewID)
-        {
-            regionEditorView->refresh();
-            setContentNonOwned(regionEditorView, false);
-        }
-        else
-        {
-            setContentNonOwned(mainView, false);
-            
-            // apply all changes that should be visible in the main view
-            Polytempo_ScoreScheduler::getInstance()->executeInit();
-            Polytempo_ScoreScheduler::getInstance()->returnToLocator();
-        }
+void Polytempo_NetworkWindow::setContentID(contentID newContentID) {
+    if (newContentID != currentContentID) {
+        Polytempo_NetworkApplication *const app = dynamic_cast<Polytempo_NetworkApplication *>(JUCEApplication::getInstance());
+
+        contentIdToBeSet = newContentID;
+        if (newContentID == pageEditorViewID && !app->scoreFileExists()) {
+            Polytempo_OkCancelAlert::show("Save?", 
+                    "You must first save the document before using the Page Editor",
+                    ModalCallbackFunction::create(saveOkCancelCallback, this));
+        } else
+            performSetContentID();
+    }
+}
+
+void Polytempo_NetworkWindow::performSetContentID() {
+    Polytempo_NetworkApplication *const app = dynamic_cast<Polytempo_NetworkApplication *>(JUCEApplication::getInstance());
+    if (!app->scoreFileExists()) // the user has aborted the save process
+        return;
+
+    currentContentID = contentIdToBeSet;
+
+    if (currentContentID == pageEditorViewID)
+    {
+        pageEditorView->refresh();
+        setContentNonOwned(pageEditorView, false);
+    }
+    else if (currentContentID == regionEditorViewID)
+    {
+        regionEditorView->refresh();
+        setContentNonOwned(regionEditorView, false);
+    }
+    else
+    {
+        setContentNonOwned(mainView, false);
+
+        // apply all changes that should be visible in the main view
+        Polytempo_ScoreScheduler::getInstance()->executeInit();
+        Polytempo_ScoreScheduler::getInstance()->returnToLocator();
     }
 }
 

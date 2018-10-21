@@ -333,110 +333,132 @@ void Polytempo_PageEditorView::resized()
 #pragma mark -
 #pragma mark actions
 
+#ifdef JUCE_ANDROID
+void Polytempo_PageEditorView::mouseDoubleClick(const MouseEvent &event)
+{
+    showMenu();
+}
+#else
 void Polytempo_PageEditorView::mouseDown(const MouseEvent &event)
 {
-    if(event.mods.isPopupMenu())
+    if (event.mods.isPopupMenu())
     {
-        ApplicationCommandManager* commandManager = Polytempo_NetworkApplication::getCommandManager();
-        PopupMenu m;
-        
-        m.addCommandItem(commandManager, Polytempo_CommandIDs::loadImage);
-        m.addCommandItem(commandManager, Polytempo_CommandIDs::addSection);
-        m.addCommandItem(commandManager, Polytempo_CommandIDs::addInstance);
-        m.addSeparator();
-        m.addCommandItem(commandManager, Polytempo_CommandIDs::deleteSelected);
-        
-        m.show();
+        showMenu();
     }
+}
+#endif
+
+void Polytempo_PageEditorView::showMenu()
+{
+    ApplicationCommandManager *commandManager = Polytempo_NetworkApplication::getCommandManager();
+    PopupMenu m;
+
+    m.addCommandItem(commandManager, Polytempo_CommandIDs::loadImage);
+    m.addCommandItem(commandManager, Polytempo_CommandIDs::addSection);
+    m.addCommandItem(commandManager, Polytempo_CommandIDs::addInstance);
+    m.addSeparator();
+    m.addCommandItem(commandManager, Polytempo_CommandIDs::deleteSelected);
+
+    m.showMenuAsync(PopupMenu::Options(), nullptr);
+}
+
+static void saveOkCancelCallback(int result, Polytempo_PageEditorView* pParent)
+{
+	if (result)
+	{
+		pParent->performDeleteSelected();
+	}
 }
 
 void Polytempo_PageEditorView::deleteSelected()
 {
-    imageID = selectedItem->getProperty("imageID");
-    String fileName = Polytempo_ImageManager::getInstance()->getFileName(imageID);
-    sectionID = selectedItem->getProperty("sectionID");
-    
-    String text("Do you want to ");
-    if(sectionID == var::null) text<<"remove \"Image "<<imageID.toString()<<"\" ("<<fileName<<")?";
-    else                       text<<"delete \"Section "<<sectionID.toString()<<"\"?";
-    
-    if(Polytempo_OkCancelAlert::show(text, String::empty))
-    {
-        if(sectionID == var::null)
-        {            
-            if(Polytempo_ImageManager::getInstance()->deleteImage(imageID))
-            {
-                score->setDirty();
-                
-                // remove the image from the page editor view
-                pageEditorViewport->getComponent()->setImage(nullptr);
+	imageID = selectedItem->getProperty("imageID");
+	String fileName = Polytempo_ImageManager::getInstance()->getFileName(imageID);
+	sectionID = selectedItem->getProperty("sectionID");
 
-                // delete the load image event
-                for(int i=0;i<loadImageEvents.size();i++)
-                {
-                    if(loadImageEvents[i]->getProperty(eventPropertyString_ImageID) == imageID)
-                    {
-                        score->removeEvent(loadImageEvents[i], true);
-                        break;
-                    }
-                }
-                // delete all define section events that refer to this image ID
-                for(int i=0;i<addSectionEvents.size();i++)
-                {
-                    if(addSectionEvents[i]->getProperty(eventPropertyString_ImageID) == imageID)
-                    {
-                        var tempSectionID = addSectionEvents[i]->getProperty(eventPropertyString_SectionID);
-                        
-                        // delete all image events (= instances) that refer to this section ID
-                        for(int j=0;j<imageEvents.size();j++)
-                        {
-                            if(imageEvents[j]->getProperty(eventPropertyString_SectionID) == tempSectionID)
-                            {
-                                score->removeEvent(imageEvents[j]);
-                            }
-                        }
-                        
-                        score->removeEvent(addSectionEvents[i], true);
-                    }
-                }
-                // delete all image events that refer directly to this image ID
-                for(int i=0;i<imageEvents.size();i++)
-                {
-                    if(imageEvents[i]->getProperty(eventPropertyString_ImageID) == imageID)
-                    {
-                        score->removeEvent(imageEvents[i]);
-                    }
-                }
-                
-                selectedItem = nullptr;
-            }
-        }
-        else
-        {
-            score->setDirty();
+	String text("Do you want to ");
+	if (sectionID == var::null) text << "remove \"Image " << imageID.toString() << "\" (" << fileName << ")?";
+	else                       text << "delete \"Section " << sectionID.toString() << "\"?";
 
-            // delete the define section event
-            for(int i=0;i<addSectionEvents.size();i++)
-            {
-                if(addSectionEvents[i]->getProperty(eventPropertyString_SectionID) == sectionID)
-                {
-                    score->removeEvent(addSectionEvents[i], true);
-                    break;
-                }
-            }
+	Polytempo_OkCancelAlert::show("Delete?", text, ModalCallbackFunction::create(saveOkCancelCallback, this));
+}
 
-            // delete all image events (= instances) that refer to this section ID
-            for(int j=0;j<imageEvents.size();j++)
-            {
-                if(imageEvents[j]->getProperty(eventPropertyString_SectionID) == sectionID)
-                {
-                    score->removeEvent(imageEvents[j]);
-                }
-            }
-        }
-        
-        refresh();
-    }
+void Polytempo_PageEditorView::performDeleteSelected()
+{
+	if (sectionID == var::null)
+	{
+		if (Polytempo_ImageManager::getInstance()->deleteImage(imageID))
+		{
+			score->setDirty();
+
+			// remove the image from the page editor view
+			pageEditorViewport->getComponent()->setImage(nullptr);
+
+			// delete the load image event
+			for (int i = 0; i < loadImageEvents.size(); i++)
+			{
+				if (loadImageEvents[i]->getProperty(eventPropertyString_ImageID) == imageID)
+				{
+					score->removeEvent(loadImageEvents[i], true);
+					break;
+				}
+			}
+			// delete all define section events that refer to this image ID
+			for (int i = 0; i < addSectionEvents.size(); i++)
+			{
+				if (addSectionEvents[i]->getProperty(eventPropertyString_ImageID) == imageID)
+				{
+					var tempSectionID = addSectionEvents[i]->getProperty(eventPropertyString_SectionID);
+
+					// delete all image events (= instances) that refer to this section ID
+					for (int j = 0; j < imageEvents.size(); j++)
+					{
+						if (imageEvents[j]->getProperty(eventPropertyString_SectionID) == tempSectionID)
+						{
+							score->removeEvent(imageEvents[j]);
+						}
+					}
+
+					score->removeEvent(addSectionEvents[i], true);
+				}
+			}
+			// delete all image events that refer directly to this image ID
+			for (int i = 0; i < imageEvents.size(); i++)
+			{
+				if (imageEvents[i]->getProperty(eventPropertyString_ImageID) == imageID)
+				{
+					score->removeEvent(imageEvents[i]);
+				}
+			}
+
+			selectedItem = nullptr;
+		}
+	}
+	else
+	{
+		score->setDirty();
+
+		// delete the define section event
+		for (int i = 0; i < addSectionEvents.size(); i++)
+		{
+			if (addSectionEvents[i]->getProperty(eventPropertyString_SectionID) == sectionID)
+			{
+				score->removeEvent(addSectionEvents[i], true);
+				break;
+			}
+		}
+
+		// delete all image events (= instances) that refer to this section ID
+		for (int j = 0; j < imageEvents.size(); j++)
+		{
+			if (imageEvents[j]->getProperty(eventPropertyString_SectionID) == sectionID)
+			{
+				score->removeEvent(imageEvents[j]);
+			}
+		}
+	}
+
+	refresh();
 }
 
 int Polytempo_PageEditorView::findNewID(String eventPropertyString, Array < Polytempo_Event* > events)
@@ -465,25 +487,41 @@ int Polytempo_PageEditorView::findNewID(String eventPropertyString, Array < Poly
 void Polytempo_PageEditorView::loadImage()
 {
     File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("scoreFileDirectory"));
-    FileChooser fileChooser("Open Score File", directory, "*.jpg;*.png", true);
-    
+    FileChooser fileChooser("Open Image File", directory, "*.jpg;*.png", true);
+
+#ifdef JUCE_ANDROID
+    fc.reset(new FileChooser("Open Image File", directory, "*.png;*.jpg", true));
+    fc->launchAsync(FileBrowserComponent::openMode | FileBrowserComponent::canSelectFiles,
+                    [this](const FileChooser &chooser) {
+                        File result = chooser.getResult();
+                        loadImage(result);
+                    });
+#else
     if(fileChooser.browseForFileToOpen())
     {
-        String url = fileChooser.getResult().getRelativePathFrom(directory);
-        
-        Polytempo_Event *event = Polytempo_Event::makeEvent(eventType_LoadImage);
-        event->setProperty(eventPropertyString_URL, url);
-        
-        event->setProperty(eventPropertyString_ImageID, findNewID(eventPropertyString_ImageID, loadImageEvents));
-        
-        score->addEvent(event, true); // add to init
-        score->setDirty();
-        
-        Polytempo_EventScheduler::getInstance()->scheduleEvent(event); // execute event
-        
-        selectedEvent = event;
-        refresh();
+        loadImage(fileChooser.getResult());
     }
+#endif
+}
+
+void Polytempo_PageEditorView::loadImage(File file)
+{
+    File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("scoreFileDirectory"));
+    String url = file.getRelativePathFrom(directory);
+
+    Polytempo_Event *event = Polytempo_Event::makeEvent(eventType_LoadImage);
+    event->setProperty(eventPropertyString_URL, url);
+
+    event->setProperty(eventPropertyString_ImageID,
+                       findNewID(eventPropertyString_ImageID, loadImageEvents));
+
+    score->addEvent(event, true); // add to init
+    score->setDirty();
+
+    Polytempo_EventScheduler::getInstance()->scheduleEvent(event); // execute event
+
+    selectedEvent = event;
+    refresh();
 }
 
 void Polytempo_PageEditorView::addSection()
@@ -591,13 +629,26 @@ void Polytempo_PageEditorView::labelTextChanged(Label* label)
 #pragma mark -
 #pragma mark button listener
 
-void Polytempo_PageEditorView::buttonClicked(Button* button)
-{
-    if(button == chooseImageFile)
-    {
-        File directory (Polytempo_StoredPreferences::getInstance()->getProps().getValue("scoreFileDirectory"));
+void Polytempo_PageEditorView::buttonClicked(Button* button) {
+    if (button == chooseImageFile) {
+        File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue(
+                "scoreFileDirectory"));
+
+#ifdef JUCE_ANDROID
+        fc.reset(new FileChooser("Open Image File", directory, "*.png;*.jpg", true));
+        fc->launchAsync(FileBrowserComponent::openMode | FileBrowserComponent::canSelectFiles,
+                        [this, directory](const FileChooser &chooser) {
+                            File result = chooser.getResult();
+                            if (Polytempo_ImageManager::getInstance()->replaceImage(
+                                    imageID,
+                                    result.getRelativePathFrom(directory)))
+                            {
+                                score->setDirty();
+                            }
+                            refresh();
+                        });
+#else
         FileChooser fileChooser ("Open Image File", directory, "*.png;*.jpg");
-        
         if(fileChooser.browseForFileToOpen())
         {
             if(Polytempo_ImageManager::getInstance()->replaceImage(imageID, fileChooser.getResult().getRelativePathFrom(directory)))
@@ -606,6 +657,7 @@ void Polytempo_PageEditorView::buttonClicked(Button* button)
             }
             refresh();
         }
+#endif
     }
 }
 

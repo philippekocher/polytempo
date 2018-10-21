@@ -48,6 +48,7 @@ public:
     int  getContentID();
     
     Component* getContentComponent();
+	void performSetContentID();
 
 private:
     ScopedPointer <Polytempo_NetworkMainView> mainView;
@@ -57,6 +58,7 @@ private:
     OpenGLContext openGLContext;
     
     contentID currentContentID = mainViewID;
+    contentID contentIdToBeSet = mainViewID;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_NetworkWindow)
 };
