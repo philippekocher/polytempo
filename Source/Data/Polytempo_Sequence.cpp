@@ -452,6 +452,8 @@ void Polytempo_Sequence::updateEvents()
 {
 //    DBG("sequence: update events");
     int cpIndex = -1;
+    Polytempo_Event *lastBeatEvent = nullptr;
+    
     for(int i=0;i<events.size();i++)
     {
         Polytempo_Event *event = events[i];
@@ -464,18 +466,23 @@ void Polytempo_Sequence::updateEvents()
         Polytempo_ControlPoint *cp2 = controlPoints[cpIndex+1];
         
         event->setProperty(eventPropertyString_Time, Polytempo_TempoInterpolation::getTime(event->getPosition(), cp1, cp2));
-        
+
+        event->setProperty("~sequence", sequenceIndex);
+
         if(event->getType() == eventType_Beat)
         {
-            event->setProperty("~sequence", sequenceIndex);
-            if(event->hasProperty(eventPropertyString_Value))
+            if(lastBeatEvent != nullptr)
             {
-                event->setProperty(eventPropertyString_Duration, float(event->getValue()) / Polytempo_TempoInterpolation::getTempo(event->getPosition(), cp1, cp2));
+                lastBeatEvent->setProperty(eventPropertyString_Duration,
+                                           float(event->getProperty(eventPropertyString_Time)) -
+                                           float(lastBeatEvent->getProperty(eventPropertyString_Time)));
             }
+            lastBeatEvent = event;
         }
-        if(event->getType() == eventType_Marker)
-            event->setProperty("~sequence", sequenceIndex);
     }
+    if(lastBeatEvent != nullptr)
+        lastBeatEvent->setProperty(eventPropertyString_Duration, 1.0f);
+
 }
 
 void Polytempo_Sequence::addPlaybackPropertiesToEvent(Polytempo_Event* event)
