@@ -151,7 +151,7 @@ int Polytempo_Composition::getSelectedControlPointIndex()
 bool Polytempo_Composition::isSelectedControlPointRemovable()
 {
     if(selectedControlPointIndex < 1 ||
-       selectedControlPointIndex == getSelectedSequence()->getControlPoints()->size()-1)
+       getSelectedSequence()->getControlPoints()->size() == 2)
         return false;
     else
         return true;
@@ -316,7 +316,7 @@ void Polytempo_Composition::writeJSONtoFile(File file)
         scoreObject->setProperty(String(i++),seq->getObject());
     }
     
-    String jsonString = JSON::toString(json,false,4);
+    String jsonString = JSON::toString(json,false);
 
     FileOutputStream stream(file);
     stream.writeString(jsonString);
@@ -347,6 +347,7 @@ bool Polytempo_Composition::readJSONfromFile(File file)
     {
         Polytempo_Sequence *sequence = new Polytempo_Sequence();
         sequence->setObject(jsonObject = jsonSequences.getValueAt(i).getDynamicObject());
+        sequence->setIndex(i);
         sequences.add(sequence);
     }
     
@@ -570,7 +571,10 @@ void Polytempo_Composition::exportAsPolytempoScore()
                     if(event->hasProperty("~sequence") && (int)event->getProperty("~sequence") == i)
                     {
                         tempEvent = new Polytempo_Event(*event);
-                        tempEvent->removeProperty(eventPropertyString_Value);
+
+                        if(tempEvent->getType() == eventType_Beat)
+                            tempEvent->removeProperty(eventPropertyString_Value);
+
                         tempEvent->removeProperty("~sequence");
                         
                         tempScore->addEvent(tempEvent);

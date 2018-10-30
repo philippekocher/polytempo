@@ -34,7 +34,7 @@ Polytempo_TimeMapComponent::Polytempo_TimeMapComponent()
     coordinateSystem->setSynchronizedViewport(&positionRuler,1);
     
     timeMapCoordinateSystem = new Polytempo_TimeMapCoordinateSystem(coordinateSystem);
-    timeMapCoordinateSystem->setBounds(Rectangle<int> (2800, 2800));
+    timeMapCoordinateSystem->setBounds(Rectangle<int> (3800, 3800));
     coordinateSystem->setViewedComponent(timeMapCoordinateSystem, false);
     
     addAndMakeVisible(timeRuler);

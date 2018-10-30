@@ -35,14 +35,14 @@ void Polytempo_EventDispatcher::setBroadcastSender(Polytempo_OSCSender *sender)
 
 void Polytempo_EventDispatcher::broadcastEvent(Polytempo_Event *event)
 {
-	// set sync time
-	event->setSyncTime(int32(Polytempo_TimeProvider::getInstance()->getDelaySafeTimestamp()));
-
 	// network broadcast
 	if (Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("broadcastSchedulerCommands") &&
 		oscSender != nullptr)
 	{
-		oscSender->broadcastEventAsMessage(event);
+        // set sync time
+        event->setSyncTime(int32(Polytempo_TimeProvider::getInstance()->getDelaySafeTimestamp()));
+
+        oscSender->broadcastEventAsMessage(event);
 	}
 
 	// direct connection

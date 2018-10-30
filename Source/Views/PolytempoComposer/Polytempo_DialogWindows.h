@@ -26,6 +26,7 @@
 #define __Polytempo_DialogWindows__
 
 #include "../../Application/PolytempoComposer/Polytempo_ComposerApplication.h"
+#include "../../Misc/Polytempo_TempoMeasurement.h"
 
 namespace Polytempo_DialogWindows
 {
@@ -162,12 +163,12 @@ namespace Polytempo_DialogWindows
             
             contentComponent->addAndMakeVisible(tempoInTextbox = new Polytempo_Textbox("Tempo In"));
             tempoInTextbox->setBounds(220,25,50,18);
-            tempoInTextbox->setText("0.25", dontSendNotification);
+            tempoInTextbox->setText(String(Polytempo_TempoMeasurement::decodeTempoForUI(0.25)), dontSendNotification);
             tempoInTextbox->addListener(this);
 
             contentComponent->addAndMakeVisible(tempoOutTextbox = new Polytempo_Textbox("Tempo Out"));
             tempoOutTextbox->setBounds(290,25,50,18);
-            tempoOutTextbox->setText("0.25", dontSendNotification);
+            tempoOutTextbox->setText(String(Polytempo_TempoMeasurement::decodeTempoForUI(0.25)), dontSendNotification);
             tempoOutTextbox->addListener(this);
         }
         
@@ -189,10 +190,10 @@ namespace Polytempo_DialogWindows
         {
             Polytempo_Sequence* sequence = Polytempo_Composition::getInstance()->getSelectedSequence();
             
-            sequence->addControlPoint(timeTextbox->getText().getIntValue(),
+            sequence->addControlPoint(timeTextbox->getText().getFloatValue(),
                                       Rational(positionTextbox->getText()),
-                                      tempoInTextbox->getText().getFloatValue(),
-                                      tempoOutTextbox->getText().getFloatValue());
+                                      Polytempo_TempoMeasurement::encodeTempoFromUI((tempoInTextbox->getText().getFloatValue())),
+                                      Polytempo_TempoMeasurement::encodeTempoFromUI(tempoOutTextbox->getText().getFloatValue()));
             
             Polytempo_Composition::getInstance()->updateContent(); // repaint everything
         }

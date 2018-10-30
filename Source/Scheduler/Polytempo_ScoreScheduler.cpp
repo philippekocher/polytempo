@@ -146,7 +146,7 @@ void Polytempo_ScoreScheduler::skipToEvent(Polytempo_EventType type, bool backwa
 
 bool Polytempo_ScoreScheduler::gotoMarker(Polytempo_Event *event, bool storeLocator)
 {
-    return gotoMarker(event->getProperty("value"), storeLocator);
+    return gotoMarker(event->getProperty(eventPropertyString_Value), storeLocator);
 }
 
 bool Polytempo_ScoreScheduler::gotoMarker(String marker, bool storeLocator)
@@ -173,7 +173,7 @@ bool Polytempo_ScoreScheduler::gotoMarker(String marker, bool storeLocator)
 
 void Polytempo_ScoreScheduler::gotoTime(Polytempo_Event *event)
 {
-    gotoTime(int((float)event->getProperty("value") * 1000.0f));
+    gotoTime(int((float)event->getProperty(eventPropertyString_Value) * 1000.0f));
 }
 
 void Polytempo_ScoreScheduler::gotoTime(int time)
@@ -196,7 +196,7 @@ void Polytempo_ScoreScheduler::storeLocator(int loc)
 
 void Polytempo_ScoreScheduler::setTempoFactor(Polytempo_Event *event)
 {
-    engine->setTempoFactor(event->getProperty("value"));
+    engine->setTempoFactor(event->getProperty(eventPropertyString_Value));
 }
 
 void Polytempo_ScoreScheduler::executeInit()

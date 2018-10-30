@@ -155,7 +155,7 @@ Array<Polytempo_Event *> Polytempo_BeatPattern::getEvents(Rational pos)
         event = new Polytempo_Event(eventType_Marker);
         event->setOwned(true);
         event->setPosition(pos);
-        event->setProperty("value", marker);
+        event->setProperty(eventPropertyString_Value, marker);
         
         beatEvents.add(event);
     }
@@ -168,7 +168,7 @@ Array<Polytempo_Event *> Polytempo_BeatPattern::getEvents(Rational pos)
             event = new Polytempo_Event(eventType_Beat);
             event->setOwned(true);
             event->setPosition(pos);
-            event->setProperty("value", pattern[j]->toFloat());
+            event->setProperty(eventPropertyString_Value, pattern[j]->toFloat());
             
             if(pattern.size() == 1)
                 event->setProperty(eventPropertyString_Pattern, 11);
@@ -188,9 +188,9 @@ Array<Polytempo_Event *> Polytempo_BeatPattern::getEvents(Rational pos)
                 event->setOwned(true);
                 event->setPosition(pos);
                 if(i == 0 && counterString != "+")
-                    event->setProperty("value", counterString);
+                    event->setProperty(eventPropertyString_Value, counterString);
                 else
-                    event->setProperty("value",currentCounter);
+                    event->setProperty(eventPropertyString_Value,currentCounter);
 
                 beatEvents.add(event);
                 
