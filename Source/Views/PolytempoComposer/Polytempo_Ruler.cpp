@@ -154,7 +154,7 @@ Polytempo_PositionRuler::Polytempo_PositionRuler()
 {
     setScrollBarsShown(false, false, true, true);
     setViewedComponent(&rulerComponent, false);
-    rulerComponent.setBounds(Rectangle<int>(65, 2800));
+    rulerComponent.setBounds(Rectangle<int>(65, 3800));
     //setViewPositionProportionately (0.0, 1.0);
 }
 
@@ -218,7 +218,7 @@ void Polytempo_PositionRulerComponent::paint(Graphics& g)
                 labelPos = pos;
                 labelOffset = 0;
             }
-            label = event->getProperty("value");
+            label = event->getProperty(eventPropertyString_Value);
             g.drawFittedText(label, 18+labelOffset, getHeight() - TIMEMAP_OFFSET - 6 - int(pos * zoomY), 10, 10, Justification::left, 1, 0.1f);
             
             labelOffset += 12;

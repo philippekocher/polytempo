@@ -31,7 +31,7 @@ Polytempo_DefaultPreferences::Polytempo_DefaultPreferences()
     setValue("zoomX", 50);
     setValue("timeMapZoomY", 20);
     setValue("tempoMapZoomY", 20);
-    setValue("mainWindowContent", "400 0 0");
+    setValue("mainWindowContent", "0.5 1 3");
     setValue("tempoMeasurement", "1/1 1");
     setValue("defaultBeatPattern", "4/4 1");
 
