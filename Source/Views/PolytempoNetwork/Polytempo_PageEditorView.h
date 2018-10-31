@@ -148,12 +148,18 @@ public:
     void refresh();
     void update();
     
-    void paint(Graphics&);
-    void resized();
+    void paint(Graphics&) override;
+    void resized() override;
     
     // actions
-    void mouseDown(const MouseEvent &);
+#ifdef JUCE_ANDROID
+	void mouseDoubleClick(const MouseEvent &) override;
+#else
+	void mouseDown(const MouseEvent &) override; 
+#endif
+
     void deleteSelected();
+	void performDeleteSelected();
     void loadImage();
     void addSection();
     void addInstance();
@@ -163,22 +169,23 @@ public:
     bool hasSelectedSection();
 
     // Label Listener
-    void editorShown(Label* label, TextEditor&);
-    void labelTextChanged(Label* labelThatHasChanged);
+    void editorShown(Label* label, TextEditor&) override;
+    void labelTextChanged(Label* labelThatHasChanged) override;
     
     // Change Listener
     void changeListenerCallback(ChangeBroadcaster*);
     
     // Button Listener
-    void buttonClicked(Button*);
+    void buttonClicked(Button*) override;
     
     // Event Observer
-    void eventNotification(Polytempo_Event *event);
+    void eventNotification(Polytempo_Event *event) override;
     
 private:
     int findNewID(String eventPropertyString, Array < Polytempo_Event* > events);
-    
-    
+    void loadImage(File file);
+    void showMenu();
+
     TreeView *tree;
     ScopedPointer < TreeItem > rootItem;
     TreeItem *selectedItem;
@@ -210,6 +217,8 @@ private:
     
     Label *sectionInstancesLabel;
     Polytempo_SectionInstancesViewport* sectionInstancesViewport;
+    
+    ScopedPointer<FileChooser> fc;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_PageEditorView)
 };

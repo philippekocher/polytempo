@@ -44,16 +44,35 @@ void Polytempo_GraphicsAnnotationSet::getAnnotationsForImage(String imageId, Own
 
 void Polytempo_GraphicsAnnotationSet::addAnnotation(Polytempo_GraphicsAnnotation annotation)
 {
+	// remove duplicates
+	for (int i = annotations.size()-1; i >= 0; i--)
+	{
+		if (annotations[i]->id == annotation.id)
+			annotations.remove(i);
+	}
 	annotations.add(new Polytempo_GraphicsAnnotation(annotation));
 }
 
-bool Polytempo_GraphicsAnnotationSet::removeAnnotation(Uuid id, Polytempo_GraphicsAnnotation* pAnnotation)
+bool Polytempo_GraphicsAnnotationSet::getAnnotation(Uuid id, Polytempo_GraphicsAnnotation* pAnnotation) const
 {
 	for(int i = 0; i < annotations.size(); i++)
 	{
 		if(annotations[i]->id == id)
 		{
 			*pAnnotation = *(annotations[i]);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool Polytempo_GraphicsAnnotationSet::removeAnnotation(Uuid id)
+{
+	for (int i = 0; i < annotations.size(); i++)
+	{
+		if (annotations[i]->id == id)
+		{
 			annotations.remove(i);
 			return true;
 		}

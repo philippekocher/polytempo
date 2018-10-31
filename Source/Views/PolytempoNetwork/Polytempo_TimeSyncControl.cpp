@@ -16,6 +16,7 @@ Polytempo_TimeSyncControl::Polytempo_TimeSyncControl()
 {
     addAndMakeVisible(syncMasterToggle = new ToggleButton("Sync Master"));
 	syncMasterToggle->addListener(this);
+    syncMasterToggle->setWantsKeyboardFocus(false);
 
 	addAndMakeVisible(infoField = new Label());
     infoField->setMinimumHorizontalScale(0.1f);

@@ -115,11 +115,14 @@ void Polytempo_NetworkEngine::setScoreTime(int time)
 
     Array <class Polytempo_Event*> events; // the events to execute immediately
     score->setTime(time, &events, &waitBeforeStart);
-    Polytempo_EventScheduler::getInstance()->scheduleEvent(Polytempo_Event::makeEvent(eventType_ClearAll));
+    
+    Polytempo_EventScheduler *scheduler = Polytempo_EventScheduler::getInstance();
+    
+    scheduler->executeEvent(Polytempo_Event::makeEvent(eventType_ClearAll));
     
     for(int i=0;i<events.size();i++)
     {
-        Polytempo_EventScheduler::getInstance()->scheduleScoreEvent(events[i]);
+        scheduler->executeEvent(events[i]);
     }
     
     lastDownbeat = time;

@@ -87,6 +87,13 @@ void Polytempo_EventScheduler::scheduleEvent(Polytempo_Event *event)
    // DBG("scheduled events: "<<scheduledEvents.size());
 }
 
+void Polytempo_EventScheduler::executeEvent(Polytempo_Event *event)
+{
+    // execute the event immediately
+    notify(event);
+}
+
+
 // ----------------------------------------------------
 #pragma mark -
 #pragma mark thread

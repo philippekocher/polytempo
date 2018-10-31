@@ -34,10 +34,9 @@
 )
 
 Polytempo_AboutWindow::Polytempo_AboutWindow()
-: DialogWindow ("About", Colour::greyLevel (0.99f), true)
 {
     Rectangle<int> rect(0, 0, 750, 200);
-    
+
     String text1, text2, text3, text4;
     
     text1 << JUCEApplication::getInstance()->getApplicationName() << newLine;
@@ -81,7 +80,7 @@ Polytempo_AboutWindow::Polytempo_AboutWindow()
     iconComponent->setBounds(rect.getWidth() - rect.getHeight() + 15, 10, rect.getHeight() - 20, rect.getHeight() - 20);
     iconComponent->setImage(icon);
 
-    Component *aboutComponent = new Component();
+    aboutComponent = new Component();
     aboutComponent->setBounds(rect);
     aboutComponent->addAndMakeVisible(iconComponent);
     aboutComponent->addAndMakeVisible(label1);
@@ -90,10 +89,9 @@ Polytempo_AboutWindow::Polytempo_AboutWindow()
     aboutComponent->addAndMakeVisible(link2);
     aboutComponent->addAndMakeVisible(label3);
     aboutComponent->addAndMakeVisible(label4);
-    
-    setContentOwned(aboutComponent, false);
-    
-    setUsingNativeTitleBar(true);
+
+    addAndMakeVisible(aboutComponent);
+
     setBounds(rect);
     centreWithSize(rect.getWidth(), rect.getHeight());
 }
@@ -108,8 +106,21 @@ Polytempo_AboutWindow::~Polytempo_AboutWindow()
 
 void Polytempo_AboutWindow::show()
 {
-    Polytempo_AboutWindow window;
-    window.runModalLoop();
+    Polytempo_AboutWindow *p = new Polytempo_AboutWindow();
+    p->setSize(750, 200);
+
+    DialogWindow::LaunchOptions options;
+    options.content.setOwned(p);
+    options.dialogTitle = "About";
+    options.dialogBackgroundColour = Colour::greyLevel (0.99f);
+    options.escapeKeyTriggersCloseButton = true;
+    options.resizable = false;
+#ifdef JUCE_ANDROID
+    options.useNativeTitleBar = false;
+#else
+    options.useNativeTitleBar = true;
+#endif
+    options.launchAsync();
 }
 
 void Polytempo_AboutWindow::closeButtonPressed()

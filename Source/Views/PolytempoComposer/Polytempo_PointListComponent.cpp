@@ -149,8 +149,8 @@ Component* Polytempo_PointListComponent::refreshComponentForCell(int rowNumber, 
     if (textLabel == nullptr)
         textLabel = new EditableTextCustomComponent(this);
     
-    // first and last point: position unchangeable
-    if((rowNumber == 0 || rowNumber == getNumRows()-1)  && columnId == 2)
+    // first point: position unchangeable
+    if(rowNumber == 0  && columnId == 2)
     {
         textLabel->setEditable(false);
         textLabel->setFont(Font(13, Font::italic));

@@ -77,7 +77,7 @@ Polytempo_Event* Polytempo_Event::makeEvent(Polytempo_EventType type, var value)
 {
     Polytempo_Event *event = new Polytempo_Event();
     event->type = type;
-    event->setProperty("value", value);
+    event->setProperty(eventPropertyString_Value, value);
     return event;
 }
 

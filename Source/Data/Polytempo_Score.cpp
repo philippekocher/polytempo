@@ -46,8 +46,8 @@ public:
             Polytempo_EventType type1 = e1->getType();
             Polytempo_EventType type2 = e2->getType();
             
-            if(type1 == eventType_Beat && type2 != eventType_Beat) result = -1;
-            if(type1 != eventType_Beat && type2 == eventType_Beat) result = 1;
+            if(type1 == eventType_Beat && type2 != eventType_Beat) result = 1;
+            if(type1 != eventType_Beat && type2 == eventType_Beat) result = -1;
         }
         
         return result;
@@ -237,25 +237,35 @@ bool Polytempo_Score::setTime(int time, Array<Polytempo_Event*> *events, float *
         }
     }
     
+    // events to be executed immediately to update the internal state
     
-    // is there a more elegant solution...?
+    Polytempo_Event *marker;               // the last marker is enough;
+    HashMap<var, Polytempo_Event*> images; // one image per region is enough;
+    
     for(i=0;i<sections[currentSectionIndex]->events.size();i++)
     {
         event = sections[currentSectionIndex]->events[i];
         if(event->getTime() > time + *waitBeforStart)
             break;
-        if(event->getType() != eventType_Beat &&
-           event->getType() != eventType_Osc)
-        {
+        
+        if(event->getType() == eventType_Beat ||
+           event->getType() == eventType_Osc)   continue;
+        
+        else if(event->getType() == eventType_Marker)
+            marker = event;
+        
+        else if(event->getType() == eventType_Image)
+            images.set(event->getProperty(eventPropertyString_RegionID), event);
+        
+        else
             events->add(event);
-        }
-        // necessary??
-        //        if(event->getType() == eventType_Osc && event->getTime() == time)
-        //        {
-        //            // TODO: events to be executed upon start
-        //            DBG("event..."<< event->getType());
-        //        }
+
     }
+    // add the necessary images and the last marker
+    events->add(marker);
+    for(Polytempo_Event *image : images)
+        events->add(image);
+    
     return true;
 }
 
@@ -317,7 +327,7 @@ bool Polytempo_Score::getTimeForMarker(String marker, int *time)
     for(int i=0;i<sections[currentSectionIndex]->events.size();i++)
     {
         Polytempo_Event *event = sections[currentSectionIndex]->events[i];
-        if(event->getType() == eventType_Marker && event->getProperty("value").toString() == marker)
+        if(event->getType() == eventType_Marker && event->getProperty(eventPropertyString_Value).toString() == marker)
         {
             *time = event->getTime();
             return true;
@@ -334,7 +344,7 @@ bool Polytempo_Score::getMarkerForTime(int time, String* marker)
         Polytempo_Event *event = sections[currentSectionIndex]->events[i];
         if(event->getType() == eventType_Marker && event->getTime() == time)
         {
-            *marker = event->getProperty("value").toString();
+            *marker = event->getProperty(eventPropertyString_Value).toString();
             return true;
         }
     }
@@ -456,17 +466,6 @@ void Polytempo_Score::parseJSON(File& JSONFile, Polytempo_Score** score)
 
 void Polytempo_Score::writeToFile(File& file)
 {
-    //    DynamicObject* obj = new DynamicObject();
-    //    obj->setProperty("foo","bar");
-    //    obj->setProperty("num",123);
-    //    DynamicObject* nestedObj = new DynamicObject();
-    //    nestedObj->setProperty("inner","value");
-    //    obj->setProperty("nested",nestedObj);
-    //    var json (obj); // store the outer object in a var [we could have done this earlier]
-    //    String s = JSON::toString(json);
-    //    DBG(s);
-    
-    
     DynamicObject* jsonSections = new DynamicObject();
     
     for(int i=-1;i<sections.size();i++)
@@ -488,7 +487,8 @@ void Polytempo_Score::writeToFile(File& file)
             for(int k=0;k<properties->size();k++)
             {
                 Identifier key = properties->getName(k);
-                if(key.toString()[0] != '~')
+                if(key.toString()[0] != '~' &&
+                   key.toString() != eventPropertyString_TimeTag)
                     jsonEventProperties->setProperty(key, properties->getValueAt(k));
             }
             

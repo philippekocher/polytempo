@@ -154,6 +154,20 @@ public:
         if(button == chooseDefaultFile)
         {
             File directory (Polytempo_StoredPreferences::getInstance()->getProps().getValue("scoreFileDirectory"));
+
+#ifdef JUCE_ANDROID
+            fc.reset(new FileChooser("Open Score File", directory, "*.json;*.ptsco", true));
+            fc->launchAsync(FileBrowserComponent::openMode | FileBrowserComponent::canSelectFiles,
+                            [this](const FileChooser& chooser)
+                            {
+                                File result = chooser.getResult();
+                                Polytempo_StoredPreferences::getInstance()->getProps().setValue ("defaultFilePath", result.getFullPathName());
+                                defaultFilePath->setText(result.getFullPathName());
+
+                                Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
+                                app->openScoreFile(result);
+                            });
+#else
             FileChooser fileChooser ("Open Score File", directory, "*.json;*.ptsco");
             
             if(fileChooser.browseForFileToOpen())
@@ -164,6 +178,7 @@ public:
                 Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
                 app->openScoreFile(fileChooser.getResult());
             }
+#endif
         }
         else if(button == fullScreenToggle)
         {
@@ -178,6 +193,9 @@ public:
     void buttonStateChanged(Button&)
     {}
 
+#ifdef JUCE_ANDROID
+    ScopedPointer<FileChooser> fc;
+#endif
 };
 
 //------------------------------------------------------------------------------
@@ -1111,11 +1129,14 @@ void Polytempo_NetworkPreferencesPanel::show()
     options.content.setOwned(p);
     options.dialogTitle                   = "Polytempo Network Preferences";
     options.dialogBackgroundColour        = Colours::white;
-    //options.componentToCentreAround       = ;
     options.escapeKeyTriggersCloseButton  = true;
-    options.useNativeTitleBar             = true;
     options.resizable                     = false;
-    
+#ifdef JUCE_ANDROID
+    options.useNativeTitleBar             = false;
+#else
+    options.useNativeTitleBar             = true;
+#endif
+
     options.launchAsync();
 }
 

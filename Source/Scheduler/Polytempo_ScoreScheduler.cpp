@@ -73,9 +73,10 @@ void Polytempo_ScoreScheduler::eventNotification(Polytempo_Event *event)
 
 void Polytempo_ScoreScheduler::startStop()
 {
-    if(!engine->isRunning())        start();
-    else if(engine->isPausing())    start();
-    else                            stop();
+    if(isRunning())
+        Polytempo_EventDispatcher::getInstance()->broadcastEvent(Polytempo_Event::makeEvent(eventType_Stop));
+    else
+        Polytempo_EventDispatcher::getInstance()->broadcastEvent(Polytempo_Event::makeEvent(eventType_Start));
 }
 
 void Polytempo_ScoreScheduler::start()
@@ -146,7 +147,7 @@ void Polytempo_ScoreScheduler::skipToEvent(Polytempo_EventType type, bool backwa
 
 bool Polytempo_ScoreScheduler::gotoMarker(Polytempo_Event *event, bool storeLocator)
 {
-    return gotoMarker(event->getProperty("value"), storeLocator);
+    return gotoMarker(event->getProperty(eventPropertyString_Value), storeLocator);
 }
 
 bool Polytempo_ScoreScheduler::gotoMarker(String marker, bool storeLocator)
@@ -173,7 +174,7 @@ bool Polytempo_ScoreScheduler::gotoMarker(String marker, bool storeLocator)
 
 void Polytempo_ScoreScheduler::gotoTime(Polytempo_Event *event)
 {
-    gotoTime(int((float)event->getProperty("value") * 1000.0f));
+    gotoTime(int((float)event->getProperty(eventPropertyString_Value) * 1000.0f));
 }
 
 void Polytempo_ScoreScheduler::gotoTime(int time)
@@ -186,7 +187,7 @@ void Polytempo_ScoreScheduler::gotoTime(int time)
     // update locator in all components
     Polytempo_Event *schedulerTick = Polytempo_Event::makeEvent(eventType_Tick);
     schedulerTick->setValue(time * 0.001f);
-    Polytempo_EventScheduler::getInstance()->scheduleEvent(schedulerTick);
+    Polytempo_EventScheduler::getInstance()->executeEvent(schedulerTick);
 }
 
 void Polytempo_ScoreScheduler::storeLocator(int loc)
@@ -196,7 +197,7 @@ void Polytempo_ScoreScheduler::storeLocator(int loc)
 
 void Polytempo_ScoreScheduler::setTempoFactor(Polytempo_Event *event)
 {
-    engine->setTempoFactor(event->getProperty("value"));
+    engine->setTempoFactor(event->getProperty(eventPropertyString_Value));
 }
 
 void Polytempo_ScoreScheduler::executeInit()

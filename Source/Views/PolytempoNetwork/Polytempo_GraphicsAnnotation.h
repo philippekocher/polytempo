@@ -14,6 +14,8 @@
 
 #define STANDARD_FONT_SIZE 40.0f
 
+class Polytempo_GraphicsViewRegion;
+
 class Polytempo_GraphicsAnnotation
 {
 public:
@@ -25,8 +27,9 @@ public:
 		  referencePoint(reference_point),
 		  color(color),
 		  freeHandPath(free_hand_path),
-		  text(text), 
-	      fontSize(fontSize)
+		  text(text),
+		  fontSize(fontSize), 
+		  pRegion(nullptr)
 	{
 	}
 
@@ -41,6 +44,7 @@ public:
 	Path freeHandPath;
 	String text;
 	float fontSize;
+	Polytempo_GraphicsViewRegion* pRegion;	// temporary usage
 
 private:
 

@@ -37,7 +37,8 @@ public:
 
 	void getAnnotationsForImage(String imageId, OwnedArray<Polytempo_GraphicsAnnotation>* pAnnotations);
 	void addAnnotation(Polytempo_GraphicsAnnotation annotation);
-	bool removeAnnotation(Uuid id, Polytempo_GraphicsAnnotation* pAnnotation);
+	bool getAnnotation(Uuid id, Polytempo_GraphicsAnnotation* pAnnotation) const;
+	bool removeAnnotation(Uuid id);
 
 	bool SaveToFile();
 	String getScoreName() const;
