@@ -43,6 +43,7 @@ public:
     void deletePendingEvents();
 
     void scheduleEvent(Polytempo_Event *event);
+    void executeEvent(Polytempo_Event *event);
 
     /* thread
      --------------------------------------- */

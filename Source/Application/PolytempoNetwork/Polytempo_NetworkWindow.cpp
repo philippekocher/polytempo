@@ -93,11 +93,19 @@ void Polytempo_NetworkWindow::setContentID(contentID newContentID) {
         Polytempo_NetworkApplication *const app = dynamic_cast<Polytempo_NetworkApplication *>(JUCEApplication::getInstance());
 
         contentIdToBeSet = newContentID;
-        if (newContentID == pageEditorViewID && !app->scoreFileExists()) {
-            Polytempo_OkCancelAlert::show("Save?", 
-                    "You must first save the document before using the Page Editor",
-                    ModalCallbackFunction::create(saveOkCancelCallback, this));
-        } else
+        if (newContentID == pageEditorViewID && !app->scoreFileExists())
+        {
+            Polytempo_OkCancelAlert::show("Save?",
+                                          "You must first save the document before you can access the Page Editor",
+                                          ModalCallbackFunction::create(saveOkCancelCallback, this));
+        }
+        else if (newContentID == regionEditorViewID && !app->scoreFileExists())
+        {
+                Polytempo_OkCancelAlert::show("Save?",
+                                              "You must first save the document before you can access the Region Editor",
+                                              ModalCallbackFunction::create(saveOkCancelCallback, this));
+        }
+        else
             performSetContentID();
     }
 }

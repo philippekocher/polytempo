@@ -148,8 +148,8 @@ public:
     void refresh();
     void update();
     
-    void paint(Graphics&);
-    void resized();
+    void paint(Graphics&) override;
+    void resized() override;
     
     // actions
 #ifdef JUCE_ANDROID
@@ -169,17 +169,17 @@ public:
     bool hasSelectedSection();
 
     // Label Listener
-    void editorShown(Label* label, TextEditor&);
-    void labelTextChanged(Label* labelThatHasChanged);
+    void editorShown(Label* label, TextEditor&) override;
+    void labelTextChanged(Label* labelThatHasChanged) override;
     
     // Change Listener
     void changeListenerCallback(ChangeBroadcaster*);
     
     // Button Listener
-    void buttonClicked(Button*);
+    void buttonClicked(Button*) override;
     
     // Event Observer
-    void eventNotification(Polytempo_Event *event);
+    void eventNotification(Polytempo_Event *event) override;
     
 private:
     int findNewID(String eventPropertyString, Array < Polytempo_Event* > events);

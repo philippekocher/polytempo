@@ -73,9 +73,10 @@ void Polytempo_ScoreScheduler::eventNotification(Polytempo_Event *event)
 
 void Polytempo_ScoreScheduler::startStop()
 {
-    if(!engine->isRunning())        start();
-    else if(engine->isPausing())    start();
-    else                            stop();
+    if(isRunning())
+        Polytempo_EventDispatcher::getInstance()->broadcastEvent(Polytempo_Event::makeEvent(eventType_Stop));
+    else
+        Polytempo_EventDispatcher::getInstance()->broadcastEvent(Polytempo_Event::makeEvent(eventType_Start));
 }
 
 void Polytempo_ScoreScheduler::start()
@@ -186,7 +187,7 @@ void Polytempo_ScoreScheduler::gotoTime(int time)
     // update locator in all components
     Polytempo_Event *schedulerTick = Polytempo_Event::makeEvent(eventType_Tick);
     schedulerTick->setValue(time * 0.001f);
-    Polytempo_EventScheduler::getInstance()->scheduleEvent(schedulerTick);
+    Polytempo_EventScheduler::getInstance()->executeEvent(schedulerTick);
 }
 
 void Polytempo_ScoreScheduler::storeLocator(int loc)
