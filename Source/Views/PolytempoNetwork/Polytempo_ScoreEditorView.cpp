@@ -9,17 +9,38 @@
 */
 
 #include "Polytempo_ScoreEditorView.h"
+#include "../../Application/PolytempoNetwork/Polytempo_NetworkApplication.h"
 
 
 Polytempo_ScoreEditorView::Polytempo_ScoreEditorView()
-{}
+{
+    setOpaque(true);
+    
+    // Create the editor..
+    editor.reset(new CodeEditorComponent(codeDocument, nullptr));
+    addAndMakeVisible(editor.get());
+}
 
 Polytempo_ScoreEditorView::~Polytempo_ScoreEditorView()
 {
-    deleteAllChildren();
+    editor = nullptr;
 }
 
 void Polytempo_ScoreEditorView::paint(Graphics& g)
+{}
+
+void Polytempo_ScoreEditorView::resized()
 {
-    g.fillAll(Colours::white);
+    editor->setBounds(getLocalBounds());
+}
+
+void Polytempo_ScoreEditorView::refresh()
+{
+    
+    Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
+    score = app->getScore();
+    
+    if(score == nullptr) return;
+    
+    editor->loadContent(score->getJsonString());
 }

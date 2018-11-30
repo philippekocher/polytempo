@@ -67,6 +67,8 @@ public:
     OwnedArray < Polytempo_Event >* getEvents();
     Array < Polytempo_Event* > getEvents(Polytempo_EventType);
 
+    String getJsonString();
+    
     static void parse(File& file, Polytempo_Score** score);
     
     void writeToFile(File&);

@@ -394,6 +394,66 @@ Array<Polytempo_Event*> Polytempo_Score::getEvents(Polytempo_EventType type)
     return result;
 }
 
+String Polytempo_Score::getJsonString()
+{
+    DynamicObject* jsonSections = new DynamicObject();
+    
+    for(int i=-1;i<sections.size();i++)
+    {
+        var jsonSection;
+        Polytempo_Score_Section *section;
+        
+        if(i == -1) section = initSection;
+        else        section = sections[i];
+        
+        for(int j=0;j<section->events.size();j++)
+        {
+            DynamicObject* jsonEvent = new DynamicObject();
+            DynamicObject* jsonEventProperties = new DynamicObject();
+            
+            Polytempo_Event* event = section->events[j];
+            NamedValueSet* properties = event->getProperties();
+            
+            for(int k=0;k<properties->size();k++)
+            {
+                Identifier key = properties->getName(k);
+                if(key.toString()[0] != '~' &&
+                   key.toString() != eventPropertyString_TimeTag)
+                    jsonEventProperties->setProperty(key, properties->getValueAt(k));
+            }
+            
+            jsonEvent->setProperty(event->getTypeString(), jsonEventProperties);
+            
+            jsonSection.append(jsonEvent);
+        }
+        
+        if(i == -1) jsonSections->setProperty("init", jsonSection);
+        else jsonSections->setProperty(sectionMap->getReference(i), jsonSection);
+    }
+    var json(jsonSections); // store the outer object in a var
+    
+    
+    String jsonString = JSON::toString(json,true);
+    
+    /* a semiprofessional formatter:
+     not as tight as the "all on one line" option
+     not as lose as the standard layout
+     */
+    
+    jsonString = jsonString.replaceSection(0,1,"{\n");    // beginning of file
+    
+    jsonString = jsonString.replace("[{","[\n\t{");       // new section
+    jsonString = jsonString.replace("}], ","}\n\t],\r");  // between sections
+    
+    jsonString = jsonString.replace("}, ","},\n\t");      // indent events
+    
+    jsonString = jsonString.replace("}]}","}\n\t]\n}");   // end of file
+    
+    
+
+    return jsonString;
+}
+
 void Polytempo_Score::parse(File& file, Polytempo_Score **scoreFile)
 {
     if(file.getFileExtension() == ".json" || file.getFileExtension() == ".ptsco") Polytempo_Score::parseJSON(file, scoreFile);
@@ -466,64 +526,8 @@ void Polytempo_Score::parseJSON(File& JSONFile, Polytempo_Score** score)
 
 void Polytempo_Score::writeToFile(File& file)
 {
-    DynamicObject* jsonSections = new DynamicObject();
-    
-    for(int i=-1;i<sections.size();i++)
-    {
-        var jsonSection;
-        Polytempo_Score_Section *section;
-        
-        if(i == -1) section = initSection;
-        else        section = sections[i];
-        
-        for(int j=0;j<section->events.size();j++)
-        {
-            DynamicObject* jsonEvent = new DynamicObject();
-            DynamicObject* jsonEventProperties = new DynamicObject();
-            
-            Polytempo_Event* event = section->events[j];
-            NamedValueSet* properties = event->getProperties();
-            
-            for(int k=0;k<properties->size();k++)
-            {
-                Identifier key = properties->getName(k);
-                if(key.toString()[0] != '~' &&
-                   key.toString() != eventPropertyString_TimeTag)
-                    jsonEventProperties->setProperty(key, properties->getValueAt(k));
-            }
-            
-            jsonEvent->setProperty(event->getTypeString(), jsonEventProperties);
-            
-            jsonSection.append(jsonEvent);
-        }
-        
-        if(i == -1) jsonSections->setProperty("init", jsonSection);
-        else jsonSections->setProperty(sectionMap->getReference(i), jsonSection);
-    }
-    var json(jsonSections); // store the outer object in a var
-    
-    
-    String jsonString = JSON::toString(json,true);
-    
-    /* a semiprofessional formatter:
-     not as tight as the "all on one line" option
-     not as lose as the standard layout
-     */
-    
-    jsonString = jsonString.replaceSection(0,1,"{\n");    // beginning of file
-    
-    jsonString = jsonString.replace("[{","[\n\t{");       // new section
-    jsonString = jsonString.replace("}], ","}\n\t],\r");  // between sections
-    
-    jsonString = jsonString.replace("}, ","},\n\t");      // indent events
-    
-    jsonString = jsonString.replace("}]}","}\n\t]\n}");   // end of file
-    
-    
-    // write to file
-    
     FileOutputStream stream(file);
-    stream.writeString(jsonString);
+    stream.writeString(getJsonString());
     
     dirty = false;
 }

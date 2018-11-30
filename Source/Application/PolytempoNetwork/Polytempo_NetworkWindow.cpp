@@ -136,6 +136,7 @@ void Polytempo_NetworkWindow::performSetContentID() {
     }
     else if (currentContentID == scoreEditorViewID)
     {
+        scoreEditorView->refresh();
         setContentNonOwned(scoreEditorView, false);
     }
     else
