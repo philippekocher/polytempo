@@ -26,6 +26,7 @@
 #include "Polytempo_EventScheduler.h"
 #include "Polytempo_EventDispatcher.h"
 #include "../Network/Polytempo_OSCSender.h"
+#include "../Views/PolytempoNetwork/Polytempo_ImageManager.h"
 
 Polytempo_ScoreScheduler::Polytempo_ScoreScheduler()
 {}
@@ -203,6 +204,8 @@ void Polytempo_ScoreScheduler::setTempoFactor(Polytempo_Event *event)
 void Polytempo_ScoreScheduler::executeInit()
 {
     if(!score) return;
+    
+    Polytempo_ImageManager::getInstance()->deleteAll();
     
     OwnedArray < Polytempo_Event >* initEvents = score->getInitEvents();
     if(initEvents != nullptr)

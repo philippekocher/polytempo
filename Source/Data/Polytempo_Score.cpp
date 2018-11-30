@@ -67,8 +67,12 @@ Polytempo_Score::Polytempo_Score()
     
     sectionMap = new StringArray();
     
-    // every score must have a "init" section
+    // add "init" section
     initSection = new Polytempo_Score_Section();
+    // add "sequence" section
+    sectionMap->add("sequence");
+    sections.add(new Polytempo_Score_Section());
+    currentSectionIndex = 0;
 }
 
 Polytempo_Score::~Polytempo_Score()
@@ -121,9 +125,9 @@ void Polytempo_Score::addEvents(OwnedArray < Polytempo_Event >& events)
 {
     if(currentSectionIndex == -1)
     {
-        sectionMap->add("default");
+        sectionMap->add("sequence");
         sections.add(new Polytempo_Score_Section());
-        currentSectionIndex = sectionMap->indexOf("default");
+        currentSectionIndex = 0;
     }
     
     sections[currentSectionIndex]->events.addCopiesOf(events);
@@ -441,6 +445,9 @@ String Polytempo_Score::getJsonString()
      */
     
     jsonString = jsonString.replaceSection(0,1,"{\n");    // beginning of file
+    
+    jsonString = jsonString.replace("null, ","[],\n");    // empty section
+    jsonString = jsonString.replace("null","[]\n");       // empty section
     
     jsonString = jsonString.replace("[{","[\n\t{");       // new section
     jsonString = jsonString.replace("}], ","}\n\t],\r");  // between sections

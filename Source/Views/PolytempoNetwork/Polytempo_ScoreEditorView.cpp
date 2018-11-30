@@ -50,3 +50,15 @@ bool Polytempo_ScoreEditorView::applyChanges()
     if(!editor->getDocument().hasChangedSinceSavePoint()) return true;
     return score->setJsonString(editor->getDocument().getAllContent());
 }
+
+//------------------------------------------------------------------------------
+#pragma mark -
+#pragma mark event observer
+
+void Polytempo_ScoreEditorView::eventNotification(Polytempo_Event *event)
+{
+    if(event->getType() == eventType_DeleteAll && isVisible())
+        refresh();
+    if(event->getType() == eventType_Ready && isVisible())
+        refresh();
+}

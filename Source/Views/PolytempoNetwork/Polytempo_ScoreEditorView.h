@@ -12,8 +12,10 @@
 
 #include "JuceHeader.h"
 #include "../../Data/Polytempo_Score.h"
+#include "../../Scheduler/Polytempo_EventObserver.h"
 
-class Polytempo_ScoreEditorView : public Component
+
+class Polytempo_ScoreEditorView : public Component, public Polytempo_EventObserver
 {
 public:
     Polytempo_ScoreEditorView();
@@ -24,6 +26,8 @@ public:
     
     void refresh();
     bool applyChanges();
+    
+    void eventNotification(Polytempo_Event*) override;
     
 private:
     CodeDocument codeDocument;

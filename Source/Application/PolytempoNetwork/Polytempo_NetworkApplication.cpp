@@ -332,7 +332,6 @@ void Polytempo_NetworkApplication::openScoreFile(File aFile)
         score = newScore;
         Polytempo_ScoreScheduler::getInstance()->setScore(score);
         mainWindow->setName(scoreFile.getFileNameWithoutExtension());
-
 		
         // add to recent files
         Polytempo_StoredPreferences::getInstance()->recentFiles.addFile(scoreFile);
