@@ -112,6 +112,11 @@ void Polytempo_NetworkWindow::setContentID(contentID newContentID) {
                                           "You must first save the document before you can access the Score Editor",
                                           ModalCallbackFunction::create(saveOkCancelCallback, this));
         }
+        else if (currentContentID == scoreEditorViewID && newContentID != scoreEditorViewID)
+        {
+            if(scoreEditorView->applyChanges())
+                performSetContentID();
+        }
         else
             performSetContentID();
     }

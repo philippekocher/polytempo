@@ -454,6 +454,22 @@ String Polytempo_Score::getJsonString()
     return jsonString;
 }
 
+bool Polytempo_Score::setJsonString(String jsonString)
+{
+    var jsonVar = JSON::parse(jsonString);
+    
+    if(jsonVar == var::null)
+    {
+        Polytempo_Alert::show("Error", "JSON code is not well-formed.");
+        return false;
+    }
+    
+    parseVar(jsonVar);
+    setDirty();
+    return true;
+}
+
+
 void Polytempo_Score::parse(File& file, Polytempo_Score **scoreFile)
 {
     if(file.getFileExtension() == ".json" || file.getFileExtension() == ".ptsco") Polytempo_Score::parseJSON(file, scoreFile);
@@ -472,11 +488,17 @@ void Polytempo_Score::parseJSON(File& JSONFile, Polytempo_Score** score)
     }
     
     *score = new Polytempo_Score();
-    
+    (*score)->parseVar(jsonVar);
+}
+
+void Polytempo_Score::parseVar(var jsonVar)
+{
     NamedValueSet jsonSections = jsonVar.getDynamicObject()->getProperties();
     var jsonSection, jsonEvent;
     DynamicObject* jsonObject;
     bool addToInit;
+    
+    clear(true);
     
     for(int i=0; i < jsonSections.size(); i++)
     {
@@ -488,7 +510,7 @@ void Polytempo_Score::parseJSON(File& JSONFile, Polytempo_Score** score)
         }
         else
         {
-            (*score)->addSection(id.toString());
+            addSection(id.toString());
             addToInit = false;
         }
         
@@ -515,12 +537,12 @@ void Polytempo_Score::parseJSON(File& JSONFile, Polytempo_Score** score)
                         event->setProperty(tempProps.getName(l).toString(), tempProps.getValueAt(l));
                     }
                     
-                    (*score)->addEvent(event, addToInit);
+                    addEvent(event, addToInit);
                 }
             }
         }
         
-        if(!addToInit)  (*score)->sortSection();
+        if(!addToInit)  sortSection();
     }
 }
 

@@ -44,3 +44,9 @@ void Polytempo_ScoreEditorView::refresh()
     
     editor->loadContent(score->getJsonString());
 }
+
+bool Polytempo_ScoreEditorView::applyChanges()
+{
+    if(!editor->getDocument().hasChangedSinceSavePoint()) return true;
+    return score->setJsonString(editor->getDocument().getAllContent());
+}

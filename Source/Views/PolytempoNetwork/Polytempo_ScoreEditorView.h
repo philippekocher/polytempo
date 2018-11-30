@@ -23,6 +23,7 @@ public:
     void resized() override;
     
     void refresh();
+    bool applyChanges();
     
 private:
     CodeDocument codeDocument;
