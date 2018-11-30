@@ -139,6 +139,7 @@ PopupMenu Polytempo_MenuBarModel::getMenuForIndex(int, const String& menuName)
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::showMainView);
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::showPageEditor);
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::showRegionEditor);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::showScoreEditor);
         menu.addSeparator();
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::zoomIn);
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::zoomOut);
@@ -241,7 +242,7 @@ void Polytempo_MenuBarModel::getAllCommands(Array <CommandID>& commands)
         Polytempo_CommandIDs::showMainView,
         Polytempo_CommandIDs::showPageEditor,
         Polytempo_CommandIDs::showRegionEditor,
-        //Polytempo_CommandIDs::showScoreEditor,
+        Polytempo_CommandIDs::showScoreEditor,
         Polytempo_CommandIDs::zoomIn,
         Polytempo_CommandIDs::zoomOut,
         Polytempo_CommandIDs::startStop,
@@ -375,7 +376,13 @@ void Polytempo_MenuBarModel::getCommandInfo(CommandID commandID, ApplicationComm
             result.addDefaultKeypress('3', ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
             result.addDefaultKeypress(KeyPress::numberPad3, ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
             break;
-
+            
+        case Polytempo_CommandIDs::showScoreEditor:
+            result.setInfo("Show Score Editor", String::empty, infoCategory, 0);
+            result.addDefaultKeypress('4', ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
+            result.addDefaultKeypress(KeyPress::numberPad4, ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
+            break;
+            
         case Polytempo_CommandIDs::zoomIn:
             result.setInfo("Zoom In", String::empty, infoCategory, 0);
             result.addDefaultKeypress(KeyPress::upKey, ModifierKeys::commandModifier);
@@ -589,7 +596,11 @@ bool Polytempo_MenuBarModel::perform(const InvocationInfo& info)
         case Polytempo_CommandIDs::showRegionEditor:
             window->setContentID(Polytempo_NetworkWindow::regionEditorViewID);
             break;
-
+            
+        case Polytempo_CommandIDs::showScoreEditor:
+            window->setContentID(Polytempo_NetworkWindow::scoreEditorViewID);
+            break;
+            
         case Polytempo_CommandIDs::zoomIn:
             Polytempo_StoredPreferences::getInstance()->getProps().setValue("zoom", Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("zoom") * 1.2);
             break;

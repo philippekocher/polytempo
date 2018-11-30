@@ -43,6 +43,7 @@ Polytempo_NetworkWindow::Polytempo_NetworkWindow()
     mainView = new Polytempo_NetworkMainView();
     pageEditorView = new Polytempo_PageEditorView();
     regionEditorView = new Polytempo_RegionEditorView();
+    scoreEditorView = new Polytempo_ScoreEditorView();
 
     // sets the main content component for the window
     setContentNonOwned(mainView, false);
@@ -101,9 +102,15 @@ void Polytempo_NetworkWindow::setContentID(contentID newContentID) {
         }
         else if (newContentID == regionEditorViewID && !app->scoreFileExists())
         {
-                Polytempo_OkCancelAlert::show("Save?",
-                                              "You must first save the document before you can access the Region Editor",
-                                              ModalCallbackFunction::create(saveOkCancelCallback, this));
+            Polytempo_OkCancelAlert::show("Save?",
+                                          "You must first save the document before you can access the Region Editor",
+                                          ModalCallbackFunction::create(saveOkCancelCallback, this));
+        }
+        else if (newContentID == scoreEditorViewID && !app->scoreFileExists())
+        {
+            Polytempo_OkCancelAlert::show("Save?",
+                                          "You must first save the document before you can access the Score Editor",
+                                          ModalCallbackFunction::create(saveOkCancelCallback, this));
         }
         else
             performSetContentID();
@@ -127,6 +134,10 @@ void Polytempo_NetworkWindow::performSetContentID() {
         regionEditorView->refresh();
         setContentNonOwned(regionEditorView, false);
     }
+    else if (currentContentID == scoreEditorViewID)
+    {
+        setContentNonOwned(scoreEditorView, false);
+    }
     else
     {
         setContentNonOwned(mainView, false);
@@ -147,6 +158,7 @@ Component* Polytempo_NetworkWindow::getContentComponent()
     if(currentContentID == mainViewID) return mainView;
     if(currentContentID == pageEditorViewID)  return pageEditorView;
     if(currentContentID == regionEditorViewID)  return regionEditorView;
+    if(currentContentID == scoreEditorViewID)  return scoreEditorView;
 
     return nullptr;
 }

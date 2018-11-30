@@ -26,6 +26,7 @@
 
 #include "../../Views/PolytempoNetwork/Polytempo_PageEditorView.h"
 #include "../../Views/PolytempoNetwork/Polytempo_RegionEditorView.h"
+#include "../../Views/PolytempoNetwork/Polytempo_ScoreEditorView.h"
 #include "../../Views/PolytempoNetwork/Polytempo_NetworkMainView.h"
 
 
@@ -42,6 +43,7 @@ public:
         mainViewID = 0,
         pageEditorViewID,
         regionEditorViewID,
+        scoreEditorViewID,
     };
     
     void setContentID(contentID);
@@ -54,6 +56,7 @@ private:
     ScopedPointer <Polytempo_NetworkMainView> mainView;
     ScopedPointer <Polytempo_PageEditorView> pageEditorView;
     ScopedPointer <Polytempo_RegionEditorView> regionEditorView;
+    ScopedPointer <Polytempo_ScoreEditorView> scoreEditorView;
 
     OpenGLContext openGLContext;
     
