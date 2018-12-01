@@ -149,6 +149,7 @@ void Polytempo_NetworkWindow::performSetContentID() {
         setContentNonOwned(mainView, false);
 
         // apply all changes that should be visible in the main view
+        Polytempo_ImageManager::getInstance()->deleteAll();
         Polytempo_ScoreScheduler::getInstance()->executeInit();
         Polytempo_ScoreScheduler::getInstance()->returnToLocator();
     }

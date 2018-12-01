@@ -69,10 +69,6 @@ Polytempo_Score::Polytempo_Score()
     
     // add "init" section
     initSection = new Polytempo_Score_Section();
-    // add "sequence" section
-    sectionMap->add("sequence");
-    sections.add(new Polytempo_Score_Section());
-    currentSectionIndex = 0;
 }
 
 Polytempo_Score::~Polytempo_Score()

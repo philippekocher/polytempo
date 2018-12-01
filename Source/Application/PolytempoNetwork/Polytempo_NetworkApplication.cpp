@@ -221,6 +221,7 @@ void Polytempo_NetworkApplication::newScore()
     }
     
     score = new Polytempo_Score();
+    score->addSection("sequence");
     Polytempo_ScoreScheduler::getInstance()->setScore(score);
     
     mainWindow->setName("Untitled");
