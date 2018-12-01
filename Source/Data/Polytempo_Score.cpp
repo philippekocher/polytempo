@@ -404,7 +404,7 @@ String Polytempo_Score::getJsonString()
     
     for(int i=-1;i<sections.size();i++)
     {
-        var jsonSection;
+        var jsonSection1, jsonSection2;
         Polytempo_Score_Section *section;
         
         if(i == -1) section = initSection;
@@ -428,16 +428,25 @@ String Polytempo_Score::getJsonString()
             
             jsonEvent->setProperty(event->getTypeString(), jsonEventProperties);
             
-            jsonSection.append(jsonEvent);
+            if(jsonStringInTwoBlocks &&
+               (event->getType() == eventType_Beat || event->getType() == eventType_Marker))
+                jsonSection2.append(jsonEvent);
+            else
+                jsonSection1.append(jsonEvent);
         }
         
-        if(i == -1) jsonSections->setProperty("init", jsonSection);
-        else jsonSections->setProperty(sectionMap->getReference(i), jsonSection);
+        for(int j=0;j<jsonSection2.size();j++)
+        {
+            jsonSection1.append(jsonSection2[j]);
+        }
+        
+        if(i == -1) jsonSections->setProperty("init", jsonSection1);
+        else jsonSections->setProperty(sectionMap->getReference(i), jsonSection1);
     }
     var json(jsonSections); // store the outer object in a var
     
     
-    String jsonString = JSON::toString(json,true);
+    String jsonString = JSON::toString(json, true, 4);
     
     /* a semiprofessional formatter:
      not as tight as the "all on one line" option

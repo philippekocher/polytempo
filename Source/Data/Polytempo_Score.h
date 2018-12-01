@@ -87,6 +87,7 @@ private:
     uint32 nextEventIndex;
     
     bool dirty = false;
+    bool jsonStringInTwoBlocks = true;
 };
 
 #endif // __Polytempo_Score__
