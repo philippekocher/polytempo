@@ -10,6 +10,7 @@
 
 #include "Polytempo_ScoreEditorView.h"
 #include "../../Application/PolytempoNetwork/Polytempo_NetworkApplication.h"
+#include "../../Misc/Polytempo_Alerts.h"
 
 
 Polytempo_ScoreEditorView::Polytempo_ScoreEditorView()
@@ -45,10 +46,25 @@ void Polytempo_ScoreEditorView::refresh()
     editor->loadContent(score->getJsonString());
 }
 
+static void discardChangesCallback(int result, Polytempo_ScoreEditorView* parent)
+{
+    if(result) parent->refresh();
+}
+
 bool Polytempo_ScoreEditorView::applyChanges()
 {
     if(!editor->getDocument().hasChangedSinceSavePoint()) return true;
-    return score->setJsonString(editor->getDocument().getAllContent());
+    
+    bool result = score->setJsonString(editor->getDocument().getAllContent());
+    
+    if(!result)
+    {
+        Polytempo_OkCancelAlert::show("Error",
+                                      "JSON code is not well-formed. Do you want to discard the changes?",
+                                      ModalCallbackFunction::create(discardChangesCallback, this));
+    }
+    
+    return result;
 }
 
 //------------------------------------------------------------------------------

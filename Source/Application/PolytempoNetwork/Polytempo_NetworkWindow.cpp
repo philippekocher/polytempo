@@ -100,18 +100,6 @@ void Polytempo_NetworkWindow::setContentID(contentID newContentID) {
                                           "You must first save the document before you can access the Page Editor",
                                           ModalCallbackFunction::create(saveOkCancelCallback, this));
         }
-        else if (newContentID == regionEditorViewID && !app->scoreFileExists())
-        {
-            Polytempo_OkCancelAlert::show("Save?",
-                                          "You must first save the document before you can access the Region Editor",
-                                          ModalCallbackFunction::create(saveOkCancelCallback, this));
-        }
-        else if (newContentID == scoreEditorViewID && !app->scoreFileExists())
-        {
-            Polytempo_OkCancelAlert::show("Save?",
-                                          "You must first save the document before you can access the Score Editor",
-                                          ModalCallbackFunction::create(saveOkCancelCallback, this));
-        }
         else if (currentContentID == scoreEditorViewID && newContentID != scoreEditorViewID)
         {
             if(scoreEditorView->applyChanges())
@@ -168,4 +156,12 @@ Component* Polytempo_NetworkWindow::getContentComponent()
     if(currentContentID == scoreEditorViewID)  return scoreEditorView;
 
     return nullptr;
+}
+
+bool Polytempo_NetworkWindow::applyChanges()
+{
+    if(currentContentID == scoreEditorViewID)
+        return scoreEditorView->applyChanges();
+    else
+        return true;
 }

@@ -51,6 +51,8 @@ public:
     
     Component* getContentComponent();
 	void performSetContentID();
+    
+    bool applyChanges();
 
 private:
     ScopedPointer <Polytempo_NetworkMainView> mainView;

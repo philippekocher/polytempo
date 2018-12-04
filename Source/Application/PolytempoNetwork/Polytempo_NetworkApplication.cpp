@@ -176,6 +176,9 @@ static void unsavedChangesCallback(int modalResult, Polytempo_YesNoCancelAlert::
 
 void Polytempo_NetworkApplication::applicationShouldQuit()
 {
+    if(!mainWindow->applyChanges()) // in case there are any pending changes
+        return;
+
     if(Polytempo_ScoreScheduler::getInstance()->isRunning())
     {
         quitApplication = true;
@@ -213,7 +216,10 @@ void Polytempo_NetworkApplication::unsavedChangesAlert(Polytempo_YesNoCancelAler
 }
 
 void Polytempo_NetworkApplication::newScore()
-{
+{    
+    if(!mainWindow->applyChanges()) // in case there are any pending changes
+        return;
+    
     if(score && score->isDirty())
     {
         unsavedChangesAlert(Polytempo_YesNoCancelAlert::newDocumentTag);
@@ -266,6 +272,9 @@ void Polytempo_NetworkApplication::saveScoreFile(bool showFileDialog)
 {
     if(score == nullptr) return;
     if(scoreFile == File::nonexistent) showFileDialog = true;
+
+    if(!mainWindow->applyChanges()) // in case there are any pending changes
+        return;
 
     if(showFileDialog)
     {

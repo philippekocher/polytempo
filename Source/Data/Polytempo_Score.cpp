@@ -470,11 +470,7 @@ bool Polytempo_Score::setJsonString(String jsonString)
 {
     var jsonVar = JSON::parse(jsonString);
     
-    if(jsonVar == var::null)
-    {
-        Polytempo_Alert::show("Error", "JSON code is not well-formed.");
-        return false;
-    }
+    if(jsonVar == var::null) return false;
     
     parseVar(jsonVar);
     setDirty();
