@@ -63,6 +63,10 @@ bool Polytempo_ScoreEditorView::applyChanges()
                                       "JSON code is not well-formed. Do you want to discard the changes?",
                                       ModalCallbackFunction::create(discardChangesCallback, this));
     }
+    else
+    {
+        editor->getDocument().setSavePoint();
+    }
     
     return result;
 }

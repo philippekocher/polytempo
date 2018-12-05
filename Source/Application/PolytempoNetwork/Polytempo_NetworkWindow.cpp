@@ -112,8 +112,8 @@ void Polytempo_NetworkWindow::setContentID(contentID newContentID) {
 
 void Polytempo_NetworkWindow::performSetContentID() {
     Polytempo_NetworkApplication *const app = dynamic_cast<Polytempo_NetworkApplication *>(JUCEApplication::getInstance());
-    if (!app->scoreFileExists()) // the user has aborted the save process
-        return;
+//    if (!app->scoreFileExists()) // the user has aborted the save process
+//        return;
 
     currentContentID = contentIdToBeSet;
 

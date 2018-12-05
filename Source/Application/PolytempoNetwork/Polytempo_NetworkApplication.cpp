@@ -210,9 +210,12 @@ void Polytempo_NetworkApplication::anotherInstanceStarted (const String&)
 
 void Polytempo_NetworkApplication::unsavedChangesAlert(Polytempo_YesNoCancelAlert::callbackTag tag)
 {
-    String title;
+    String title, fileName;
+    
+    if(scoreFileExists()) fileName = scoreFile.getFileName();
+    else                  fileName = mainWindow->getName();
 
-    Polytempo_YesNoCancelAlert::show(title << "Do you want to save the changes to \"" << scoreFile.getFileName().toRawUTF8() << "\"?", "If you don't save your changes will be lost.", ModalCallbackFunction::create(unsavedChangesCallback, tag));
+    Polytempo_YesNoCancelAlert::show(title << "Do you want to save the changes to \"" << fileName << "\"?", "If you don't save your changes will be lost.", ModalCallbackFunction::create(unsavedChangesCallback, tag));
 }
 
 void Polytempo_NetworkApplication::newScore()
