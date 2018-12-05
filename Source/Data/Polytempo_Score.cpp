@@ -527,7 +527,8 @@ void Polytempo_Score::parseVar(var jsonVar)
         for(int j=0; j < jsonSection.size(); j++)
         {
             jsonObject = jsonSection[j].getDynamicObject();
-            
+            if(jsonObject == nullptr) continue;
+
             Polytempo_Event* event = new Polytempo_Event();
             
             // build event from Dynamic Object
@@ -539,6 +540,8 @@ void Polytempo_Score::parseVar(var jsonVar)
                 
                 if(event->getType() != eventType_None)
                 {
+                    if(properties.getValueAt(k).getDynamicObject() == nullptr) continue;
+                    
                     NamedValueSet tempProps = properties.getValueAt(k).getDynamicObject()->getProperties();
                     for(int l=0;l < tempProps.size(); l++)
                     {
