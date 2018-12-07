@@ -269,6 +269,9 @@ void Polytempo_NetworkApplication::saveAs(File targetFile)
     tempFile.copyFileTo(scoreFile);
     tempFile.deleteFile();
     mainWindow->setName(scoreFile.getFileNameWithoutExtension());
+
+    // add to recent files
+    Polytempo_StoredPreferences::getInstance()->recentFiles.addFile(scoreFile);
 }
 
 void Polytempo_NetworkApplication::saveScoreFile(bool showFileDialog)
@@ -293,6 +296,8 @@ void Polytempo_NetworkApplication::saveScoreFile(bool showFileDialog)
 		FileChooser fileChooser("Save Score File", scoreFile, "*.ptsco", true);
 		if(fileChooser.browseForFileToSave(true))
         {
+            Polytempo_StoredPreferences::getInstance()->getProps().setValue("scoreFileDirectory", fileChooser.getResult().getParentDirectory().getFullPathName());
+
             saveAs(fileChooser.getResult());
         }
 #endif
