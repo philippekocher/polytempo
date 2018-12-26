@@ -67,6 +67,9 @@ public:
     OwnedArray < Polytempo_Event >* getEvents();
     Array < Polytempo_Event* > getEvents(Polytempo_EventType);
 
+    String getJsonString();
+    bool setJsonString(String);
+
     static void parse(File& file, Polytempo_Score** score);
     
     void writeToFile(File&);
@@ -74,6 +77,7 @@ public:
 private:
     static void parseJSON(File& JSONFile, Polytempo_Score** scoreFile);
     //static void parseXML(File& XMLFile, Polytempo_Score** scoreFile);
+    void parseVar(var);
     
     ScopedPointer < StringArray > sectionMap;
     OwnedArray < Polytempo_Score_Section > sections;
@@ -83,6 +87,7 @@ private:
     uint32 nextEventIndex;
     
     bool dirty = false;
+    bool jsonStringInTwoBlocks = true;
 };
 
 #endif // __Polytempo_Score__

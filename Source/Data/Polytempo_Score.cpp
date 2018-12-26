@@ -67,7 +67,7 @@ Polytempo_Score::Polytempo_Score()
     
     sectionMap = new StringArray();
     
-    // every score must have a "init" section
+    // add "init" section
     initSection = new Polytempo_Score_Section();
 }
 
@@ -121,9 +121,9 @@ void Polytempo_Score::addEvents(OwnedArray < Polytempo_Event >& events)
 {
     if(currentSectionIndex == -1)
     {
-        sectionMap->add("default");
+        sectionMap->add("sequence");
         sections.add(new Polytempo_Score_Section());
-        currentSectionIndex = sectionMap->indexOf("default");
+        currentSectionIndex = 0;
     }
     
     sections[currentSectionIndex]->events.addCopiesOf(events);
@@ -394,83 +394,13 @@ Array<Polytempo_Event*> Polytempo_Score::getEvents(Polytempo_EventType type)
     return result;
 }
 
-void Polytempo_Score::parse(File& file, Polytempo_Score **scoreFile)
-{
-    if(file.getFileExtension() == ".json" || file.getFileExtension() == ".ptsco") Polytempo_Score::parseJSON(file, scoreFile);
-    else Polytempo_Alert::show("Error", "No valid file extension:\n" + file.getFileName());
-}
-
-void Polytempo_Score::parseJSON(File& JSONFile, Polytempo_Score** score)
-{
-    //DBG("parse json");
-    var jsonVar = JSON::parse(JSONFile);
-    
-    if(jsonVar == var::null)
-    {
-        Polytempo_Alert::show("Error", "Not a valid JSON file:\n" + JSONFile.getFileName());
-        return;
-    }
-    
-    *score = new Polytempo_Score();
-    
-    NamedValueSet jsonSections = jsonVar.getDynamicObject()->getProperties();
-    var jsonSection, jsonEvent;
-    DynamicObject* jsonObject;
-    bool addToInit;
-    
-    for(int i=0; i < jsonSections.size(); i++)
-    {
-        Identifier id = jsonSections.getName(i);
-        
-        if(id.toString() == "init")
-        {
-            addToInit = true;
-        }
-        else
-        {
-            (*score)->addSection(id.toString());
-            addToInit = false;
-        }
-        
-        jsonSection = jsonVar[id];
-        
-        for(int j=0; j < jsonSection.size(); j++)
-        {
-            jsonObject = jsonSection[j].getDynamicObject();
-            
-            Polytempo_Event* event = new Polytempo_Event();
-            
-            // build event from Dynamic Object
-            
-            NamedValueSet properties = jsonObject->getProperties();
-            for(int k=0;k < properties.size();k++)
-            {
-                event->setType(properties.getName(k).toString());
-                
-                if(event->getType() != eventType_None)
-                {
-                    NamedValueSet tempProps = properties.getValueAt(k).getDynamicObject()->getProperties();
-                    for(int l=0;l < tempProps.size(); l++)
-                    {
-                        event->setProperty(tempProps.getName(l).toString(), tempProps.getValueAt(l));
-                    }
-                    
-                    (*score)->addEvent(event, addToInit);
-                }
-            }
-        }
-        
-        if(!addToInit)  (*score)->sortSection();
-    }
-}
-
-void Polytempo_Score::writeToFile(File& file)
+String Polytempo_Score::getJsonString()
 {
     DynamicObject* jsonSections = new DynamicObject();
     
     for(int i=-1;i<sections.size();i++)
     {
-        var jsonSection;
+        var jsonSection1, jsonSection2;
         Polytempo_Score_Section *section;
         
         if(i == -1) section = initSection;
@@ -494,16 +424,25 @@ void Polytempo_Score::writeToFile(File& file)
             
             jsonEvent->setProperty(event->getTypeString(), jsonEventProperties);
             
-            jsonSection.append(jsonEvent);
+            if(jsonStringInTwoBlocks &&
+               (event->getType() == eventType_Beat || event->getType() == eventType_Marker))
+                jsonSection2.append(jsonEvent);
+            else
+                jsonSection1.append(jsonEvent);
         }
         
-        if(i == -1) jsonSections->setProperty("init", jsonSection);
-        else jsonSections->setProperty(sectionMap->getReference(i), jsonSection);
+        for(int j=0;j<jsonSection2.size();j++)
+        {
+            jsonSection1.append(jsonSection2[j]);
+        }
+        
+        if(i == -1) jsonSections->setProperty("init", jsonSection1);
+        else jsonSections->setProperty(sectionMap->getReference(i), jsonSection1);
     }
     var json(jsonSections); // store the outer object in a var
     
     
-    String jsonString = JSON::toString(json,true);
+    String jsonString = JSON::toString(json, true, 4);
     
     /* a semiprofessional formatter:
      not as tight as the "all on one line" option
@@ -511,6 +450,9 @@ void Polytempo_Score::writeToFile(File& file)
      */
     
     jsonString = jsonString.replaceSection(0,1,"{\n");    // beginning of file
+    
+    jsonString = jsonString.replace("null, ","[],\n");    // empty section
+    jsonString = jsonString.replace("null","[]\n");       // empty section
     
     jsonString = jsonString.replace("[{","[\n\t{");       // new section
     jsonString = jsonString.replace("}], ","}\n\t],\r");  // between sections
@@ -520,10 +462,105 @@ void Polytempo_Score::writeToFile(File& file)
     jsonString = jsonString.replace("}]}","}\n\t]\n}");   // end of file
     
     
-    // write to file
+
+    return jsonString;
+}
+
+bool Polytempo_Score::setJsonString(String jsonString)
+{
+    var jsonVar = JSON::parse(jsonString);
     
+    if(jsonVar == var::null) return false;
+    
+    parseVar(jsonVar);
+    setDirty();
+    return true;
+}
+
+
+void Polytempo_Score::parse(File& file, Polytempo_Score **scoreFile)
+{
+    if(file.getFileExtension() == ".json" || file.getFileExtension() == ".ptsco") Polytempo_Score::parseJSON(file, scoreFile);
+    else Polytempo_Alert::show("Error", "No valid file extension:\n" + file.getFileName());
+}
+
+void Polytempo_Score::parseJSON(File& JSONFile, Polytempo_Score** score)
+{
+    //DBG("parse json");
+    var jsonVar = JSON::parse(JSONFile);
+    
+    if(jsonVar == var::null)
+    {
+        Polytempo_Alert::show("Error", "Not a valid JSON file:\n" + JSONFile.getFileName());
+        return;
+    }
+    
+    *score = new Polytempo_Score();
+    (*score)->parseVar(jsonVar);
+}
+
+void Polytempo_Score::parseVar(var jsonVar)
+{
+    NamedValueSet jsonSections = jsonVar.getDynamicObject()->getProperties();
+    var jsonSection, jsonEvent;
+    DynamicObject* jsonObject;
+    bool addToInit;
+    
+    clear(true);
+    
+    for(int i=0; i < jsonSections.size(); i++)
+    {
+        Identifier id = jsonSections.getName(i);
+        
+        if(id.toString() == "init")
+        {
+            addToInit = true;
+        }
+        else
+        {
+            addSection(id.toString());
+            addToInit = false;
+        }
+        
+        jsonSection = jsonVar[id];
+        
+        for(int j=0; j < jsonSection.size(); j++)
+        {
+            jsonObject = jsonSection[j].getDynamicObject();
+            if(jsonObject == nullptr) continue;
+
+            Polytempo_Event* event = new Polytempo_Event();
+            
+            // build event from Dynamic Object
+            
+            NamedValueSet properties = jsonObject->getProperties();
+            for(int k=0;k < properties.size();k++)
+            {
+                event->setType(properties.getName(k).toString());
+                
+                if(event->getType() != eventType_None)
+                {
+                    if(properties.getValueAt(k).getDynamicObject() == nullptr) continue;
+                    
+                    NamedValueSet tempProps = properties.getValueAt(k).getDynamicObject()->getProperties();
+                    for(int l=0;l < tempProps.size(); l++)
+                    {
+                        event->setProperty(tempProps.getName(l).toString(), tempProps.getValueAt(l));
+                    }
+                    
+                    addEvent(event, addToInit);
+                }
+            }
+        }
+        
+        if(!addToInit)  sortSection();
+    }
+}
+
+void Polytempo_Score::writeToFile(File& file)
+{
     FileOutputStream stream(file);
-    stream.writeString(jsonString);
+    stream.writeString(getJsonString());
     
     dirty = false;
 }

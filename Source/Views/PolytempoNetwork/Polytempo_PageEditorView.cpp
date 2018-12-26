@@ -114,18 +114,23 @@ void Polytempo_PageEditorView::refresh()
     */
     for(int i=0;i<addSectionEvents.size();i++)
     {
-        Array < var > r = *addSectionEvents[i]->getProperty(eventPropertyString_Rect).getArray();
-        if(float(r[0])+float(r[2]) > 1.0) // too wide
+        Array < var > r;
+        
+        if(addSectionEvents[i]->hasProperty(eventPropertyString_Rect))
         {
-            r.set(2, 1.0f - float(r[0]));
-            addSectionEvents[i]->setProperty(eventPropertyString_Rect, r);
-            score->setDirty();
-        }
-        if(float(r[1])+float(r[3]) > 1.0) // too high
-        {
-            r.set(3, 1.0f - float(r[1]));
-            addSectionEvents[i]->setProperty(eventPropertyString_Rect, r);
-            score->setDirty();
+           r = *addSectionEvents[i]->getProperty(eventPropertyString_Rect).getArray();
+            if(float(r[0])+float(r[2]) > 1.0) // too wide
+            {
+                r.set(2, 1.0f - float(r[0]));
+                addSectionEvents[i]->setProperty(eventPropertyString_Rect, r);
+                score->setDirty();
+            }
+            if(float(r[1])+float(r[3]) > 1.0) // too high
+            {
+                r.set(3, 1.0f - float(r[1]));
+                addSectionEvents[i]->setProperty(eventPropertyString_Rect, r);
+                score->setDirty();
+            }
         }
     }
 
@@ -257,9 +262,18 @@ void Polytempo_PageEditorView::update()
         pageEditorViewport->getComponent()->setEditedEvent(selectedAddSectionEvent);
  
         // show handles
-        Array<var> r = *selectedAddSectionEvent->getProperty(eventPropertyString_Rect).getArray();
+        Array<var> r;
+        if(selectedAddSectionEvent->hasProperty(eventPropertyString_Rect))
+        {
+            r = *selectedAddSectionEvent->getProperty(eventPropertyString_Rect).getArray();
+        }
+        else
+        {
+            r.set(0,0); r.set(1,0); r.set(2,1); r.set(3,1);
+        }
+
         pageEditorViewport->getComponent()->setSectionRect(Rectangle<float>(r[0],r[1],r[2],r[3]));
-        
+
         // show textboxes
         relativePositionLabel->setVisible(true);
         xTextbox->setVisible(true);

@@ -43,6 +43,7 @@ Polytempo_NetworkWindow::Polytempo_NetworkWindow()
     mainView = new Polytempo_NetworkMainView();
     pageEditorView = new Polytempo_PageEditorView();
     regionEditorView = new Polytempo_RegionEditorView();
+    scoreEditorView = new Polytempo_ScoreEditorView();
 
     // sets the main content component for the window
     setContentNonOwned(mainView, false);
@@ -99,22 +100,18 @@ void Polytempo_NetworkWindow::setContentID(contentID newContentID) {
                                           "You must first save the document before you can access the Page Editor",
                                           ModalCallbackFunction::create(saveOkCancelCallback, this));
         }
-        else if (newContentID == regionEditorViewID && !app->scoreFileExists())
+        else if (currentContentID == scoreEditorViewID && newContentID != scoreEditorViewID)
         {
-                Polytempo_OkCancelAlert::show("Save?",
-                                              "You must first save the document before you can access the Region Editor",
-                                              ModalCallbackFunction::create(saveOkCancelCallback, this));
+            if(scoreEditorView->applyChanges())
+                performSetContentID();
         }
         else
             performSetContentID();
     }
 }
 
-void Polytempo_NetworkWindow::performSetContentID() {
-    Polytempo_NetworkApplication *const app = dynamic_cast<Polytempo_NetworkApplication *>(JUCEApplication::getInstance());
-    if (!app->scoreFileExists()) // the user has aborted the save process
-        return;
-
+void Polytempo_NetworkWindow::performSetContentID()
+{
     currentContentID = contentIdToBeSet;
 
     if (currentContentID == pageEditorViewID)
@@ -127,11 +124,17 @@ void Polytempo_NetworkWindow::performSetContentID() {
         regionEditorView->refresh();
         setContentNonOwned(regionEditorView, false);
     }
+    else if (currentContentID == scoreEditorViewID)
+    {
+        scoreEditorView->refresh();
+        setContentNonOwned(scoreEditorView, false);
+    }
     else
     {
         setContentNonOwned(mainView, false);
 
         // apply all changes that should be visible in the main view
+        Polytempo_ImageManager::getInstance()->deleteAll();
         Polytempo_ScoreScheduler::getInstance()->executeInit();
         Polytempo_ScoreScheduler::getInstance()->returnToLocator();
     }
@@ -147,6 +150,15 @@ Component* Polytempo_NetworkWindow::getContentComponent()
     if(currentContentID == mainViewID) return mainView;
     if(currentContentID == pageEditorViewID)  return pageEditorView;
     if(currentContentID == regionEditorViewID)  return regionEditorView;
+    if(currentContentID == scoreEditorViewID)  return scoreEditorView;
 
     return nullptr;
+}
+
+bool Polytempo_NetworkWindow::applyChanges()
+{
+    if(currentContentID == scoreEditorViewID)
+        return scoreEditorView->applyChanges();
+    else
+        return true;
 }
