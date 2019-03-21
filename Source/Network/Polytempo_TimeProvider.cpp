@@ -220,6 +220,10 @@ void Polytempo_TimeProvider::oscMessageReceived(const OSCMessage& message)
 
 		handleTimeSyncMessage(senderId, argMasterTime, timeIndex, maxRoundTripFromMaster);
 	}
+	else
+	{
+		displayMessage("wrong OSC arrived!!!", MessageType_Error);
+	}
 }
 
 void Polytempo_TimeProvider::timerCallback()
