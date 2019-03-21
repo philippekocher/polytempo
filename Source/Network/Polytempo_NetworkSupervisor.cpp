@@ -34,7 +34,6 @@
 Polytempo_NetworkSupervisor::Polytempo_NetworkSupervisor()
 {
     connectedPeersMap = new HashMap < String, String >();
-    tempConnectedPeersMap = new HashMap < String, String >();
     
     socket = nullptr;
     component = nullptr;
@@ -47,7 +46,6 @@ Polytempo_NetworkSupervisor::~Polytempo_NetworkSupervisor()
 	stopTimer();
 
     connectedPeersMap = nullptr;
-    tempConnectedPeersMap = nullptr;
     
     clearSingletonInstance();
     
@@ -74,15 +72,6 @@ void Polytempo_NetworkSupervisor::timerCallback()
 			OSCArgument(*name), 
 			OSCArgument((int32)Polytempo_TimeProvider::getInstance()->isMaster())));
 	
-    // update hash maps
-    connectedPeersMap->clear();
-    HashMap < String, String >::Iterator it(*tempConnectedPeersMap);
-    while(it.next())
-    {
-        connectedPeersMap->set(it.getKey(), it.getValue());
-    }
-    tempConnectedPeersMap->clear();
-    
     if(component) component->repaint();
 }
 
@@ -133,7 +122,6 @@ void Polytempo_NetworkSupervisor::setComponent(Component *aComponent)
 void Polytempo_NetworkSupervisor::handlePeer(String ip, String name)
 {
 	connectedPeersMap->set(ip, name);
-    tempConnectedPeersMap->set(ip, name);
     component->repaint();
 }
 

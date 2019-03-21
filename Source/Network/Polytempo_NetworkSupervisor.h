@@ -60,7 +60,6 @@ private:
     ScopedPointer < String > localName;
 
     ScopedPointer < HashMap < String, String > > connectedPeersMap;
-    ScopedPointer < HashMap < String, String > > tempConnectedPeersMap;
 };
 
 
