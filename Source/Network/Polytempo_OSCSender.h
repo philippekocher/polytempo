@@ -27,6 +27,7 @@
 
 #include "../Scheduler/Polytempo_EventObserver.h"
 #include "Polytempo_Socket.h"
+#include "Polytempo_BroadcastWrapper.h"
 
 class Polytempo_OSCSender : public Polytempo_EventObserver
 {
@@ -47,6 +48,7 @@ public:
 private:
     ScopedPointer < HashMap < String, Polytempo_Socket* > > socketsMap;
     ScopedPointer < Polytempo_Socket > broadcastSocket;
+	ScopedPointer < Polytempo_BroadcastWrapper > broadcastWrapper;
 };
 
 

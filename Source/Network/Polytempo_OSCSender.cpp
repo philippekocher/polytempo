@@ -28,12 +28,14 @@
 Polytempo_OSCSender::Polytempo_OSCSender()
 {
     socketsMap = new HashMap < String, Polytempo_Socket* >();
+	broadcastWrapper = new Polytempo_BroadcastWrapper();
 }
 
 Polytempo_OSCSender::~Polytempo_OSCSender()
 {
     deleteAll();
     broadcastSocket = nullptr;
+	broadcastWrapper = nullptr;
 }
 
 void Polytempo_OSCSender::addBroadcastSender(int port)
@@ -77,7 +79,8 @@ void Polytempo_OSCSender::eventNotification(Polytempo_Event *event)
 
 void Polytempo_OSCSender::broadcastEventAsMessage(Polytempo_Event *event)
 {
-    sendEventAsMessage(event, broadcastSocket);
+	broadcastWrapper->SendEvent(event);
+    //sendEventAsMessage(event, broadcastSocket);
 }
 
 void Polytempo_OSCSender::sendEventAsMessage(Polytempo_Event *event, Polytempo_Socket *socket)

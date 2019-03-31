@@ -76,6 +76,10 @@
             file="../Source/Misc/Polytempo_Textbox.h"/>
     </GROUP>
     <GROUP id="{20871079-D757-6FAE-C7D7-6B4E6D796F76}" name="Network">
+      <FILE id="dO6RMk" name="Polytempo_BroadcastWrapper.cpp" compile="1"
+            resource="0" file="../Source/Network/Polytempo_BroadcastWrapper.cpp"/>
+      <FILE id="dqFChB" name="Polytempo_BroadcastWrapper.h" compile="0" resource="0"
+            file="../Source/Network/Polytempo_BroadcastWrapper.h"/>
       <FILE id="XmhERo" name="Polytempo_IPAddress.cpp" compile="1" resource="0"
             file="../Source/Network/Polytempo_IPAddress.cpp"/>
       <FILE id="wU56a8" name="Polytempo_IPAddress.h" compile="0" resource="0"
@@ -104,6 +108,10 @@
             file="../Source/Network/Polytempo_TimeProvider.cpp"/>
       <FILE id="PIEmTw" name="Polytempo_TimeProvider.h" compile="0" resource="0"
             file="../Source/Network/Polytempo_TimeProvider.h"/>
+      <FILE id="Rts8wO" name="Polytempo_AsyncUnicastSender.cpp" compile="1"
+            resource="0" file="../Source/Network/Polytempo_AsyncUnicastSender.cpp"/>
+      <FILE id="GKB3Ln" name="Polytempo_AsyncUnicastSender.h" compile="0"
+            resource="0" file="../Source/Network/Polytempo_AsyncUnicastSender.h"/>
     </GROUP>
     <GROUP id="{47AC34E2-55B8-0A83-90F9-17E330BE25A4}" name="Preferences">
       <FILE id="TtP3Vf" name="Polytempo_DefaultPreferences.cpp" compile="1"
