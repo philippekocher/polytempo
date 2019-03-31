@@ -24,7 +24,7 @@ public:
 private:
 	void handleAsyncUpdate() override;
 
-	Polytempo_Event eventToSend;
 	CriticalSection csEvent;
-	ScopedPointer<Polytempo_Socket> socket;
+	ScopedPointer < Polytempo_Event > eventToSend;
+	ScopedPointer < Polytempo_Socket > socket;
 };

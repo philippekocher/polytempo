@@ -18,25 +18,26 @@ Polytempo_AsyncUnicastSender::Polytempo_AsyncUnicastSender(String ip)
 Polytempo_AsyncUnicastSender::~Polytempo_AsyncUnicastSender()
 {
 	socket = nullptr;
+	eventToSend = nullptr;
 }
 
 void Polytempo_AsyncUnicastSender::sendAsync(Polytempo_Event* pEvent)
 {
 	const ScopedLock lock(csEvent);
-	eventToSend = *pEvent;
+	eventToSend = new Polytempo_Event(*pEvent);
 	triggerAsyncUpdate();
 }
 
 void Polytempo_AsyncUnicastSender::handleAsyncUpdate()
 {
-	Polytempo_Event e;
+	ScopedPointer < Polytempo_Event > e;
 	{
 		const ScopedLock lock(csEvent);
-		e = eventToSend;
+		e = new Polytempo_Event(*eventToSend);
 	}
 
-	OSCMessage oscMessage = OSCMessage(OSCAddressPattern(e.getOscAddressFromType()));
-	for (var message : e.getOscMessageFromProperties())
+	OSCMessage oscMessage = OSCMessage(OSCAddressPattern(e->getOscAddressFromType()));
+	for (var message : e->getOscMessageFromProperties())
 	{
 		if (message.isInt())          oscMessage.addInt32(int(message));
 		else if (message.isDouble())  oscMessage.addFloat32(float(message));
