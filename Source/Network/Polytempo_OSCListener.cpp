@@ -59,8 +59,7 @@ void Polytempo_OSCListener::oscMessageReceived(const OSCMessage & message)
 		String argIp = (argumentIterator++)->getString();
 		String argName = (argumentIterator++)->getString();
 		
-		if(Polytempo_TimeProvider::getInstance()->isMaster())
-			Polytempo_NetworkSupervisor::getInstance()->handlePeer(argIp, argName);
+		Polytempo_NetworkSupervisor::getInstance()->handlePeer(argIp, argName);
 
 		bool isMaster = false;
 		if (argumentIterator && (*argumentIterator).isInt32())
