@@ -203,7 +203,7 @@ void Polytempo_ScoreScheduler::setTempoFactor(Polytempo_Event *event)
 void Polytempo_ScoreScheduler::executeInit()
 {
     if(!score) return;
-    
+        
     OwnedArray < Polytempo_Event >* initEvents = score->getInitEvents();
     if(initEvents != nullptr)
     {

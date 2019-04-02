@@ -56,6 +56,7 @@ namespace Polytempo_CommandIDs
         showMainView,
         showPageEditor,
         showRegionEditor,
+        showScoreEditor,
 
         loadImage,
         addSection,

@@ -176,6 +176,9 @@ static void unsavedChangesCallback(int modalResult, Polytempo_YesNoCancelAlert::
 
 void Polytempo_NetworkApplication::applicationShouldQuit()
 {
+    if(!mainWindow->applyChanges()) // in case there are any pending changes
+        return;
+
     if(Polytempo_ScoreScheduler::getInstance()->isRunning())
     {
         quitApplication = true;
@@ -207,13 +210,19 @@ void Polytempo_NetworkApplication::anotherInstanceStarted (const String&)
 
 void Polytempo_NetworkApplication::unsavedChangesAlert(Polytempo_YesNoCancelAlert::callbackTag tag)
 {
-    String title;
+    String title, fileName;
+    
+    if(scoreFileExists()) fileName = scoreFile.getFileName();
+    else                  fileName = mainWindow->getName();
 
-    Polytempo_YesNoCancelAlert::show(title << "Do you want to save the changes to \"" << scoreFile.getFileName().toRawUTF8() << "\"?", "If you don't save your changes will be lost.", ModalCallbackFunction::create(unsavedChangesCallback, tag));
+    Polytempo_YesNoCancelAlert::show(title << "Do you want to save the changes to \"" << fileName << "\"?", "If you don't save your changes will be lost.", ModalCallbackFunction::create(unsavedChangesCallback, tag));
 }
 
 void Polytempo_NetworkApplication::newScore()
-{
+{    
+    if(!mainWindow->applyChanges()) // in case there are any pending changes
+        return;
+    
     if(score && score->isDirty())
     {
         unsavedChangesAlert(Polytempo_YesNoCancelAlert::newDocumentTag);
@@ -221,6 +230,7 @@ void Polytempo_NetworkApplication::newScore()
     }
     
     score = new Polytempo_Score();
+    score->addSection("sequence");
     Polytempo_ScoreScheduler::getInstance()->setScore(score);
     
     mainWindow->setName("Untitled");
@@ -259,12 +269,18 @@ void Polytempo_NetworkApplication::saveAs(File targetFile)
     tempFile.copyFileTo(scoreFile);
     tempFile.deleteFile();
     mainWindow->setName(scoreFile.getFileNameWithoutExtension());
+
+    // add to recent files
+    Polytempo_StoredPreferences::getInstance()->recentFiles.addFile(scoreFile);
 }
 
 void Polytempo_NetworkApplication::saveScoreFile(bool showFileDialog)
 {
     if(score == nullptr) return;
     if(scoreFile == File::nonexistent) showFileDialog = true;
+
+    if(!mainWindow->applyChanges()) // in case there are any pending changes
+        return;
 
     if(showFileDialog)
     {
@@ -280,6 +296,8 @@ void Polytempo_NetworkApplication::saveScoreFile(bool showFileDialog)
 		FileChooser fileChooser("Save Score File", scoreFile, "*.ptsco", true);
 		if(fileChooser.browseForFileToSave(true))
         {
+            Polytempo_StoredPreferences::getInstance()->getProps().setValue("scoreFileDirectory", fileChooser.getResult().getParentDirectory().getFullPathName());
+
             saveAs(fileChooser.getResult());
         }
 #endif
@@ -332,7 +350,6 @@ void Polytempo_NetworkApplication::openScoreFile(File aFile)
         score = newScore;
         Polytempo_ScoreScheduler::getInstance()->setScore(score);
         mainWindow->setName(scoreFile.getFileNameWithoutExtension());
-
 		
         // add to recent files
         Polytempo_StoredPreferences::getInstance()->recentFiles.addFile(scoreFile);
