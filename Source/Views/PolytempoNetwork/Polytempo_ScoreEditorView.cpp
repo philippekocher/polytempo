@@ -27,7 +27,7 @@ Polytempo_ScoreEditorView::~Polytempo_ScoreEditorView()
     editor = nullptr;
 }
 
-void Polytempo_ScoreEditorView::paint(Graphics& g)
+void Polytempo_ScoreEditorView::paint(Graphics&)
 {}
 
 void Polytempo_ScoreEditorView::resized()
