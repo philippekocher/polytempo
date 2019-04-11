@@ -33,8 +33,8 @@ class Polytempo_EventComparator
 public:
     static int compareElements(Polytempo_Event* e1, Polytempo_Event* e2) throw()
     {
-        float t1 = e1->getTime();
-        float t2 = e2->getTime();
+        float t1 = float(e1->getTime());
+        float t2 = float(e2->getTime());
         
         int result = 0;
         
@@ -206,7 +206,7 @@ bool Polytempo_Score::setTime(int time, Array<Polytempo_Event*> *events, float *
              int(event->getProperty(eventPropertyString_Cue)) > 0))
             || event->getType() == eventType_Progressbar))
         {
-            tempTime = event->getTime();
+            tempTime = float(event->getTime());
             *waitBeforStart = tempTime - time;
             
             // find the first event that has the same time as the downbeat
@@ -227,7 +227,7 @@ bool Polytempo_Score::setTime(int time, Array<Polytempo_Event*> *events, float *
             event = sections[currentSectionIndex]->events[i];
             if(event->getTime() >= time)
             {
-                tempTime = event->getTime();
+                tempTime = float(event->getTime());
                 *waitBeforStart = tempTime - time;
                 
                 nextEventIndex = ++i;

@@ -315,10 +315,10 @@ void Polytempo_PageEditorView::paint(Graphics& g)
     g.setColour(Colour(245,245,245));
     g.fillRect(r.removeFromRight(TREE_VIEW_WIDTH));
     g.setColour(Colours::grey);
-    if(sectionID != var::null)
-        g.drawHorizontalLine(168, getWidth() - TREE_VIEW_WIDTH, getWidth());
-    g.drawVerticalLine(TREE_VIEW_WIDTH, 0.0f, (float)getHeight());
-    g.drawVerticalLine(getWidth() - TREE_VIEW_WIDTH, 0.0f, (float)getHeight());
+    if(sectionID != var())
+        g.drawHorizontalLine(168, float(getWidth() - TREE_VIEW_WIDTH), float(getWidth()));
+    g.drawVerticalLine(TREE_VIEW_WIDTH, 0.0f, float(getHeight()));
+    g.drawVerticalLine(getWidth() - TREE_VIEW_WIDTH, 0.0f, float(getHeight()));
 }
 
 void Polytempo_PageEditorView::resized()

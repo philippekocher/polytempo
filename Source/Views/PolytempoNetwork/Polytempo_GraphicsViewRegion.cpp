@@ -190,7 +190,7 @@ void Polytempo_GraphicsViewRegion::setProgressbar(String txt, float time, float 
     contentType = contentType_Progressbar;
     progressbar = new Polytempo_Progressbar();
     progressbar->setText(txt);
-    progressbar->setTime(time);
+    progressbar->setTime(int(time));
     progressbar->setDuration(duration);
     
     progressbar->setBounds(getLocalBounds().reduced(15,10));  // inset rect

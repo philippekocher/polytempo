@@ -172,7 +172,7 @@ void Polytempo_AuxiliaryView::labelTextChanged(Label* label)
     }
     else if(label == timeTextbox)
     {
-        Polytempo_ScoreScheduler::getInstance()->storeLocator(Polytempo_Textbox::stringToTime(label->getText()) * 1000.0f);
+        Polytempo_ScoreScheduler::getInstance()->storeLocator(int(Polytempo_Textbox::stringToTime(label->getText()) * 1000.0f));
         Polytempo_EventDispatcher::getInstance()->broadcastEvent(Polytempo_Event::makeEvent(eventType_GotoTime, Polytempo_Textbox::stringToTime(label->getText())));
     }
     else if(label == tempoFactorTextbox)

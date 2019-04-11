@@ -121,7 +121,7 @@ void Polytempo_RegionEditorView::paint(Graphics& g)
             if(bounds.getHeight() < bounds.getWidth() * 2)
                 g.setFont(bounds.getHeight());
             else
-                g.setFont(bounds.getWidth() * 2);
+                g.setFont(bounds.getWidth() * 2.0f);
             g.setColour(Colours::blue.withAlpha(0.05f));
             g.drawFittedText(addRegionEvent->getProperty(eventPropertyString_RegionID).toString(), bounds, Justification::centred, 0.1f);
         }
@@ -168,7 +168,7 @@ void Polytempo_RegionEditorView::mouseDown(const MouseEvent& event)
     for(Polytempo_Event *addRegionEvent : addRegionEvents)
     {
         Array<var> r = *addRegionEvent->getProperty(eventPropertyString_Rect).getArray();
-        Rectangle<int> bounds = Rectangle<int>(width * float(r[0]), height * float(r[1]), width * float(r[2]), height * float(r[3]));
+        Rectangle<int> bounds = Rectangle<int>(int(width * float(r[0])), int(height * float(r[1])), int(width * float(r[2])), int(height * float(r[3])));
         
         if(bounds.contains(event.getPosition()))
             break;
