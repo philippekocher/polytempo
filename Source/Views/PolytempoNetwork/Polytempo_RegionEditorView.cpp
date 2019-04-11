@@ -86,7 +86,7 @@ void Polytempo_RegionEditorView::paint(Graphics& g)
     {
         Array<var> rect = *addRegionEvent->getProperty(eventPropertyString_Rect).getArray();
         
-        Rectangle<int> bounds = Rectangle<int>(width * float(rect[0]), height * float(rect[1]), width * float(rect[2]), height * float(rect[3]));
+        Rectangle<int> bounds = Rectangle<int>(int(width * float(rect[0])), int(height * float(rect[1])), int(width * float(rect[2])), int(height * float(rect[3])));
         
         if(index++ == selectedRegionID)
         {
@@ -103,12 +103,12 @@ void Polytempo_RegionEditorView::paint(Graphics& g)
                 g.setColour(Colours::blue.withAlpha(0.05f));
                 g.fillRect(bounds);
                 g.setColour(Colours::blue);
-                g.drawRect(bounds, 2.0f);
+                g.drawRect(bounds, 2);
             
                 if(bounds.getHeight() < bounds.getWidth() * 2)
-                    g.setFont(bounds.getHeight());
+                    g.setFont(float(bounds.getHeight()));
                 else
-                    g.setFont(bounds.getWidth() * 2);
+                    g.setFont(bounds.getWidth() * 2.0f);
                 g.setColour(Colours::blue.withAlpha(0.2f));
                 g.drawFittedText(addRegionEvent->getProperty(eventPropertyString_RegionID).toString(), bounds, Justification::centred, 0.1f);
             }
@@ -119,7 +119,7 @@ void Polytempo_RegionEditorView::paint(Graphics& g)
             g.drawRect(width * float(rect[0]) + 1, height * float(rect[1]) + 1, width * float(rect[2]) - 2, height * float(rect[3]) - 2, 1.0f);
 
             if(bounds.getHeight() < bounds.getWidth() * 2)
-                g.setFont(bounds.getHeight());
+                g.setFont(float(bounds.getHeight()));
             else
                 g.setFont(bounds.getWidth() * 2.0f);
             g.setColour(Colours::blue.withAlpha(0.05f));
