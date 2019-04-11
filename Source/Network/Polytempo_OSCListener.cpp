@@ -70,6 +70,8 @@ void Polytempo_OSCListener::oscMessageReceived(const OSCMessage & message)
 #ifdef POLYTEMPO_NETWORK
 	else if (addressPattern == "/open")
 	{
+		const MessageManagerLock mml(Thread::getCurrentThread());
+
 		DBG("osc: open");
 		// "Open Score": only PolytempoNetwork
 
@@ -84,6 +86,8 @@ void Polytempo_OSCListener::oscMessageReceived(const OSCMessage & message)
 	}
     else if (addressPattern == "/fullScreen")
     {
+		const MessageManagerLock mml(Thread::getCurrentThread());
+
         Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
 
         Polytempo_NetworkWindow *window = app->getMainWindow();

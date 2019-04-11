@@ -125,7 +125,6 @@ void Polytempo_NetworkSupervisor::setComponent(Component *aComponent)
 void Polytempo_NetworkSupervisor::handlePeer(String ip, String name)
 {
 	connectedPeersMap->set(ip, name);
-    component->repaint();
 }
 
 void Polytempo_NetworkSupervisor::eventNotification(Polytempo_Event *event)
