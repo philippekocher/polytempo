@@ -40,7 +40,7 @@ void Polytempo_EventDispatcher::broadcastEvent(Polytempo_Event *event)
 		oscSender != nullptr)
 	{
         // set sync time
-        event->setSyncTime(int32(Polytempo_TimeProvider::getInstance()->getDelaySafeTimestamp()));
+        event->setSyncTime(Polytempo_TimeProvider::getInstance()->getDelaySafeTimestamp());
 
         oscSender->broadcastEventAsMessage(event);
 	}

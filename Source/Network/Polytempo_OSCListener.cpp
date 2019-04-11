@@ -130,7 +130,7 @@ void Polytempo_OSCListener::oscMessageReceived(const OSCMessage & message)
         uint32 syncTime;
         
         if(event->hasProperty(eventPropertyString_TimeTag))
-            syncTime = uint32(int(event->getProperty(eventPropertyString_TimeTag)));
+            syncTime = uint32(int32(event->getProperty(eventPropertyString_TimeTag)));
 		else
 		{
 			Polytempo_TimeProvider::getInstance()->getSyncTime(&syncTime);

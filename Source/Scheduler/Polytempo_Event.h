@@ -140,40 +140,40 @@ public:
      --------------------------------------- */
 
     String getOscAddressFromType();
-    Array<var> getOscMessageFromProperties();
+    Array<var> getOscMessageFromProperties() const;
     
     /* accessors
      --------------------------------------- */
     void setType(String);
-    Polytempo_EventType getType();
+    Polytempo_EventType getType() const;
     String getTypeString();
     
     void setValue(var val);
-    var  getValue();
+    var  getValue() const;
     
     void setTime(int t);
-    int  getTime();
+    int  getTime() const;
     
-    void  setSyncTime(int t);
-    int   getSyncTime();
+    void   setSyncTime(uint32 t);
+    uint32 getSyncTime() const;
 
     void setPosition(Rational pos);
-    Rational getPosition();
+    Rational getPosition() const;
     
     void setOwned(bool flag);
-    bool isOwned();
+    bool isOwned() const;
     
     void setProperty(String key, var value);
-    var  getProperty(String key);
-    bool hasProperty(String key);
+    var  getProperty(String key) const;
+    bool hasProperty(String key) const;
     void removeProperty(String key);
-    NamedValueSet* getProperties();
+    NamedValueSet* getProperties() const;
     
     
 private:
     Polytempo_EventType type;
     int                 time;      // in miliseconds (NB. the property "time" is in seconds and whenever a time is stored in the property "value" it's in seconds as well!)
-    int                 syncTime;  // in miliseconds
+    uint32              syncTime;  // in miliseconds
     Rational            position;
     
     bool                owned;     // indicate if this event is owned by a another data structure (e.g. a score) 
