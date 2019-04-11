@@ -110,7 +110,7 @@ void Polytempo_RegionEditorView::paint(Graphics& g)
                 else
                     g.setFont(bounds.getWidth() * 2.0f);
                 g.setColour(Colours::blue.withAlpha(0.2f));
-                g.drawFittedText(addRegionEvent->getProperty(eventPropertyString_RegionID).toString(), bounds, Justification::centred, 0.1f);
+                g.drawFittedText(addRegionEvent->getProperty(eventPropertyString_RegionID).toString(), bounds, Justification::centred, 1, 0.1f);
             }
         }
         else
@@ -123,7 +123,7 @@ void Polytempo_RegionEditorView::paint(Graphics& g)
             else
                 g.setFont(bounds.getWidth() * 2.0f);
             g.setColour(Colours::blue.withAlpha(0.05f));
-            g.drawFittedText(addRegionEvent->getProperty(eventPropertyString_RegionID).toString(), bounds, Justification::centred, 0.1f);
+            g.drawFittedText(addRegionEvent->getProperty(eventPropertyString_RegionID).toString(), bounds, Justification::centred, 1, 0.1f);
         }
     }
 }
