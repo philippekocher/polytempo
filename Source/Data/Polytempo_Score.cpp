@@ -306,7 +306,7 @@ Polytempo_Event* Polytempo_Score::getNextEvent()
     // we assume that the events have been sorted
     
     if(currentSectionIndex > -1 && currentSectionIndex < sections.size() &&
-       nextEventIndex < sections[currentSectionIndex]->events.size())
+       nextEventIndex < uint32(sections[currentSectionIndex]->events.size()))
         return sections[currentSectionIndex]->events[nextEventIndex++];
     else
         return nullptr;
