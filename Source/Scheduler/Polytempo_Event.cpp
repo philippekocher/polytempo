@@ -144,9 +144,9 @@ Array<var> Polytempo_Event::getOscMessageFromProperties()
 {
     Array<var> message = Array<var>();
     
-    NamedValueSet* properties = getProperties();
+    NamedValueSet* props = getProperties();
     
-    for(juce::NamedValueSet::NamedValue val : *properties)
+    for(NamedValueSet::NamedValue val : *props)
     {
         Identifier key = val.name;
         if(key.toString()[0] != '~')
