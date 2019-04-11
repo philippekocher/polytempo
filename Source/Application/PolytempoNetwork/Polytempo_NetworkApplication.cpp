@@ -277,7 +277,7 @@ void Polytempo_NetworkApplication::saveAs(File targetFile)
 void Polytempo_NetworkApplication::saveScoreFile(bool showFileDialog)
 {
     if(score == nullptr) return;
-    if(scoreFile == File::nonexistent) showFileDialog = true;
+    if(!scoreFile.exists()) showFileDialog = true;
 
     if(!mainWindow->applyChanges()) // in case there are any pending changes
         return;
@@ -317,7 +317,7 @@ void Polytempo_NetworkApplication::openScoreFilePath(String filePath)
 
 void Polytempo_NetworkApplication::openScoreFile(File aFile)
 {
-    if(aFile != File::nonexistent) newScoreFile = aFile;
+    if(aFile.exists()) newScoreFile = aFile;
     
     if(!newScoreFile.existsAsFile())
     {

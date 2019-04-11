@@ -52,14 +52,14 @@ public:
     void anotherInstanceStarted(const String& commandLine);
     
     Polytempo_Score* getScore() { return score; };
-    bool scoreFileExists() { return scoreFile != File::nonexistent; }
+    bool scoreFileExists() { return scoreFile.exists(); }
     Polytempo_NetworkWindow* getMainWindow() { return mainWindow; }
     
     void unsavedChangesAlert(Polytempo_YesNoCancelAlert::callbackTag);
     void newScore();
     void openFileDialog();
-    void openScoreFilePath(String filePath = String::empty);
-    void openScoreFile(File aFile = File::nonexistent);
+    void openScoreFilePath(String filePath = String());
+    void openScoreFile(File aFile = File());
     void saveScoreFile(bool showFileDialog);
     void commandStatusChanged();
     
