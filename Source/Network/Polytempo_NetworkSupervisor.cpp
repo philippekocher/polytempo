@@ -48,6 +48,8 @@ Polytempo_NetworkSupervisor::~Polytempo_NetworkSupervisor()
 	stopTimer();
 
     connectedPeersMap = nullptr;
+	localName = nullptr;
+	nodeName = nullptr;
     
     clearSingletonInstance();
     
