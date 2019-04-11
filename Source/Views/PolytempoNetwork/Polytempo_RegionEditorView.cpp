@@ -154,7 +154,7 @@ void Polytempo_RegionEditorView::refresh()
     repaint();
 }
 
-bool Polytempo_RegionEditorView::keyPressed(const KeyPress& key)
+bool Polytempo_RegionEditorView::keyPressed(const KeyPress&)
 {
     return false;
 }
