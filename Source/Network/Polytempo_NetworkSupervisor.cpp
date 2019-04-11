@@ -38,6 +38,8 @@ Polytempo_NetworkSupervisor::Polytempo_NetworkSupervisor()
     socket = nullptr;
     component = nullptr;
 
+	nodeName = new String(SystemStats::getFullUserName());
+
 	startTimer(PING_INTERVAL);
 }
 
@@ -100,8 +102,7 @@ Uuid Polytempo_NetworkSupervisor::getUniqueId()
 
 String Polytempo_NetworkSupervisor::getLocalName()
 {
-    if(localName == nullptr) return "Untitled";
-    else                     return *localName;
+	return String(localName == nullptr ? "Untitled" : *localName) + String(" (") + String(*nodeName) + String(")");
 }
 
 HashMap <String, String>* Polytempo_NetworkSupervisor::getPeers()

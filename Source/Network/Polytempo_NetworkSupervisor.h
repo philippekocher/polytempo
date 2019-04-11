@@ -58,6 +58,7 @@ private:
     Component *component;
     
     ScopedPointer < String > localName;
+	ScopedPointer < String > nodeName;
 
     ScopedPointer < HashMap < String, String > > connectedPeersMap;
 };
