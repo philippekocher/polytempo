@@ -40,7 +40,7 @@ enum Polytempo_ViewContentType
 class Polytempo_GraphicsViewRegion : public Component
 {
 public:
-    Polytempo_GraphicsViewRegion(var = var::null);
+    Polytempo_GraphicsViewRegion(var = var());
     ~Polytempo_GraphicsViewRegion();
 
     void paint(Graphics& g) override;
