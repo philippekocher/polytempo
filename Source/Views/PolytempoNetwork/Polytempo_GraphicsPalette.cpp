@@ -30,38 +30,38 @@ Polytempo_GraphicsPalette::Polytempo_GraphicsPalette(Polytempo_GraphicsAnnotatio
 	Image imageDelete = CreateImageWithSolidBackground(ImageCache::getFromMemory(BinaryData::delete_png, BinaryData::delete_pngSize), BUTTON_SIZE, BUTTON_SIZE);
 
 	buttonColor = new ImageButton("Color");
-	buttonColor->setImages(false, false, false, imageColorPalette, 1.0f, Colours::transparentWhite, Image::null, overOpacity, overColour, Image::null, downOpacity, Colours::green);
+	buttonColor->setImages(false, false, false, imageColorPalette, 1.0f, Colours::transparentWhite, Image(), overOpacity, overColour, Image(), downOpacity, Colours::green);
 	buttonColor->setBounds(0, 0, BUTTON_SIZE, BUTTON_SIZE);
 	buttonColor->addListener(this);
 	pParent->addChildComponent(buttonColor);
 
 	buttonTextSize = new ImageButton("Size");
-	buttonTextSize->setImages(false, false, false, imageFontSize, 1.0f, Colours::transparentWhite, Image::null, overOpacity, overColour, Image::null, downOpacity, Colours::green);
+	buttonTextSize->setImages(false, false, false, imageFontSize, 1.0f, Colours::transparentWhite, Image(), overOpacity, overColour, Image(), downOpacity, Colours::green);
 	buttonTextSize->setBounds(0, 0, BUTTON_SIZE, BUTTON_SIZE);
 	buttonTextSize->setTriggeredOnMouseDown(true);
 	buttonTextSize->addListener(this);
 	pParent->addChildComponent(buttonTextSize);
 
 	buttonSettings = new ImageButton("Settings");
-	buttonSettings->setImages(false, false, false, imageSettings, 1.0f, Colours::transparentWhite, Image::null, overOpacity, overColour, Image::null, downOpacity, Colours::green);
+	buttonSettings->setImages(false, false, false, imageSettings, 1.0f, Colours::transparentWhite, Image(), overOpacity, overColour, Image(), downOpacity, Colours::green);
 	buttonSettings->setBounds(0, 0, BUTTON_SIZE, BUTTON_SIZE);
 	buttonSettings->addListener(this);
 	pParent->addChildComponent(buttonSettings);
 
 	buttonOk = new ImageButton("OK");
-	buttonOk->setImages(false, false, false, imageOk, 1.0f, Colours::transparentWhite, Image::null, overOpacity, overColour, Image::null, downOpacity, Colours::green);
+	buttonOk->setImages(false, false, false, imageOk, 1.0f, Colours::transparentWhite, Image(), overOpacity, overColour, Image(), downOpacity, Colours::green);
 	buttonOk->setBounds(0, 0, BUTTON_SIZE, BUTTON_SIZE);
 	buttonOk->addListener(this);
 	pParent->addChildComponent(buttonOk);
 
 	buttonCancel = new ImageButton("Cancel");
-	buttonCancel->setImages(false, false, false, imageCancel, 1.0f, Colours::transparentWhite, Image::null, overOpacity, overColour, Image::null, downOpacity, Colours::red);
+	buttonCancel->setImages(false, false, false, imageCancel, 1.0f, Colours::transparentWhite, Image(), overOpacity, overColour, Image(), downOpacity, Colours::red);
 	buttonCancel->setBounds(0, 0, BUTTON_SIZE, BUTTON_SIZE);
 	buttonCancel->addListener(this);
 	pParent->addChildComponent(buttonCancel);
 
 	buttonDelete = new ImageButton("Delete");
-	buttonDelete->setImages(false, false, false, imageDelete, 1.0f, Colours::transparentWhite, Image::null, overOpacity, overColour, Image::null, downOpacity, Colours::red);
+	buttonDelete->setImages(false, false, false, imageDelete, 1.0f, Colours::transparentWhite, Image(), overOpacity, overColour, Image(), downOpacity, Colours::red);
 	buttonDelete->setBounds(0, 0, BUTTON_SIZE, BUTTON_SIZE);
 	buttonDelete->addListener(this);
 	pParent->addChildComponent(buttonDelete);

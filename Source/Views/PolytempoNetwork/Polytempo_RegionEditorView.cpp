@@ -37,7 +37,7 @@ Polytempo_RegionEditorView::Polytempo_RegionEditorView()
         addChildComponent(dh);
     }
     
-    addAndMakeVisible(relativePositionLabel = new Label(String::empty, "Region --"));
+    addAndMakeVisible(relativePositionLabel = new Label(String(), "Region --"));
     relativePositionLabel->setFont(Font (15.0f, Font::plain));
     
     addAndMakeVisible(xTextbox = new Polytempo_Textbox("Left"));

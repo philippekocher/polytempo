@@ -50,7 +50,7 @@ public:
     void removeEvent(Polytempo_Event*, bool removeFromInit = false);
     
     void addSection(String sectionName);
-    void selectSection(String sectionName = String::empty);
+    void selectSection(String sectionName = String());
     void sortSection(int sectionIndex = -1);
     
     void setTime(int time);

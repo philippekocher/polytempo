@@ -34,8 +34,8 @@ bool Polytempo_NetworkInterfaceManager::TrySelectLastUsedAdapter()
 
 	updateAddresses();
 
-	String lastNetworkAdapter = Polytempo_StoredPreferences::getInstance()->getProps().getValue("selectedNetworkAdapter", String::empty);
-	if (lastNetworkAdapter != String::empty)
+	String lastNetworkAdapter = Polytempo_StoredPreferences::getInstance()->getProps().getValue("selectedNetworkAdapter", String());
+	if (lastNetworkAdapter != String())
 	{
 		for (Polytempo_IPAddress ip : availableIpAddresses)
 		{

@@ -95,7 +95,7 @@ public:
         defaultFilePath->setColour(TextEditor::outlineColourId, Colours::grey);
         defaultFilePath->addListener(this);
         
-        addAndMakeVisible(defaultFilePathLabel = new Label(String::empty, L"Default Score File"));
+        addAndMakeVisible(defaultFilePathLabel = new Label(String(), L"Default Score File"));
         defaultFilePathLabel->setFont(Font(15.0000f, Font::plain));
         defaultFilePathLabel->setJustificationType(Justification::centredLeft);
         defaultFilePathLabel->setEditable(false, false, false);
@@ -103,12 +103,12 @@ public:
         addAndMakeVisible(chooseDefaultFile = new TextButton("Choose.."));
         chooseDefaultFile->addListener(this);
 
-        addAndMakeVisible(fullScreenToggle = new ToggleButton(String::empty));
+        addAndMakeVisible(fullScreenToggle = new ToggleButton(String()));
         fullScreenToggle->setButtonText(L"Full Screen");
         fullScreenToggle->setToggleState(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("fullScreen"), dontSendNotification);
         fullScreenToggle->addListener(this);
 
-        addAndMakeVisible(broadcastCommandsToggle = new ToggleButton(String::empty));
+        addAndMakeVisible(broadcastCommandsToggle = new ToggleButton(String()));
         broadcastCommandsToggle->setButtonText(L"Broadcast Scheduler Commands");
         broadcastCommandsToggle->setToggleState(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("broadcastSchedulerCommands"), dontSendNotification);
         broadcastCommandsToggle->addListener(this);
@@ -223,18 +223,18 @@ class VisualPreferencesPage : public Component, Button::Listener, Slider::Listen
 public:
     VisualPreferencesPage()
     {
-        addAndMakeVisible(showVisualMetro = new ToggleButton(String::empty));
+        addAndMakeVisible(showVisualMetro = new ToggleButton(String()));
         showVisualMetro->setButtonText(L"Show Visual Metro");
         showVisualMetro->setToggleState(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("showVisualMetro"), dontSendNotification);
         showVisualMetro->addListener(this);
         
-        addAndMakeVisible(stripWidthLabel = new Label(String::empty, L"Width"));
+        addAndMakeVisible(stripWidthLabel = new Label(String(), L"Width"));
         stripWidthLabel->setFont(Font(15.0000f, Font::plain));
         stripWidthLabel->setJustificationType(Justification::centredLeft);
         stripWidthLabel->setEditable(false, false, false);
         stripWidthLabel->setEnabled(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("showVisualMetro"));
         
-        addAndMakeVisible(stripWidthSlider = new Slider(String::empty));
+        addAndMakeVisible(stripWidthSlider = new Slider(String()));
         stripWidthSlider->setRange(5, 100, 1);
         stripWidthSlider->setSliderStyle(Slider::LinearHorizontal);
         stripWidthSlider->setTextBoxStyle(Slider::TextBoxLeft, false, 80, 20);
@@ -242,7 +242,7 @@ public:
         stripWidthSlider->setValue(Polytempo_StoredPreferences::getInstance()->getProps().getIntValue("stripWidth"));
         stripWidthSlider->setEnabled(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("showVisualMetro"));
         
-        addAndMakeVisible(stripNormalColourLabel = new Label(String::empty, L"Normal Beat"));
+        addAndMakeVisible(stripNormalColourLabel = new Label(String(), L"Normal Beat"));
         stripNormalColourLabel->setFont(Font(15.0000f, Font::plain));
         stripNormalColourLabel->setJustificationType(Justification::centredLeft);
         stripNormalColourLabel->setEditable(false, false, false);
@@ -254,7 +254,7 @@ public:
         stripNormalColourSelector->addListener(this);
         stripNormalColourSelector->setEnabled(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("showVisualMetro"));
         
-        addAndMakeVisible(stripCueColourLabel = new Label(String::empty, L"Cue In"));
+        addAndMakeVisible(stripCueColourLabel = new Label(String(), L"Cue In"));
         stripCueColourLabel->setFont(Font(15.0000f, Font::plain));
         stripCueColourLabel->setJustificationType(Justification::centredLeft);
         stripCueColourLabel->setEditable(false, false, false);
@@ -266,7 +266,7 @@ public:
         stripCueColourSelector->addListener(this);
         stripCueColourSelector->setEnabled(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("showVisualMetro"));
         
-        addAndMakeVisible(stripBackgroundColourLabel = new Label(String::empty, L"Background"));
+        addAndMakeVisible(stripBackgroundColourLabel = new Label(String(), L"Background"));
         stripBackgroundColourLabel->setFont(Font(15.0000f, Font::plain));
         stripBackgroundColourLabel->setJustificationType(Justification::centredLeft);
         stripBackgroundColourLabel->setEditable(false, false, false);
@@ -278,7 +278,7 @@ public:
         stripBackgroundColourSelector->addListener(this);
         stripBackgroundColourSelector->setEnabled(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("showVisualMetro"));
         
-        addAndMakeVisible(stripFrameColourLabel = new Label(String::empty, L"Frame"));
+        addAndMakeVisible(stripFrameColourLabel = new Label(String(), L"Frame"));
         stripFrameColourLabel->setFont(Font(15.0000f, Font::plain));
         stripFrameColourLabel->setJustificationType(Justification::centredLeft);
         stripFrameColourLabel->setEditable(false, false, false);
@@ -290,7 +290,7 @@ public:
         stripFrameColourSelector->addListener(this);
         stripFrameColourSelector->setEnabled(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("showVisualMetro"));
     
-        addAndMakeVisible(showAuxiliaryView = new ToggleButton(String::empty));
+        addAndMakeVisible(showAuxiliaryView = new ToggleButton(String()));
         showAuxiliaryView->setButtonText(L"Show Auxiliary View");
         showAuxiliaryView->setToggleState(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("showAuxiliaryView"), dontSendNotification);
         showAuxiliaryView->addListener(this);
@@ -400,7 +400,7 @@ public:
         /* audio main toggle
          -------------------------------------------------- */
         
-        addAndMakeVisible(audioClick = new ToggleButton(String::empty));
+        addAndMakeVisible(audioClick = new ToggleButton(String()));
         audioClick->setButtonText(L"Activate Audio Click");
         audioClick->setToggleState(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("audioClick"), dontSendNotification);
         audioClick->addListener(this);
@@ -408,7 +408,7 @@ public:
         /* audio downbeat
          -------------------------------------------------- */
         
-        addAndMakeVisible(audioDownbeatPitchLabel = new Label(String::empty, L"Downbeat Pitch"));
+        addAndMakeVisible(audioDownbeatPitchLabel = new Label(String(), L"Downbeat Pitch"));
         audioDownbeatPitchLabel->setFont(Font(15.0000f, Font::plain));
         audioDownbeatPitchLabel->setJustificationType(Justification::centredLeft);
         audioDownbeatPitchLabel->setEditable(false, false, false);
@@ -419,7 +419,7 @@ public:
         audioDownbeatPitch->setEnabled(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("audioClick"));
         audioDownbeatPitch->addListener(this);
         
-        addAndMakeVisible(audioDownbeatVolumeLabel = new Label(String::empty, L"Downbeat Volume"));
+        addAndMakeVisible(audioDownbeatVolumeLabel = new Label(String(), L"Downbeat Volume"));
         audioDownbeatVolumeLabel->setFont(Font(15.0000f, Font::plain));
         audioDownbeatVolumeLabel->setJustificationType(Justification::centredLeft);
         audioDownbeatVolumeLabel->setEditable(false, false, false);
@@ -427,7 +427,7 @@ public:
         audioDownbeatVolumeLabel->setColour(TextEditor::backgroundColourId, Colour(0x0));
         audioDownbeatVolumeLabel->setEnabled(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("audioClick"));
         
-        addAndMakeVisible(audioDownbeatVolumeSlider = new Slider(String::empty));
+        addAndMakeVisible(audioDownbeatVolumeSlider = new Slider(String()));
         audioDownbeatVolumeSlider->setRange(0, 1, 0.01);
         audioDownbeatVolumeSlider->setSliderStyle(Slider::LinearHorizontal);
         audioDownbeatVolumeSlider->setTextBoxStyle(Slider::TextBoxLeft, false, 80, 20);
@@ -438,7 +438,7 @@ public:
         /* audio beat
          -------------------------------------------------- */
         
-        addAndMakeVisible(audioBeatPitchLabel = new Label(String::empty, L"Beat Pitch"));
+        addAndMakeVisible(audioBeatPitchLabel = new Label(String(), L"Beat Pitch"));
         audioBeatPitchLabel->setFont(Font(15.0000f, Font::plain));
         audioBeatPitchLabel->setJustificationType(Justification::centredLeft);
         audioBeatPitchLabel->setEditable(false, false, false);
@@ -449,13 +449,13 @@ public:
         audioBeatPitch->setEnabled(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("audioClick"));
         audioBeatPitch->addListener(this);
         
-        addAndMakeVisible(audioBeatVolumeLabel = new Label(String::empty, L"Beat Volume"));
+        addAndMakeVisible(audioBeatVolumeLabel = new Label(String(), L"Beat Volume"));
         audioBeatVolumeLabel->setFont(Font(15.0000f, Font::plain));
         audioBeatVolumeLabel->setJustificationType(Justification::centredLeft);
         audioBeatVolumeLabel->setEditable(false, false, false);
         audioBeatVolumeLabel->setEnabled(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("audioClick"));
         
-        addAndMakeVisible(audioBeatVolumeSlider = new Slider(String::empty));
+        addAndMakeVisible(audioBeatVolumeSlider = new Slider(String()));
         audioBeatVolumeSlider->setRange(0, 1, 0.01);
         audioBeatVolumeSlider->setSliderStyle(Slider::LinearHorizontal);
         audioBeatVolumeSlider->setTextBoxStyle(Slider::TextBoxLeft, false, 80, 20);
@@ -469,7 +469,7 @@ public:
         /* audio cue in
          -------------------------------------------------- */
         
-        addAndMakeVisible(audioCuePitchLabel = new Label(String::empty, L"Cue Pitch"));
+        addAndMakeVisible(audioCuePitchLabel = new Label(String(), L"Cue Pitch"));
         audioCuePitchLabel->setFont(Font(15.0000f, Font::plain));
         audioCuePitchLabel->setJustificationType(Justification::centredLeft);
         audioCuePitchLabel->setEditable(false, false, false);
@@ -480,13 +480,13 @@ public:
         audioCuePitch->setEnabled(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("audioClick"));
         audioCuePitch->addListener(this);
         
-        addAndMakeVisible(audioCueVolumeLabel = new Label(String::empty, L"Cue Volume"));
+        addAndMakeVisible(audioCueVolumeLabel = new Label(String(), L"Cue Volume"));
         audioCueVolumeLabel->setFont(Font(15.0000f, Font::plain));
         audioCueVolumeLabel->setJustificationType(Justification::centredLeft);
         audioCueVolumeLabel->setEditable(false, false, false);
         audioCueVolumeLabel->setEnabled(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("audioClick"));
         
-        addAndMakeVisible(audioCueVolumeSlider = new Slider(String::empty));
+        addAndMakeVisible(audioCueVolumeSlider = new Slider(String()));
         audioCueVolumeSlider->setRange(0, 1, 0.01);
         audioCueVolumeSlider->setSliderStyle(Slider::LinearHorizontal);
         audioCueVolumeSlider->setTextBoxStyle(Slider::TextBoxLeft, false, 80, 20);
@@ -675,7 +675,7 @@ public:
         /* midi main toggle
          -------------------------------------------------- */
         
-        addAndMakeVisible(midiClick = new ToggleButton(String::empty));
+        addAndMakeVisible(midiClick = new ToggleButton(String()));
         midiClick->setButtonText(L"Activate Midi Click");
         midiClick->setToggleState(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("midiClick"), dontSendNotification);
         midiClick->addListener(this);
@@ -684,7 +684,7 @@ public:
         /* midi downbeat
          -------------------------------------------------- */
         
-        addAndMakeVisible(midiDownbeatPitchLabel = new Label(String::empty, L"Downbeat Pitch"));
+        addAndMakeVisible(midiDownbeatPitchLabel = new Label(String(), L"Downbeat Pitch"));
         midiDownbeatPitchLabel->setFont(Font(15.0000f, Font::plain));
         midiDownbeatPitchLabel->setJustificationType(Justification::centredLeft);
         midiDownbeatPitchLabel->setEditable(false, false, false);
@@ -695,13 +695,13 @@ public:
         midiDownbeatPitch->setEnabled(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("midiClick"));
         midiDownbeatPitch->addListener(this);
         
-        addAndMakeVisible(midiDownbeatVelocityLabel = new Label(String::empty, L"Downbeat Velocity"));
+        addAndMakeVisible(midiDownbeatVelocityLabel = new Label(String(), L"Downbeat Velocity"));
         midiDownbeatVelocityLabel->setFont(Font(15.0000f, Font::plain));
         midiDownbeatVelocityLabel->setJustificationType(Justification::centredLeft);
         midiDownbeatVelocityLabel->setEditable(false, false, false);
         midiDownbeatVelocityLabel->setEnabled(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("midiClick"));
         
-        addAndMakeVisible(midiDownbeatVelocitySlider = new Slider(String::empty));
+        addAndMakeVisible(midiDownbeatVelocitySlider = new Slider(String()));
         midiDownbeatVelocitySlider->setRange(0, 127, 1);
         midiDownbeatVelocitySlider->setSliderStyle(Slider::LinearHorizontal);
         midiDownbeatVelocitySlider->setTextBoxStyle(Slider::TextBoxLeft, false, 80, 20);
@@ -712,7 +712,7 @@ public:
         /* midi beat
          -------------------------------------------------- */
         
-        addAndMakeVisible(midiBeatPitchLabel = new Label(String::empty, L"Beat Pitch"));
+        addAndMakeVisible(midiBeatPitchLabel = new Label(String(), L"Beat Pitch"));
         midiBeatPitchLabel->setFont(Font(15.0000f, Font::plain));
         midiBeatPitchLabel->setJustificationType(Justification::centredLeft);
         midiBeatPitchLabel->setEditable(false, false, false);
@@ -723,13 +723,13 @@ public:
         midiBeatPitch->setEnabled(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("midiClick"));
         midiBeatPitch->addListener(this);
         
-        addAndMakeVisible(midiBeatVelocityLabel = new Label(String::empty, L"Beat Velocity"));
+        addAndMakeVisible(midiBeatVelocityLabel = new Label(String(), L"Beat Velocity"));
         midiBeatVelocityLabel->setFont(Font(15.0000f, Font::plain));
         midiBeatVelocityLabel->setJustificationType(Justification::centredLeft);
         midiBeatVelocityLabel->setEditable(false, false, false);
         midiBeatVelocityLabel->setEnabled(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("midiClick"));
         
-        addAndMakeVisible(midiBeatVelocitySlider = new Slider(String::empty));
+        addAndMakeVisible(midiBeatVelocitySlider = new Slider(String()));
         midiBeatVelocitySlider->setRange(0, 127, 1);
         midiBeatVelocitySlider->setSliderStyle(Slider::LinearHorizontal);
         midiBeatVelocitySlider->setTextBoxStyle(Slider::TextBoxLeft, false, 80, 20);
@@ -740,7 +740,7 @@ public:
         /* midi cue in
          -------------------------------------------------- */
         
-        addAndMakeVisible(midiCuePitchLabel = new Label(String::empty, L"Cue Pitch"));
+        addAndMakeVisible(midiCuePitchLabel = new Label(String(), L"Cue Pitch"));
         midiCuePitchLabel->setFont(Font(15.0000f, Font::plain));
         midiCuePitchLabel->setJustificationType(Justification::centredLeft);
         midiCuePitchLabel->setEditable(false, false, false);
@@ -751,13 +751,13 @@ public:
         midiCuePitch->setEnabled(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("midiClick"));
         midiCuePitch->addListener(this);
         
-        addAndMakeVisible(midiCueVelocityLabel = new Label(String::empty, L"Beat Velocity"));
+        addAndMakeVisible(midiCueVelocityLabel = new Label(String(), L"Beat Velocity"));
         midiCueVelocityLabel->setFont(Font(15.0000f, Font::plain));
         midiCueVelocityLabel->setJustificationType(Justification::centredLeft);
         midiCueVelocityLabel->setEditable(false, false, false);
         midiCueVelocityLabel->setEnabled(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("midiClick"));
         
-        addAndMakeVisible(midiCueVelocitySlider = new Slider(String::empty));
+        addAndMakeVisible(midiCueVelocitySlider = new Slider(String()));
         midiCueVelocitySlider->setRange(0, 127, 1);
         midiCueVelocitySlider->setSliderStyle(Slider::LinearHorizontal);
         midiCueVelocitySlider->setTextBoxStyle(Slider::TextBoxLeft, false, 80, 20);
@@ -768,7 +768,7 @@ public:
         /* midi device and channel
          -------------------------------------------------- */
         
-        addAndMakeVisible(midiOutputDeviceListLabel = new Label(String::empty, "MIDI Output"));
+        addAndMakeVisible(midiOutputDeviceListLabel = new Label(String(), "MIDI Output"));
         midiOutputDeviceListLabel->setFont(Font(15.0000f, Font::plain));
         midiOutputDeviceListLabel->setJustificationType(Justification::centredLeft);
         midiOutputDeviceListLabel->setEnabled(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("midiClick"));
@@ -786,7 +786,7 @@ public:
         if(index < 0) index = 0; // otherwise set first device
         midiOutputDeviceList->setSelectedId(index+1, dontSendNotification);
         
-        addAndMakeVisible(midiChannelLabel = new Label(String::empty, L"Channel"));
+        addAndMakeVisible(midiChannelLabel = new Label(String(), L"Channel"));
         midiChannelLabel->setFont(Font(15.0000f, Font::plain));
         midiChannelLabel->setJustificationType(Justification::centredLeft);
         midiChannelLabel->setEnabled(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("midiClick"));
@@ -974,12 +974,12 @@ class NetworkPreferencesPage : public Component, Button::Listener, ComboBox::Lis
 public:
 	NetworkPreferencesPage()
 	{
-		addAndMakeVisible(ipListLabel = new Label(String::empty, L"IP-Address"));
+		addAndMakeVisible(ipListLabel = new Label(String(), L"IP-Address"));
 		ipListLabel->setFont(Font(15.0000f, Font::plain));
 		ipListLabel->setJustificationType(Justification::centredLeft);
 		ipListLabel->setEditable(false, false, false);
 		
-		addAndMakeVisible(ipList = new ComboBox(String::empty));
+		addAndMakeVisible(ipList = new ComboBox(String()));
 		ipList->addListener(this);
 		updateIpList();
 
@@ -987,11 +987,11 @@ public:
 		adapterLock->setToggleState(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("networkAdapterLock", false), dontSendNotification);
 		adapterLock->addListener(this);
 
-		addAndMakeVisible(refreshButton = new TextButton(String::empty));
+		addAndMakeVisible(refreshButton = new TextButton(String()));
 		refreshButton->setButtonText(L"Refresh");
 		refreshButton->addListener(this);
 
-		addAndMakeVisible(adapterInfoLabel = new Label(String::empty, String::empty));
+		addAndMakeVisible(adapterInfoLabel = new Label(String(), String()));
 		adapterInfoLabel->setFont(Font(15.0000f, Font::plain));
 		adapterInfoLabel->setJustificationType(Justification::centredLeft);
 		adapterInfoLabel->setEditable(false, false, false);
@@ -1092,7 +1092,7 @@ Polytempo_NetworkPreferencesPanel::Polytempo_NetworkPreferencesPanel()
     addSettingsPage(midiPreferencesPage, 0, 0);
 	addSettingsPage(networkPreferencesPage, 0, 0);
 
-    if(preferencePage == String::empty) preferencePage = generalPreferencesPage;
+    if(preferencePage == String()) preferencePage = generalPreferencesPage;
     setCurrentPage(preferencePage);
 }
 

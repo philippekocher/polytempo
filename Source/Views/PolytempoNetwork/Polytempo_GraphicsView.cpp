@@ -139,7 +139,7 @@ void Polytempo_GraphicsView::displayImage(Polytempo_Event *event)
     }
     
     // default rectangle [0,0,1,1]
-    if(rect == var::null)
+    if(rect == var())
     {
         Array < var > r;
         r.set(0,0); r.set(1,0); r.set(2,1); r.set(3,1);

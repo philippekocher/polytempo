@@ -80,7 +80,7 @@ void Polytempo_TimeSyncControl::buttonClicked(Button* button)
 
 void Polytempo_TimeSyncControl::resetInfoField()
 {
-	newString = String::empty;
+	newString = String();
 	newColor = findColour(Label::backgroundColourId);
 	startTimer(TIMER_ID_DELAY, DISPLAY_DELAY);
 }

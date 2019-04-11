@@ -49,17 +49,17 @@ Polytempo_PageEditorView::Polytempo_PageEditorView()
     addAndMakeVisible(pageEditorViewport = new Polytempo_PageEditorViewport());
     pageEditorViewport->addMouseListener(this, true);
     
-    addChildComponent(imageFileLabel = new Label(String::empty, "Image File"));
+    addChildComponent(imageFileLabel = new Label(String(), "Image File"));
     imageFileLabel->setFont(Font (15.0f, Font::plain));
     
-    addChildComponent(imageFileTextbox = new Polytempo_Textbox(String::empty));
+    addChildComponent(imageFileTextbox = new Polytempo_Textbox(String()));
     imageFileTextbox->setFont(Font (14.0f, Font::plain));
     imageFileTextbox->addListener(this);
     
     addChildComponent(chooseImageFile = new TextButton("Choose.."));
     chooseImageFile->addListener(this);
 
-    addChildComponent(relativePositionLabel = new Label(String::empty, "Relative Bounds"));
+    addChildComponent(relativePositionLabel = new Label(String(), "Relative Bounds"));
     relativePositionLabel->setFont(Font (15.0f, Font::plain));
 
     addChildComponent(xTextbox = new Polytempo_Textbox("Left"));
@@ -78,7 +78,7 @@ Polytempo_PageEditorView::Polytempo_PageEditorView()
     hTextbox->setFont(Font (16.0f, Font::plain));
     hTextbox->addListener(this);
     
-    addChildComponent(sectionInstancesLabel = new Label(String::empty, "Instances"));
+    addChildComponent(sectionInstancesLabel = new Label(String(), "Instances"));
     sectionInstancesLabel->setFont(Font (15.0f, Font::plain));
     
     addChildComponent(sectionInstancesViewport = new Polytempo_SectionInstancesViewport());
@@ -135,17 +135,17 @@ void Polytempo_PageEditorView::refresh()
     }
 
     // create and populate tree
-    ValueTree vt = createTree(String::empty, String::empty);
+    ValueTree vt = createTree(String(), String());
 
     for(int i=0;i<loadImageEvents.size();i++)
     {
         ValueTree item;
-        vt.addChild(item = createTree(loadImageEvents[i]->getProperty(eventPropertyString_ImageID), String::empty), -1, nullptr);
+        vt.addChild(item = createTree(loadImageEvents[i]->getProperty(eventPropertyString_ImageID), String()), -1, nullptr);
         
         if(selectedEvent && selectedEvent == loadImageEvents[i])
         {
             imageID       = loadImageEvents[i]->getProperty(eventPropertyString_ImageID);
-            sectionID     = var::null;
+            sectionID     = var();
             selectedItem  = (TreeItem*)tree->getItemOnRow(0);
             selectedEvent = nullptr;
         }
@@ -212,8 +212,8 @@ void Polytempo_PageEditorView::update()
     }
     else
     {
-        imageID = var::null;
-        sectionID = var::null;
+        imageID = var();
+        sectionID = var();
     }
 
     pageEditorViewport->getComponent()->setImage(Polytempo_ImageManager::getInstance()->getImage(imageID));
@@ -240,7 +240,7 @@ void Polytempo_PageEditorView::update()
     sectionInstancesLabel->setVisible(false);
     sectionInstancesViewport->setVisible(false);
         
-    if(imageID != var::null && sectionID == var::null)
+    if(imageID != var() && sectionID == var())
     {
         // show textboxes
         imageFileLabel->setVisible(true);
@@ -248,7 +248,7 @@ void Polytempo_PageEditorView::update()
         imageFileTextbox->setText(Polytempo_ImageManager::getInstance()->getFileName(imageID), dontSendNotification);
         chooseImageFile->setVisible(true);
     }
-    else if(sectionID != var::null)
+    else if(sectionID != var())
     {
         for(int i=0;i<addSectionEvents.size();i++)
         {
@@ -391,7 +391,7 @@ void Polytempo_PageEditorView::deleteSelected()
 	sectionID = selectedItem->getProperty("sectionID");
 
 	String text("Do you want to ");
-	if (sectionID == var::null) text << "remove \"Image " << imageID.toString() << "\" (" << fileName << ")?";
+	if (sectionID == var()) text << "remove \"Image " << imageID.toString() << "\" (" << fileName << ")?";
 	else                       text << "delete \"Section " << sectionID.toString() << "\"?";
 
 	Polytempo_OkCancelAlert::show("Delete?", text, ModalCallbackFunction::create(saveOkCancelCallback, this));
@@ -399,7 +399,7 @@ void Polytempo_PageEditorView::deleteSelected()
 
 void Polytempo_PageEditorView::performDeleteSelected()
 {
-	if (sectionID == var::null)
+	if (sectionID == var())
 	{
 		if (Polytempo_ImageManager::getInstance()->deleteImage(imageID))
 		{
@@ -594,12 +594,12 @@ void Polytempo_PageEditorView::addInstance()
 
 bool Polytempo_PageEditorView::hasSelectedImage()
 {
-    return imageID != var::null;
+    return imageID != var();
 }
 
 bool Polytempo_PageEditorView::hasSelectedSection()
 {
-    return sectionID != var::null;
+    return sectionID != var();
 }
 
 

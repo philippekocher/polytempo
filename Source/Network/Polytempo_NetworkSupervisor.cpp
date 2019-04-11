@@ -86,8 +86,8 @@ Uuid Polytempo_NetworkSupervisor::getUniqueId()
 	if (uniqueId != nullptr)
 		return uniqueId;
 
-	String uuidStr = Polytempo_StoredPreferences::getInstance()->getProps().getValue("uniqueId", String::empty);
-	if(uuidStr != String::empty)
+	String uuidStr = Polytempo_StoredPreferences::getInstance()->getProps().getValue("uniqueId", String());
+	if(uuidStr != String())
 		uniqueId = Uuid(uuidStr);
 	else
 	{

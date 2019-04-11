@@ -210,7 +210,7 @@ String Polytempo_Event::getTypeString()
         case eventType_None:
         case eventType_Ready:
         case eventType_DeleteAll:
-            return String::empty;
+            return String();
         // these events have no string equivalent
         
         case eventType_Open:
@@ -274,7 +274,7 @@ String Polytempo_Event::getTypeString()
             return eventTypeString_Settings;
     }
     
-    return String::empty;
+    return String();
 }
 
 void Polytempo_Event::setValue(var val)
@@ -355,7 +355,7 @@ void Polytempo_Event::setProperty(String key, var value)
 var Polytempo_Event::getProperty(String key)
 {
     if(properties)   return var((*properties)[key]);
-    else             return var::null;
+    else             return var();
 }
 
 bool Polytempo_Event::hasProperty(String key)

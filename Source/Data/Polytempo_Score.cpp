@@ -153,7 +153,7 @@ void Polytempo_Score::addSection(String sectionName)
 
 void Polytempo_Score::selectSection(String sectionName)
 {
-    if(sectionName == String::empty && sections.size() > 0)
+    if(sectionName == String() && sections.size() > 0)
         currentSectionIndex = 0;
     else
         currentSectionIndex = sectionMap->indexOf(sectionName);
@@ -470,7 +470,7 @@ bool Polytempo_Score::setJsonString(String jsonString)
 {
     var jsonVar = JSON::parse(jsonString);
     
-    if(jsonVar == var::null) return false;
+    if(jsonVar == var()) return false;
     
     parseVar(jsonVar);
     setDirty();
@@ -489,7 +489,7 @@ void Polytempo_Score::parseJSON(File& JSONFile, Polytempo_Score** score)
     //DBG("parse json");
     var jsonVar = JSON::parse(JSONFile);
     
-    if(jsonVar == var::null)
+    if(jsonVar == var())
     {
         Polytempo_Alert::show("Error", "Not a valid JSON file:\n" + JSONFile.getFileName());
         return;

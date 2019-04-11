@@ -280,6 +280,6 @@ void Polytempo_TimeProvider::resetTimeSync()
 	relativeMsToMaster = 0;
 	maxRoundTrip = 0;
 	lastRoundTrip = 0;
-	lastMasterIp = String::empty;
+	lastMasterIp = String();
 	lastMasterID = Uuid::null();
 }

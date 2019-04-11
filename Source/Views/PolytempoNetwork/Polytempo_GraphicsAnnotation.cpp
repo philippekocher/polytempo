@@ -24,8 +24,8 @@ void Polytempo_GraphicsAnnotation::clear()
 {
 	color = Colours::black;
 	freeHandPath.clear();
-	imageId = String::empty;
+	imageId = String();
 	referencePoint = Point<float>();
-	text = String::empty;
+	text = String();
 	fontSize = STANDARD_FONT_SIZE;
 }

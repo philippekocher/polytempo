@@ -44,23 +44,23 @@ Polytempo_AboutWindow::Polytempo_AboutWindow()
     text3 << "Build Date: " << __DATE__ << " " << __TIME__;
     text4 << "Copyright (c) 2014–"<< _BUILD_YEAR_ << " Zurich University of the Arts";
     
-    label1 = new Label(String::empty, text1);
+    label1 = new Label(String(), text1);
     label1->setFont(Font(64.0f, Font::plain));
     label1->setColour(Label::textColourId, Colours::darkslateblue);
     label1->setJustificationType(Justification::topLeft);
     label1->setBounds(rect);
     
-    label2 = new Label(String::empty, text2);
+    label2 = new Label(String(), text2);
     label2->setFont(Font(16.0f, Font::bold));
     label2->setJustificationType(Justification::topLeft);
     label2->setBounds(4,75,rect.getWidth(),20);
     
-    label3 = new Label(String::empty, text3);
+    label3 = new Label(String(), text3);
     label3->setFont(Font(11.0f, Font::plain));
     label3->setJustificationType(Justification::topLeft);
     label3->setBounds(4,95,rect.getWidth(),20);
     
-    label4 = new Label(String::empty, text4);
+    label4 = new Label(String(), text4);
     label4->setFont(Font(12.0f, Font::plain));
     label3->setJustificationType(Justification::topLeft);
     label4->setBounds(4,rect.getHeight()-20,rect.getWidth(),20);

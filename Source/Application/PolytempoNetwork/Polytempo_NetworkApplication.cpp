@@ -86,7 +86,7 @@ void Polytempo_NetworkApplication::initialise(const String&)
 #endif
     
     // open default score file
-    if(Polytempo_StoredPreferences::getInstance()->getProps().getValue("defaultFilePath") != String::empty)
+    if(Polytempo_StoredPreferences::getInstance()->getProps().getValue("defaultFilePath") != String())
     {
         scoreFile = *new File(Polytempo_StoredPreferences::getInstance()->getProps().getValue("defaultFilePath"));
         if(scoreFile.exists())

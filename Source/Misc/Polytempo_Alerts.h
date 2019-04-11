@@ -64,9 +64,9 @@ public:
     {
         AlertWindow::showYesNoCancelBox(AlertWindow::InfoIcon,
                                         title, message,
-                                        String::empty,
-                                        String::empty,
-                                        String::empty,
+                                        String(),
+                                        String(),
+                                        String(),
                                         nullptr,
                                         callback);
     }

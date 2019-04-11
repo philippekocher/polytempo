@@ -51,7 +51,7 @@ public:
 	
 private:
 	void loadFromFile();
-	String getFileName(String newLayerName = String::empty) const;
+	String getFileName(String newLayerName = String()) const;
 	OwnedArray<Polytempo_GraphicsAnnotation> annotations;
 	String filePath;
 	String scoreName;
