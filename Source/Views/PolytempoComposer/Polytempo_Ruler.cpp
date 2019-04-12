@@ -139,7 +139,7 @@ void Polytempo_TimeRulerComponent::paint(Graphics& g)
             label = "";
             label << String(hour) << ":" << String(min).paddedLeft('0',2) << ":" << String(sec%60).paddedLeft('0',2);
         }
-        g.drawVerticalLine(TIMEMAP_OFFSET + int(sec * zoomX), 0, getHeight());
+        g.drawVerticalLine(TIMEMAP_OFFSET + int(sec * zoomX), 0.0f, float(getHeight()));
         g.drawText(label, TIMEMAP_OFFSET + 2 + int(sec * zoomX), 1, 50, 12, Justification::left);
 
         sec += increment;
@@ -201,14 +201,14 @@ void Polytempo_PositionRulerComponent::paint(Graphics& g)
             y = getHeight() - TIMEMAP_OFFSET - pos * zoomY;
             if(int(event->getProperty(eventPropertyString_Pattern)) < 20)
             {
-                thickness = int(event->getProperty(eventPropertyString_Pattern)) == 10 ? 2.0 : 1.0;
+                thickness = int(event->getProperty(eventPropertyString_Pattern)) == 10 ? 2.0f : 1.0f;
 
-                g.drawLine(45, y, getWidth(), y, thickness);
+                g.drawLine(45, y, float(getWidth()), y, thickness);
             }
             else
             {
                 thickness = 0.5;
-                g.drawLine(50, y, getWidth(), y, thickness);
+                g.drawLine(50, y, float(getWidth()), y, thickness);
             }
         }
         else if(event->getType() == eventType_Marker)
@@ -283,14 +283,14 @@ void Polytempo_TempoRulerComponent::paint(Graphics& g)
         
         if(i++ % 2 == 0)
         {
-            g.drawLine(55, y, getWidth(), y, 0.5);
+            g.drawLine(55.0f, float(y), float(getWidth()), float(y), 0.5f);
             float num = Polytempo_TempoMeasurement::decodeTempoForUI(tempo);
             int decimalPlaces = num < 10 ? 4 : num < 100 ? 3 : num < 1000 ? 2 : 1;
             g.drawFittedText(String(num, decimalPlaces), 18, y - 6, 30, 10, Justification::left, 1);
         }
         else
         {
-            g.drawLine(60, y, getWidth(), y, 0.5);
+            g.drawLine(60.0f, float(y), float(getWidth()), float(y), 0.5f);
         }
         
         tempo += increment;

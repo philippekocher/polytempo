@@ -56,17 +56,17 @@ void Polytempo_ComposerEngine::run()
     
     while(!threadShouldExit() && !shouldStop)
     {
-        scoreTime += scoreTimeIncrement() * tempoFactor;
+        scoreTime += int(scoreTimeIncrement() * tempoFactor);
         
         while(nextScoreEvent && nextScoreEvent->getTime() <= scoreTime + lookAhead)
         {
             // calculate syncTime
             
             syncTime = Time::getMillisecondCounter();
-            syncTime += (nextScoreEvent->getTime() - scoreTime) / tempoFactor;
+            syncTime += int((nextScoreEvent->getTime() - scoreTime) / tempoFactor);
             
             if(nextScoreEvent->hasProperty(eventPropertyString_Defer))
-                syncTime += (float)nextScoreEvent->getProperty(eventPropertyString_Defer) * 1000.0f;
+                syncTime += int(float(nextScoreEvent->getProperty(eventPropertyString_Defer)) * 1000.0f);
             
             nextScoreEvent->setSyncTime(syncTime);
             

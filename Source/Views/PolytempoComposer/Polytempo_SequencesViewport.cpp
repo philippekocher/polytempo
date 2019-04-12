@@ -48,7 +48,7 @@ Polytempo_SequencesViewport::~Polytempo_SequencesViewport()
 void Polytempo_SequencesViewport::paint(Graphics& g)
 {
     g.setColour(Colour(170,170,170));
-    g.drawHorizontalLine(0,0,getWidth());
+    g.drawHorizontalLine(0, 0.0f, float(getWidth()));
     
     Polytempo_Composition* composition = Polytempo_Composition::getInstance();
     if(sequenceControls.size() != composition->getNumberOfSequences()) resized();
@@ -140,14 +140,14 @@ void Polytempo_SequenceControlComponent::paint (Graphics& g)
     else
         g.setColour(Colour(200,200,200));
 
-    g.drawRoundedRectangle(4,9,94,getHeight()-18,4,1);
+    g.drawRoundedRectangle(4.0f, 9.0f, 94.0f, float(getHeight() - 18), 4.0f, 1.0f);
 
     if(composition->getSelectedSequenceIndex() == sequenceIndex)
         g.setColour(Colour(225,225,225));
     else
         g.setColour(Colour(235,235,235));
 
-    g.fillRoundedRectangle(5,10,92,getHeight()-20,4);
+    g.fillRoundedRectangle(5.0f, 10.0f, 92.0f, float(getHeight() - 20), 4.0f);
     
     if(composition->getSelectedSequenceIndex() == sequenceIndex)
     {

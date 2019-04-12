@@ -46,7 +46,7 @@ Rational Polytempo_BeatPattern::getLength()
         length = length + *(pattern[i]);
     }
     
-    return length * repeats;
+    return Rational(length * float(repeats));
 }
 
 void Polytempo_BeatPattern::setPattern(String string)

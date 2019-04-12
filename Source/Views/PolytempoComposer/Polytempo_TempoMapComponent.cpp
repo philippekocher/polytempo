@@ -56,7 +56,7 @@ void Polytempo_TempoMapComponent::paint (Graphics& g)
     g.fillAll(Colour (245,245,245));
     
     g.setColour(Colours::grey);
-    g.drawVerticalLine(getWidth() - 1, 0, getHeight());
+    g.drawVerticalLine(getWidth() - 1, 0.0f, float(getHeight()));
 }
 
 void Polytempo_TempoMapComponent::resized()

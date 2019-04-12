@@ -137,7 +137,7 @@ void Polytempo_TimeMapCoordinateSystem::paint(Graphics& g)
     int increment = Polytempo_TimeRuler::getIncrementForZoom(zoomX);
     g.setColour(Colour(50,50,50));
     for(int i=0;i<100;i++)
-        g.drawVerticalLine(TIMEMAP_OFFSET + int(i * increment * zoomX), 0, getHeight());
+        g.drawVerticalLine(TIMEMAP_OFFSET + int(i * increment * zoomX), 0.0f, float(getHeight()));
     
     
     // horizontal grid lines (position)
@@ -162,7 +162,7 @@ void Polytempo_TimeMapCoordinateSystem::paint(Graphics& g)
             else
                 thickness = 0.5;
             
-            g.drawLine(0, y, getWidth(), y, thickness);
+            g.drawLine(0, y, float(getWidth()), y, thickness);
         }
     }
     
@@ -186,8 +186,8 @@ void Polytempo_TimeMapCoordinateSystem::paintSequence(Graphics& g, Polytempo_Seq
     Polytempo_Composition* composition = Polytempo_Composition::getInstance();
  
     Colour sequenceColour = sequence->getColour();
-    float brightness = selected ? 1.0 : 0.5;
-    float alpha      = selected ? 1.0 : 0.5;
+    float brightness = selected ? 1.0f : 0.5f;
+    float alpha      = selected ? 1.0f : 0.5f;
     Polytempo_ControlPoint *controlPoint, *controlPoint1;
     int i = -1;
     while((controlPoint = sequence->getControlPoint(++i)) != nullptr)
@@ -225,7 +225,7 @@ void Polytempo_TimeMapCoordinateSystem::paintSequence(Graphics& g, Polytempo_Seq
         if(selected && controlPoint->isCoinciding)
         {
             g.setColour(Colours::black.withAlpha(0.25f));
-            g.drawLine(x, 0, x, getHeight(), 4.0);
+            g.drawLine(float(x), 0.0f, float(x), float(getHeight()), 4.0f);
         }
         
         // control points
@@ -246,7 +246,7 @@ void Polytempo_TimeMapCoordinateSystem::paintSequence(Graphics& g, Polytempo_Seq
         else
             g.setColour(sequenceColour.withMultipliedBrightness(brightness).withAlpha(alpha));
         
-        float thickness = selected ? 2.0 : 1.0;
+        float thickness = selected ? 2.0f : 1.0f;
         g.drawEllipse(x - CONTROL_POINT_SIZE * 0.5f,
                       y - CONTROL_POINT_SIZE * 0.5f,
                       CONTROL_POINT_SIZE,
@@ -406,7 +406,7 @@ void Polytempo_TempoMapCoordinateSystem::paint(Graphics& g)
     int timeIncrement = Polytempo_TimeRuler::getIncrementForZoom(zoomX);
     g.setColour(Colour(50,50,50));
     for(int i=0;i<100;i++)
-        g.drawVerticalLine(TIMEMAP_OFFSET + int(i * timeIncrement * zoomX), 0, getHeight());
+        g.drawVerticalLine(TIMEMAP_OFFSET + int(i * timeIncrement * zoomX), 0.0f, float(getHeight()));
     
     
     // horizontal grid lines (tempo)
@@ -419,7 +419,7 @@ void Polytempo_TempoMapCoordinateSystem::paint(Graphics& g)
     while(tempo < 5.0f)
     {
         float y = getHeight() - TIMEMAP_OFFSET - tempo * zoomY;
-        g.drawLine(0, y, getWidth(), y, 0.5);
+        g.drawLine(0, y, float(getWidth()), y, 0.5f);
         tempo += tempoIncrement;
     }
     
@@ -443,8 +443,8 @@ void Polytempo_TempoMapCoordinateSystem::paintSequence(Graphics& g, Polytempo_Se
     Polytempo_Composition* composition = Polytempo_Composition::getInstance();
     
     Colour sequenceColour = sequence->getColour();
-    float brightness = selected ? 1.0 : 0.5;
-    float alpha      = selected ? 1.0 : 0.5;
+    float brightness = selected ? 1.0f : 0.5f;
+    float alpha      = selected ? 1.0f : 0.5f;
     Polytempo_ControlPoint *controlPoint, *controlPoint1;
     int i = -1;
     while((controlPoint = sequence->getControlPoint(++i)) != nullptr)
@@ -484,7 +484,7 @@ void Polytempo_TempoMapCoordinateSystem::paintSequence(Graphics& g, Polytempo_Se
         if(selected && controlPoint->isCoinciding)
         {
             g.setColour(Colours::black.withAlpha(0.25f));
-            g.drawLine(x, 0, x, getHeight(), 4.0);
+            g.drawLine(float(x), 0.0f, float(x), float(getHeight()), 4.0f);
         }
         
         // control points
@@ -503,20 +503,20 @@ void Polytempo_TempoMapCoordinateSystem::paintSequence(Graphics& g, Polytempo_Se
         g.fillRoundedRectangle(x - CONTROL_POINT_SIZE * 0.5f,
                                y - CONTROL_POINT_SIZE * 0.5f,
                                CONTROL_POINT_SIZE,
-                               CONTROL_POINT_SIZE + height,
-                               CONTROL_POINT_SIZE * 0.5);
+                               CONTROL_POINT_SIZE + float(height),
+                               CONTROL_POINT_SIZE * 0.5f);
         
         if(!selected && controlPoint->isCoinciding)
             g.setColour(Colours::black);
         else
             g.setColour(sequenceColour.withMultipliedBrightness(brightness).withAlpha(alpha));
         
-        float thickness = selected ? 2.0 : 1.0;
+        float thickness = selected ? 2.0f : 1.0f;
         g.drawRoundedRectangle(x - CONTROL_POINT_SIZE * 0.5f,
                                y - CONTROL_POINT_SIZE * 0.5f,
                                CONTROL_POINT_SIZE,
-                               CONTROL_POINT_SIZE + height,
-                               CONTROL_POINT_SIZE * 0.5,
+                               CONTROL_POINT_SIZE + float(height),
+                               CONTROL_POINT_SIZE * 0.5f,
                                thickness);
     }
 }

@@ -61,7 +61,7 @@ void Polytempo_ComposerToolbarComponent::paint (Graphics& g)
     g.fillAll(Colour(245,245,245));
     
     g.setColour(Colour(170,170,170));
-    g.drawHorizontalLine(getHeight() - 1, 0, getWidth());
+    g.drawHorizontalLine(getHeight() - 1, 0.0f, float(getWidth()));
     
     g.drawFittedText("Tempo Measurement: "+Polytempo_TempoMeasurement::getMeasurementAsString(), int(getWidth() * 0.5) - 50, 8, 100, 20, Justification::centred, 2);
 }
