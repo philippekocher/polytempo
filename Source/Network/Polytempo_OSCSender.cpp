@@ -80,7 +80,6 @@ void Polytempo_OSCSender::eventNotification(Polytempo_Event *event)
 void Polytempo_OSCSender::broadcastEventAsMessage(Polytempo_Event *event)
 {
 	broadcastWrapper->SendEvent(event);
-    //sendEventAsMessage(event, broadcastSocket);
 }
 
 void Polytempo_OSCSender::sendEventAsMessage(Polytempo_Event *event, Polytempo_Socket *socket)
