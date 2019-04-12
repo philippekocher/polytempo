@@ -113,7 +113,7 @@ void Polytempo_NetworkEngine::setScoreTime(int time)
 {
     scoreTime = time;
 
-    Array <class Polytempo_Event*> events; // the events to execute immediately
+    Array <Polytempo_Event*> events; // the events to execute immediately
     score->setTime(time, &events, &waitBeforeStart);
     
     Polytempo_EventScheduler *scheduler = Polytempo_EventScheduler::getInstance();
