@@ -174,16 +174,12 @@ void Polytempo_PositionRulerComponent::changeListenerCallback(ChangeBroadcaster 
 
 void Polytempo_PositionRulerComponent::paint(Graphics& g)
 {
-    Polytempo_Sequence* sequence;
-    
-    if(!(sequence = Polytempo_Composition::getInstance()->getSelectedSequence())) return;
+    Polytempo_Sequence* sequence = Polytempo_Composition::getInstance()->getSelectedSequence();
+    if(sequence == nullptr) return;
 
-    //g.fillAll(Colour (235,235,235));
- 
     g.setColour(sequence->getColour());
     g.fillRect(0,0,10,getHeight());
     
-    //g.setColour(Colour(0,0,0));
     g.setFont(12);
     
     g.setColour(Colour(50,50,50));
@@ -263,9 +259,8 @@ void Polytempo_TempoRulerComponent::changeListenerCallback(ChangeBroadcaster *)
 
 void Polytempo_TempoRulerComponent::paint(Graphics& g)
 {
-    Polytempo_Sequence* sequence;
-    
-    if(!(sequence = Polytempo_Composition::getInstance()->getSelectedSequence())) return;
+    Polytempo_Sequence* sequence = Polytempo_Composition::getInstance()->getSelectedSequence();
+    if(sequence == nullptr) return;
     
     g.setColour(sequence->getColour());
     g.fillRect(0,0,10,getHeight());

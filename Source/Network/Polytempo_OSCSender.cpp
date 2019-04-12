@@ -83,12 +83,14 @@ void Polytempo_OSCSender::eventNotification(Polytempo_Event *event)
         sendTick(event);
 }
 
+#ifdef POLYTEMPO_NETWORK
 void Polytempo_OSCSender::broadcastEventAsMessage(Polytempo_Event *event)
 {
-#ifdef POLYTEMPO_NETWORK
 	broadcastWrapper->SendEvent(event);
-#endif
 }
+#else
+void Polytempo_OSCSender::broadcastEventAsMessage(Polytempo_Event*) {}
+#endif
 
 void Polytempo_OSCSender::sendEventAsMessage(Polytempo_Event *event, Polytempo_Socket *socket)
 {

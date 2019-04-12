@@ -249,9 +249,9 @@ void Polytempo_TimeProvider::timerCallback()
 	}
 }
 
+#ifdef POLYTEMPO_NETWORK
 void Polytempo_TimeProvider::displayMessage(String message, MessageType messageType)
 {
-#ifdef POLYTEMPO_NETWORK
 	if (pTimeSyncControl != nullptr)
 	{
 		Colour c;
@@ -265,9 +265,11 @@ void Polytempo_TimeProvider::displayMessage(String message, MessageType messageT
 		pTimeSyncControl->showInfoMessage(message, c);
 		return;
 	}
-#endif
 	DBG(message);
 }
+#else
+void Polytempo_TimeProvider::displayMessage(String, MessageType) {}
+#endif
 
 void Polytempo_TimeProvider::resetTimeSync()
 {

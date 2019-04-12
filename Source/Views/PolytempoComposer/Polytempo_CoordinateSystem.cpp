@@ -128,8 +128,8 @@ void Polytempo_TimeMapCoordinateSystem::paint(Graphics& g)
     g.fillAll(Colour(255,255,255));
  
     Polytempo_Composition* composition = Polytempo_Composition::getInstance();
-    Polytempo_Sequence* sequence;
-    if(!(sequence = Polytempo_Composition::getInstance()->getSelectedSequence())) return;
+    Polytempo_Sequence* sequence = Polytempo_Composition::getInstance()->getSelectedSequence();
+    if(sequence == nullptr) return;
 
     
     // vertical grid lines (time)
@@ -397,8 +397,8 @@ void Polytempo_TempoMapCoordinateSystem::paint(Graphics& g)
     g.fillAll(Colour(255,255,255));
     
     Polytempo_Composition* composition = Polytempo_Composition::getInstance();
-    Polytempo_Sequence* sequence;
-    if(!(sequence = Polytempo_Composition::getInstance()->getSelectedSequence())) return;
+    Polytempo_Sequence* sequence = Polytempo_Composition::getInstance()->getSelectedSequence();
+    if(sequence == nullptr) return;
     
     
     // vertical grid lines (time)
