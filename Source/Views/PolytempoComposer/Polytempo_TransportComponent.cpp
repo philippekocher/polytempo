@@ -44,11 +44,11 @@ Polytempo_TransportComponent::Polytempo_TransportComponent()
     returnToZeroButton->setCommandToTrigger(&Polytempo_ComposerApplication::getCommandManager(), Polytempo_CommandIDs::returnToBeginning , true);
     
     
-    addAndMakeVisible(timeTextbox = new Polytempo_Textbox(String::empty));
+    addAndMakeVisible(timeTextbox = new Polytempo_Textbox(String()));
     timeTextbox->setFont(Font (24.0f, Font::bold));
     timeTextbox->addListener(this);
 
-    addAndMakeVisible(tempoFactorTextbox = new Polytempo_Textbox(String::empty));
+    addAndMakeVisible(tempoFactorTextbox = new Polytempo_Textbox(String()));
     tempoFactorTextbox->setFont(Font (24.0f, Font::bold));
     tempoFactorTextbox->setText("1.0", dontSendNotification);
     tempoFactorTextbox->addListener(this);

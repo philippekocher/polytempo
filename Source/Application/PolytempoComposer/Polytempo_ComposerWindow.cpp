@@ -31,7 +31,7 @@
 //static ScopedPointer<ApplicationCommandManager> applicationCommandManager;
 
 Polytempo_ComposerWindow::Polytempo_ComposerWindow()
-: DocumentWindow (String::empty,
+: DocumentWindow (String(),
                   Colours::lightgrey,
                   DocumentWindow::allButtons)
 {

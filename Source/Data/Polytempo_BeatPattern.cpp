@@ -213,7 +213,7 @@ DynamicObject* Polytempo_BeatPattern::getObject()
     DynamicObject* object = new DynamicObject();
     object->setProperty("patternString", patternString);
     object->setProperty("repeats", repeats);
-    if(marker != String::empty) object->setProperty("marker", marker);
+    if(marker != String()) object->setProperty("marker", marker);
     object->setProperty("counterString", counterString);
 
     return object;

@@ -238,7 +238,7 @@ void Polytempo_Composition::newComposition()
     Polytempo_Composition::getInstance()->addSequence(); // one sequence to start with
     setDirty(false);
     
-    compositionFile = File::nonexistent;
+    compositionFile = File();
     mainWindow->setName("Untitled");
 }
 
@@ -261,7 +261,7 @@ void Polytempo_Composition::openFile()
 
 void Polytempo_Composition::openFile(File file)
 {
-    if(file == File::nonexistent) return;
+    if(!file.existsAsFile()) return;
     
     if(readJSONfromFile(file))
     {
@@ -277,7 +277,7 @@ void Polytempo_Composition::openFile(File file)
 
 void Polytempo_Composition::saveToFile()
 {
-    if(compositionFile == File::nonexistent)
+    if(!compositionFile.existsAsFile())
     {
         File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("compositionFileDirectory"));
         FileChooser fileChooser("Save Composition", directory, "*.ptcom", true);
@@ -326,7 +326,7 @@ bool Polytempo_Composition::readJSONfromFile(File file)
 {
     var jsonVar = JSON::parse(file);
     
-    if(jsonVar == var::null)
+    if(jsonVar == var())
     {
         Polytempo_Alert::show("Error", "Not a valid JSON file:\n" + file.getFileName());
         return false;
