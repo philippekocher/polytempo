@@ -75,6 +75,7 @@ private:
     ScopedPointer<Polytempo_OSCListener> oscListener;
     ScopedPointer<Polytempo_MidiInput> midiInput;
     ScopedPointer<Polytempo_Score> score;
+	ScopedPointer<FileLogger> fileLogger;
 
 #ifdef JUCE_ANDROID
 	ScopedPointer<FileChooser> fc;

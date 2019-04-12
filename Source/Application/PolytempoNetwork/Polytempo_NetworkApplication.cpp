@@ -40,6 +40,9 @@ Polytempo_NetworkApplication::Polytempo_NetworkApplication()
 
 void Polytempo_NetworkApplication::initialise(const String&)
 {
+	fileLogger = FileLogger::createDefaultAppLogger("Polytempo Network", "appLog.log", "Polytemp Network Logfile", 10 * 1024 * 1024);
+	Logger::setCurrentLogger(fileLogger);
+
     // GUI
     mainWindow = new Polytempo_NetworkWindow();
     
@@ -151,6 +154,9 @@ void Polytempo_NetworkApplication::shutdown()
 	Polytempo_GraphicsAnnotationManager::deleteInstance();
 	Polytempo_TimeProvider::deleteInstance();
     Polytempo_EventDispatcher::deleteInstance();
+
+	Logger::setCurrentLogger(nullptr);
+	fileLogger = nullptr;
 }
 
 //------------------------------------------------------------------------------
