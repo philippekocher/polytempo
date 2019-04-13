@@ -40,8 +40,8 @@ void Polytempo_NetworkInfoView::paint (Graphics& g)
 		Colour peerColor = (currentTime - it.getValue().lastHeartBeat) > 2*NETWORK_SUPERVISOR_PING_INTERVAL
 			? Colours::red
 			: it.getValue().syncState
-				? Colours::orange
-				: Colours::green;
+				? Colours::green
+				: Colours::orange;
 		attributedPeers.append(" \n", Font(4.0f, Font::plain));
 		attributedPeers.append(it.getValue().name + "\n", Font(12.0f, Font::plain), peerColor);
 	}
