@@ -141,3 +141,8 @@ void Polytempo_OSCSender::sendTick(Polytempo_Event *event)
         if(socket->transmitsTicks()) sendEventAsMessage(event, socket);
     }
 }
+
+Polytempo_BroadcastWrapper* Polytempo_OSCSender::getBroadcastWrapper() const
+{
+	return broadcastWrapper;
+}

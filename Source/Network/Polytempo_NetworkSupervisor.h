@@ -27,7 +27,7 @@
 
 #include "../Scheduler/Polytempo_EventObserver.h"
 #include "Polytempo_Socket.h"
-#include "Polytempo_OSCSender.h"
+#include "Polytempo_BroadcastWrapper.h"
 
 
 class Polytempo_NetworkSupervisor : public Timer,
@@ -46,7 +46,7 @@ public:
     HashMap <String, String>* getPeers();
     void setSocket(Polytempo_Socket *aSocket);
     void setComponent(Component *aComponent);
-
+	void setBroadcastWrapper(Polytempo_BroadcastWrapper* pBroadcastWrapper);
     void handlePeer(String ip, String name);
 
     void eventNotification(Polytempo_Event *event);
@@ -61,6 +61,8 @@ private:
 	ScopedPointer < String > nodeName;
 
     ScopedPointer < HashMap < String, String > > connectedPeersMap;
+
+	Polytempo_BroadcastWrapper* pBroadcastWrapper;
 };
 
 

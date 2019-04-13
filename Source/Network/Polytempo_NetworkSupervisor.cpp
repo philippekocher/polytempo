@@ -40,6 +40,8 @@ Polytempo_NetworkSupervisor::Polytempo_NetworkSupervisor()
 
 	nodeName = new String(SystemStats::getFullUserName());
 
+	pBroadcastWrapper = nullptr;
+
 	startTimer(PING_INTERVAL);
 }
 
@@ -50,7 +52,7 @@ Polytempo_NetworkSupervisor::~Polytempo_NetworkSupervisor()
     connectedPeersMap = nullptr;
 	localName = nullptr;
 	nodeName = nullptr;
-    
+
     clearSingletonInstance();
     
     Polytempo_NetworkInterfaceManager::deleteInstance();
@@ -68,14 +70,20 @@ void Polytempo_NetworkSupervisor::timerCallback()
     // broadcast a heartbeat
     ScopedPointer<String> name = new String(getLocalName());
     
-	socket->write(
-		OSCMessage(
-			OSCAddressPattern("/node"), 
-			OSCArgument(getUniqueId().toString()), 
-			OSCArgument(Polytempo_NetworkInterfaceManager::getInstance()->getSelectedIpAddress().ipAddress.toString()), 
-			OSCArgument(*name), 
-			OSCArgument((int32)Polytempo_TimeProvider::getInstance()->isMaster())));
+	OSCMessage msg = OSCMessage(
+		OSCAddressPattern("/node"),
+		OSCArgument(getUniqueId().toString()),
+		OSCArgument(Polytempo_NetworkInterfaceManager::getInstance()->getSelectedIpAddress().ipAddress.toString()),
+		OSCArgument(*name),
+		OSCArgument((int32)Polytempo_TimeProvider::getInstance()->isMaster()));
+
+	socket->write(msg);
 	
+	if(pBroadcastWrapper != nullptr)
+	{
+		pBroadcastWrapper->SendOsc(&msg);
+	}
+
     if(component) component->repaint();
 }
 
@@ -120,6 +128,11 @@ void Polytempo_NetworkSupervisor::setSocket(Polytempo_Socket *theSocket)
 void Polytempo_NetworkSupervisor::setComponent(Component *aComponent)
 {
     component = aComponent;
+}
+
+void Polytempo_NetworkSupervisor::setBroadcastWrapper(Polytempo_BroadcastWrapper* pBroadcaster)
+{
+	pBroadcastWrapper = pBroadcaster;
 }
 
 void Polytempo_NetworkSupervisor::handlePeer(String ip, String name)

@@ -47,6 +47,7 @@ public:
     void sendEventAsMessage(Polytempo_Event *event, Polytempo_Socket *socket);
     void sendOscEventAsMessage(Polytempo_Event *event);
     void sendTick(Polytempo_Event *event);
+	Polytempo_BroadcastWrapper* getBroadcastWrapper() const;
 
 private:
     ScopedPointer < HashMap < String, Polytempo_Socket* > > socketsMap;
