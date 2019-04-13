@@ -21,6 +21,7 @@ public:
 
 	void UpdatePeers(HashMap< String, String >* pPeers);
 	void SendEvent(Polytempo_Event* pEvent) const;
+	void SendOsc(OSCMessage* pMsg) const;
 
 private:
 	void timerCallback() override;

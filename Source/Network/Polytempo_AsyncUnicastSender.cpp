@@ -18,31 +18,39 @@ Polytempo_AsyncUnicastSender::Polytempo_AsyncUnicastSender(String ip)
 Polytempo_AsyncUnicastSender::~Polytempo_AsyncUnicastSender()
 {
 	socket = nullptr;
-	eventToSend = nullptr;
+	messageToSend = nullptr;
 }
 
 void Polytempo_AsyncUnicastSender::sendAsync(Polytempo_Event* pEvent)
 {
 	const ScopedLock lock(csEvent);
-	eventToSend = new Polytempo_Event(*pEvent);
-	triggerAsyncUpdate();
-}
-
-void Polytempo_AsyncUnicastSender::handleAsyncUpdate()
-{
-	ScopedPointer < Polytempo_Event > e;
-	{
-		const ScopedLock lock(csEvent);
-		e = new Polytempo_Event(*eventToSend);
-	}
-
-	OSCMessage oscMessage = OSCMessage(OSCAddressPattern(e->getOscAddressFromType()));
-	for (var message : e->getOscMessageFromProperties())
+	
+	OSCMessage oscMessage = OSCMessage(OSCAddressPattern(pEvent->getOscAddressFromType()));
+	for (var message : pEvent->getOscMessageFromProperties())
 	{
 		if (message.isInt())          oscMessage.addInt32(int(message));
 		else if (message.isDouble())  oscMessage.addFloat32(float(message));
 		else if (message.isString())  oscMessage.addString(message.toString());
 	}
 
-	socket->write(oscMessage);
+	messageToSend = new OSCMessage(oscMessage);
+
+	triggerAsyncUpdate();
+}
+
+void Polytempo_AsyncUnicastSender::sendAsync(OSCMessage* pMsg)
+{
+	const ScopedLock lock(csEvent);
+
+	messageToSend = new OSCMessage(*pMsg);
+
+	triggerAsyncUpdate();
+}
+
+void Polytempo_AsyncUnicastSender::handleAsyncUpdate()
+{
+	const ScopedLock lock(csEvent);
+	
+	OSCMessage msg = OSCMessage(*messageToSend);
+	socket->write(msg);
 }

@@ -20,11 +20,12 @@ public:
 	~Polytempo_AsyncUnicastSender();
 
 	void sendAsync(Polytempo_Event* pEvent);
+	void sendAsync(OSCMessage* pMsg);
 
 private:
 	void handleAsyncUpdate() override;
 
 	CriticalSection csEvent;
-	ScopedPointer < Polytempo_Event > eventToSend;
+	ScopedPointer < OSCMessage > messageToSend;
 	ScopedPointer < Polytempo_Socket > socket;
 };

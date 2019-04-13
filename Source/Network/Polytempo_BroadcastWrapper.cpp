@@ -60,6 +60,15 @@ void Polytempo_BroadcastWrapper::SendEvent(Polytempo_Event* pEvent) const
 	}
 }
 
+void Polytempo_BroadcastWrapper::SendOsc(OSCMessage* pMsg) const
+{
+	HashMap < String, Polytempo_AsyncUnicastSender* >::Iterator it(unicastSenderList);
+	while (it.next())
+	{
+		it.getValue()->sendAsync(pMsg);
+	}
+}
+
 void Polytempo_BroadcastWrapper::timerCallback()
 {
 	UpdatePeers(Polytempo_NetworkSupervisor::getInstance()->getPeers());
