@@ -1,0 +1,21 @@
+/*
+  ==============================================================================
+
+    Polytempo_PeerInfo.h
+    Created: 13 Apr 2019 3:57:42pm
+    Author:  chris
+
+  ==============================================================================
+*/
+
+#pragma once
+#include "JuceHeader.h"
+
+class Polytempo_PeerInfo
+{
+public:
+	String	ip;
+	String	name;
+	uint32	lastHeartBeat;
+	bool	syncState;
+};

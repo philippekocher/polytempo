@@ -21,7 +21,7 @@ Polytempo_BroadcastWrapper::~Polytempo_BroadcastWrapper()
 {
 	stopTimer();
 
-	HashMap < String, Polytempo_AsyncUnicastSender* >::Iterator it(unicastSenderList);
+	HashMap < Uuid, Polytempo_AsyncUnicastSender* >::Iterator it(unicastSenderList);
 	while (it.next())
 	{
 		delete it.getValue();
@@ -30,19 +30,19 @@ Polytempo_BroadcastWrapper::~Polytempo_BroadcastWrapper()
 	unicastSenderList.clear();
 }
 
-void Polytempo_BroadcastWrapper::UpdatePeers(HashMap<String, String>* pPeers)
+void Polytempo_BroadcastWrapper::UpdatePeers(HashMap<Uuid, Polytempo_PeerInfo>* pPeers)
 {
-	HashMap < String, String >::Iterator it(*pPeers);
+	HashMap < Uuid, Polytempo_PeerInfo >::Iterator it(*pPeers);
 	while (it.next())
 	{
 		if(!unicastSenderList.contains(it.getKey()))
 		{
-			unicastSenderList.set(it.getKey(), new Polytempo_AsyncUnicastSender(it.getKey(), port));
+			unicastSenderList.set(it.getKey(), new Polytempo_AsyncUnicastSender(it.getValue().ip, port));
 		}
 	}
 
 	// check for peers to remove
-	HashMap < String, Polytempo_AsyncUnicastSender* >::Iterator it2(unicastSenderList);
+	HashMap < Uuid, Polytempo_AsyncUnicastSender* >::Iterator it2(unicastSenderList);
 	while (it2.next())
 	{
 		if (!pPeers->contains(it2.getKey()))
@@ -54,7 +54,7 @@ void Polytempo_BroadcastWrapper::UpdatePeers(HashMap<String, String>* pPeers)
 
 void Polytempo_BroadcastWrapper::SendEvent(Polytempo_Event* pEvent) const
 {
-	HashMap < String, Polytempo_AsyncUnicastSender* >::Iterator it(unicastSenderList);
+	HashMap < Uuid, Polytempo_AsyncUnicastSender* >::Iterator it(unicastSenderList);
 	while (it.next())
 	{
 		it.getValue()->sendAsync(pEvent);
@@ -63,7 +63,7 @@ void Polytempo_BroadcastWrapper::SendEvent(Polytempo_Event* pEvent) const
 
 void Polytempo_BroadcastWrapper::SendOsc(OSCMessage* pMsg) const
 {
-	HashMap < String, Polytempo_AsyncUnicastSender* >::Iterator it(unicastSenderList);
+	HashMap < Uuid, Polytempo_AsyncUnicastSender* >::Iterator it(unicastSenderList);
 	while (it.next())
 	{
 		it.getValue()->sendAsync(pMsg);

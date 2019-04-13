@@ -29,11 +29,9 @@
 #include "Polytempo_NetworkInterfaceManager.h"
 #include "Polytempo_TimeProvider.h"
 
-#define PING_INTERVAL	1000
-
 Polytempo_NetworkSupervisor::Polytempo_NetworkSupervisor()
 {
-    connectedPeersMap = new HashMap < String, String >();
+    connectedPeersMap = new HashMap < Uuid, Polytempo_PeerInfo >();
     
     socket = nullptr;
     component = nullptr;
@@ -42,7 +40,7 @@ Polytempo_NetworkSupervisor::Polytempo_NetworkSupervisor()
 
 	pBroadcastWrapper = nullptr;
 
-	startTimer(PING_INTERVAL);
+	startTimer(NETWORK_SUPERVISOR_PING_INTERVAL);
 }
 
 Polytempo_NetworkSupervisor::~Polytempo_NetworkSupervisor()
@@ -76,7 +74,8 @@ void Polytempo_NetworkSupervisor::timerCallback()
 		OSCArgument(getUniqueId().toString()),
 		OSCArgument(Polytempo_NetworkInterfaceManager::getInstance()->getSelectedIpAddress().ipAddress.toString()),
 		OSCArgument(*name),
-		OSCArgument((int32)Polytempo_TimeProvider::getInstance()->isMaster()));
+		OSCArgument((int32)Polytempo_TimeProvider::getInstance()->isMaster()),
+		OSCArgument((int32)Polytempo_TimeProvider::getInstance()->getDelaySafeTimestamp()));
 
 	socket->write(msg);
 	
@@ -111,12 +110,12 @@ Uuid Polytempo_NetworkSupervisor::getUniqueId()
 	return uniqueId;
 }
 
-String Polytempo_NetworkSupervisor::getLocalName()
+String Polytempo_NetworkSupervisor::getLocalName() const
 {
 	return String(localName == nullptr ? "Untitled" : *localName) + String(" (") + String(*nodeName) + String(")");
 }
 
-HashMap <String, String>* Polytempo_NetworkSupervisor::getPeers()
+HashMap <Uuid, Polytempo_PeerInfo>* Polytempo_NetworkSupervisor::getPeers() const
 {
     return connectedPeersMap;
 }
@@ -136,9 +135,15 @@ void Polytempo_NetworkSupervisor::setBroadcastSender(Polytempo_BroadcastWrapper*
 	pBroadcastWrapper = pBroadcaster;
 }
 
-void Polytempo_NetworkSupervisor::handlePeer(String ip, String name)
+void Polytempo_NetworkSupervisor::handlePeer(Uuid id, String ip, String name, bool syncOk) const
 {
-	connectedPeersMap->set(ip, name);
+	Polytempo_PeerInfo info;
+	info.ip = ip;
+	info.name = name;
+	info.lastHeartBeat = Time::getMillisecondCounter();
+	info.syncState = syncOk;
+
+	connectedPeersMap->set(id, info);
 }
 
 void Polytempo_NetworkSupervisor::eventNotification(Polytempo_Event *event)

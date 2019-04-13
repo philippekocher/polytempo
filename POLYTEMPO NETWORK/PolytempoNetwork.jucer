@@ -76,6 +76,8 @@
             file="../Source/Misc/Polytempo_Textbox.h"/>
     </GROUP>
     <GROUP id="{20871079-D757-6FAE-C7D7-6B4E6D796F76}" name="Network">
+      <FILE id="WOfyFA" name="Polytempo_PeerInfo.h" compile="0" resource="0"
+            file="../Source/Network/Polytempo_PeerInfo.h"/>
       <FILE id="dO6RMk" name="Polytempo_BroadcastWrapper.cpp" compile="1"
             resource="0" file="../Source/Network/Polytempo_BroadcastWrapper.cpp"/>
       <FILE id="dqFChB" name="Polytempo_BroadcastWrapper.h" compile="0" resource="0"
