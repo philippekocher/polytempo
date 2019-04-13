@@ -16,7 +16,7 @@
 class Polytempo_AsyncUnicastSender : AsyncUpdater
 {
 public:
-	Polytempo_AsyncUnicastSender(String ip);
+	Polytempo_AsyncUnicastSender(String ip, int port);
 	~Polytempo_AsyncUnicastSender();
 
 	void sendAsync(Polytempo_Event* pEvent);

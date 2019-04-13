@@ -16,7 +16,7 @@
 class Polytempo_BroadcastWrapper : Timer
 {
 public:
-	Polytempo_BroadcastWrapper();
+	Polytempo_BroadcastWrapper(int port);
 	~Polytempo_BroadcastWrapper();
 
 	void UpdatePeers(HashMap< String, String >* pPeers);
@@ -27,4 +27,5 @@ private:
 	void timerCallback() override;
 
 	HashMap< String, Polytempo_AsyncUnicastSender* > unicastSenderList;
+	int port;
 };

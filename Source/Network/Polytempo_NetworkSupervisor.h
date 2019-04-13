@@ -44,9 +44,9 @@ public:
     String getAdapterInfo();
     String getLocalName();
     HashMap <String, String>* getPeers();
-    void setSocket(Polytempo_Socket *aSocket);
+    void createSocket(int port);
     void setComponent(Component *aComponent);
-	void setBroadcastWrapper(Polytempo_BroadcastWrapper* pBroadcastWrapper);
+	void setBroadcastSender(Polytempo_BroadcastWrapper* pBroadcastWrapper);
     void handlePeer(String ip, String name);
 
     void eventNotification(Polytempo_Event *event);
@@ -54,7 +54,7 @@ public:
 
 private:
 	Uuid uniqueId = nullptr;
-    Polytempo_Socket *socket;
+    ScopedPointer<Polytempo_Socket> socket;
     Component *component;
     
     ScopedPointer < String > localName;

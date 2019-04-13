@@ -28,21 +28,21 @@
 
 juce_ImplementSingleton(Polytempo_EventDispatcher);
 
-void Polytempo_EventDispatcher::setBroadcastSender(Polytempo_OSCSender *sender)
+void Polytempo_EventDispatcher::setBroadcastSender(Polytempo_BroadcastWrapper *sender)
 {
-	oscSender = sender;
+	broadcaster = sender;
 }
 
 void Polytempo_EventDispatcher::broadcastEvent(Polytempo_Event *event)
 {
 	// network broadcast
 	if (Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("broadcastSchedulerCommands") &&
-		oscSender != nullptr)
+		broadcaster != nullptr)
 	{
-        // set sync time
-        event->setSyncTime(Polytempo_TimeProvider::getInstance()->getDelaySafeTimestamp());
+		// set sync time
+		event->setSyncTime(Polytempo_TimeProvider::getInstance()->getDelaySafeTimestamp());
 
-        oscSender->broadcastEventAsMessage(event);
+		broadcaster->SendEvent(event);
 	}
 
 	// direct connection

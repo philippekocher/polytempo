@@ -52,6 +52,7 @@ Polytempo_NetworkSupervisor::~Polytempo_NetworkSupervisor()
     connectedPeersMap = nullptr;
 	localName = nullptr;
 	nodeName = nullptr;
+	socket = nullptr;
 
     clearSingletonInstance();
     
@@ -120,9 +121,9 @@ HashMap <String, String>* Polytempo_NetworkSupervisor::getPeers()
     return connectedPeersMap;
 }
 
-void Polytempo_NetworkSupervisor::setSocket(Polytempo_Socket *theSocket)
+void Polytempo_NetworkSupervisor::createSocket(int port)
 {
-    socket = theSocket;
+    socket = new Polytempo_Socket("255.255.255.255", port); // dummy broadcaster, will be overwritten by renewBroadcaster()
 }
 
 void Polytempo_NetworkSupervisor::setComponent(Component *aComponent)
@@ -130,7 +131,7 @@ void Polytempo_NetworkSupervisor::setComponent(Component *aComponent)
     component = aComponent;
 }
 
-void Polytempo_NetworkSupervisor::setBroadcastWrapper(Polytempo_BroadcastWrapper* pBroadcaster)
+void Polytempo_NetworkSupervisor::setBroadcastSender(Polytempo_BroadcastWrapper* pBroadcaster)
 {
 	pBroadcastWrapper = pBroadcaster;
 }

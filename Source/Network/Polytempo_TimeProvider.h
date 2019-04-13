@@ -18,9 +18,8 @@
 #define	ROUND_TRIP_HISTORY_SIZE		20
 #define SYNC_TIME_VALID_PERIOD_MS	10000
 #define TIME_SYNC_INTERVAL_MS		4000
-#define TIME_SYNC_OSC_PORT			9999
 
-class Polytempo_TimeProvider : private OSCReceiver::Listener<OSCReceiver::RealtimeCallback>, Timer
+class Polytempo_TimeProvider : OSCReceiver::Listener<OSCReceiver::RealtimeCallback>, Timer
 {
 public:
 	juce_DeclareSingleton(Polytempo_TimeProvider, true);
@@ -28,7 +27,8 @@ public:
 	Polytempo_TimeProvider();
 	~Polytempo_TimeProvider();
 
-	void initialize(bool master, int oscPort);
+	void initialize(int oscPort);
+	void toggleMaster(bool master);
 	bool getSyncTime(uint32* pTime);
 	uint32 getDelaySafeTimestamp();
 	bool isMaster() const;
@@ -43,7 +43,7 @@ private:
 	void createTimeIndex(int* pIndex, uint32* pTimestamp);
 	void oscMessageReceived(const OSCMessage& message) override;
 	void timerCallback() override;
-	void displayMessage(String message, MessageType messageType);
+	void displayMessage(String message, MessageType messageType) const;
 	void resetTimeSync();
 
 private:

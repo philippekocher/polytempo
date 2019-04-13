@@ -10,9 +10,9 @@
 
 #include "Polytempo_AsyncUnicastSender.h"
 
-Polytempo_AsyncUnicastSender::Polytempo_AsyncUnicastSender(String ip)
+Polytempo_AsyncUnicastSender::Polytempo_AsyncUnicastSender(String ip, int port)
 {
-	socket = new Polytempo_Socket(ip, 47522);
+	socket = new Polytempo_Socket(ip, port);
 }
 
 Polytempo_AsyncUnicastSender::~Polytempo_AsyncUnicastSender()

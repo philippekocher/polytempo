@@ -11,8 +11,9 @@
 #include "Polytempo_BroadcastWrapper.h"
 #include "Polytempo_NetworkSupervisor.h"
 
-Polytempo_BroadcastWrapper::Polytempo_BroadcastWrapper()
+Polytempo_BroadcastWrapper::Polytempo_BroadcastWrapper(int port)
 {
+	this->port = port;
 	startTimer(2000);
 }
 
@@ -36,7 +37,7 @@ void Polytempo_BroadcastWrapper::UpdatePeers(HashMap<String, String>* pPeers)
 	{
 		if(!unicastSenderList.contains(it.getKey()))
 		{
-			unicastSenderList.set(it.getKey(), new Polytempo_AsyncUnicastSender(it.getKey()));
+			unicastSenderList.set(it.getKey(), new Polytempo_AsyncUnicastSender(it.getKey(), port));
 		}
 	}
 

@@ -28,35 +28,21 @@
 #include "../Scheduler/Polytempo_EventObserver.h"
 #include "Polytempo_Socket.h"
 
-#ifdef POLYTEMPO_NETWORK
-#include "Polytempo_BroadcastWrapper.h"
-#endif
-
 class Polytempo_OSCSender : public Polytempo_EventObserver
 {
 public:
     Polytempo_OSCSender();
     ~Polytempo_OSCSender();
     
-    void addBroadcastSender(int port);
-    
     void eventNotification(Polytempo_Event *event);
-    void broadcastEventAsMessage(Polytempo_Event *event);
     void addSender(const String& senderID, const String& hostName, int port, bool ticks = false);
     void deleteAll();
     void sendEventAsMessage(Polytempo_Event *event, Polytempo_Socket *socket);
     void sendOscEventAsMessage(Polytempo_Event *event);
     void sendTick(Polytempo_Event *event);
-	Polytempo_BroadcastWrapper* getBroadcastWrapper() const;
 
 private:
     ScopedPointer < HashMap < String, Polytempo_Socket* > > socketsMap;
-    ScopedPointer < Polytempo_Socket > broadcastSocket;
-
-#ifdef POLYTEMPO_NETWORK
-	ScopedPointer < Polytempo_BroadcastWrapper > broadcastWrapper;
-#endif
-
 };
 
 

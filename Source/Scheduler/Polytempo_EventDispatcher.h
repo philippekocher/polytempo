@@ -26,8 +26,8 @@
 #define __Polytempo_EventDispatcher__
 
 #include "Polytempo_EventScheduler.h"
-#include "../Network/Polytempo_OSCSender.h"
 #include "../Preferences/Polytempo_StoredPreferences.h"
+#include "../Network/Polytempo_BroadcastWrapper.h"
 
 
 class Polytempo_EventDispatcher
@@ -35,11 +35,11 @@ class Polytempo_EventDispatcher
 public:
     juce_DeclareSingleton(Polytempo_EventDispatcher, false);
     
-    void setBroadcastSender(Polytempo_OSCSender *sender);
+    void setBroadcastSender(Polytempo_BroadcastWrapper *sender);
     void broadcastEvent(Polytempo_Event *event);
     
 private:
-    Polytempo_OSCSender *oscSender = nullptr;
+	Polytempo_BroadcastWrapper *broadcaster = nullptr;
 };
 
 #endif  // __Polytempo_EventDispatcher__

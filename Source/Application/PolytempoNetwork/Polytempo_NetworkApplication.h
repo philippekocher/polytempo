@@ -28,12 +28,14 @@
 
 #include "Polytempo_NetworkWindow.h"
 #include "Polytempo_NetworkMenuBarModel.h"
-#include "../../Network/Polytempo_OSCSender.h"
 #include "../../Network/Polytempo_OSCListener.h"
 #include "../../Data/Polytempo_Score.h"
 #include "../../Audio+Midi/Polytempo_MidiInput.h"
 #include "../../Misc/Polytempo_Alerts.h"
+#include "../../Network/Polytempo_BroadcastWrapper.h"
 
+#define OSC_PORT_TIME_SYNC			9999
+#define OSC_PORT_COMMUNICATION		47522
 
 class Polytempo_NetworkApplication : public JUCEApplication
 {
@@ -71,7 +73,7 @@ private:
 private:
 	ScopedPointer<Polytempo_NetworkWindow> mainWindow;
     ScopedPointer<Polytempo_MenuBarModel> menuBarModel;
-    ScopedPointer<Polytempo_OSCSender> oscSender;
+    ScopedPointer<Polytempo_BroadcastWrapper> broadcastWrapper;
     ScopedPointer<Polytempo_OSCListener> oscListener;
     ScopedPointer<Polytempo_MidiInput> midiInput;
     ScopedPointer<Polytempo_Score> score;

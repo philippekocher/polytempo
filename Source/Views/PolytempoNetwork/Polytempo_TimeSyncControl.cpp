@@ -73,7 +73,7 @@ void Polytempo_TimeSyncControl::buttonClicked(Button* button)
 {
 	if (button == syncMasterToggle)
 	{
-		Polytempo_TimeProvider::getInstance()->initialize(syncMasterToggle->getToggleState(), TIME_SYNC_OSC_PORT);
+		Polytempo_TimeProvider::getInstance()->toggleMaster(syncMasterToggle->getToggleState());
 		resetInfoField();
 	}
 }

@@ -13,7 +13,7 @@
 #include "Polytempo_NetworkInterfaceManager.h"
 
 
-Polytempo_TimeProvider::Polytempo_TimeProvider(): relativeMsToMaster(0), timeDiffHistorySize(0), timeDiffHistoryWritePosition(0), masterFlag(false), sync(false), lastSentTimeIndex(0), lastSentTimestamp(0)
+Polytempo_TimeProvider::Polytempo_TimeProvider(): oscPort(0), relativeMsToMaster(0), maxRoundTrip(0), timeDiffHistorySize(0), timeDiffHistoryWritePosition(0), roundTripHistorySize(0), roundTripHistoryWritePosition(0), masterFlag(false), sync(false), lastSentTimeIndex(0), lastSentTimestamp(0), lastReceivedTimestamp(0), lastRoundTrip(0)
 {
 	oscSender = new OSCSender();
 	oscReceiver = new OSCReceiver();
@@ -33,13 +33,18 @@ Polytempo_TimeProvider::~Polytempo_TimeProvider()
 
 juce_ImplementSingleton(Polytempo_TimeProvider)
 
-void Polytempo_TimeProvider::initialize(bool master, int port)
+void Polytempo_TimeProvider::initialize(int port)
+{
+	oscPort = port;
+	toggleMaster(false);
+}
+
+void Polytempo_TimeProvider::toggleMaster(bool master)
 {
 	stopTimer();
 	oscSender->disconnect();
 	oscReceiver->disconnect();
 
-	oscPort = port;
 	masterFlag = master;
 	
 	resetTimeSync();
@@ -250,7 +255,7 @@ void Polytempo_TimeProvider::timerCallback()
 }
 
 #ifdef POLYTEMPO_NETWORK
-void Polytempo_TimeProvider::displayMessage(String message, MessageType messageType)
+void Polytempo_TimeProvider::displayMessage(String message, MessageType messageType) const
 {
 	if (pTimeSyncControl != nullptr)
 	{
@@ -268,7 +273,7 @@ void Polytempo_TimeProvider::displayMessage(String message, MessageType messageT
 	DBG(message);
 }
 #else
-void Polytempo_TimeProvider::displayMessage(String, MessageType) {}
+void Polytempo_TimeProvider::displayMessage(String, MessageType) const {}
 #endif
 
 void Polytempo_TimeProvider::resetTimeSync()

@@ -28,26 +28,11 @@
 Polytempo_OSCSender::Polytempo_OSCSender()
 {
     socketsMap = new HashMap < String, Polytempo_Socket* >();
-
-#ifdef POLYTEMPO_NETWORK
-	broadcastWrapper = new Polytempo_BroadcastWrapper();
-#endif
 }
 
 Polytempo_OSCSender::~Polytempo_OSCSender()
 {
     deleteAll();
-    broadcastSocket = nullptr;
-
-#ifdef POLYTEMPO_NETWORK
-	broadcastWrapper = nullptr;
-#endif
-}
-
-void Polytempo_OSCSender::addBroadcastSender(int port)
-{
-    broadcastSocket = new Polytempo_Socket("255.255.255.255", port); // dummy broadcaster, will be overwritten by renewBroadcaster()
-    Polytempo_NetworkSupervisor::getInstance()->setSocket(broadcastSocket);
 }
 
 void Polytempo_OSCSender::deleteAll()
@@ -82,15 +67,6 @@ void Polytempo_OSCSender::eventNotification(Polytempo_Event *event)
             event->getType() == eventType_Stop)
         sendTick(event);
 }
-
-#ifdef POLYTEMPO_NETWORK
-void Polytempo_OSCSender::broadcastEventAsMessage(Polytempo_Event *event)
-{
-	broadcastWrapper->SendEvent(event);
-}
-#else
-void Polytempo_OSCSender::broadcastEventAsMessage(Polytempo_Event*) {}
-#endif
 
 void Polytempo_OSCSender::sendEventAsMessage(Polytempo_Event *event, Polytempo_Socket *socket)
 {
@@ -140,9 +116,4 @@ void Polytempo_OSCSender::sendTick(Polytempo_Event *event)
         Polytempo_Socket *socket = it.getValue();
         if(socket->transmitsTicks()) sendEventAsMessage(event, socket);
     }
-}
-
-Polytempo_BroadcastWrapper* Polytempo_OSCSender::getBroadcastWrapper() const
-{
-	return broadcastWrapper;
 }

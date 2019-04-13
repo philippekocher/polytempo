@@ -61,11 +61,11 @@ void Polytempo_NetworkApplication::initialise(const String&)
     Polytempo_EventScheduler::getInstance()->startThread(5); // priority between 0 and 10
     
     // create network connection
-    oscListener = new Polytempo_OSCListener(47522);
-    oscSender   = new Polytempo_OSCSender();
-    oscSender->addBroadcastSender(47522);
-    Polytempo_EventDispatcher::getInstance()->setBroadcastSender(oscSender);
-	Polytempo_NetworkSupervisor::getInstance()->setBroadcastWrapper(oscSender->getBroadcastWrapper());
+	broadcastWrapper = new Polytempo_BroadcastWrapper(OSC_PORT_COMMUNICATION);
+    oscListener = new Polytempo_OSCListener(OSC_PORT_COMMUNICATION);
+    Polytempo_EventDispatcher::getInstance()->setBroadcastSender(broadcastWrapper);
+	Polytempo_NetworkSupervisor::getInstance()->setBroadcastSender(broadcastWrapper);
+	Polytempo_NetworkSupervisor::getInstance()->createSocket(OSC_PORT_COMMUNICATION);
     
     // audio and midi
     Polytempo_AudioClick::getInstance();
@@ -76,7 +76,7 @@ void Polytempo_NetworkApplication::initialise(const String&)
     Polytempo_ImageManager::getInstance();
     
 	// time sync
-	Polytempo_TimeProvider::getInstance()->initialize(false, TIME_SYNC_OSC_PORT);
+	Polytempo_TimeProvider::getInstance()->initialize(OSC_PORT_TIME_SYNC);
 
 #if (!JUCE_DEBUG)
     // contact web server
@@ -139,8 +139,8 @@ void Polytempo_NetworkApplication::shutdown()
     
     // delete scoped pointers
     mainWindow = nullptr;
-    oscSender = nullptr;
     oscListener = nullptr;
+	broadcastWrapper = nullptr;
     midiInput = nullptr;
     score = nullptr;
 
