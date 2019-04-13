@@ -25,7 +25,6 @@
 #include "Polytempo_ScoreScheduler.h"
 #include "Polytempo_EventScheduler.h"
 #include "Polytempo_EventDispatcher.h"
-#include "../Network/Polytempo_OSCSender.h"
 
 Polytempo_ScoreScheduler::Polytempo_ScoreScheduler()
 {}

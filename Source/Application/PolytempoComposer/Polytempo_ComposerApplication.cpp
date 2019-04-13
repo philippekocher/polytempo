@@ -30,7 +30,6 @@
 #include "../../Scheduler/Polytempo_ScoreScheduler.h"
 #include "../../Scheduler/Polytempo_EventScheduler.h"
 #include "../../Scheduler/Polytempo_EventDispatcher.h"
-#include "../../Network/Polytempo_NetworkSupervisor.h"
 #include "../../Network/Polytempo_TimeProvider.h"
 #include "../../Misc/Polytempo_Alerts.h"
 
@@ -45,13 +44,6 @@ void Polytempo_ComposerApplication::initialise(const String& /*commandLine*/)
     // scheduler
     Polytempo_ScoreScheduler::getInstance()->setEngine(new Polytempo_ComposerEngine);
     Polytempo_EventScheduler::getInstance()->startThread(5); // priority between 0 and 10
-    
-    // create network connection
-    //oscListener = new Polytempo_OSCListener(47522);
-    //oscListener->startThread();
-    oscSender   = new Polytempo_OSCSender();
-    oscSender->addBroadcastSender(47522);
-    //Polytempo_EventDispatcher::getInstance()->setBroadcastSender(oscSender);
     
     // audio and midi
     Polytempo_AudioClick::getInstance();
@@ -82,14 +74,12 @@ void Polytempo_ComposerApplication::shutdown()
     // delete scoped pointers
     composerWindow = nullptr;
     commandManager = nullptr;
-    oscSender = nullptr;
     
     // delete singletons
     Polytempo_StoredPreferences::deleteInstance();
     Polytempo_Composition::deleteInstance();
     Polytempo_AudioClick::deleteInstance();
     Polytempo_MidiClick::deleteInstance();
-    Polytempo_NetworkSupervisor::deleteInstance();
     Polytempo_ScoreScheduler::deleteInstance(); // delete after observers!
     Polytempo_EventScheduler::deleteInstance();
     Polytempo_TimeProvider::deleteInstance();

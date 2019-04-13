@@ -28,13 +28,9 @@
 
 juce_ImplementSingleton(Polytempo_EventDispatcher);
 
-void Polytempo_EventDispatcher::setBroadcastSender(Polytempo_BroadcastWrapper *sender)
-{
-	broadcaster = sender;
-}
-
 void Polytempo_EventDispatcher::broadcastEvent(Polytempo_Event *event)
 {
+#ifdef POLYTEMPO_NETWORK
 	// network broadcast
 	if (Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("broadcastSchedulerCommands") &&
 		broadcaster != nullptr)
@@ -44,7 +40,15 @@ void Polytempo_EventDispatcher::broadcastEvent(Polytempo_Event *event)
 
 		broadcaster->SendEvent(event);
 	}
+#endif
 
 	// direct connection
 	Polytempo_EventScheduler::getInstance()->scheduleEvent(event); // the scheduler deletes the event
 }
+
+#ifdef POLYTEMPO_NETWORK
+void Polytempo_EventDispatcher::setBroadcastSender(Polytempo_BroadcastWrapper *sender)
+{
+	broadcaster = sender;
+}
+#endif

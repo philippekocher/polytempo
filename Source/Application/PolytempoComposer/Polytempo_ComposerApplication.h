@@ -27,7 +27,6 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Polytempo_ComposerWindow.h"
-#include "../../Network/Polytempo_OSCSender.h"
 
 
 class Polytempo_ComposerApplication : public JUCEApplication
@@ -52,7 +51,6 @@ public:
 private:
     ScopedPointer<Polytempo_ComposerWindow> composerWindow;
     ScopedPointer<ApplicationCommandManager> commandManager;
-    ScopedPointer<Polytempo_OSCSender> oscSender;
 };
 
 

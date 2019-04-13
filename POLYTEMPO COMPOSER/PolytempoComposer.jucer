@@ -136,18 +136,6 @@
               resource="0" file="../Source/Network/Polytempo_NetworkInterfaceManager.h"/>
         <FILE id="TVOF2R" name="Polytempo_NetworkInterfaceManager.cpp" compile="1"
               resource="0" file="../Source/Network/Polytempo_NetworkInterfaceManager.cpp"/>
-        <FILE id="WyPiu1" name="Polytempo_NetworkSupervisor.cpp" compile="1"
-              resource="0" file="../Source/Network/Polytempo_NetworkSupervisor.cpp"/>
-        <FILE id="DECI5b" name="Polytempo_NetworkSupervisor.h" compile="0"
-              resource="0" file="../Source/Network/Polytempo_NetworkSupervisor.h"/>
-        <FILE id="Xn9C8x" name="Polytempo_OSCListener.cpp" compile="1" resource="0"
-              file="../Source/Network/Polytempo_OSCListener.cpp"/>
-        <FILE id="ct2gDT" name="Polytempo_OSCListener.h" compile="0" resource="0"
-              file="../Source/Network/Polytempo_OSCListener.h"/>
-        <FILE id="a7vkU2" name="Polytempo_OSCSender.cpp" compile="1" resource="0"
-              file="../Source/Network/Polytempo_OSCSender.cpp"/>
-        <FILE id="WiX1Bc" name="Polytempo_OSCSender.h" compile="0" resource="0"
-              file="../Source/Network/Polytempo_OSCSender.h"/>
         <FILE id="jJjurB" name="Polytempo_Socket.cpp" compile="1" resource="0"
               file="../Source/Network/Polytempo_Socket.cpp"/>
         <FILE id="d3aVSt" name="Polytempo_Socket.h" compile="0" resource="0"

@@ -9,9 +9,10 @@
 */
 
 #include "Polytempo_TimeProvider.h"
-#include "Polytempo_NetworkSupervisor.h"
 #include "Polytempo_NetworkInterfaceManager.h"
-
+#ifdef POLYTEMPO_NETWORK
+#include "Polytempo_NetworkSupervisor.h"
+#endif
 
 Polytempo_TimeProvider::Polytempo_TimeProvider(): oscPort(0), relativeMsToMaster(0), maxRoundTrip(0), timeDiffHistorySize(0), timeDiffHistoryWritePosition(0), roundTripHistorySize(0), roundTripHistoryWritePosition(0), masterFlag(false), sync(false), lastSentTimeIndex(0), lastSentTimestamp(0), lastReceivedTimestamp(0), lastRoundTrip(0)
 {
@@ -181,6 +182,8 @@ void Polytempo_TimeProvider::registerUserInterface(Polytempo_TimeSyncControl* pC
 void Polytempo_TimeProvider::oscMessageReceived(const OSCMessage& message)
 {
 	String addressPattern = message.getAddressPattern().toString();
+
+#ifdef POLYTEMPO_NETWORK
 	OSCArgument* argumentIterator = message.begin();
 
 	if (addressPattern == "/timeSyncRequest")
@@ -229,6 +232,9 @@ void Polytempo_TimeProvider::oscMessageReceived(const OSCMessage& message)
 	{
 		displayMessage("wrong OSC arrived!!!", MessageType_Error);
 	}
+#else
+	DBG(addressPattern);
+#endif
 }
 
 void Polytempo_TimeProvider::timerCallback()
