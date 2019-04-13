@@ -35,7 +35,7 @@ void Polytempo_Socket::renewBroadcaster()
 
 void Polytempo_Socket::write(OSCMessage oscMessage)
 {
-    oscSender->sendToIPAddress(hostName->replace("#broadcast", Polytempo_NetworkInterfaceManager::getInstance()->getSelectedIpAddress().getBroadcastAddress().toString()), port, oscMessage);
+    oscSender->sendToIPAddress(*hostName, port, oscMessage);
 }
 
 bool Polytempo_Socket::transmitsTicks() { return ticks; }
