@@ -61,13 +61,15 @@ void Polytempo_OSCListener::oscMessageReceived(const OSCMessage & message)
 		
 		bool isMaster = false;
 		if (argumentIterator && (*argumentIterator).isInt32())
-			isMaster = (bool)argumentIterator->getInt32();
+			isMaster = (bool)(argumentIterator++)->getInt32();
 
 		bool syncOk = false;
 		if (argumentIterator && (*argumentIterator).isInt32())
 		{
-			uint32 syncTime;
-			syncOk = Polytempo_TimeProvider::getInstance()->getSyncTime(&syncTime) && uint32(argumentIterator->getInt32()) <= syncTime;
+			uint32 localSyncTime;
+			bool syncTimeValid = Polytempo_TimeProvider::getInstance()->getSyncTime(&localSyncTime);
+			uint32 safeTimeToCheck = uint32((argumentIterator++)->getInt32());
+			syncOk = syncTimeValid && safeTimeToCheck >= localSyncTime;
 		}
 
 		Polytempo_NetworkSupervisor::getInstance()->handlePeer(senderId, argIp, argName, syncOk);

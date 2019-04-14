@@ -118,7 +118,7 @@ void Polytempo_TimeProvider::createTimeIndex(int* pIndex, uint32* pTimestamp)
 
 bool Polytempo_TimeProvider::getSyncTime(uint32* pTime)
 {
-	sync = masterFlag || (lastReceivedTimestamp > lastSentTimestamp) || (lastSentTimestamp - lastReceivedTimestamp < SYNC_TIME_VALID_PERIOD_MS);
+	sync = masterFlag || (lastReceivedTimestamp > lastSentTimestamp) || (lastSentTimestamp - lastReceivedTimestamp < SYNC_TIME_VALID_PERIOD_MS && lastSentTimestamp > 0);
 
 	if (masterFlag || !sync)
 		relativeMsToMaster = 0;
