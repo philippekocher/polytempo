@@ -85,7 +85,7 @@ void Polytempo_TimeProvider::handleTimeSyncMessage(Uuid senderId, uint32 masterT
 	timeDiffHistoryWritePosition = (++timeDiffHistoryWritePosition) % TIME_DIFF_HISTORY_SIZE;
 
 	// handle timing
-	Array<uint32> valueArray;
+	Array<int32> valueArray;
 	for (int i = 0; i < timeDiffHistorySize; i++)
 		valueArray.add(timeDiffHistory[i]);
 	valueArray.sort();
