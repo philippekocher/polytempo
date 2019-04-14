@@ -43,6 +43,7 @@ Polytempo_OSCListener::Polytempo_OSCListener(int port) : m_Port(port)
 
 Polytempo_OSCListener::~Polytempo_OSCListener()
 {
+	oscReceiver = nullptr;
 }
 
 void Polytempo_OSCListener::oscMessageReceived(const OSCMessage & message)

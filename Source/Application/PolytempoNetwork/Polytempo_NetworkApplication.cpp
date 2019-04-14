@@ -143,6 +143,7 @@ void Polytempo_NetworkApplication::shutdown()
 	broadcastWrapper = nullptr;
     midiInput = nullptr;
     score = nullptr;
+	menuBarModel = nullptr;
 
     // delete singletons
     Polytempo_StoredPreferences::deleteInstance();
