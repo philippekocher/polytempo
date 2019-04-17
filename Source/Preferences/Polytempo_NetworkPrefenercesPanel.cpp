@@ -309,9 +309,10 @@ public:
      --------------------------------------- */
     void sliderValueChanged(Slider* slider)
     {
-        if(slider == stripWidthSlider)
-            Polytempo_StoredPreferences::getInstance()->getProps().setValue("stripWidth", slider->getValue());
-        
+		if (slider == stripWidthSlider)
+		{
+			Polytempo_StoredPreferences::getInstance()->getProps().setValue("stripWidth", int(slider->getValue()));
+		}
     }
     
     void buttonClicked(Button* button)
