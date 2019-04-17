@@ -83,9 +83,6 @@ class GeneralPreferencesPage : public Component, Button::Listener, TextEditor::L
     Label      *defaultFilePathLabel;
     ToggleButton* fullScreenToggle;
 
-    ToggleButton* broadcastCommandsToggle;
-
-    
 public:
     GeneralPreferencesPage()
     {
@@ -107,11 +104,6 @@ public:
         fullScreenToggle->setButtonText(L"Full Screen");
         fullScreenToggle->setToggleState(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("fullScreen"), dontSendNotification);
         fullScreenToggle->addListener(this);
-
-        addAndMakeVisible(broadcastCommandsToggle = new ToggleButton(String()));
-        broadcastCommandsToggle->setButtonText(L"Broadcast Scheduler Commands");
-        broadcastCommandsToggle->setToggleState(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("broadcastSchedulerCommands"), dontSendNotification);
-        broadcastCommandsToggle->addListener(this);
 }
     
     ~GeneralPreferencesPage()
@@ -126,8 +118,6 @@ public:
         chooseDefaultFile->setBounds   (20, 100, proportionOfWidth(0.2f), 24);
         
         fullScreenToggle->setBounds    (getWidth() - proportionOfWidth(0.2f) - 20, 100, proportionOfWidth(0.2f), 24);
-        
-        broadcastCommandsToggle->setBounds(20,  200, proportionOfWidth(0.9f), 24);
     }
     
     /* text editor & button listener
@@ -184,10 +174,6 @@ public:
         {
             Polytempo_StoredPreferences::getInstance()->getProps().setValue("fullScreen", button->getToggleState());
         }
-        else if(button == broadcastCommandsToggle)
-        {
-            Polytempo_StoredPreferences::getInstance()->getProps().setValue("broadcastSchedulerCommands", button->getToggleState());
-         }
     }
     
     void buttonStateChanged(Button&)

@@ -36,7 +36,6 @@ Polytempo_DefaultPreferences::Polytempo_DefaultPreferences()
     setValue("defaultBeatPattern", "4/4 1");
 
     // network
-    setValue("broadcastSchedulerCommands", 1);
     setValue("showVisualMetro", 1);
     setValue("stripWidth", 30);
     setValue("stripNormalColour", "ff000000");
