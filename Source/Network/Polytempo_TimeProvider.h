@@ -31,6 +31,7 @@ public:
 	void toggleMaster(bool master);
 	bool getSyncTime(uint32* pTime);
 	uint32 getDelaySafeTimestamp();
+	int32 getMRT() const;
 	bool isMaster() const;
 	void setRemoteMasterPeer(String ip, Uuid id, bool master);
 #ifdef POLYTEMPO_NETWORK

@@ -137,6 +137,11 @@ uint32 Polytempo_TimeProvider::getDelaySafeTimestamp()
 	return safeTime;
 }
 
+int32 Polytempo_TimeProvider::getMRT() const
+{
+	return maxRoundTrip;
+}
+
 bool Polytempo_TimeProvider::isMaster() const
 {
 	return masterFlag;
