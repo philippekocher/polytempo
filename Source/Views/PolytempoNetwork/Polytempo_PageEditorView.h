@@ -152,7 +152,7 @@ public:
     void resized() override;
     
     // actions
-#ifdef JUCE_ANDROID
+#if defined JUCE_ANDROID || JUCE_IOS
 	void mouseDoubleClick(const MouseEvent &) override;
 #else
 	void mouseDown(const MouseEvent &) override; 

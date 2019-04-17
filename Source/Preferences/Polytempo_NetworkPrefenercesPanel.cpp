@@ -158,7 +158,11 @@ public:
                                 app->openScoreFile(result);
                             });
 #else
+#ifdef JUCE_IOS
+            FileChooser fileChooser("Open Score File", directory, "*", true);
+#else
             FileChooser fileChooser ("Open Score File", directory, "*.json;*.ptsco");
+#endif
             
             if(fileChooser.browseForFileToOpen())
             {
@@ -1118,7 +1122,7 @@ void Polytempo_NetworkPreferencesPanel::show()
     options.dialogBackgroundColour        = Colours::white;
     options.escapeKeyTriggersCloseButton  = true;
     options.resizable                     = false;
-#ifdef JUCE_ANDROID
+#if defined JUCE_ANDROID || defined JUCE_IOS
     options.useNativeTitleBar             = false;
 #else
     options.useNativeTitleBar             = true;

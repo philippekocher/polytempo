@@ -96,7 +96,7 @@ PopupMenu Polytempo_MenuBarModel::getMenuForIndex(int, const String& menuName)
     ApplicationCommandManager *commandManager = Polytempo_NetworkApplication::getCommandManager();
     PopupMenu menu;
 
-#if defined(WIN32) || defined(JUCE_LINUX) || defined(JUCE_ANDROID)
+#if !JUCE_MAC
     if (menuName == "PolytempoNetwork")
     {
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::aboutWindow);

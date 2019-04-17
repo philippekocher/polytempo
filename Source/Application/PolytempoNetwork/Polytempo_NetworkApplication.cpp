@@ -256,7 +256,12 @@ void Polytempo_NetworkApplication::openFileDialog()
 		openScoreFile(result);
 	});
 #else
+    
+#ifdef JUCE_IOS
+    FileChooser fileChooser("Open Score File", directory, "*", true);
+#else
 	FileChooser fileChooser("Open Score File", directory, "*.json;*.ptsco", true);
+#endif
     
     if(fileChooser.browseForFileToOpen())
     {
@@ -301,8 +306,12 @@ void Polytempo_NetworkApplication::saveScoreFile(bool showFileDialog)
                             saveAs(result);
                         });
 #else
-		FileChooser fileChooser("Save Score File", scoreFile, "*.ptsco", true);
-		if(fileChooser.browseForFileToSave(true))
+#ifdef JUCE_IOS
+        FileChooser fileChooser("Save Score File", scoreFile, "*", true);
+#else
+        FileChooser fileChooser("Save Score File", scoreFile, "*.ptsco", true);
+#endif
+        if(fileChooser.browseForFileToSave(true))
         {
             Polytempo_StoredPreferences::getInstance()->getProps().setValue("scoreFileDirectory", fileChooser.getResult().getParentDirectory().getFullPathName());
 

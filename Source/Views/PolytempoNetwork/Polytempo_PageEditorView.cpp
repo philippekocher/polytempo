@@ -347,7 +347,7 @@ void Polytempo_PageEditorView::resized()
 #pragma mark -
 #pragma mark actions
 
-#ifdef JUCE_ANDROID
+#if defined JUCE_ANDROID || defined JUCE_IOS
 void Polytempo_PageEditorView::mouseDoubleClick(const MouseEvent &event)
 {
     showMenu();
