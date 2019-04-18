@@ -3,7 +3,7 @@
 
     Polytempo_NetworkInfoView.h
     Created: 5 Dec 2017 2:41:16pm
-    Author:  chris
+    Author:  christian.schweizer
 
   ==============================================================================
 */

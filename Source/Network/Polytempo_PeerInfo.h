@@ -3,7 +3,7 @@
 
     Polytempo_PeerInfo.h
     Created: 13 Apr 2019 3:57:42pm
-    Author:  chris
+    Author:  christian.schweizer
 
   ==============================================================================
 */

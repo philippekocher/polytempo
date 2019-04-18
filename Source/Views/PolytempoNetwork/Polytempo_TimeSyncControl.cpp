@@ -3,7 +3,7 @@
 
     Polytempo_TimeSyncControl.cpp
     Created: 4 Dec 2017 10:40:17pm
-    Author:  chris
+    Author:  christian.schweizer
 
   ==============================================================================
 */

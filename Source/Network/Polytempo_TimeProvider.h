@@ -3,7 +3,7 @@
 
     Polytempo_TimeProvider.h
     Created: 30 Nov 2017 7:58:57pm
-    Author:  chris
+    Author:  christian.schweizer
 
   ==============================================================================
 */

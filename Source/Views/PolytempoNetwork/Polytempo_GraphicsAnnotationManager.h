@@ -3,7 +3,7 @@
 
     Polytempo_GraphicsAnnotationManager.h
     Created: 28 Jul 2017 4:27:28pm
-    Author:  chris
+    Author:  christian.schweizer
 
   ==============================================================================
 */

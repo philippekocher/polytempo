@@ -3,7 +3,7 @@
 
     Polytempo_NetworkInfoView.cpp
     Created: 5 Dec 2017 2:41:16pm
-    Author:  chris
+    Author:  christian.schweizer
 
   ==============================================================================
 */
@@ -11,7 +11,6 @@
 #include "JuceHeader.h"
 #include "Polytempo_NetworkInfoView.h"
 #include "../../Network/Polytempo_NetworkSupervisor.h"
-#include "../../Network/Polytempo_TimeProvider.h"
 
 //==============================================================================
 Polytempo_NetworkInfoView::Polytempo_NetworkInfoView()

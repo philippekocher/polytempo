@@ -3,7 +3,7 @@
 
     Polytempo_BroadcastWrapper.h
     Created: 31 Mar 2019 7:53:18pm
-    Author:  chris
+    Author:  christian.schweizer
 
   ==============================================================================
 */

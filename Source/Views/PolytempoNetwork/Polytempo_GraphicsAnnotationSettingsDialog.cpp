@@ -3,7 +3,7 @@
 
     Polytempo_GraphicsAnnotationSettingsDialog.cpp
     Created: 30 Aug 2017 3:32:09pm
-    Author:  chris
+    Author:  christian.schweizer
 
   ==============================================================================
 */
