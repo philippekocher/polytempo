@@ -193,7 +193,9 @@ void Polytempo_TimeProvider::oscMessageReceived(const OSCMessage& message)
 
 	if (addressPattern == "/timeSyncRequest")
 	{
+		Uuid senderId = Uuid((argumentIterator++)->getString());
 		String senderIp = (argumentIterator++)->getString();
+		String senderName = (argumentIterator++)->getString();
 		int timeIndex = (argumentIterator++)->getInt32();
 		int32 lastRoundTripFromClient = (argumentIterator++)->getInt32();
 
@@ -204,6 +206,8 @@ void Polytempo_TimeProvider::oscMessageReceived(const OSCMessage& message)
 				OSCMessage(
 					OSCAddressPattern("/timeSyncReply"), 
 					OSCArgument(Polytempo_NetworkSupervisor::getInstance()->getUniqueId().toString()), 
+					OSCArgument(Polytempo_NetworkInterfaceManager::getInstance()->getSelectedIpAddress().ipAddress.toString()),
+					OSCArgument(Polytempo_NetworkSupervisor::getInstance()->getLocalName()),
 					OSCArgument(int32(ts)), 
 					OSCArgument(timeIndex),
 					OSCArgument(maxRoundTrip)));
@@ -227,6 +231,8 @@ void Polytempo_TimeProvider::oscMessageReceived(const OSCMessage& message)
 	else if(addressPattern == "/timeSyncReply")
 	{
 		Uuid senderId = Uuid((argumentIterator++)->getString());
+		String senderIp = (argumentIterator++)->getString();
+		String senderName = (argumentIterator++)->getString();
 		uint32 argMasterTime = uint32((argumentIterator++)->getInt32());
 		int timeIndex = (argumentIterator++)->getInt32();
 		int32 maxRoundTripFromMaster = (argumentIterator++)->getInt32();
@@ -257,7 +263,9 @@ void Polytempo_TimeProvider::timerCallback()
 		bool ok = oscSender->sendToIPAddress(timeSyncMasterIp, oscPort, 
 			OSCMessage(
 				OSCAddressPattern("/timeSyncRequest"), 
+				OSCArgument(Polytempo_NetworkSupervisor::getInstance()->getUniqueId().toString()),
 				OSCArgument(Polytempo_NetworkInterfaceManager::getInstance()->getSelectedIpAddress().ipAddress.toString()), 
+				OSCArgument(Polytempo_NetworkSupervisor::getInstance()->getLocalName()),
 				OSCArgument(index),
 				OSCArgument(lastRoundTrip)));
 		if(!ok)
