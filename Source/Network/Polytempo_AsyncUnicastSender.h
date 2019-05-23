@@ -21,6 +21,7 @@ public:
 
 	void sendAsync(Polytempo_Event* pEvent);
 	void sendAsync(OSCMessage* pMsg);
+	void updateIp(String ip, int port);
 
 private:
 	void handleAsyncUpdate() override;
@@ -28,4 +29,6 @@ private:
 	CriticalSection csEvent;
 	ScopedPointer < OSCMessage > messageToSend;
 	ScopedPointer < Polytempo_Socket > socket;
+	String currentIp;
+	int currentPort;
 };

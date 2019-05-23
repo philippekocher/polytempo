@@ -39,6 +39,11 @@ void Polytempo_BroadcastWrapper::UpdatePeers(HashMap<Uuid, Polytempo_PeerInfo>* 
 		{
 			unicastSenderList.set(it.getKey(), new Polytempo_AsyncUnicastSender(it.getValue().ip, port));
 		}
+		else
+		{
+			// update ip if needed
+			unicastSenderList[it.getKey()]->updateIp(it.getValue().ip, port);
+		}
 	}
 
 	// check for peers to remove

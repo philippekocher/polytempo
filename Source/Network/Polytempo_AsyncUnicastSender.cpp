@@ -12,6 +12,8 @@
 
 Polytempo_AsyncUnicastSender::Polytempo_AsyncUnicastSender(String ip, int port)
 {
+	currentIp = ip;
+	currentPort = port;
 	socket = new Polytempo_Socket(ip, port);
 }
 
@@ -45,6 +47,16 @@ void Polytempo_AsyncUnicastSender::sendAsync(OSCMessage* pMsg)
 	messageToSend = new OSCMessage(*pMsg);
 
 	triggerAsyncUpdate();
+}
+
+void Polytempo_AsyncUnicastSender::updateIp(String ip, int port)
+{
+	if(ip != currentIp || port != currentPort)
+	{
+		currentIp = ip;
+		currentPort = port;
+		socket = new Polytempo_Socket(ip, port);
+	}
 }
 
 void Polytempo_AsyncUnicastSender::handleAsyncUpdate()
