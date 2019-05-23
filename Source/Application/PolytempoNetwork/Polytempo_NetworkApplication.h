@@ -34,7 +34,7 @@
 #include "../../Misc/Polytempo_Alerts.h"
 #include "../../Network/Polytempo_BroadcastWrapper.h"
 
-#define OSC_PORT_TIME_SYNC			9999
+#define OSC_PORT_TIME_SYNC			47523
 #define OSC_PORT_COMMUNICATION		47522
 
 class Polytempo_NetworkApplication : public JUCEApplication
