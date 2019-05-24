@@ -39,8 +39,8 @@ public:
 
 	Polytempo_NetworkSupervisor();
     ~Polytempo_NetworkSupervisor();
-    
-    void timerCallback() override;
+
+	void timerCallback() override;
 
 	static String getAdapterInfo();
     String getLocalName() const;
@@ -52,8 +52,12 @@ public:
 
     void eventNotification(Polytempo_Event *event) override;
 	Uuid getUniqueId();
+	void manualConnect(String ip);
+	void unicastFlood();
 
 private:
+	OSCMessage* createNodeMessage();
+
 	Uuid uniqueId = nullptr;
     ScopedPointer<Polytempo_Socket> socket;
     Component *component;
@@ -64,6 +68,7 @@ private:
     ScopedPointer < HashMap < Uuid, Polytempo_PeerInfo > > connectedPeersMap;
 
 	Polytempo_BroadcastWrapper* pBroadcastWrapper;
+	int currentPort;
 };
 
 

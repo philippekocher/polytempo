@@ -11,6 +11,7 @@
 #pragma once
 
 #include "JuceHeader.h"
+#include "../../Misc/Polytempo_Button.h"
 #define DISPLAY_DURATION	4000
 #define DISPLAY_DELAY		100
 #define TIMER_ID_DELAY		1
@@ -30,6 +31,7 @@ public:
 
 	void showInfoMessage(String message, Colour color);
 	void timerCallback(int timerID) override;
+	void handlePopupMenuCallback(int returnValue);
 
 private:
 	void buttonClicked(Button* button) override;
@@ -40,6 +42,18 @@ private:
 	Label			*infoField;
 	String			newString;
 	Colour			newColor;
+	Polytempo_Button *optionsButton;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_TimeSyncControl)
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_TimeSyncControl)
+};
+
+
+class PopupMenuCallback : public ModalComponentManager::Callback
+{
+public:
+	PopupMenuCallback(Polytempo_TimeSyncControl* pParent) :pParent(pParent) {};
+	void modalStateFinished(int returnValue) override { pParent->handlePopupMenuCallback(returnValue); }
+
+private:
+	Polytempo_TimeSyncControl * pParent;
 };
