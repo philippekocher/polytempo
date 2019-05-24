@@ -213,6 +213,9 @@ void Polytempo_TimeProvider::oscMessageReceived(const OSCMessage& message)
 					OSCArgument(maxRoundTrip)));
 			displayMessage(ok ? "Mastertime sent" : "Fail", ok ? MessageType_Info : MessageType_Error);
 
+			// update peer
+			Polytempo_NetworkSupervisor::getInstance()->handlePeer(senderId, senderIp, senderName, true); // TODO: sync ok
+
 			// handle round trip time
 			roundTripTime[roundTripHistoryWritePosition] = lastRoundTripFromClient;
 			roundTripHistorySize = jmin(++roundTripHistorySize, ROUND_TRIP_HISTORY_SIZE);
@@ -238,6 +241,8 @@ void Polytempo_TimeProvider::oscMessageReceived(const OSCMessage& message)
 		int32 maxRoundTripFromMaster = (argumentIterator++)->getInt32();
 
 		handleTimeSyncMessage(senderId, argMasterTime, timeIndex, maxRoundTripFromMaster);
+
+		Polytempo_NetworkSupervisor::getInstance()->handlePeer(senderId, senderIp, senderName, true);
 	}
 	else
 	{
