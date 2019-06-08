@@ -147,6 +147,11 @@ bool Polytempo_TimeProvider::isMaster() const
 	return masterFlag;
 }
 
+String Polytempo_TimeProvider::getMasterIP() const
+{
+	return lastMasterIp;
+}
+
 void Polytempo_TimeProvider::setRemoteMasterPeer(String ip, Uuid id, bool master)
 {
 	if (!master)

@@ -34,6 +34,7 @@
 #include "../../Network/Polytempo_NetworkSupervisor.h"
 #include "../../Views/PolytempoNetwork/Polytempo_GraphicsAnnotationManager.h"
 #include "../../Network/Polytempo_TimeProvider.h"
+#include "../../Network/Polytempo_InterprocessCommunication.h"
 
 Polytempo_NetworkApplication::Polytempo_NetworkApplication()
 {}
@@ -66,7 +67,8 @@ void Polytempo_NetworkApplication::initialise(const String&)
     Polytempo_EventDispatcher::getInstance()->setBroadcastSender(broadcastWrapper);
 	Polytempo_NetworkSupervisor::getInstance()->setBroadcastSender(broadcastWrapper);
 	Polytempo_NetworkSupervisor::getInstance()->createSocket(OSC_PORT_COMMUNICATION);
-    
+	Polytempo_InterprocessCommunication::getInstance()->toggleMaster(true);
+
     // audio and midi
     Polytempo_AudioClick::getInstance();
     Polytempo_MidiClick::getInstance();
@@ -156,6 +158,7 @@ void Polytempo_NetworkApplication::shutdown()
 	Polytempo_GraphicsAnnotationManager::deleteInstance();
 	Polytempo_TimeProvider::deleteInstance();
     Polytempo_EventDispatcher::deleteInstance();
+	Polytempo_InterprocessCommunication::deleteInstance();
 
 	Logger::setCurrentLogger(nullptr);
 	fileLogger = nullptr;

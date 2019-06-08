@@ -13,6 +13,7 @@
 #include "../../Network/Polytempo_NetworkSupervisor.h"
 #include "../../Misc/Polytempo_Alerts.h"
 #include "../../Network/Polytempo_NetworkInterfaceManager.h"
+#include "../../Network/Polytempo_InterprocessCommunication.h"
 
 //==============================================================================
 Polytempo_TimeSyncControl::Polytempo_TimeSyncControl()
@@ -123,6 +124,7 @@ void Polytempo_TimeSyncControl::buttonClicked(Button* button)
 	if (button == syncMasterToggle)
 	{
 		Polytempo_TimeProvider::getInstance()->toggleMaster(syncMasterToggle->getToggleState());
+		Polytempo_InterprocessCommunication::getInstance()->toggleMaster(syncMasterToggle->getToggleState());
 		resetInfoField();
 	}
 	if (button == optionsButton)

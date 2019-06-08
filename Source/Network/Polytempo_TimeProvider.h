@@ -33,6 +33,7 @@ public:
 	uint32 getDelaySafeTimestamp();
 	int32 getMRT() const;
 	bool isMaster() const;
+	String getMasterIP() const;
 	void setRemoteMasterPeer(String ip, Uuid id, bool master);
 #ifdef POLYTEMPO_NETWORK
 	void registerUserInterface(Polytempo_TimeSyncControl* pControl);
