@@ -34,6 +34,7 @@ public:
 	~Polytempo_InterprocessCommunication();
 	void cleanUpServer();
 	void toggleMaster(bool master);
+	void connectToMaster(String ip);
 
 private:
 	ScopedPointer<IpcServer> server;

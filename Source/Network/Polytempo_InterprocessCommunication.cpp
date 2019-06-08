@@ -54,27 +54,28 @@ void Polytempo_InterprocessCommunication::toggleMaster(bool master)
 {
 	cleanUpServer();
 
-	if(master)
+	if (master)
 	{
 		server = new IpcServer();
 		server->beginWaitingForSocket(1234, String());// Polytempo_NetworkInterfaceManager::getInstance()->getSelectedIpAddress().ipAddress.toString());
 	}
+}
+
+void Polytempo_InterprocessCommunication::connectToMaster(String ip)
+{
+	client = new Ipc();
+	bool ok = client->connectToSocket(ip, 1234, 1000);
+	if (ok)
+	{
+		Logger::writeToLog("Successfully connected to server " + ip);
+		MemoryBlock m;
+		String str = "Testdata";
+		m.append(str.getCharPointer(), str.length() + 1);
+		client->sendMessage(m);
+	}
 	else
 	{
-		client = new Ipc();
-		bool ok = client->connectToSocket(Polytempo_TimeProvider::getInstance()->getMasterIP(), 1234, 1000);
-		if(ok)
-		{
-			Logger::writeToLog("Successfully connected to server " + Polytempo_TimeProvider::getInstance()->getMasterIP());
-			MemoryBlock m;
-			String str = "Testdata";
-			m.append(str.getCharPointer(), str.length()+1);
-			client->sendMessage(m);
-		}
-		else
-		{
-			Logger::writeToLog("Error connecting to server " + Polytempo_TimeProvider::getInstance()->getMasterIP());
-		}
+		Logger::writeToLog("Error connecting to server " + ip);
 	}
 }
 
