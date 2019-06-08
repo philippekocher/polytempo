@@ -18,7 +18,7 @@ void Ipc::connectionMade()
 
 void Ipc::connectionLost()
 {
-	Logger::writeToLog("Connection lost");
+	Logger::writeToLog("Connection lost: " + getConnectedHostName());
 }
 
 void Ipc::messageReceived(const MemoryBlock& message)
@@ -40,10 +40,12 @@ void Ipc::messageReceived(const MemoryBlock& message)
 
 InterprocessConnection* IpcServer::createConnectionObject()
 {
-	return new Ipc();
+	Ipc* newConnection = new Ipc();
+	Polytempo_InterprocessCommunication::getInstance()->registerNewServerConnection(newConnection);
+	return newConnection;
 }
 
-Polytempo_InterprocessCommunication::Polytempo_InterprocessCommunication()
+Polytempo_InterprocessCommunication::Polytempo_InterprocessCommunication(): dataIndex(0)
 {
 }
 
@@ -81,10 +83,6 @@ void Polytempo_InterprocessCommunication::toggleMaster(bool master)
 		server = new IpcServer();
 		server->beginWaitingForSocket(1234, String());// Polytempo_NetworkInterfaceManager::getInstance()->getSelectedIpAddress().ipAddress.toString());
 	}
-	else
-	{
-		startTimer(5000);
-	}
 }
 
 void Polytempo_InterprocessCommunication::connectToMaster(String ip)
@@ -101,10 +99,24 @@ void Polytempo_InterprocessCommunication::connectToMaster(String ip)
 		m.append(str.getCharPointer(), str.length() + 1);
 		Logger::writeToLog(String((int)Time::getMillisecondCounterHiRes()) + " - Testdata sent");
 		client->sendMessage(m);
+		startTimer(5000);
 	}
 	else
 	{
 		Logger::writeToLog("Error connecting to server " + ip);
+	}
+}
+
+void Polytempo_InterprocessCommunication::registerNewServerConnection(Ipc* connection)
+{
+	serverConnections.addIfNotAlreadyThere(connection);
+}
+
+void Polytempo_InterprocessCommunication::notifyAllServerConnections(MemoryBlock m)
+{
+	for (Ipc* connection : serverConnections)
+	{
+		connection->sendMessage(m);
 	}
 }
 

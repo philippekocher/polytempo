@@ -36,10 +36,13 @@ public:
 	void cleanUpClient();
 	void toggleMaster(bool master);
 	void connectToMaster(String ip);
+	void registerNewServerConnection(Ipc* connection);
+	void notifyAllServerConnections(MemoryBlock m);
 
 	void timerCallback() override;
 private:
 	ScopedPointer<IpcServer> server;
 	ScopedPointer<Ipc> client;
+	Array<Ipc*> serverConnections;
 	int dataIndex;
 };

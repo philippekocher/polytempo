@@ -25,6 +25,7 @@
 #include "Polytempo_ScoreScheduler.h"
 #include "Polytempo_EventScheduler.h"
 #include "Polytempo_EventDispatcher.h"
+#include "../Network/Polytempo_InterprocessCommunication.h"
 
 Polytempo_ScoreScheduler::Polytempo_ScoreScheduler()
 {}
@@ -76,6 +77,11 @@ void Polytempo_ScoreScheduler::startStop()
         Polytempo_EventDispatcher::getInstance()->broadcastEvent(Polytempo_Event::makeEvent(eventType_Stop));
     else
         Polytempo_EventDispatcher::getInstance()->broadcastEvent(Polytempo_Event::makeEvent(eventType_Start));
+
+	String s = "StartStop";
+	MemoryBlock m;
+	m.append(s.getCharPointer(), s.length());
+	Polytempo_InterprocessCommunication::getInstance()->notifyAllServerConnections(m);
 }
 
 void Polytempo_ScoreScheduler::start()
