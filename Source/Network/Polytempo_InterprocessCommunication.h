@@ -33,6 +33,7 @@ public:
 	Polytempo_InterprocessCommunication();
 	~Polytempo_InterprocessCommunication();
 	void cleanUpServer();
+	void cleanUpClient();
 	void toggleMaster(bool master);
 	void connectToMaster(String ip);
 

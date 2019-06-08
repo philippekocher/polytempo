@@ -9,7 +9,6 @@
 */
 
 #include "Polytempo_InterprocessCommunication.h"
-#include "Polytempo_NetworkInterfaceManager.h"
 #include "Polytempo_TimeProvider.h"
 
 void Ipc::connectionMade()
@@ -24,7 +23,13 @@ void Ipc::connectionLost()
 
 void Ipc::messageReceived(const MemoryBlock& message)
 {
-	Logger::writeToLog("Message received");
+	Logger::writeToLog(String((int)Time::getMillisecondCounterHiRes()) + " - Message received: " + message.toString());
+
+	MemoryBlock m;
+	String str = "Answer";
+	m.append(str.getCharPointer(), str.length() + 1);
+	sendMessage(m);
+	Logger::writeToLog(String((int)Time::getMillisecondCounterHiRes()) + " - Answer sent");
 }
 
 InterprocessConnection* IpcServer::createConnectionObject()
@@ -39,6 +44,7 @@ Polytempo_InterprocessCommunication::Polytempo_InterprocessCommunication()
 Polytempo_InterprocessCommunication::~Polytempo_InterprocessCommunication()
 {
 	cleanUpServer();
+	cleanUpClient();
 }
 
 void Polytempo_InterprocessCommunication::cleanUpServer()
@@ -47,6 +53,15 @@ void Polytempo_InterprocessCommunication::cleanUpServer()
 	{
 		server->stop();
 		server = nullptr;
+	}
+}
+
+void Polytempo_InterprocessCommunication::cleanUpClient()
+{
+	if(client != nullptr)
+	{
+		client->disconnect();
+		client = nullptr;
 	}
 }
 
@@ -63,6 +78,7 @@ void Polytempo_InterprocessCommunication::toggleMaster(bool master)
 
 void Polytempo_InterprocessCommunication::connectToMaster(String ip)
 {
+	cleanUpClient();
 	client = new Ipc();
 	bool ok = client->connectToSocket(ip, 1234, 1000);
 	if (ok)
@@ -71,6 +87,7 @@ void Polytempo_InterprocessCommunication::connectToMaster(String ip)
 		MemoryBlock m;
 		String str = "Testdata";
 		m.append(str.getCharPointer(), str.length() + 1);
+		Logger::writeToLog(String((int)Time::getMillisecondCounterHiRes()) + " - Testdata sent");
 		client->sendMessage(m);
 	}
 	else
