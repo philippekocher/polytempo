@@ -23,13 +23,19 @@ void Ipc::connectionLost()
 
 void Ipc::messageReceived(const MemoryBlock& message)
 {
-	Logger::writeToLog(String((int)Time::getMillisecondCounterHiRes()) + " - Message received: " + message.toString());
-
-	MemoryBlock m;
-	String str = "Answer";
-	m.append(str.getCharPointer(), str.length() + 1);
-	sendMessage(m);
-	Logger::writeToLog(String((int)Time::getMillisecondCounterHiRes()) + " - Answer sent");
+	if (message.toString().startsWith("Answer"))
+	{
+		Logger::writeToLog(String((int)Time::getMillisecondCounterHiRes()) + " - Answer received");
+	}
+	else
+	{
+		Logger::writeToLog(String((int)Time::getMillisecondCounterHiRes()) + " - Message received: " + message.toString());
+		MemoryBlock m;
+		String str = "Answer";
+		m.append(str.getCharPointer(), str.length() + 1);
+		sendMessage(m);
+		Logger::writeToLog(String((int)Time::getMillisecondCounterHiRes()) + " - Answer sent");
+	}
 }
 
 InterprocessConnection* IpcServer::createConnectionObject()
