@@ -25,7 +25,7 @@ protected:
 	InterprocessConnection* createConnectionObject() override;
 };
 
-class Polytempo_InterprocessCommunication
+class Polytempo_InterprocessCommunication: public Timer
 {
 public:
 	juce_DeclareSingleton(Polytempo_InterprocessCommunication, false);
@@ -37,7 +37,9 @@ public:
 	void toggleMaster(bool master);
 	void connectToMaster(String ip);
 
+	void timerCallback() override;
 private:
 	ScopedPointer<IpcServer> server;
 	ScopedPointer<Ipc> client;
+	int dataIndex;
 };

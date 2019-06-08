@@ -67,7 +67,7 @@ void Polytempo_NetworkApplication::initialise(const String&)
     Polytempo_EventDispatcher::getInstance()->setBroadcastSender(broadcastWrapper);
 	Polytempo_NetworkSupervisor::getInstance()->setBroadcastSender(broadcastWrapper);
 	Polytempo_NetworkSupervisor::getInstance()->createSocket(OSC_PORT_COMMUNICATION);
-	Polytempo_InterprocessCommunication::getInstance()->toggleMaster(true);
+	Polytempo_InterprocessCommunication::getInstance()->toggleMaster(false);
 
     // audio and midi
     Polytempo_AudioClick::getInstance();

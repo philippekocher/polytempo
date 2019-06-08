@@ -64,6 +64,7 @@ void Polytempo_InterprocessCommunication::cleanUpServer()
 
 void Polytempo_InterprocessCommunication::cleanUpClient()
 {
+	stopTimer();
 	if(client != nullptr)
 	{
 		client->disconnect();
@@ -80,11 +81,16 @@ void Polytempo_InterprocessCommunication::toggleMaster(bool master)
 		server = new IpcServer();
 		server->beginWaitingForSocket(1234, String());// Polytempo_NetworkInterfaceManager::getInstance()->getSelectedIpAddress().ipAddress.toString());
 	}
+	else
+	{
+		startTimer(5000);
+	}
 }
 
 void Polytempo_InterprocessCommunication::connectToMaster(String ip)
 {
 	cleanUpClient();
+	dataIndex = 0;
 	client = new Ipc();
 	bool ok = client->connectToSocket(ip, 1234, 1000);
 	if (ok)
@@ -99,6 +105,18 @@ void Polytempo_InterprocessCommunication::connectToMaster(String ip)
 	else
 	{
 		Logger::writeToLog("Error connecting to server " + ip);
+	}
+}
+
+void Polytempo_InterprocessCommunication::timerCallback()
+{
+	if(client != nullptr)
+	{
+		MemoryBlock m;
+		String str = String(dataIndex++);
+		m.append(str.getCharPointer(), str.length() + 1);
+		Logger::writeToLog(String((int)Time::getMillisecondCounterHiRes()) + " - Testdata sent");
+		client->sendMessage(m);
 	}
 }
 
