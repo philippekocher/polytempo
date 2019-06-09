@@ -11,6 +11,14 @@
 #include "Polytempo_InterprocessCommunication.h"
 #include "Polytempo_TimeProvider.h"
 
+Ipc::Ipc() : InterprocessConnection(false)
+{
+}
+
+Ipc::~Ipc()
+{
+}
+
 void Ipc::connectionMade()
 {
 	Logger::writeToLog("Connection to " + getConnectedHostName());
