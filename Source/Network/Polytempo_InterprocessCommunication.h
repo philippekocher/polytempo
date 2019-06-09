@@ -14,6 +14,8 @@
 class Ipc : public InterprocessConnection
 {
 public:
+	Ipc();
+	~Ipc();
 	void connectionMade() override;
 	void connectionLost() override;
 	void messageReceived(const MemoryBlock& message) override;
