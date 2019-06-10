@@ -186,8 +186,9 @@ void Polytempo_TimeProvider::registerUserInterface(Polytempo_TimeSyncControl* pC
 }
 #endif
 
-void Polytempo_TimeProvider::handleMessage(XmlElement message)
+XmlElement Polytempo_TimeProvider::handleMessage(XmlElement message)
 {
+	XmlElement ret = XmlElement("");
 	NamedValueSet syncParams;
 	syncParams.setFromXmlAttributes(message);
 
@@ -209,9 +210,9 @@ void Polytempo_TimeProvider::handleMessage(XmlElement message)
 			replayParams.set("Timestamp", int32(ts));
 			replayParams.set("Index", timeIndex);
 			replayParams.set("MaxRT", maxRoundTrip);
-			XmlElement xml = XmlElement("TimeSyncReply");
-			replayParams.copyToXmlAttributes(xml);
-			bool ok = Polytempo_InterprocessCommunication::getInstance()->notifyServer(xml);
+			ret = XmlElement("TimeSyncReply");
+			replayParams.copyToXmlAttributes(ret);
+			bool ok = Polytempo_InterprocessCommunication::getInstance()->notifyServer(ret);
 
 			displayMessage(ok ? "Mastertime sent" : "Fail", ok ? MessageType_Info : MessageType_Error);
 
@@ -246,6 +247,8 @@ void Polytempo_TimeProvider::handleMessage(XmlElement message)
 
 		Polytempo_NetworkSupervisor::getInstance()->handlePeer(senderId, senderIp, senderName, true);
 	}
+
+	return ret;
 }
 
 void Polytempo_TimeProvider::oscMessageReceived(const OSCMessage& message)
