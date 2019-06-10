@@ -24,11 +24,12 @@ Ipc::~Ipc()
 void Ipc::connectionMade()
 {
 	Logger::writeToLog("Connection to " + getConnectedHostName());
+	lastConnectedHost = getConnectedHostName();
 }
 
 void Ipc::connectionLost()
 {
-	Logger::writeToLog("Connection lost: " + getConnectedHostName());
+	Logger::writeToLog("Connection lost: " + lastConnectedHost);
 }
 
 void Ipc::messageReceived(const MemoryBlock& message)
@@ -127,6 +128,8 @@ InterprocessConnection* IpcServer::createConnectionObject()
 
 Polytempo_InterprocessCommunication::Polytempo_InterprocessCommunication(): dataIndex(0)
 {
+	server = new IpcServer();
+	server->beginWaitingForSocket(1234, String());
 }
 
 Polytempo_InterprocessCommunication::~Polytempo_InterprocessCommunication()
@@ -135,14 +138,23 @@ Polytempo_InterprocessCommunication::~Polytempo_InterprocessCommunication()
 	cleanUpClient();
 }
 
+void Polytempo_InterprocessCommunication::cleanUpServerConnections()
+{
+	for(int i = serverConnections.size()-1; i >= 0; i--)
+	{
+		serverConnections[i]->disconnect();
+		serverConnections.remove(i);
+	}
+}
+
 void Polytempo_InterprocessCommunication::cleanUpServer()
 {
 	if(server != nullptr)
 	{
 		server->stop();
 		server = nullptr;
-		serverConnections.clear();
 	}
+	cleanUpServerConnections();
 }
 
 void Polytempo_InterprocessCommunication::cleanUpClient()
@@ -157,14 +169,8 @@ void Polytempo_InterprocessCommunication::cleanUpClient()
 
 void Polytempo_InterprocessCommunication::toggleMaster(bool master)
 {
-	cleanUpServer();
 	cleanUpClient();
-
-	if (master)
-	{
-		server = new IpcServer();
-		server->beginWaitingForSocket(1234, String());// Polytempo_NetworkInterfaceManager::getInstance()->getSelectedIpAddress().ipAddress.toString());
-	}
+	cleanUpServerConnections();
 }
 
 void Polytempo_InterprocessCommunication::connectToMaster(String ip)

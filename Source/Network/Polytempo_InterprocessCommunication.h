@@ -20,6 +20,8 @@ public:
 	void connectionMade() override;
 	void connectionLost() override;
 	void messageReceived(const MemoryBlock& message) override;
+private:
+	String lastConnectedHost;
 };
 
 class IpcServer : public InterprocessConnectionServer
@@ -35,6 +37,7 @@ public:
 
 	Polytempo_InterprocessCommunication();
 	~Polytempo_InterprocessCommunication();
+	void cleanUpServerConnections();
 	void cleanUpServer();
 	void cleanUpClient();
 	void toggleMaster(bool master);
@@ -47,6 +50,6 @@ public:
 private:
 	ScopedPointer<IpcServer> server;
 	ScopedPointer<Ipc> client;
-	Array<Ipc*> serverConnections;
+	OwnedArray<Ipc> serverConnections;
 	int dataIndex;
 };
