@@ -188,7 +188,7 @@ void Polytempo_TimeProvider::registerUserInterface(Polytempo_TimeSyncControl* pC
 
 XmlElement Polytempo_TimeProvider::handleMessage(XmlElement message)
 {
-	XmlElement ret = XmlElement("");
+	XmlElement ret = XmlElement("noreply");
 	NamedValueSet syncParams;
 	syncParams.setFromXmlAttributes(message);
 

@@ -46,7 +46,7 @@ void Ipc::messageReceived(const MemoryBlock& message)
 			if(xml->getTagName() == "TimeSyncRequest" || xml->getTagName() == "TimeSyncReply")
 			{
 				XmlElement ret = Polytempo_TimeProvider::getInstance()->handleMessage(*xml);
-				if(!ret.getTagName().isEmpty())
+				if(!ret.getTagName().equalsIgnoreCase("noreply"))
 				{
 					sendMessage(Polytempo_InterprocessCommunication::xmlToMemoryBlock(ret));
 				}
