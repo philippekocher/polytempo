@@ -10,6 +10,8 @@
 
 #include "Polytempo_InterprocessCommunication.h"
 #include "Polytempo_TimeProvider.h"
+#include "../Scheduler/Polytempo_ScoreScheduler.h"
+#include "../Scheduler/Polytempo_EventScheduler.h"
 
 Ipc::Ipc() : InterprocessConnection(false)
 {
@@ -40,7 +42,68 @@ void Ipc::messageReceived(const MemoryBlock& message)
 		std::unique_ptr<XmlElement> xml = parseXML(message.toString());
 		if(xml != nullptr)
 		{
-			String s = xml->getAllSubText();
+			if(xml->getTagName() == "Event")
+			{
+				String type = xml->getStringAttribute("Type");
+				xml->removeAttribute("Type");
+				Array<var> messages;
+				for(int i = 0; i < xml->getNumAttributes(); i++)
+				{
+					String name = xml->getAttributeName(i);
+					messages.add(name);
+					double ddd = xml->getDoubleAttribute(name, std::numeric_limits<double>::infinity());
+					if(juce_isfinite(ddd))
+					{
+						messages.add(ddd);
+					}
+					else
+					{
+						int iii = xml->getIntAttribute(name, std::numeric_limits<int>::infinity());
+						if(juce_isfinite(iii))
+						{
+							messages.add(iii);
+						}
+						else
+						{
+							messages.add(xml->getStringAttribute(name));
+						}
+					}
+				}
+				Polytempo_Event* e = Polytempo_Event::makeEvent(type, messages);
+				if (e->getType() == eventType_None)
+				{
+					DBG("--unknown");
+					delete e;
+					return;
+				}
+
+				// calculate syncTime
+				uint32 syncTime;
+
+				if (e->hasProperty(eventPropertyString_TimeTag))
+					syncTime = uint32(int32(e->getProperty(eventPropertyString_TimeTag)));
+				else
+				{
+					Polytempo_TimeProvider::getInstance()->getSyncTime(&syncTime);
+				}
+
+				if (e->hasProperty(eventPropertyString_Time))
+				{
+					Polytempo_ScoreScheduler *scoreScheduler = Polytempo_ScoreScheduler::getInstance();
+
+					if (!scoreScheduler->isRunning()) return; // ignore an event that has a "time"
+															 // when the score scheduler isn't running
+
+					syncTime += e->getTime() - scoreScheduler->getScoreTime();
+				}
+
+				if (e->hasProperty(eventPropertyString_Defer))
+					syncTime += int(float(e->getProperty(eventPropertyString_Defer)) * 1000.0f);
+
+				e->setSyncTime(syncTime);
+
+				Polytempo_EventScheduler::getInstance()->scheduleEvent(e);
+			}
 		}
 		else
 		{
