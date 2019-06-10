@@ -37,7 +37,7 @@ void Polytempo_EventDispatcher::broadcastEvent(Polytempo_Event *event)
 	{
 		// set sync time
 		event->setSyncTime(Polytempo_TimeProvider::getInstance()->getDelaySafeTimestamp());
-		Polytempo_InterprocessCommunication::getInstance()->notifyAllServerConnections(event->getXml());
+		Polytempo_InterprocessCommunication::getInstance()->notifyAllClients(event->getXml());
 	}
 #endif
 

@@ -43,7 +43,11 @@ void Ipc::messageReceived(const MemoryBlock& message)
 		std::unique_ptr<XmlElement> xml = parseXML(message.toString());
 		if(xml != nullptr)
 		{
-			if(xml->getTagName() == "Event")
+			if(xml->getTagName() == "TimeSyncReuest" || xml->getTagName() == "TimeSyncReply")
+			{
+				Polytempo_TimeProvider::getInstance()->handleMessage(*xml);
+			}
+			else if(xml->getTagName() == "Event")
 			{
 				String type = xml->getStringAttribute("Type");
 				xml->removeAttribute("Type");
@@ -52,17 +56,17 @@ void Ipc::messageReceived(const MemoryBlock& message)
 				{
 					String name = xml->getAttributeName(i);
 					messages.add(name);
-					double ddd = xml->getDoubleAttribute(name, std::numeric_limits<double>::infinity());
-					if(juce_isfinite(ddd))
+					int iii = xml->getIntAttribute(name, std::numeric_limits<int>::infinity());
+					if (juce_isfinite(iii))
 					{
-						messages.add(ddd);
+						messages.add(iii);
 					}
 					else
 					{
-						int iii = xml->getIntAttribute(name, std::numeric_limits<int>::infinity());
-						if(juce_isfinite(iii))
+						double ddd = xml->getDoubleAttribute(name, std::numeric_limits<double>::infinity());
+						if (juce_isfinite(ddd))
 						{
-							messages.add(iii);
+							messages.add(ddd);
 						}
 						else
 						{
@@ -200,7 +204,7 @@ void Polytempo_InterprocessCommunication::registerNewServerConnection(Ipc* conne
 	serverConnections.addIfNotAlreadyThere(connection);
 }
 
-void Polytempo_InterprocessCommunication::notifyAllServerConnections(MemoryBlock m)
+void Polytempo_InterprocessCommunication::notifyAllClients(MemoryBlock m)
 {
 	for (Ipc* connection : serverConnections)
 	{
@@ -208,15 +212,28 @@ void Polytempo_InterprocessCommunication::notifyAllServerConnections(MemoryBlock
 	}
 }
 
-void Polytempo_InterprocessCommunication::notifyAllServerConnections(XmlElement e)
+MemoryBlock Polytempo_InterprocessCommunication::xmlToMemoryBlock(XmlElement e)
 {
 	MemoryBlock m;
 	MemoryOutputStream os;
 	e.writeToStream(os, "");
 	String s = os.toString();
 	m.append(s.getCharPointer(), s.length());
+	return m;
+}
 
-	notifyAllServerConnections(m);
+void Polytempo_InterprocessCommunication::notifyAllClients(XmlElement e)
+{
+	notifyAllClients(xmlToMemoryBlock(e));
+}
+
+bool Polytempo_InterprocessCommunication::notifyServer(XmlElement e) const
+{
+	if(client == nullptr || !client->isConnected())
+		return false;
+	
+	client->sendMessage(xmlToMemoryBlock(e));
+	return true;
 }
 
 void Polytempo_InterprocessCommunication::timerCallback()
