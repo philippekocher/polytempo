@@ -10,6 +10,7 @@
 
 #pragma once
 #include "JuceHeader.h"
+#include "Polytempo_InterprocessCommunication.h"
 #ifdef POLYTEMPO_NETWORK
 #include "../Views/PolytempoNetwork/Polytempo_TimeSyncControl.h"
 #endif
@@ -34,7 +35,7 @@ public:
 	int32 getMRT() const;
 	bool isMaster() const;
 	void setRemoteMasterPeer(String ip, Uuid id, bool master);
-	XmlElement handleMessage(XmlElement message);
+	void handleMessage(XmlElement message, Ipc* sender);
 #ifdef POLYTEMPO_NETWORK
 	void registerUserInterface(Polytempo_TimeSyncControl* pControl);
 #endif
