@@ -37,12 +37,21 @@ void Ipc::messageReceived(const MemoryBlock& message)
 	}
 	else
 	{
-		Logger::writeToLog(String((int)Time::getMillisecondCounterHiRes()) + " - Message received: " + message.toString());
-		MemoryBlock m;
-		String str = "Answer";
-		m.append(str.getCharPointer(), str.length() + 1);
-		sendMessage(m);
-		Logger::writeToLog(String((int)Time::getMillisecondCounterHiRes()) + " - Answer sent");
+		std::unique_ptr<XmlElement> xml = parseXML(message.toString());
+		if(xml != nullptr)
+		{
+			String s = xml->getAllSubText();
+		}
+		else
+		{
+			// generic message
+			Logger::writeToLog(String((int)Time::getMillisecondCounterHiRes()) + " - Message received: " + message.toString());
+			MemoryBlock m;
+			String str = "Answer";
+			m.append(str.getCharPointer(), str.length() + 1);
+			sendMessage(m);
+			Logger::writeToLog(String((int)Time::getMillisecondCounterHiRes()) + " - Answer sent");
+		}
 	}
 }
 
@@ -126,6 +135,18 @@ void Polytempo_InterprocessCommunication::notifyAllServerConnections(MemoryBlock
 	{
 		connection->sendMessage(m);
 	}
+}
+
+void Polytempo_InterprocessCommunication::notifyAllServerConnections(Polytempo_Event* e)
+{
+	MemoryBlock m;
+	XmlElement xml = e->getXml();
+	MemoryOutputStream os;
+	xml.writeToStream(os, "");
+	String s = os.toString();
+	m.append(s.getCharPointer(), s.length());
+
+	notifyAllServerConnections(m);
 }
 
 void Polytempo_InterprocessCommunication::timerCallback()

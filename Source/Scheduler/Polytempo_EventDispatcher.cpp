@@ -24,6 +24,7 @@
 
 #include "Polytempo_EventDispatcher.h"
 #include "../Network/Polytempo_TimeProvider.h"
+#include "../Network/Polytempo_InterprocessCommunication.h"
 
 
 juce_ImplementSingleton(Polytempo_EventDispatcher);
@@ -32,12 +33,14 @@ void Polytempo_EventDispatcher::broadcastEvent(Polytempo_Event *event)
 {
 #ifdef POLYTEMPO_NETWORK
 	// network broadcast
-	if (Polytempo_TimeProvider::getInstance()->isMaster() && broadcaster != nullptr)
+	if (Polytempo_TimeProvider::getInstance()->isMaster())// && broadcaster != nullptr)
 	{
 		// set sync time
 		event->setSyncTime(Polytempo_TimeProvider::getInstance()->getDelaySafeTimestamp());
 
-		broadcaster->SendEvent(event);
+		//broadcaster->SendEvent(event);
+
+		Polytempo_InterprocessCommunication::getInstance()->notifyAllServerConnections(event);
 	}
 #endif
 

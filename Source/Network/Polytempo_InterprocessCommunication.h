@@ -10,6 +10,7 @@
 
 #pragma once
 #include "JuceHeader.h"
+#include "../Scheduler/Polytempo_Event.h"
 
 class Ipc : public InterprocessConnection
 {
@@ -40,6 +41,7 @@ public:
 	void connectToMaster(String ip);
 	void registerNewServerConnection(Ipc* connection);
 	void notifyAllServerConnections(MemoryBlock m);
+	void notifyAllServerConnections(Polytempo_Event* e);
 
 	void timerCallback() override;
 private:
