@@ -43,7 +43,7 @@ void Ipc::messageReceived(const MemoryBlock& message)
 		std::unique_ptr<XmlElement> xml = parseXML(message.toString());
 		if(xml != nullptr)
 		{
-			if(xml->getTagName() == "TimeSyncReuest" || xml->getTagName() == "TimeSyncReply")
+			if(xml->getTagName() == "TimeSyncRequest" || xml->getTagName() == "TimeSyncReply")
 			{
 				Polytempo_TimeProvider::getInstance()->handleMessage(*xml);
 			}
