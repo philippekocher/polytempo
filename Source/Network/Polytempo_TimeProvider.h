@@ -34,6 +34,7 @@ public:
 	int32 getMRT() const;
 	bool isMaster() const;
 	void setRemoteMasterPeer(String ip, Uuid id, bool master);
+	void handleMessage(XmlElement message);
 #ifdef POLYTEMPO_NETWORK
 	void registerUserInterface(Polytempo_TimeSyncControl* pControl);
 #endif
@@ -51,8 +52,8 @@ private:
 #ifdef POLYTEMPO_NETWORK
 	Polytempo_TimeSyncControl* pTimeSyncControl;
 #endif
-	ScopedPointer<OSCSender> oscSender;
-	ScopedPointer<OSCReceiver> oscReceiver;
+	//ScopedPointer<OSCSender> oscSender;
+	//ScopedPointer<OSCReceiver> oscReceiver;
 	int oscPort;
 
 	int32 relativeMsToMaster;

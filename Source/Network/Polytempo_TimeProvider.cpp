@@ -17,8 +17,8 @@
 
 Polytempo_TimeProvider::Polytempo_TimeProvider(): oscPort(0), relativeMsToMaster(0), maxRoundTrip(0), timeDiffHistorySize(0), timeDiffHistoryWritePosition(0), roundTripHistorySize(0), roundTripHistoryWritePosition(0), masterFlag(false), sync(false), lastSentTimeIndex(0), lastSentTimestamp(0), lastReceivedTimestamp(0), lastRoundTrip(0)
 {
-	oscSender = new OSCSender();
-	oscReceiver = new OSCReceiver();
+	//oscSender = new OSCSender();
+	//oscReceiver = new OSCReceiver();
 
 #ifdef POLYTEMPO_NETWORK
 	pTimeSyncControl = nullptr;
@@ -27,8 +27,8 @@ Polytempo_TimeProvider::Polytempo_TimeProvider(): oscPort(0), relativeMsToMaster
 
 Polytempo_TimeProvider::~Polytempo_TimeProvider()
 {
-	oscSender->disconnect();
-	oscReceiver->disconnect();
+	//oscSender->disconnect();
+	//oscReceiver->disconnect();
 	
 	clearSingletonInstance();
 }
@@ -44,14 +44,14 @@ void Polytempo_TimeProvider::initialize(int port)
 void Polytempo_TimeProvider::toggleMaster(bool master)
 {
 	stopTimer();
-	oscSender->disconnect();
-	oscReceiver->disconnect();
+	//oscSender->disconnect();
+	//oscReceiver->disconnect();
 
 	masterFlag = master;
 	
 	resetTimeSync();
 
-	bool ok = oscSender->connect(Polytempo_NetworkInterfaceManager::getInstance()->getSelectedIpAddress().ipAddress.toString(), 0);
+	/*bool ok = oscSender->connect(Polytempo_NetworkInterfaceManager::getInstance()->getSelectedIpAddress().ipAddress.toString(), 0);
 	if (!ok)
 		AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Time Sync", "Error setting up time sync OSC sender");
 
@@ -60,7 +60,7 @@ void Polytempo_TimeProvider::toggleMaster(bool master)
 		AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Time Sync", "Error setting up time sync OSC receiver");
 
 	oscReceiver->addListener(this);
-
+*/
 	if (!masterFlag)
 		startTimer(TIME_SYNC_INTERVAL_MS);
 }
@@ -186,8 +186,71 @@ void Polytempo_TimeProvider::registerUserInterface(Polytempo_TimeSyncControl* pC
 }
 #endif
 
+void Polytempo_TimeProvider::handleMessage(XmlElement message)
+{
+	NamedValueSet syncParams;
+	syncParams.setFromXmlAttributes(message);
+
+	if(message.getTagName() == "TimeSyncRequest")
+	{
+		Uuid senderId = Uuid(syncParams.getWithDefault("Id", ""));
+		String senderIp = syncParams.getWithDefault("IP", "");
+		String senderName = syncParams.getWithDefault("Name", "");
+		int timeIndex = syncParams.getWithDefault("Index", 0);
+		int32 lastRoundTripFromClient = syncParams.getWithDefault("LastRT", 0);
+
+		if (masterFlag)
+		{
+			uint32 ts = Time::getMillisecondCounter();
+			NamedValueSet replayParams;
+			replayParams.set("Id", Polytempo_NetworkSupervisor::getInstance()->getUniqueId().toString());
+			replayParams.set("IP", Polytempo_NetworkInterfaceManager::getInstance()->getSelectedIpAddress().ipAddress.toString());
+			replayParams.set("Name", Polytempo_NetworkSupervisor::getInstance()->getLocalName());
+			replayParams.set("Timestamp", int32(ts));
+			replayParams.set("Index", timeIndex);
+			replayParams.set("MaxRT", maxRoundTrip);
+			XmlElement xml = XmlElement("TimeSyncReply");
+			replayParams.copyToXmlAttributes(xml);
+			bool ok = Polytempo_InterprocessCommunication::getInstance()->notifyServer(xml);
+
+			displayMessage(ok ? "Mastertime sent" : "Fail", ok ? MessageType_Info : MessageType_Error);
+
+			// update peer
+			Polytempo_NetworkSupervisor::getInstance()->handlePeer(senderId, senderIp, senderName, true); // TODO: sync ok
+
+			// handle round trip time
+			roundTripTime[roundTripHistoryWritePosition] = lastRoundTripFromClient;
+			roundTripHistorySize = jmin(++roundTripHistorySize, ROUND_TRIP_HISTORY_SIZE);
+			roundTripHistoryWritePosition = (++roundTripHistoryWritePosition) % ROUND_TRIP_HISTORY_SIZE;
+
+			int32 localMaxRoundTrip = 0;
+			for (int i = 0; i < roundTripHistorySize; i++)
+				localMaxRoundTrip = jmax(localMaxRoundTrip, roundTripTime[i]);
+			maxRoundTrip = localMaxRoundTrip;
+		}
+		else
+		{
+			displayMessage("Wrong timeSyncRequest received", MessageType_Error);
+		}
+	}
+	else if(message.getTagName() == "TimeSyncReply")
+	{
+		Uuid senderId = Uuid(syncParams.getWithDefault("Id", ""));
+		String senderIp = syncParams.getWithDefault("IP", "");
+		String senderName = syncParams.getWithDefault("Name", "");
+		uint32 argMasterTime = uint32(int32(syncParams.getWithDefault("Timestamp", 0)));
+		int timeIndex = syncParams.getWithDefault("Index", 0);
+		int32 maxRoundTripFromMaster = syncParams.getWithDefault("MaxRT", 0);
+
+		handleTimeSyncMessage(senderId, argMasterTime, timeIndex, maxRoundTripFromMaster);
+
+		Polytempo_NetworkSupervisor::getInstance()->handlePeer(senderId, senderIp, senderName, true);
+	}
+}
+
 void Polytempo_TimeProvider::oscMessageReceived(const OSCMessage& message)
 {
+	/*
 	String addressPattern = message.getAddressPattern().toString();
 
 #ifdef POLYTEMPO_NETWORK
@@ -253,6 +316,7 @@ void Polytempo_TimeProvider::oscMessageReceived(const OSCMessage& message)
 #else
 	DBG(addressPattern);
 #endif
+	*/
 }
 
 void Polytempo_TimeProvider::timerCallback()
@@ -267,6 +331,20 @@ void Polytempo_TimeProvider::timerCallback()
 		int index;
 		uint32 timestamp;
 		createTimeIndex(&index, &timestamp);
+		
+		NamedValueSet syncParams;
+		syncParams.set("Id", Polytempo_NetworkSupervisor::getInstance()->getUniqueId().toString());
+		syncParams.set("IP", Polytempo_NetworkInterfaceManager::getInstance()->getSelectedIpAddress().ipAddress.toString());
+		syncParams.set("Name", Polytempo_NetworkSupervisor::getInstance()->getLocalName());
+		syncParams.set("Index", index);
+		syncParams.set("LastRT", lastRoundTrip);
+		XmlElement xml = XmlElement("TimeSyncRequest");
+		syncParams.copyToXmlAttributes(xml);
+		bool ok = Polytempo_InterprocessCommunication::getInstance()->notifyServer(xml);
+		if (!ok)
+			displayMessage("send TS request failed", MessageType_Warning);
+
+		/*
 		bool ok = oscSender->sendToIPAddress(timeSyncMasterIp, oscPort, 
 			OSCMessage(
 				OSCAddressPattern("/timeSyncRequest"), 
@@ -275,8 +353,7 @@ void Polytempo_TimeProvider::timerCallback()
 				OSCArgument(Polytempo_NetworkSupervisor::getInstance()->getLocalName()),
 				OSCArgument(index),
 				OSCArgument(lastRoundTrip)));
-		if(!ok)
-			displayMessage("send TS request failed", MessageType_Warning);
+		*/
 	}
 }
 
