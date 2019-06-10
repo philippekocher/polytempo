@@ -41,7 +41,7 @@ public:
 	void connectToMaster(String ip);
 	void registerNewServerConnection(Ipc* connection);
 	void notifyAllServerConnections(MemoryBlock m);
-	void notifyAllServerConnections(Polytempo_Event* e);
+	void notifyAllServerConnections(XmlElement e);
 
 	void timerCallback() override;
 private:

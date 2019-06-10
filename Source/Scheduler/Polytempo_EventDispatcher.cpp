@@ -33,14 +33,11 @@ void Polytempo_EventDispatcher::broadcastEvent(Polytempo_Event *event)
 {
 #ifdef POLYTEMPO_NETWORK
 	// network broadcast
-	if (Polytempo_TimeProvider::getInstance()->isMaster())// && broadcaster != nullptr)
+	if (Polytempo_TimeProvider::getInstance()->isMaster())
 	{
 		// set sync time
 		event->setSyncTime(Polytempo_TimeProvider::getInstance()->getDelaySafeTimestamp());
-
-		//broadcaster->SendEvent(event);
-
-		Polytempo_InterprocessCommunication::getInstance()->notifyAllServerConnections(event);
+		Polytempo_InterprocessCommunication::getInstance()->notifyAllServerConnections(event->getXml());
 	}
 #endif
 

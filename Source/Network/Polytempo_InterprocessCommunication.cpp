@@ -141,6 +141,7 @@ void Polytempo_InterprocessCommunication::cleanUpServer()
 	{
 		server->stop();
 		server = nullptr;
+		serverConnections.clear();
 	}
 }
 
@@ -157,6 +158,7 @@ void Polytempo_InterprocessCommunication::cleanUpClient()
 void Polytempo_InterprocessCommunication::toggleMaster(bool master)
 {
 	cleanUpServer();
+	cleanUpClient();
 
 	if (master)
 	{
@@ -200,12 +202,11 @@ void Polytempo_InterprocessCommunication::notifyAllServerConnections(MemoryBlock
 	}
 }
 
-void Polytempo_InterprocessCommunication::notifyAllServerConnections(Polytempo_Event* e)
+void Polytempo_InterprocessCommunication::notifyAllServerConnections(XmlElement e)
 {
 	MemoryBlock m;
-	XmlElement xml = e->getXml();
 	MemoryOutputStream os;
-	xml.writeToStream(os, "");
+	e.writeToStream(os, "");
 	String s = os.toString();
 	m.append(s.getCharPointer(), s.length());
 
