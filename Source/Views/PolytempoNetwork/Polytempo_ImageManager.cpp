@@ -49,7 +49,7 @@ HashMap < var, Image* >& Polytempo_ImageManager::getImages()
 String Polytempo_ImageManager::getFileName(var imageID)
 {
     if(loadImageEventMap.contains(imageID)) return loadImageEventMap[imageID]->getProperty(eventPropertyString_URL);
-    else return String::empty;
+    else return String();
 }
 
 void Polytempo_ImageManager::deleteAll()
@@ -78,7 +78,7 @@ bool Polytempo_ImageManager::loadImage(Polytempo_Event *event)
    
     Image* image = new Image(ImageFileFormat::loadFrom(directory.getChildFile(url)));
     
-    if(*image == Image::null)
+    if(*image == Image())
     {
         Polytempo_Alert::show("Error", "Can't open file:\n" + directory.getChildFile(url).getFullPathName());
         delete image;
@@ -110,7 +110,7 @@ bool Polytempo_ImageManager::replaceImage(var imageID, String url)
 
         Image* image = new Image(ImageFileFormat::loadFrom(directory.getChildFile(url)));
 
-        if(*image == Image::null)
+        if(*image == Image())
         {
             Polytempo_Alert::show("Error", "Can't open file:\n" + directory.getChildFile(url).getFullPathName());
             delete image;

@@ -3,7 +3,7 @@
 
     Polytempo_GraphicsAnnotationSettingsDialog.cpp
     Created: 30 Aug 2017 3:32:09pm
-    Author:  chris
+    Author:  christian.schweizer
 
   ==============================================================================
 */
@@ -293,7 +293,7 @@ void Polytempo_GraphicsAnnotationSettingsDialog::show(OwnedArray < Polytempo_Gra
 	options.dialogBackgroundColour = Colours::white;
 	options.escapeKeyTriggersCloseButton = true;
 	options.resizable = false;
-#ifdef JUCE_ANDROID
+#if defined JUCE_ANDROID || defined JUCE_IOS
 	options.useNativeTitleBar = false;
 #else
 	options.useNativeTitleBar = true;

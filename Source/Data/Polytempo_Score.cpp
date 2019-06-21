@@ -33,8 +33,8 @@ class Polytempo_EventComparator
 public:
     static int compareElements(Polytempo_Event* e1, Polytempo_Event* e2) throw()
     {
-        float t1 = e1->getTime();
-        float t2 = e2->getTime();
+        float t1 = float(e1->getTime());
+        float t2 = float(e2->getTime());
         
         int result = 0;
         
@@ -153,7 +153,7 @@ void Polytempo_Score::addSection(String sectionName)
 
 void Polytempo_Score::selectSection(String sectionName)
 {
-    if(sectionName == String::empty && sections.size() > 0)
+    if(sectionName == String() && sections.size() > 0)
         currentSectionIndex = 0;
     else
         currentSectionIndex = sectionMap->indexOf(sectionName);
@@ -206,7 +206,7 @@ bool Polytempo_Score::setTime(int time, Array<Polytempo_Event*> *events, float *
              int(event->getProperty(eventPropertyString_Cue)) > 0))
             || event->getType() == eventType_Progressbar))
         {
-            tempTime = event->getTime();
+            tempTime = float(event->getTime());
             *waitBeforStart = tempTime - time;
             
             // find the first event that has the same time as the downbeat
@@ -227,7 +227,7 @@ bool Polytempo_Score::setTime(int time, Array<Polytempo_Event*> *events, float *
             event = sections[currentSectionIndex]->events[i];
             if(event->getTime() >= time)
             {
-                tempTime = event->getTime();
+                tempTime = float(event->getTime());
                 *waitBeforStart = tempTime - time;
                 
                 nextEventIndex = ++i;
@@ -239,7 +239,7 @@ bool Polytempo_Score::setTime(int time, Array<Polytempo_Event*> *events, float *
     
     // events to be executed immediately to update the internal state
     
-    Polytempo_Event *marker;               // the last marker is enough;
+    Polytempo_Event *marker = nullptr;               // the last marker is enough;
     HashMap<var, Polytempo_Event*> images; // one image per region is enough;
     
     for(i=0;i<sections[currentSectionIndex]->events.size();i++)
@@ -262,8 +262,10 @@ bool Polytempo_Score::setTime(int time, Array<Polytempo_Event*> *events, float *
 
     }
     // add the necessary images and the last marker
-    events->add(marker);
-    for(Polytempo_Event *image : images)
+	if (marker != nullptr)
+		events->add(marker);
+	
+	for(Polytempo_Event *image : images)
         events->add(image);
     
     return true;
@@ -306,7 +308,7 @@ Polytempo_Event* Polytempo_Score::getNextEvent()
     // we assume that the events have been sorted
     
     if(currentSectionIndex > -1 && currentSectionIndex < sections.size() &&
-       nextEventIndex < sections[currentSectionIndex]->events.size())
+       nextEventIndex < uint32(sections[currentSectionIndex]->events.size()))
         return sections[currentSectionIndex]->events[nextEventIndex++];
     else
         return nullptr;
@@ -470,7 +472,7 @@ bool Polytempo_Score::setJsonString(String jsonString)
 {
     var jsonVar = JSON::parse(jsonString);
     
-    if(jsonVar == var::null) return false;
+    if(jsonVar == var()) return false;
     
     parseVar(jsonVar);
     setDirty();
@@ -489,7 +491,7 @@ void Polytempo_Score::parseJSON(File& JSONFile, Polytempo_Score** score)
     //DBG("parse json");
     var jsonVar = JSON::parse(JSONFile);
     
-    if(jsonVar == var::null)
+    if(jsonVar == var())
     {
         Polytempo_Alert::show("Error", "Not a valid JSON file:\n" + JSONFile.getFileName());
         return;

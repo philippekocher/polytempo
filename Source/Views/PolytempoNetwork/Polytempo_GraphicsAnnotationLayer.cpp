@@ -3,7 +3,7 @@
 
     Polytempo_GraphicsAnnotationLayer.cpp
     Created: 22 Jul 2018 5:42:33am
-    Author:  chris
+    Author:  christian.schweizer
 
   ==============================================================================
 */

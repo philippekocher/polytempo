@@ -46,7 +46,7 @@ Rational Polytempo_BeatPattern::getLength()
         length = length + *(pattern[i]);
     }
     
-    return length * repeats;
+    return Rational(length * float(repeats));
 }
 
 void Polytempo_BeatPattern::setPattern(String string)
@@ -213,7 +213,7 @@ DynamicObject* Polytempo_BeatPattern::getObject()
     DynamicObject* object = new DynamicObject();
     object->setProperty("patternString", patternString);
     object->setProperty("repeats", repeats);
-    if(marker != String::empty) object->setProperty("marker", marker);
+    if(marker != String()) object->setProperty("marker", marker);
     object->setProperty("counterString", counterString);
 
     return object;

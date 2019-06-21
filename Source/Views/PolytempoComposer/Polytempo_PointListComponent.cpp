@@ -52,8 +52,8 @@ Polytempo_PointListComponent::~Polytempo_PointListComponent()
 
 void Polytempo_PointListComponent::paint(Graphics& g)
 {
-    Polytempo_Sequence* sequence;
-    if(!(sequence = Polytempo_Composition::getInstance()->getSelectedSequence())) return;
+    Polytempo_Sequence* sequence = Polytempo_Composition::getInstance()->getSelectedSequence();
+    if(sequence == nullptr) return;
     
     g.fillAll(sequence->getColour());
     

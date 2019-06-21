@@ -28,18 +28,20 @@
 #include "../Preferences/Polytempo_StoredPreferences.h"
 #include "Polytempo_NetworkInterfaceManager.h"
 #include "Polytempo_TimeProvider.h"
-
-#define PING_INTERVAL	1000
+#include "../Misc/Polytempo_Alerts.h"
 
 Polytempo_NetworkSupervisor::Polytempo_NetworkSupervisor()
 {
-    connectedPeersMap = new HashMap < String, String >();
-    tempConnectedPeersMap = new HashMap < String, String >();
+    connectedPeersMap = new HashMap < Uuid, Polytempo_PeerInfo >();
     
     socket = nullptr;
     component = nullptr;
 
-	startTimer(PING_INTERVAL);
+	nodeName = new String(SystemStats::getFullUserName());
+
+	pBroadcastWrapper = nullptr;
+
+	startTimer(NETWORK_SUPERVISOR_PING_INTERVAL);
 }
 
 Polytempo_NetworkSupervisor::~Polytempo_NetworkSupervisor()
@@ -47,8 +49,10 @@ Polytempo_NetworkSupervisor::~Polytempo_NetworkSupervisor()
 	stopTimer();
 
     connectedPeersMap = nullptr;
-    tempConnectedPeersMap = nullptr;
-    
+	localName = nullptr;
+	nodeName = nullptr;
+	socket = nullptr;
+
     clearSingletonInstance();
     
     Polytempo_NetworkInterfaceManager::deleteInstance();
@@ -56,40 +60,40 @@ Polytempo_NetworkSupervisor::~Polytempo_NetworkSupervisor()
 
 juce_ImplementSingleton(Polytempo_NetworkSupervisor);
 
+OSCMessage* Polytempo_NetworkSupervisor::createNodeMessage()
+{
+	return new OSCMessage(
+		OSCAddressPattern("/node"),
+		OSCArgument(getUniqueId().toString()),
+		OSCArgument(Polytempo_NetworkInterfaceManager::getInstance()->getSelectedIpAddress().ipAddress.toString()),
+		OSCArgument(String(getLocalName())),
+		OSCArgument((int32)Polytempo_TimeProvider::getInstance()->isMaster()),
+		OSCArgument((int32)Polytempo_TimeProvider::getInstance()->getDelaySafeTimestamp()));
+}
+
 void Polytempo_NetworkSupervisor::timerCallback()
 {
-    if(socket == nullptr) return;
-    // nothing to do, if there is no socket
+	if(socket == nullptr) return;
+	// nothing to do, if there is no socket
     
-    socket->renewBroadcaster();
+	socket->renewBroadcaster();
     
-    // broadcast a heartbeat
-    ScopedPointer<String> name = new String(getLocalName());
-    
-	socket->write(
-		OSCMessage(
-			OSCAddressPattern("/node"), 
-			OSCArgument(getUniqueId().toString()), 
-			OSCArgument(Polytempo_NetworkInterfaceManager::getInstance()->getSelectedIpAddress().ipAddress.toString()), 
-			OSCArgument(*name), 
-			OSCArgument((int32)Polytempo_TimeProvider::getInstance()->isMaster())));
+	// broadcast a heartbeat
+	ScopedPointer<OSCMessage> msg = createNodeMessage();
+	socket->write(*msg);
 	
-    // update hash maps
-    connectedPeersMap->clear();
-    HashMap < String, String >::Iterator it(*tempConnectedPeersMap);
-    while(it.next())
-    {
-        connectedPeersMap->set(it.getKey(), it.getValue());
-    }
-    tempConnectedPeersMap->clear();
-    
-    if(component) component->repaint();
+	if(pBroadcastWrapper != nullptr)
+	{
+		pBroadcastWrapper->SendOsc(msg);
+	}
+
+	if(component) component->repaint();
 }
 
 String Polytempo_NetworkSupervisor::getAdapterInfo()
 {
 	Polytempo_IPAddress ip = Polytempo_NetworkInterfaceManager::getInstance()->getSelectedIpAddress();
-    return ip.addressDescription() + "\r\n" + ip.getNetworkAddress().toString() + "\r\n(" + ip.ipAddress.toString() + ")";
+	return ip.addressDescription() + "\r\n" + ip.getNetworkAddress().toString() + "\r\n(" + ip.ipAddress.toString() + ")";
 }
 
 Uuid Polytempo_NetworkSupervisor::getUniqueId()
@@ -97,8 +101,8 @@ Uuid Polytempo_NetworkSupervisor::getUniqueId()
 	if (uniqueId != nullptr)
 		return uniqueId;
 
-	String uuidStr = Polytempo_StoredPreferences::getInstance()->getProps().getValue("uniqueId", String::empty);
-	if(uuidStr != String::empty)
+	String uuidStr = Polytempo_StoredPreferences::getInstance()->getProps().getValue("uniqueId", String());
+	if(uuidStr != String())
 		uniqueId = Uuid(uuidStr);
 	else
 	{
@@ -109,40 +113,102 @@ Uuid Polytempo_NetworkSupervisor::getUniqueId()
 	return uniqueId;
 }
 
-String Polytempo_NetworkSupervisor::getLocalName()
+void Polytempo_NetworkSupervisor::manualConnect(String ip)
 {
-    if(localName == nullptr) return "Untitled";
-    else                     return *localName;
+	OSCSender localSender;
+	localSender.connect(Polytempo_NetworkInterfaceManager::getInstance()->getSelectedIpAddress().ipAddress.toString(), 0);
+	ScopedPointer<OSCMessage> msg = this->createNodeMessage();
+	Logger::writeToLog("Sending node information to " + ip);
+	bool ok = localSender.sendToIPAddress(ip, currentPort, *msg);
+	if(!ok)
+	{
+		Polytempo_Alert::show("Error", "Error sending node information to " + ip);
+	}
 }
 
-HashMap <String, String>* Polytempo_NetworkSupervisor::getPeers()
+void Polytempo_NetworkSupervisor::unicastFlood()
 {
-    return connectedPeersMap;
+	OSCSender localSender;
+	localSender.connect(Polytempo_NetworkInterfaceManager::getInstance()->getSelectedIpAddress().ipAddress.toString(), 0);
+	ScopedPointer<OSCMessage> msg = this->createNodeMessage();
+	IPAddress currentIp = Polytempo_NetworkInterfaceManager::getInstance()->getSelectedIpAddress().getFirstNetworkAddress();
+	IPAddress lastIp = Polytempo_NetworkInterfaceManager::getInstance()->getSelectedIpAddress().getLastNetworkAddress();
+	
+	while (currentIp <= lastIp)
+	{
+		Logger::writeToLog("Sending node information to " + currentIp.toString());
+		bool ok = localSender.sendToIPAddress(currentIp.toString(), currentPort, *msg);
+		if(!ok)
+		{
+			Polytempo_Alert::show("Error", "Error sending node information to " + currentIp.toString());
+			return;
+		}
+		// proceed to next address
+		if (currentIp.address[3] == 255)
+		{
+			currentIp.address[3] = 0;
+			if (currentIp.address[2] == 255)
+			{
+				currentIp.address[2] = 0;
+				if (currentIp.address[1] == 255)
+				{
+					currentIp.address[1] = 0;
+					currentIp.address[0]++;
+				}
+				else
+					currentIp.address[1]++;
+			}
+			else
+				currentIp.address[2]++;
+		}
+		else
+			currentIp.address[3]++;
+	}
 }
 
-void Polytempo_NetworkSupervisor::setSocket(Polytempo_Socket *theSocket)
+String Polytempo_NetworkSupervisor::getLocalName() const
 {
-    socket = theSocket;
+	return String(localName == nullptr ? "Untitled" : *localName) + String(" (") + String(*nodeName) + String(")");
+}
+
+HashMap <Uuid, Polytempo_PeerInfo>* Polytempo_NetworkSupervisor::getPeers() const
+{
+	return connectedPeersMap;
+}
+
+void Polytempo_NetworkSupervisor::createSocket(int port)
+{
+	currentPort = port;
+	socket = new Polytempo_Socket("255.255.255.255", port); // dummy broadcaster, will be overwritten by renewBroadcaster()
 }
 
 void Polytempo_NetworkSupervisor::setComponent(Component *aComponent)
 {
-    component = aComponent;
+	component = aComponent;
 }
 
-void Polytempo_NetworkSupervisor::handlePeer(String ip, String name)
+void Polytempo_NetworkSupervisor::setBroadcastSender(Polytempo_BroadcastWrapper* pBroadcaster)
 {
-	connectedPeersMap->set(ip, name);
-    tempConnectedPeersMap->set(ip, name);
-    component->repaint();
+	pBroadcastWrapper = pBroadcaster;
+}
+
+void Polytempo_NetworkSupervisor::handlePeer(Uuid id, String ip, String name, bool syncOk) const
+{
+	Polytempo_PeerInfo info;
+	info.ip = ip;
+	info.name = name;
+	info.lastHeartBeat = Time::getMillisecondCounter();
+	info.syncState = syncOk;
+
+	connectedPeersMap->set(id, info);
 }
 
 void Polytempo_NetworkSupervisor::eventNotification(Polytempo_Event *event)
 {
-    if(event->getType() == eventType_Settings)
-    {
-        localName = new String(event->getProperty("name").toString());
-    }
+	if(event->getType() == eventType_Settings)
+	{
+		localName = new String(event->getProperty("name").toString());
+	}
 }
 
 

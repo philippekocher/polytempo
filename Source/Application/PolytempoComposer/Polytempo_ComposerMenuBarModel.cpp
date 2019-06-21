@@ -267,39 +267,39 @@ void Polytempo_ComposerMenuBarModel::getCommandInfo(CommandID commandID, Applica
          ----------------------------------*/
             
         case Polytempo_CommandIDs::newDocument:
-            result.setInfo("New", String::empty, infoCategory, 0);
+            result.setInfo("New", String(), infoCategory, 0);
             result.addDefaultKeypress('n', ModifierKeys::commandModifier);
             break;
             
         case Polytempo_CommandIDs::open:
-            result.setInfo("Open...", String::empty, infoCategory, 0);
+            result.setInfo("Open...", String(), infoCategory, 0);
             result.addDefaultKeypress('o', ModifierKeys::commandModifier);
             break;
             
         case Polytempo_CommandIDs::clearOpenRecent:
-            result.setInfo("Clear Menu", String::empty, infoCategory, 0);
+            result.setInfo("Clear Menu", String(), infoCategory, 0);
             result.setActive(Polytempo_StoredPreferences::getInstance()->recentFiles.getNumFiles() > 0);
             break;
 
         case Polytempo_CommandIDs::save:
-            result.setInfo("Save", String::empty, infoCategory, 0);
+            result.setInfo("Save", String(), infoCategory, 0);
             result.addDefaultKeypress('s', ModifierKeys::commandModifier);
             break;
 
 //        case Polytempo_CommandIDs::saveAs:
 
         case Polytempo_CommandIDs::exportSelected:
-            result.setInfo("Export Selected Sequence...", String::empty, infoCategory, 0);
+            result.setInfo("Export Selected Sequence...", String(), infoCategory, 0);
             result.addDefaultKeypress('e', ModifierKeys::commandModifier);
             break;
 
         case Polytempo_CommandIDs::exportAll:
-            result.setInfo("Export All Sequences...", String::empty, infoCategory, 0);
+            result.setInfo("Export All Sequences...", String(), infoCategory, 0);
             result.addDefaultKeypress('e', ModifierKeys::shiftModifier | ModifierKeys::commandModifier);
             break;
 
         case Polytempo_CommandIDs::close:
-            result.setInfo("Close", String::empty, infoCategory, 0);
+            result.setInfo("Close", String(), infoCategory, 0);
             result.addDefaultKeypress('w', ModifierKeys::commandModifier);
             break;
             
@@ -307,58 +307,58 @@ void Polytempo_ComposerMenuBarModel::getCommandInfo(CommandID commandID, Applica
          ----------------------------------*/
 
         case Polytempo_CommandIDs::addSequence:
-            result.setInfo ("Add Sequence", String::empty, infoCategory, 0);
+            result.setInfo ("Add Sequence", String(), infoCategory, 0);
             break;
             
         case Polytempo_CommandIDs::removeSequence:
-            result.setInfo("Remove Selected Sequence", String::empty, infoCategory, 0);
+            result.setInfo("Remove Selected Sequence", String(), infoCategory, 0);
             result.setActive(composition->getSelectedSequenceIndex() >= 0);
             break;
 
         case Polytempo_CommandIDs::addBeatPattern:
-            result.setInfo("Add Beat Pattern", String::empty, infoCategory, 0);
+            result.setInfo("Add Beat Pattern", String(), infoCategory, 0);
             result.addDefaultKeypress('b', ModifierKeys::commandModifier);
             break;
             
         case Polytempo_CommandIDs::insertBeatPattern:
-            result.setInfo("Insert Beat Pattern", String::empty, infoCategory, 0);
+            result.setInfo("Insert Beat Pattern", String(), infoCategory, 0);
             result.addDefaultKeypress('b', ModifierKeys::commandModifier | ModifierKeys::altModifier);
             result.setActive(composition->getSelectedSequence() != nullptr && composition->getSelectedSequence()->getSelectedBeatPattern() >= 0);
             break;
             
         case Polytempo_CommandIDs::removeBeatPattern:
-            result.setInfo ("Remove Selected Beat Pattern", String::empty, infoCategory, 0);
+            result.setInfo ("Remove Selected Beat Pattern", String(), infoCategory, 0);
             result.setActive(composition->getSelectedSequence() != nullptr && composition->getSelectedSequence()->getSelectedBeatPattern() >= 0);
             break;
             
         case Polytempo_CommandIDs::insertControlPoint:
-            result.setInfo ("Insert Control Point", String::empty, infoCategory, 0);
+            result.setInfo ("Insert Control Point", String(), infoCategory, 0);
             result.setActive(composition->getSelectedSequence() != nullptr && composition->getSelectedSequence()->getControlPoints()->size() > 0);
             break;
             
         case Polytempo_CommandIDs::adjustTime:
-            result.setInfo ("Adjust Time", String::empty, infoCategory, 0);
+            result.setInfo ("Adjust Time", String(), infoCategory, 0);
             result.setActive(composition->getSelectedSequence()->allowAdjustTime(composition->getSelectedControlPointIndex()));
             break;
             
         case Polytempo_CommandIDs::adjustPosition:
-            result.setInfo ("Adjust Position", String::empty, infoCategory, 0);
+            result.setInfo ("Adjust Position", String(), infoCategory, 0);
             result.setActive(composition->isSelectedControlPointRemovable());
             break;
             
         case Polytempo_CommandIDs::adjustTempo:
-            result.setInfo ("Adjust Tempo", String::empty, infoCategory, 0);
+            result.setInfo ("Adjust Tempo", String(), infoCategory, 0);
             result.setActive(composition->getSelectedControlPointIndex() > 0);
             break;
             
         case Polytempo_CommandIDs::alignWithCursor:
-            result.setInfo ("Align With Cursor", String::empty, infoCategory, 0);
+            result.setInfo ("Align With Cursor", String(), infoCategory, 0);
             result.setActive(composition->getSelectedControlPointIndex() > 0 &&
                              !Polytempo_ScoreScheduler::getInstance()->isRunning());
             break;
             
         case Polytempo_CommandIDs::removeControlPoint:
-            result.setInfo("Remove Selected Control Point", String::empty, infoCategory, 0);
+            result.setInfo("Remove Selected Control Point", String(), infoCategory, 0);
             result.setActive(composition->isSelectedControlPointRemovable());
             break;
 
@@ -367,52 +367,52 @@ void Polytempo_ComposerMenuBarModel::getCommandInfo(CommandID commandID, Applica
          ----------------------------------*/
 
         case Polytempo_CommandIDs::showTimeMap:
-            result.setInfo ("Show Time Map", String::empty, infoCategory, 0);
+            result.setInfo ("Show Time Map", String(), infoCategory, 0);
             result.addDefaultKeypress('1', ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
             result.addDefaultKeypress(KeyPress::numberPad1, ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
             break;
             
         case Polytempo_CommandIDs::showTempoMap:
-            result.setInfo ("Show Tempo Map", String::empty, infoCategory, 0);
+            result.setInfo ("Show Tempo Map", String(), infoCategory, 0);
             result.addDefaultKeypress('2', ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
             result.addDefaultKeypress(KeyPress::numberPad2, ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
             break;
             
         case Polytempo_CommandIDs::showPatternList:
-            result.setInfo ("Show Pattern List", String::empty, infoCategory, 0);
+            result.setInfo ("Show Pattern List", String(), infoCategory, 0);
             result.addDefaultKeypress('3', ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
             result.addDefaultKeypress(KeyPress::numberPad3, ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
             break;
             
         case Polytempo_CommandIDs::showPointList:
-            result.setInfo ("Show Point List", String::empty, infoCategory, 0);
+            result.setInfo ("Show Point List", String(), infoCategory, 0);
             result.addDefaultKeypress('4', ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
             result.addDefaultKeypress(KeyPress::numberPad4, ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
             break;
             
         case Polytempo_CommandIDs::zoomInX:
-            result.setInfo ("Horizontal Zoom In", String::empty, infoCategory, 0);
+            result.setInfo ("Horizontal Zoom In", String(), infoCategory, 0);
             result.addDefaultKeypress (KeyPress::rightKey, ModifierKeys::commandModifier);
             break;
             
         case Polytempo_CommandIDs::zoomOutX:
-            result.setInfo ("Horizontal Zoom Out", String::empty, infoCategory, 0);
+            result.setInfo ("Horizontal Zoom Out", String(), infoCategory, 0);
             result.addDefaultKeypress (KeyPress::leftKey, ModifierKeys::commandModifier);
             break;
             
         case Polytempo_CommandIDs::zoomInY:
-            result.setInfo ("Vertical Zoom In", String::empty, infoCategory, 0);
+            result.setInfo ("Vertical Zoom In", String(), infoCategory, 0);
             result.addDefaultKeypress (KeyPress::upKey, ModifierKeys::commandModifier);
             break;
             
         case Polytempo_CommandIDs::zoomOutY:
-            result.setInfo ("Vertical Zoom Out", String::empty, infoCategory, 0);
+            result.setInfo ("Vertical Zoom Out", String(), infoCategory, 0);
             result.addDefaultKeypress (KeyPress::downKey, ModifierKeys::commandModifier);
             break;
             
 #if ! JUCE_LINUX
         case Polytempo_CommandIDs::fullScreen:
-            result.setInfo ("Enter full-screen", String::empty, infoCategory, 0);
+            result.setInfo ("Enter full-screen", String(), infoCategory, 0);
             result.addDefaultKeypress ('f', ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
             result.setTicked (Desktop::getInstance().getKioskModeComponent() != 0);
             break;
@@ -447,12 +447,12 @@ void Polytempo_ComposerMenuBarModel::getCommandInfo(CommandID commandID, Applica
         /* help menu
          ----------------------------------*/
         case Polytempo_CommandIDs::help:
-            result.setInfo ("Polytempo Help", String::empty, infoCategory, 0);
+            result.setInfo ("Polytempo Help", String(), infoCategory, 0);
             result.addDefaultKeypress ('?', ModifierKeys::commandModifier);
             break;
             
         case Polytempo_CommandIDs::visitWebsite:
-            result.setInfo("Visit Polytempo Website", String::empty, infoCategory, 0);
+            result.setInfo("Visit Polytempo Website", String(), infoCategory, 0);
             break;
 
         default:

@@ -33,13 +33,6 @@ Polytempo_OSCSender::Polytempo_OSCSender()
 Polytempo_OSCSender::~Polytempo_OSCSender()
 {
     deleteAll();
-    broadcastSocket = nullptr;
-}
-
-void Polytempo_OSCSender::addBroadcastSender(int port)
-{
-    broadcastSocket = new Polytempo_Socket("255.255.255.255", port); // dummy broadcaster, will be overwritten by renewBroadcaster()
-    Polytempo_NetworkSupervisor::getInstance()->setSocket(broadcastSocket);
 }
 
 void Polytempo_OSCSender::deleteAll()
@@ -73,11 +66,6 @@ void Polytempo_OSCSender::eventNotification(Polytempo_Event *event)
             event->getType() == eventType_Start  ||
             event->getType() == eventType_Stop)
         sendTick(event);
-}
-
-void Polytempo_OSCSender::broadcastEventAsMessage(Polytempo_Event *event)
-{
-    sendEventAsMessage(event, broadcastSocket);
 }
 
 void Polytempo_OSCSender::sendEventAsMessage(Polytempo_Event *event, Polytempo_Socket *socket)

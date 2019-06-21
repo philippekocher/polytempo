@@ -78,13 +78,19 @@ void Polytempo_EventScheduler::scheduleEvent(Polytempo_Event *event)
 	if(event->getSyncTime() <= currentSyncTime)
     {
         notify(event);
+		
+		// logging for late start messages
+		if (event->getType() == eventType_Start)
+		{
+			Logger::writeToLog("Late start command received! Delay: " + String(currentSyncTime - event->getSyncTime()) + "; Current MRT: " + String(Polytempo_TimeProvider::getInstance()->getMRT()));
+		}
+
         if(!event->isOwned()) delete event;
     }
     else
     {
         scheduledEvents.add(event);
     }
-   // DBG("scheduled events: "<<scheduledEvents.size());
 }
 
 void Polytempo_EventScheduler::executeEvent(Polytempo_Event *event)

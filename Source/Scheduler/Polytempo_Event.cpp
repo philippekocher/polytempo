@@ -140,13 +140,13 @@ String Polytempo_Event::getOscAddressFromType()
     return address;
 }
 
-Array<var> Polytempo_Event::getOscMessageFromProperties()
+Array<var> Polytempo_Event::getOscMessageFromProperties() const
 {
     Array<var> message = Array<var>();
     
-    NamedValueSet* properties = getProperties();
+    NamedValueSet* props = getProperties();
     
-    for(juce::NamedValueSet::NamedValue val : *properties)
+    for(NamedValueSet::NamedValue val : *props)
     {
         Identifier key = val.name;
         if(key.toString()[0] != '~')
@@ -198,7 +198,7 @@ void Polytempo_Event::setType(String typeString)
     else type = eventType_None;
 }
 
-Polytempo_EventType Polytempo_Event::getType()
+Polytempo_EventType Polytempo_Event::getType() const
 {
     return type;
 }
@@ -210,7 +210,7 @@ String Polytempo_Event::getTypeString()
         case eventType_None:
         case eventType_Ready:
         case eventType_DeleteAll:
-            return String::empty;
+            return String();
         // these events have no string equivalent
         
         case eventType_Open:
@@ -274,7 +274,7 @@ String Polytempo_Event::getTypeString()
             return eventTypeString_Settings;
     }
     
-    return String::empty;
+    return String();
 }
 
 void Polytempo_Event::setValue(var val)
@@ -282,7 +282,7 @@ void Polytempo_Event::setValue(var val)
     setProperty(eventPropertyString_Value, val);
 }
 
-var  Polytempo_Event::getValue()
+var  Polytempo_Event::getValue() const
 {
     return getProperty(eventPropertyString_Value);
 }
@@ -293,7 +293,7 @@ void Polytempo_Event::setTime(int t)
     setProperty(eventPropertyString_Time, t * 0.001);
 }
 
-int Polytempo_Event::getTime()
+int Polytempo_Event::getTime() const
 {
     return time;
 }
@@ -303,13 +303,13 @@ int Polytempo_Event::getTime()
 //    return (int)(time * 1000.0f + 0.5f);
 //}
 
-void  Polytempo_Event::setSyncTime(int t)
+void  Polytempo_Event::setSyncTime(uint32 t)
 {
     syncTime = t;
-	setProperty(eventPropertyString_TimeTag, t);
+	setProperty(eventPropertyString_TimeTag, int32(t));
 }
 
-int Polytempo_Event::getSyncTime()
+uint32 Polytempo_Event::getSyncTime() const
 {
     return syncTime;
 }
@@ -319,7 +319,7 @@ void Polytempo_Event::setPosition(Rational pos)
     position = pos;
 }
 
-Rational Polytempo_Event::getPosition()
+Rational Polytempo_Event::getPosition() const
 {
     return position;
 }
@@ -329,7 +329,7 @@ void Polytempo_Event::setOwned(bool flag)
     owned = flag;
 }
 
-bool Polytempo_Event::isOwned()
+bool Polytempo_Event::isOwned() const
 {
     return owned;
 }
@@ -352,13 +352,13 @@ void Polytempo_Event::setProperty(String key, var value)
     properties->set(key,value);
 }
 
-var Polytempo_Event::getProperty(String key)
+var Polytempo_Event::getProperty(String key) const
 {
     if(properties)   return var((*properties)[key]);
-    else             return var::null;
+    else             return var();
 }
 
-bool Polytempo_Event::hasProperty(String key)
+bool Polytempo_Event::hasProperty(String key) const
 {
     if(!properties) return false;
     return properties->contains(key);
@@ -369,7 +369,7 @@ void Polytempo_Event::removeProperty(String key)
     properties->remove(key);
 }
 
-NamedValueSet* Polytempo_Event::getProperties()
+NamedValueSet* Polytempo_Event::getProperties() const
 {
     return properties;
 }

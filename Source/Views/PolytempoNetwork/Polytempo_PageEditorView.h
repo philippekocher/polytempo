@@ -72,7 +72,7 @@ public:
         
         if(image == nullptr) return;
         
-        if(*image == Image::null)
+        if(*image == Image())
         {
             g.setColour(Colours::grey);
             g.setFont(Font (15.0000f, Font::italic));
@@ -84,7 +84,7 @@ public:
         }
         
         String text = "";
-        if(tree["sectionID"] == var::null) text << "Image " << tree["imageID"].toString();
+        if(tree["sectionID"] == var()) text << "Image " << tree["imageID"].toString();
         else                               text << "Section " << tree["sectionID"].toString();
         
         g.drawText(text,
@@ -152,7 +152,7 @@ public:
     void resized() override;
     
     // actions
-#ifdef JUCE_ANDROID
+#if defined JUCE_ANDROID || JUCE_IOS
 	void mouseDoubleClick(const MouseEvent &) override;
 #else
 	void mouseDown(const MouseEvent &) override; 

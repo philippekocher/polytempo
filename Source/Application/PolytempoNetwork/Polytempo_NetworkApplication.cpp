@@ -40,6 +40,9 @@ Polytempo_NetworkApplication::Polytempo_NetworkApplication()
 
 void Polytempo_NetworkApplication::initialise(const String&)
 {
+	fileLogger = FileLogger::createDefaultAppLogger("Polytempo Network", "appLog.log", "Polytemp Network Logfile", 10 * 1024 * 1024);
+	Logger::setCurrentLogger(fileLogger);
+
     // GUI
     mainWindow = new Polytempo_NetworkWindow();
     
@@ -58,10 +61,11 @@ void Polytempo_NetworkApplication::initialise(const String&)
     Polytempo_EventScheduler::getInstance()->startThread(5); // priority between 0 and 10
     
     // create network connection
-    oscListener = new Polytempo_OSCListener(47522);
-    oscSender   = new Polytempo_OSCSender();
-    oscSender->addBroadcastSender(47522);
-    Polytempo_EventDispatcher::getInstance()->setBroadcastSender(oscSender);
+	broadcastWrapper = new Polytempo_BroadcastWrapper(OSC_PORT_COMMUNICATION);
+    oscListener = new Polytempo_OSCListener(OSC_PORT_COMMUNICATION);
+    Polytempo_EventDispatcher::getInstance()->setBroadcastSender(broadcastWrapper);
+	Polytempo_NetworkSupervisor::getInstance()->setBroadcastSender(broadcastWrapper);
+	Polytempo_NetworkSupervisor::getInstance()->createSocket(OSC_PORT_COMMUNICATION);
     
     // audio and midi
     Polytempo_AudioClick::getInstance();
@@ -72,7 +76,7 @@ void Polytempo_NetworkApplication::initialise(const String&)
     Polytempo_ImageManager::getInstance();
     
 	// time sync
-	Polytempo_TimeProvider::getInstance()->initialize(false, TIME_SYNC_OSC_PORT);
+	Polytempo_TimeProvider::getInstance()->initialize(OSC_PORT_TIME_SYNC);
 
 #if (!JUCE_DEBUG)
     // contact web server
@@ -86,7 +90,7 @@ void Polytempo_NetworkApplication::initialise(const String&)
 #endif
     
     // open default score file
-    if(Polytempo_StoredPreferences::getInstance()->getProps().getValue("defaultFilePath") != String::empty)
+    if(Polytempo_StoredPreferences::getInstance()->getProps().getValue("defaultFilePath") != String())
     {
         scoreFile = *new File(Polytempo_StoredPreferences::getInstance()->getProps().getValue("defaultFilePath"));
         if(scoreFile.exists())
@@ -135,10 +139,11 @@ void Polytempo_NetworkApplication::shutdown()
     
     // delete scoped pointers
     mainWindow = nullptr;
-    oscSender = nullptr;
     oscListener = nullptr;
+	broadcastWrapper = nullptr;
     midiInput = nullptr;
     score = nullptr;
+	menuBarModel = nullptr;
 
     // delete singletons
     Polytempo_StoredPreferences::deleteInstance();
@@ -151,6 +156,9 @@ void Polytempo_NetworkApplication::shutdown()
 	Polytempo_GraphicsAnnotationManager::deleteInstance();
 	Polytempo_TimeProvider::deleteInstance();
     Polytempo_EventDispatcher::deleteInstance();
+
+	Logger::setCurrentLogger(nullptr);
+	fileLogger = nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -248,7 +256,12 @@ void Polytempo_NetworkApplication::openFileDialog()
 		openScoreFile(result);
 	});
 #else
+    
+#ifdef JUCE_IOS
+    FileChooser fileChooser("Open Score File", directory, "*", true);
+#else
 	FileChooser fileChooser("Open Score File", directory, "*.json;*.ptsco", true);
+#endif
     
     if(fileChooser.browseForFileToOpen())
     {
@@ -277,7 +290,7 @@ void Polytempo_NetworkApplication::saveAs(File targetFile)
 void Polytempo_NetworkApplication::saveScoreFile(bool showFileDialog)
 {
     if(score == nullptr) return;
-    if(scoreFile == File::nonexistent) showFileDialog = true;
+    if(!scoreFile.exists()) showFileDialog = true;
 
     if(!mainWindow->applyChanges()) // in case there are any pending changes
         return;
@@ -293,8 +306,12 @@ void Polytempo_NetworkApplication::saveScoreFile(bool showFileDialog)
                             saveAs(result);
                         });
 #else
-		FileChooser fileChooser("Save Score File", scoreFile, "*.ptsco", true);
-		if(fileChooser.browseForFileToSave(true))
+#ifdef JUCE_IOS
+        FileChooser fileChooser("Save Score File", scoreFile, "*", true);
+#else
+        FileChooser fileChooser("Save Score File", scoreFile, "*.ptsco", true);
+#endif
+        if(fileChooser.browseForFileToSave(true))
         {
             Polytempo_StoredPreferences::getInstance()->getProps().setValue("scoreFileDirectory", fileChooser.getResult().getParentDirectory().getFullPathName());
 
@@ -317,7 +334,7 @@ void Polytempo_NetworkApplication::openScoreFilePath(String filePath)
 
 void Polytempo_NetworkApplication::openScoreFile(File aFile)
 {
-    if(aFile != File::nonexistent) newScoreFile = aFile;
+    if(aFile.exists()) newScoreFile = aFile;
     
     if(!newScoreFile.existsAsFile())
     {

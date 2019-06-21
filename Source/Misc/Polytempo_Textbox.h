@@ -96,7 +96,7 @@ public:
                 break;
         }
 
-        textboxLabel = new Label(String::empty, label);
+        textboxLabel = new Label(String(), label);
         textboxLabel->setFont(Font (12.0000f, Font::plain));
         textboxLabel->setJustificationType(Justification::bottomLeft);
         textboxLabel->setBorderSize(BorderSize<int>(1));

@@ -3,7 +3,7 @@
 
     Polytempo_GraphicsAnnotation.cpp
     Created: 28 Jul 2017 5:26:47am
-    Author:  chris
+    Author:  christian.schweizer
 
   ==============================================================================
 */
@@ -24,8 +24,8 @@ void Polytempo_GraphicsAnnotation::clear()
 {
 	color = Colours::black;
 	freeHandPath.clear();
-	imageId = String::empty;
+	imageId = String();
 	referencePoint = Point<float>();
-	text = String::empty;
+	text = String();
 	fontSize = STANDARD_FONT_SIZE;
 }

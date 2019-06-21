@@ -56,17 +56,17 @@ void Polytempo_ComposerEngine::run()
     
     while(!threadShouldExit() && !shouldStop)
     {
-        scoreTime += scoreTimeIncrement() * tempoFactor;
+        scoreTime += int(scoreTimeIncrement() * tempoFactor);
         
         while(nextScoreEvent && nextScoreEvent->getTime() <= scoreTime + lookAhead)
         {
             // calculate syncTime
             
             syncTime = Time::getMillisecondCounter();
-            syncTime += (nextScoreEvent->getTime() - scoreTime) / tempoFactor;
+            syncTime += int((nextScoreEvent->getTime() - scoreTime) / tempoFactor);
             
             if(nextScoreEvent->hasProperty(eventPropertyString_Defer))
-                syncTime += (float)nextScoreEvent->getProperty(eventPropertyString_Defer) * 1000.0f;
+                syncTime += int(float(nextScoreEvent->getProperty(eventPropertyString_Defer)) * 1000.0f);
             
             nextScoreEvent->setSyncTime(syncTime);
             
@@ -113,12 +113,12 @@ void Polytempo_NetworkEngine::setScoreTime(int time)
 {
     scoreTime = time;
 
-    Array <class Polytempo_Event*> events; // the events to execute immediately
+    Array <Polytempo_Event*> events; // the events to execute immediately
     score->setTime(time, &events, &waitBeforeStart);
     
     Polytempo_EventScheduler *scheduler = Polytempo_EventScheduler::getInstance();
-    
-    scheduler->executeEvent(Polytempo_Event::makeEvent(eventType_ClearAll));
+	ScopedPointer<Polytempo_Event> clearAllEvent = Polytempo_Event::makeEvent(eventType_ClearAll);
+    scheduler->executeEvent(clearAllEvent);
     
     for(int i=0;i<events.size();i++)
     {

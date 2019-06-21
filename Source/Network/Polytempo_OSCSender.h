@@ -34,10 +34,7 @@ public:
     Polytempo_OSCSender();
     ~Polytempo_OSCSender();
     
-    void addBroadcastSender(int port);
-    
     void eventNotification(Polytempo_Event *event);
-    void broadcastEventAsMessage(Polytempo_Event *event);
     void addSender(const String& senderID, const String& hostName, int port, bool ticks = false);
     void deleteAll();
     void sendEventAsMessage(Polytempo_Event *event, Polytempo_Socket *socket);
@@ -46,7 +43,6 @@ public:
 
 private:
     ScopedPointer < HashMap < String, Polytempo_Socket* > > socketsMap;
-    ScopedPointer < Polytempo_Socket > broadcastSocket;
 };
 
 

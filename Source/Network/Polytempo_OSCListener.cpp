@@ -43,6 +43,7 @@ Polytempo_OSCListener::Polytempo_OSCListener(int port) : m_Port(port)
 
 Polytempo_OSCListener::~Polytempo_OSCListener()
 {
+	oscReceiver = nullptr;
 }
 
 void Polytempo_OSCListener::oscMessageReceived(const OSCMessage & message)
@@ -59,17 +60,28 @@ void Polytempo_OSCListener::oscMessageReceived(const OSCMessage & message)
 		String argIp = (argumentIterator++)->getString();
 		String argName = (argumentIterator++)->getString();
 		
-		Polytempo_NetworkSupervisor::getInstance()->handlePeer(argIp, argName);
-
 		bool isMaster = false;
 		if (argumentIterator && (*argumentIterator).isInt32())
-			isMaster = (bool)argumentIterator->getInt32();
+			isMaster = (bool)(argumentIterator++)->getInt32();
+
+		bool syncOk = false;
+		if (argumentIterator && (*argumentIterator).isInt32())
+		{
+			uint32 localSyncTime;
+			bool syncTimeValid = Polytempo_TimeProvider::getInstance()->getSyncTime(&localSyncTime);
+			uint32 safeTimeToCheck = uint32((argumentIterator++)->getInt32());
+			syncOk = syncTimeValid && safeTimeToCheck >= localSyncTime;
+		}
+
+		Polytempo_NetworkSupervisor::getInstance()->handlePeer(senderId, argIp, argName, syncOk);
 		Polytempo_TimeProvider::getInstance()->setRemoteMasterPeer(argIp, senderId, isMaster);
 	}
 
 #ifdef POLYTEMPO_NETWORK
 	else if (addressPattern == "/open")
 	{
+		const MessageManagerLock mml(Thread::getCurrentThread());
+
 		DBG("osc: open");
 		// "Open Score": only PolytempoNetwork
 
@@ -84,6 +96,8 @@ void Polytempo_OSCListener::oscMessageReceived(const OSCMessage & message)
 	}
     else if (addressPattern == "/fullScreen")
     {
+		const MessageManagerLock mml(Thread::getCurrentThread());
+
         Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
 
         Polytempo_NetworkWindow *window = app->getMainWindow();
@@ -130,7 +144,7 @@ void Polytempo_OSCListener::oscMessageReceived(const OSCMessage & message)
         uint32 syncTime;
         
         if(event->hasProperty(eventPropertyString_TimeTag))
-            syncTime = uint32(int(event->getProperty(eventPropertyString_TimeTag)));
+            syncTime = uint32(int32(event->getProperty(eventPropertyString_TimeTag)));
 		else
 		{
 			Polytempo_TimeProvider::getInstance()->getSyncTime(&syncTime);

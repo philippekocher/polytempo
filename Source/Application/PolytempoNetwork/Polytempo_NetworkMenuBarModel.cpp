@@ -96,7 +96,7 @@ PopupMenu Polytempo_MenuBarModel::getMenuForIndex(int, const String& menuName)
     ApplicationCommandManager *commandManager = Polytempo_NetworkApplication::getCommandManager();
     PopupMenu menu;
 
-#if defined(WIN32) || defined(JUCE_LINUX) || defined(JUCE_ANDROID)
+#if !JUCE_MAC
     if (menuName == "PolytempoNetwork")
     {
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::aboutWindow);
@@ -298,7 +298,7 @@ void Polytempo_MenuBarModel::getCommandInfo(CommandID commandID, ApplicationComm
         /* file menu
          ----------------------------------*/
         case Polytempo_CommandIDs::newDocument:
-            result.setInfo("New", String::empty, infoCategory, 0);
+            result.setInfo("New", String(), infoCategory, 0);
             result.addDefaultKeypress('n', ModifierKeys::commandModifier);
             break;
 
@@ -308,7 +308,7 @@ void Polytempo_MenuBarModel::getCommandInfo(CommandID commandID, ApplicationComm
             break;
 
         case Polytempo_CommandIDs::clearOpenRecent:
-            result.setInfo("Clear Menu", String::empty, infoCategory, 0);
+            result.setInfo("Clear Menu", String(), infoCategory, 0);
             result.setActive(Polytempo_StoredPreferences::getInstance()->recentFiles.getNumFiles() > 0);
             break;
 
@@ -325,7 +325,7 @@ void Polytempo_MenuBarModel::getCommandInfo(CommandID commandID, ApplicationComm
             break;
 
         case Polytempo_CommandIDs::close:
-            result.setInfo("Close", String::empty, infoCategory, 0);
+            result.setInfo("Close", String(), infoCategory, 0);
             result.addDefaultKeypress('w', ModifierKeys::commandModifier);
             break;
 
@@ -360,44 +360,44 @@ void Polytempo_MenuBarModel::getCommandInfo(CommandID commandID, ApplicationComm
         /* view menu
          ----------------------------------*/
         case Polytempo_CommandIDs::showMainView:
-            result.setInfo("Show Main View", String::empty, infoCategory, 0);
+            result.setInfo("Show Main View", String(), infoCategory, 0);
             result.addDefaultKeypress('1', ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
             result.addDefaultKeypress(KeyPress::numberPad1, ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
             break;
 
         case Polytempo_CommandIDs::showPageEditor:
-            result.setInfo("Show Page Editor", String::empty, infoCategory, 0);
+            result.setInfo("Show Page Editor", String(), infoCategory, 0);
             result.addDefaultKeypress('2', ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
             result.addDefaultKeypress(KeyPress::numberPad2, ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
             break;
 
         case Polytempo_CommandIDs::showRegionEditor:
-            result.setInfo("Show Region Editor", String::empty, infoCategory, 0);
+            result.setInfo("Show Region Editor", String(), infoCategory, 0);
             result.addDefaultKeypress('3', ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
             result.addDefaultKeypress(KeyPress::numberPad3, ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
             break;
             
         case Polytempo_CommandIDs::showScoreEditor:
-            result.setInfo("Show Score Editor", String::empty, infoCategory, 0);
+            result.setInfo("Show Score Editor", String(), infoCategory, 0);
             result.addDefaultKeypress('4', ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
             result.addDefaultKeypress(KeyPress::numberPad4, ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
             break;
             
         case Polytempo_CommandIDs::zoomIn:
-            result.setInfo("Zoom In", String::empty, infoCategory, 0);
+            result.setInfo("Zoom In", String(), infoCategory, 0);
             result.addDefaultKeypress(KeyPress::upKey, ModifierKeys::commandModifier);
             result.setActive(window->getContentID() == Polytempo_NetworkWindow::pageEditorViewID);
             break;
 
         case Polytempo_CommandIDs::zoomOut:
-            result.setInfo("Zoom Out", String::empty, infoCategory, 0);
+            result.setInfo("Zoom Out", String(), infoCategory, 0);
             result.addDefaultKeypress(KeyPress::downKey, ModifierKeys::commandModifier);
             result.setActive(window->getContentID() == Polytempo_NetworkWindow::pageEditorViewID);
             break;
 
 #if ! JUCE_LINUX
         case Polytempo_CommandIDs::fullScreen:
-            result.setInfo("Show full-screen", String::empty, infoCategory, 0);
+            result.setInfo("Show full-screen", String(), infoCategory, 0);
             result.addDefaultKeypress('f', ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
             result.setTicked (window->isFullScreen());
             break;
@@ -406,7 +406,7 @@ void Polytempo_MenuBarModel::getCommandInfo(CommandID commandID, ApplicationComm
         /* scheduler menu
          ----------------------------------*/
         case Polytempo_CommandIDs::startStop:
-            result.setInfo("Start / Stop", String::empty, infoCategory, 0);
+            result.setInfo("Start / Stop", String(), infoCategory, 0);
             result.addDefaultKeypress(' ', 0);
             result.setActive(window->getContentID() == Polytempo_NetworkWindow::mainViewID);
             break;
@@ -418,31 +418,31 @@ void Polytempo_MenuBarModel::getCommandInfo(CommandID commandID, ApplicationComm
             break;
 
         case Polytempo_CommandIDs::returnToBeginning:
-            result.setInfo("Return to Beginning", String::empty, infoCategory, 0);
+            result.setInfo("Return to Beginning", String(), infoCategory, 0);
             result.addDefaultKeypress('\r', ModifierKeys::commandModifier);
             result.setActive(window->getContentID() == Polytempo_NetworkWindow::mainViewID);
             break;
 
         case Polytempo_CommandIDs::markerFwd:
-            result.setInfo("Next Marker", String::empty, infoCategory, 0);
+            result.setInfo("Next Marker", String(), infoCategory, 0);
             result.addDefaultKeypress(KeyPress::rightKey, ModifierKeys::commandModifier);
             result.setActive(window->getContentID() == Polytempo_NetworkWindow::mainViewID);
             break;
 
         case Polytempo_CommandIDs::markerBwd:
-            result.setInfo("Previous Marker", String::empty, infoCategory, 0);
+            result.setInfo("Previous Marker", String(), infoCategory, 0);
             result.addDefaultKeypress(KeyPress::leftKey, ModifierKeys::commandModifier);
             result.setActive(window->getContentID() == Polytempo_NetworkWindow::mainViewID);
             break;
 
         case Polytempo_CommandIDs::imageFwd:
-            result.setInfo("Next Image", String::empty, infoCategory, 0);
+            result.setInfo("Next Image", String(), infoCategory, 0);
             result.addDefaultKeypress(KeyPress::rightKey, ModifierKeys::commandModifier | ModifierKeys::shiftModifier);
             result.setActive(window->getContentID() == Polytempo_NetworkWindow::mainViewID);
             break;
 
         case Polytempo_CommandIDs::imageBwd:
-            result.setInfo("Previous Image", String::empty, infoCategory, 0);
+            result.setInfo("Previous Image", String(), infoCategory, 0);
             result.addDefaultKeypress(KeyPress::leftKey, ModifierKeys::commandModifier | ModifierKeys::shiftModifier);
             result.setActive(window->getContentID() == Polytempo_NetworkWindow::mainViewID);
             break;
@@ -499,12 +499,12 @@ void Polytempo_MenuBarModel::getCommandInfo(CommandID commandID, ApplicationComm
         /* help menu
          ----------------------------------*/
         case Polytempo_CommandIDs::help:
-            result.setInfo("PolytempoNetwork Help", String::empty, infoCategory, 0);
+            result.setInfo("PolytempoNetwork Help", String(), infoCategory, 0);
             result.addDefaultKeypress('?', ModifierKeys::commandModifier);
             break;
 
         case Polytempo_CommandIDs::visitWebsite:
-            result.setInfo("Visit Polytempo Website", String::empty, infoCategory, 0);
+            result.setInfo("Visit Polytempo Website", String(), infoCategory, 0);
             break;
 
 

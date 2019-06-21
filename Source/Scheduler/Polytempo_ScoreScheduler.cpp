@@ -25,7 +25,6 @@
 #include "Polytempo_ScoreScheduler.h"
 #include "Polytempo_EventScheduler.h"
 #include "Polytempo_EventDispatcher.h"
-#include "../Network/Polytempo_OSCSender.h"
 
 Polytempo_ScoreScheduler::Polytempo_ScoreScheduler()
 {}
@@ -185,7 +184,7 @@ void Polytempo_ScoreScheduler::gotoTime(int time)
     engine->setScoreTime(time);
     
     // update locator in all components
-    Polytempo_Event *schedulerTick = Polytempo_Event::makeEvent(eventType_Tick);
+    ScopedPointer<Polytempo_Event> schedulerTick = Polytempo_Event::makeEvent(eventType_Tick);
     schedulerTick->setValue(time * 0.001f);
     Polytempo_EventScheduler::getInstance()->executeEvent(schedulerTick);
 }

@@ -3,7 +3,7 @@
 
     Polytempo_GraphicsAnnotationSet.h
     Created: 29 Jul 2017 2:01:10am
-    Author:  chris
+    Author:  christian.schweizer
 
   ==============================================================================
 */
@@ -51,7 +51,7 @@ public:
 	
 private:
 	void loadFromFile();
-	String getFileName(String newLayerName = String::empty) const;
+	String getFileName(String newLayerName = String()) const;
 	OwnedArray<Polytempo_GraphicsAnnotation> annotations;
 	String filePath;
 	String scoreName;

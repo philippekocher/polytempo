@@ -28,12 +28,14 @@
 
 #include "Polytempo_NetworkWindow.h"
 #include "Polytempo_NetworkMenuBarModel.h"
-#include "../../Network/Polytempo_OSCSender.h"
 #include "../../Network/Polytempo_OSCListener.h"
 #include "../../Data/Polytempo_Score.h"
 #include "../../Audio+Midi/Polytempo_MidiInput.h"
 #include "../../Misc/Polytempo_Alerts.h"
+#include "../../Network/Polytempo_BroadcastWrapper.h"
 
+#define OSC_PORT_TIME_SYNC			47523
+#define OSC_PORT_COMMUNICATION		47522
 
 class Polytempo_NetworkApplication : public JUCEApplication
 {
@@ -52,14 +54,14 @@ public:
     void anotherInstanceStarted(const String& commandLine);
     
     Polytempo_Score* getScore() { return score; };
-    bool scoreFileExists() { return scoreFile != File::nonexistent; }
+    bool scoreFileExists() { return scoreFile.exists(); }
     Polytempo_NetworkWindow* getMainWindow() { return mainWindow; }
     
     void unsavedChangesAlert(Polytempo_YesNoCancelAlert::callbackTag);
     void newScore();
     void openFileDialog();
-    void openScoreFilePath(String filePath = String::empty);
-    void openScoreFile(File aFile = File::nonexistent);
+    void openScoreFilePath(String filePath = String());
+    void openScoreFile(File aFile = File());
     void saveScoreFile(bool showFileDialog);
     void commandStatusChanged();
     
@@ -71,10 +73,11 @@ private:
 private:
 	ScopedPointer<Polytempo_NetworkWindow> mainWindow;
     ScopedPointer<Polytempo_MenuBarModel> menuBarModel;
-    ScopedPointer<Polytempo_OSCSender> oscSender;
+    ScopedPointer<Polytempo_BroadcastWrapper> broadcastWrapper;
     ScopedPointer<Polytempo_OSCListener> oscListener;
     ScopedPointer<Polytempo_MidiInput> midiInput;
     ScopedPointer<Polytempo_Score> score;
+	ScopedPointer<FileLogger> fileLogger;
 
 #ifdef JUCE_ANDROID
 	ScopedPointer<FileChooser> fc;

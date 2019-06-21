@@ -27,7 +27,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-class Polytempo_OSCListener : private OSCReceiver, private OSCReceiver::Listener<OSCReceiver::MessageLoopCallback>
+class Polytempo_OSCListener : OSCReceiver, OSCReceiver::Listener<OSCReceiver::RealtimeCallback>
 {
 public:
     Polytempo_OSCListener(int port);

@@ -56,12 +56,12 @@ public:
         StringArray tempoMeasurementTokens;
         tempoMeasurementTokens.addTokens(tempoMeasurement, false);
 
-        addAndMakeVisible(tempoMeasurementLabel = new Label(String::empty, L"Tempo Measurement"));
+        addAndMakeVisible(tempoMeasurementLabel = new Label(String(), L"Tempo Measurement"));
         tempoMeasurementLabel->setFont(Font(15.0000f, Font::plain));
         tempoMeasurementLabel->setJustificationType(Justification::centredLeft);
         tempoMeasurementLabel->setEditable(false, false, false);
         
-        addAndMakeVisible(tempoMeasurementUnitLabel = new Label(String::empty, L"Unit:"));
+        addAndMakeVisible(tempoMeasurementUnitLabel = new Label(String(), L"Unit:"));
         tempoMeasurementUnitLabel->setFont(Font(12.0000f, Font::plain));
         tempoMeasurementUnitLabel->setJustificationType(Justification::centredLeft);
         tempoMeasurementUnitLabel->setEditable(false, false, false);
@@ -73,7 +73,7 @@ public:
         tempoMeasurementUnit->setInputRestrictions(0, "0123456789/");
         tempoMeasurementUnit->addListener(this);
         
-        addAndMakeVisible(tempoMeasurementTimeLabel = new Label(String::empty, L"Time:"));
+        addAndMakeVisible(tempoMeasurementTimeLabel = new Label(String(), L"Time:"));
         tempoMeasurementTimeLabel->setFont(Font(12.0000f, Font::plain));
         tempoMeasurementTimeLabel->setJustificationType(Justification::centredLeft);
         tempoMeasurementTimeLabel->setEditable(false, false, false);
@@ -93,12 +93,12 @@ public:
         StringArray beatPatternTokens;
         beatPatternTokens.addTokens(defaultBeatPattern, false);
 
-        addAndMakeVisible(defaultBeatPatternLabel = new Label(String::empty, L"Default Beat Pattern"));
+        addAndMakeVisible(defaultBeatPatternLabel = new Label(String(), L"Default Beat Pattern"));
         defaultBeatPatternLabel->setFont(Font(15.0000f, Font::plain));
         defaultBeatPatternLabel->setJustificationType(Justification::centredLeft);
         defaultBeatPatternLabel->setEditable(false, false, false);
         
-        addAndMakeVisible(defaultBeatPatternMetreLabel = new Label(String::empty, L"Metre:"));
+        addAndMakeVisible(defaultBeatPatternMetreLabel = new Label(String(), L"Metre:"));
         defaultBeatPatternMetreLabel->setFont(Font(12.0000f, Font::plain));
         defaultBeatPatternMetreLabel->setJustificationType(Justification::centredLeft);
         defaultBeatPatternMetreLabel->setEditable(false, false, false);
@@ -110,7 +110,7 @@ public:
         defaultBeatPatternMetre->setInputRestrictions(0, "0123456789/");
         defaultBeatPatternMetre->addListener(this);
         
-        addAndMakeVisible(defaultBeatPatternRepeatsLabel = new Label(String::empty, L"Repeats:"));
+        addAndMakeVisible(defaultBeatPatternRepeatsLabel = new Label(String(), L"Repeats:"));
         defaultBeatPatternRepeatsLabel->setFont(Font(12.0000f, Font::plain));
         defaultBeatPatternRepeatsLabel->setJustificationType(Justification::centredLeft);
         defaultBeatPatternRepeatsLabel->setEditable(false, false, false);
@@ -168,7 +168,7 @@ public:
             tempoMeasurementUnit->setText(unit.toString());
             
             String time = tempoMeasurementTime->getText();
-            if(time == String::empty) time = "1";
+            if(time == String()) time = "1";
             if(time.getFloatValue() == 0.0f) time = "1";
             tempoMeasurementTime->setText(time);
             
@@ -185,7 +185,7 @@ public:
             defaultBeatPatternMetre->setText(metre.toString());
             
             String repeats = defaultBeatPatternRepeats->getText();
-            if(repeats == String::empty) repeats = "1";
+            if(repeats == String()) repeats = "1";
             if(repeats == "0") repeats = "1";
             defaultBeatPatternRepeats->setText(repeats);
 
@@ -212,7 +212,7 @@ Polytempo_ComposerPreferencesPanel::Polytempo_ComposerPreferencesPanel()
     
     addSettingsPage(generalPreferencesPage, 0, 0);
     
-    if(preferencePage == String::empty) preferencePage = generalPreferencesPage;
+    if(preferencePage == String()) preferencePage = generalPreferencesPage;
     setCurrentPage(preferencePage);
 }
 

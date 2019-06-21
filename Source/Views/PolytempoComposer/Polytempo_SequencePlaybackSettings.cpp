@@ -34,7 +34,7 @@ Polytempo_SequencePlaybackSettings::Polytempo_SequencePlaybackSettings(Polytempo
     /* audio
      -------------------------------------------------- */
     
-    addAndMakeVisible(audioClick = new ToggleButton(String::empty));
+    addAndMakeVisible(audioClick = new ToggleButton(String()));
     audioClick->setButtonText("Play Audio Click");
     audioClick->setToggleState(sequence->playAudioClick, dontSendNotification);
     audioClick->addListener(this);
@@ -97,7 +97,7 @@ Polytempo_SequencePlaybackSettings::Polytempo_SequencePlaybackSettings(Polytempo
     /* midi
      -------------------------------------------------- */
     
-    addAndMakeVisible(midiClick = new ToggleButton(String::empty));
+    addAndMakeVisible(midiClick = new ToggleButton(String()));
     midiClick->setButtonText("Play Midi Click");
     midiClick->setToggleState(sequence->playMidiClick, dontSendNotification);
     midiClick->addListener(this);
@@ -160,7 +160,7 @@ Polytempo_SequencePlaybackSettings::Polytempo_SequencePlaybackSettings(Polytempo
     /* osc
      -------------------------------------------------- */
     
-    addAndMakeVisible(sendOsc = new ToggleButton(String::empty));
+    addAndMakeVisible(sendOsc = new ToggleButton(String()));
     sendOsc->setButtonText("Send Osc");
     sendOsc->setToggleState(sequence->sendOsc, dontSendNotification);
     sendOsc->addListener(this);

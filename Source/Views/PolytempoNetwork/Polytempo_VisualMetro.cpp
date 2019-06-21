@@ -114,7 +114,7 @@ Polytempo_VisualMetro::Polytempo_VisualMetro()
     pos = 0.5f;
     timeInterval = 15; // good somewhere between 5 and 20
     tempoFactor = 1.0f;
-    pattern = 0.0f;
+    pattern = 0;
     exponentMain = 1.5f;
     exponentSub = 1.0f;
     linear = false;

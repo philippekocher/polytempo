@@ -88,7 +88,7 @@ private:
 
     ScopedPointer <Polytempo_Score> score;
     
-    File compositionFile = File::nonexistent;
+    File compositionFile = File();
     bool dirty = false;
 };
 

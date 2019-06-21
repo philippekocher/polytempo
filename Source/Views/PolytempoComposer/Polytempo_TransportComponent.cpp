@@ -44,11 +44,11 @@ Polytempo_TransportComponent::Polytempo_TransportComponent()
     returnToZeroButton->setCommandToTrigger(&Polytempo_ComposerApplication::getCommandManager(), Polytempo_CommandIDs::returnToBeginning , true);
     
     
-    addAndMakeVisible(timeTextbox = new Polytempo_Textbox(String::empty));
+    addAndMakeVisible(timeTextbox = new Polytempo_Textbox(String()));
     timeTextbox->setFont(Font (24.0f, Font::bold));
     timeTextbox->addListener(this);
 
-    addAndMakeVisible(tempoFactorTextbox = new Polytempo_Textbox(String::empty));
+    addAndMakeVisible(tempoFactorTextbox = new Polytempo_Textbox(String()));
     tempoFactorTextbox->setFont(Font (24.0f, Font::bold));
     tempoFactorTextbox->setText("1.0", dontSendNotification);
     tempoFactorTextbox->addListener(this);
@@ -68,7 +68,7 @@ void Polytempo_TransportComponent::paint (Graphics& g)
     g.fillAll(Colour(245,245,245));
     
     g.setColour(Colour(170,170,170));
-    g.drawHorizontalLine(0,0,getWidth());
+    g.drawHorizontalLine(0, 0.0f, float(getWidth()));
     
     g.setColour(Colour(150,150,150));
     g.drawText("Tempo x", 320, int(getHeight() * 0.25), 100, 20, Justification::left);

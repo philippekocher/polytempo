@@ -176,14 +176,14 @@ namespace Polytempo_DialogWindows
         {
             Polytempo_Sequence* sequence = Polytempo_Composition::getInstance()->getSelectedSequence();
             
-            enableOkButton(sequence->validateNewControlPointPosition(timeTextbox->getText().getIntValue(), Rational(positionTextbox->getText())));
+            enableOkButton(sequence->validateNewControlPointPosition(timeTextbox->getText().getFloatValue(), Rational(positionTextbox->getText())));
         }
         
         void labelTextChanged (Label* /*label*/)
         {
             Polytempo_Sequence* sequence = Polytempo_Composition::getInstance()->getSelectedSequence();
             
-            enableOkButton(sequence->validateNewControlPointPosition(timeTextbox->getText().getIntValue(), Rational(positionTextbox->getText())));
+            enableOkButton(sequence->validateNewControlPointPosition(timeTextbox->getText().getFloatValue(), Rational(positionTextbox->getText())));
         }
  
         void perform()

@@ -37,7 +37,7 @@ Polytempo_RegionEditorView::Polytempo_RegionEditorView()
         addChildComponent(dh);
     }
     
-    addAndMakeVisible(relativePositionLabel = new Label(String::empty, "Region --"));
+    addAndMakeVisible(relativePositionLabel = new Label(String(), "Region --"));
     relativePositionLabel->setFont(Font (15.0f, Font::plain));
     
     addAndMakeVisible(xTextbox = new Polytempo_Textbox("Left"));
@@ -75,7 +75,7 @@ void Polytempo_RegionEditorView::paint(Graphics& g)
 
     int width = r.getWidth();
     int height = getHeight();
-    int i = 0;
+    int index = 0;
     
     if(selectedRegionID < addRegionEvents.size())
         for(int i=0;i<4;i++) dragHandles.getUnchecked(i)->setVisible(true);
@@ -84,11 +84,11 @@ void Polytempo_RegionEditorView::paint(Graphics& g)
 
     for(Polytempo_Event *addRegionEvent : addRegionEvents)
     {
-        Array<var> r = *addRegionEvent->getProperty(eventPropertyString_Rect).getArray();
+        Array<var> rect = *addRegionEvent->getProperty(eventPropertyString_Rect).getArray();
         
-        Rectangle<int> bounds = Rectangle<int>(width * float(r[0]), height * float(r[1]), width * float(r[2]), height * float(r[3]));
+        Rectangle<int> bounds = Rectangle<int>(int(width * float(rect[0])), int(height * float(rect[1])), int(width * float(rect[2])), int(height * float(rect[3])));
         
-        if(i++ == selectedRegionID)
+        if(index++ == selectedRegionID)
         {
             dragHandles.getUnchecked(0)->setCentrePosition(int((bounds.getX() + bounds.getWidth() * 0.5f)), int(bounds.getY()));
             
@@ -103,27 +103,27 @@ void Polytempo_RegionEditorView::paint(Graphics& g)
                 g.setColour(Colours::blue.withAlpha(0.05f));
                 g.fillRect(bounds);
                 g.setColour(Colours::blue);
-                g.drawRect(bounds, 2.0f);
+                g.drawRect(bounds, 2);
             
                 if(bounds.getHeight() < bounds.getWidth() * 2)
-                    g.setFont(bounds.getHeight());
+                    g.setFont(float(bounds.getHeight()));
                 else
-                    g.setFont(bounds.getWidth() * 2);
+                    g.setFont(bounds.getWidth() * 2.0f);
                 g.setColour(Colours::blue.withAlpha(0.2f));
-                g.drawFittedText(addRegionEvent->getProperty(eventPropertyString_RegionID).toString(), bounds, Justification::centred, 0.1f);
+                g.drawFittedText(addRegionEvent->getProperty(eventPropertyString_RegionID).toString(), bounds, Justification::centred, 1, 0.1f);
             }
         }
         else
         {
             g.setColour(Colours::blue.withAlpha(0.7f));
-            g.drawRect(width * float(r[0]) + 1, height * float(r[1]) + 1, width * float(r[2]) - 2, height * float(r[3]) - 2, 1.0f);
+            g.drawRect(width * float(rect[0]) + 1, height * float(rect[1]) + 1, width * float(rect[2]) - 2, height * float(rect[3]) - 2, 1.0f);
 
             if(bounds.getHeight() < bounds.getWidth() * 2)
-                g.setFont(bounds.getHeight());
+                g.setFont(float(bounds.getHeight()));
             else
-                g.setFont(bounds.getWidth() * 2);
+                g.setFont(bounds.getWidth() * 2.0f);
             g.setColour(Colours::blue.withAlpha(0.05f));
-            g.drawFittedText(addRegionEvent->getProperty(eventPropertyString_RegionID).toString(), bounds, Justification::centred, 0.1f);
+            g.drawFittedText(addRegionEvent->getProperty(eventPropertyString_RegionID).toString(), bounds, Justification::centred, 1, 0.1f);
         }
     }
 }
@@ -154,7 +154,7 @@ void Polytempo_RegionEditorView::refresh()
     repaint();
 }
 
-bool Polytempo_RegionEditorView::keyPressed(const KeyPress& key)
+bool Polytempo_RegionEditorView::keyPressed(const KeyPress&)
 {
     return false;
 }
@@ -168,7 +168,7 @@ void Polytempo_RegionEditorView::mouseDown(const MouseEvent& event)
     for(Polytempo_Event *addRegionEvent : addRegionEvents)
     {
         Array<var> r = *addRegionEvent->getProperty(eventPropertyString_Rect).getArray();
-        Rectangle<int> bounds = Rectangle<int>(width * float(r[0]), height * float(r[1]), width * float(r[2]), height * float(r[3]));
+        Rectangle<int> bounds = Rectangle<int>(int(width * float(r[0])), int(height * float(r[1])), int(width * float(r[2])), int(height * float(r[3])));
         
         if(bounds.contains(event.getPosition()))
             break;

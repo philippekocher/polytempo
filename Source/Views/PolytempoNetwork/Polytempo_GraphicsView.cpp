@@ -139,7 +139,7 @@ void Polytempo_GraphicsView::displayImage(Polytempo_Event *event)
     }
     
     // default rectangle [0,0,1,1]
-    if(rect == var::null)
+    if(rect == var())
     {
         Array < var > r;
         r.set(0,0); r.set(1,0); r.set(2,1); r.set(3,1);
@@ -182,7 +182,7 @@ void Polytempo_GraphicsView::displayProgessbar(Polytempo_Event *event)
         return; // invalid region id
     
     Polytempo_GraphicsViewRegion *region = regionsMap[event->getProperty(eventPropertyString_RegionID)];
-    region->setProgressbar(String(event->getValue().toString()),event->getTime(), event->getProperty("duration"));
+    region->setProgressbar(String(event->getValue().toString()), float(event->getTime()), event->getProperty("duration"));
     region->setVisible(true);
     region->repaint();
 }

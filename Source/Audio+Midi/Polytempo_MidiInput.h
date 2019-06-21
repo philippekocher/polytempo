@@ -51,7 +51,7 @@ public:
     
     void handleIncomingMidiMessage(MidiInput*, const MidiMessage& message)
     {
-        DBG(message.getDescription());
+		DBG(message.getDescription());
     }
     
 private:

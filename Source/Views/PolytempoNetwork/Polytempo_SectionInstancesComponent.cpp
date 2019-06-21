@@ -37,7 +37,7 @@ void Polytempo_SectionInstancesComponent::paint(Graphics& g)
 {
     g.setColour(Colours::grey);
     for(int i=0;i<imageEvents.size();i++)
-        g.drawHorizontalLine(i*120-4, 0, getWidth());
+        g.drawHorizontalLine(i*120-4, 0.0f, float(getWidth()));
 }
 
 void Polytempo_SectionInstancesComponent::resized()
@@ -137,7 +137,7 @@ void Polytempo_SectionInstancesComponent::labelTextChanged(Label* label)
         {
             if(timeTextboxes[i] == label)
             {
-                int time = Polytempo_Textbox::stringToTime(timeTextboxes[i]->getText()) * 1000.0f;
+                int time = int(Polytempo_Textbox::stringToTime(timeTextboxes[i]->getText()) * 1000.0f);
 
                 timeTextboxes[i]->setText(Polytempo_Textbox::timeToString(time * 0.001f), dontSendNotification);
 
