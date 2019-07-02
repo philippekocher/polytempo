@@ -56,7 +56,7 @@ String Polytempo_IPAddress::addressDescription()
 		return "Private local network";
 	if (ipAddress.address[0] == 10)
 		return "Private local network";
-	if (ipAddress.address[1] == 169 && ipAddress.address[1] == 254)
+	if (ipAddress.address[0] == 169 && ipAddress.address[1] == 254)
 		return "Link-local network";
 
 	return "Other network";
