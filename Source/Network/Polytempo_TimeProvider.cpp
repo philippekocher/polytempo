@@ -17,9 +17,6 @@
 
 Polytempo_TimeProvider::Polytempo_TimeProvider(): oscPort(0), relativeMsToMaster(0), maxRoundTrip(0), timeDiffHistorySize(0), timeDiffHistoryWritePosition(0), roundTripHistorySize(0), roundTripHistoryWritePosition(0), masterFlag(false), sync(false), lastSentTimeIndex(0), lastSentTimestamp(0), lastReceivedTimestamp(0), lastRoundTrip(0)
 {
-	//oscSender = new OSCSender();
-	//oscReceiver = new OSCReceiver();
-
 #ifdef POLYTEMPO_NETWORK
 	pTimeSyncControl = nullptr;
 #endif
@@ -27,42 +24,26 @@ Polytempo_TimeProvider::Polytempo_TimeProvider(): oscPort(0), relativeMsToMaster
 
 Polytempo_TimeProvider::~Polytempo_TimeProvider()
 {
-	//oscSender->disconnect();
-	//oscReceiver->disconnect();
-	
 	clearSingletonInstance();
 }
 
 juce_ImplementSingleton(Polytempo_TimeProvider)
 
-void Polytempo_TimeProvider::initialize(int port)
+bool Polytempo_TimeProvider::getSyncTime(uint32* pTime)
 {
-	oscPort = port;
-	toggleMaster(false);
+	sync = masterFlag || (lastReceivedTimestamp > lastSentTimestamp) || (lastSentTimestamp - lastReceivedTimestamp < SYNC_TIME_VALID_PERIOD_MS && lastSentTimestamp > 0);
+
+	if (masterFlag || !sync)
+		relativeMsToMaster = 0;
+
+	*pTime = Time::getMillisecondCounter() + relativeMsToMaster;
+
+	return sync;
 }
 
-void Polytempo_TimeProvider::toggleMaster(bool master)
+int32 Polytempo_TimeProvider::getMRT() const
 {
-	stopTimer();
-	//oscSender->disconnect();
-	//oscReceiver->disconnect();
-
-	masterFlag = master;
-	
-	resetTimeSync();
-
-	/*bool ok = oscSender->connect(Polytempo_NetworkInterfaceManager::getInstance()->getSelectedIpAddress().ipAddress.toString(), 0);
-	if (!ok)
-		AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Time Sync", "Error setting up time sync OSC sender");
-
-	ok = oscReceiver->connect(oscPort);
-	if (!ok)
-		AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Time Sync", "Error setting up time sync OSC receiver");
-
-	oscReceiver->addListener(this);
-*/
-	if (!masterFlag)
-		startTimer(TIME_SYNC_INTERVAL_MS);
+	return maxRoundTrip;
 }
 
 void Polytempo_TimeProvider::handleTimeSyncMessage(Uuid senderId, uint32 masterTime, int timeIndex, int32 roundTrip)
@@ -117,16 +98,22 @@ void Polytempo_TimeProvider::createTimeIndex(int* pIndex, uint32* pTimestamp)
 	*pTimestamp = lastSentTimestamp;
 }
 
-bool Polytempo_TimeProvider::getSyncTime(uint32* pTime)
+
+#ifdef POLYTEMPO_NETWORK
+void Polytempo_TimeProvider::initialize(int port)
 {
-	sync = masterFlag || (lastReceivedTimestamp > lastSentTimestamp) || (lastSentTimestamp - lastReceivedTimestamp < SYNC_TIME_VALID_PERIOD_MS && lastSentTimestamp > 0);
+	oscPort = port;
+	toggleMaster(false);
+}
 
-	if (masterFlag || !sync)
-		relativeMsToMaster = 0;
+void Polytempo_TimeProvider::toggleMaster(bool master)
+{
+	stopTimer();
+	masterFlag = master;
+	resetTimeSync();
 
-	*pTime = Time::getMillisecondCounter() + relativeMsToMaster;
-	
-	return sync;
+	if (!masterFlag)
+		startTimer(TIME_SYNC_INTERVAL_MS);
 }
 
 uint32 Polytempo_TimeProvider::getDelaySafeTimestamp()
@@ -136,11 +123,6 @@ uint32 Polytempo_TimeProvider::getDelaySafeTimestamp()
 	safeTime += maxRoundTrip + 200;	// allow 200ms for calculation time
 
 	return safeTime;
-}
-
-int32 Polytempo_TimeProvider::getMRT() const
-{
-	return maxRoundTrip;
 }
 
 bool Polytempo_TimeProvider::isMaster() const
@@ -160,7 +142,7 @@ void Polytempo_TimeProvider::setRemoteMasterPeer(String ip, Uuid id, bool master
 		return;
 	}
 
-	if(masterFlag)
+	if (masterFlag)
 	{
 		displayMessage("Another master detected", MessageType_Error);
 		resetTimeSync();
@@ -174,17 +156,15 @@ void Polytempo_TimeProvider::setRemoteMasterPeer(String ip, Uuid id, bool master
 		displayMessage("Master changed", MessageType_Warning);
 		Polytempo_InterprocessCommunication::getInstance()->connectToMaster(ip);
 	}
-	
+
 	lastMasterID = id;
 	lastMasterIp = ip;
 }
 
-#ifdef POLYTEMPO_NETWORK
 void Polytempo_TimeProvider::registerUserInterface(Polytempo_TimeSyncControl* pControl)
 {
 	pTimeSyncControl = pControl;
 }
-#endif
 
 void Polytempo_TimeProvider::handleMessage(XmlElement message, Ipc* sender)
 {
@@ -246,80 +226,11 @@ void Polytempo_TimeProvider::handleMessage(XmlElement message, Ipc* sender)
 		Polytempo_NetworkSupervisor::getInstance()->handlePeer(senderId, senderIp, senderName, true);
 	}
 }
-
-void Polytempo_TimeProvider::oscMessageReceived(const OSCMessage& message)
-{
-	/*
-	String addressPattern = message.getAddressPattern().toString();
-
-#ifdef POLYTEMPO_NETWORK
-	OSCArgument* argumentIterator = message.begin();
-
-	if (addressPattern == "/timeSyncRequest")
-	{
-		Uuid senderId = Uuid((argumentIterator++)->getString());
-		String senderIp = (argumentIterator++)->getString();
-		String senderName = (argumentIterator++)->getString();
-		int timeIndex = (argumentIterator++)->getInt32();
-		int32 lastRoundTripFromClient = (argumentIterator++)->getInt32();
-
-		if (masterFlag)
-		{
-			uint32 ts = Time::getMillisecondCounter();
-			bool ok = oscSender->sendToIPAddress(senderIp, oscPort, 
-				OSCMessage(
-					OSCAddressPattern("/timeSyncReply"), 
-					OSCArgument(Polytempo_NetworkSupervisor::getInstance()->getUniqueId().toString()), 
-					OSCArgument(Polytempo_NetworkInterfaceManager::getInstance()->getSelectedIpAddress().ipAddress.toString()),
-					OSCArgument(Polytempo_NetworkSupervisor::getInstance()->getLocalName()),
-					OSCArgument(int32(ts)), 
-					OSCArgument(timeIndex),
-					OSCArgument(maxRoundTrip)));
-			displayMessage(ok ? "Mastertime sent" : "Fail", ok ? MessageType_Info : MessageType_Error);
-
-			// update peer
-			Polytempo_NetworkSupervisor::getInstance()->handlePeer(senderId, senderIp, senderName, true); // TODO: sync ok
-
-			// handle round trip time
-			roundTripTime[roundTripHistoryWritePosition] = lastRoundTripFromClient;
-			roundTripHistorySize = jmin(++roundTripHistorySize, ROUND_TRIP_HISTORY_SIZE);
-			roundTripHistoryWritePosition = (++roundTripHistoryWritePosition) % ROUND_TRIP_HISTORY_SIZE;
-
-			int32 localMaxRoundTrip = 0;
-			for (int i = 0; i < roundTripHistorySize; i++)
-				localMaxRoundTrip = jmax(localMaxRoundTrip, roundTripTime[i]);
-			maxRoundTrip = localMaxRoundTrip;
-		}
-		else
-		{
-			displayMessage("Wrong timeSyncRequest received", MessageType_Error);
-		}
-	}
-	else if(addressPattern == "/timeSyncReply")
-	{
-		Uuid senderId = Uuid((argumentIterator++)->getString());
-		String senderIp = (argumentIterator++)->getString();
-		String senderName = (argumentIterator++)->getString();
-		uint32 argMasterTime = uint32((argumentIterator++)->getInt32());
-		int timeIndex = (argumentIterator++)->getInt32();
-		int32 maxRoundTripFromMaster = (argumentIterator++)->getInt32();
-
-		handleTimeSyncMessage(senderId, argMasterTime, timeIndex, maxRoundTripFromMaster);
-
-		Polytempo_NetworkSupervisor::getInstance()->handlePeer(senderId, senderIp, senderName, true);
-	}
-	else
-	{
-		displayMessage("wrong OSC arrived!!!", MessageType_Error);
-	}
-#else
-	DBG(addressPattern);
 #endif
-	*/
-}
 
 void Polytempo_TimeProvider::timerCallback()
 {
+#ifdef POLYTEMPO_NETWORK
 	String timeSyncMasterIp = lastMasterIp;
 	if(timeSyncMasterIp.isEmpty())
 	{
@@ -342,18 +253,8 @@ void Polytempo_TimeProvider::timerCallback()
 		bool ok = Polytempo_InterprocessCommunication::getInstance()->notifyServer(xml);
 		if (!ok)
 			displayMessage("send TS request failed", MessageType_Warning);
-
-		/*
-		bool ok = oscSender->sendToIPAddress(timeSyncMasterIp, oscPort, 
-			OSCMessage(
-				OSCAddressPattern("/timeSyncRequest"), 
-				OSCArgument(Polytempo_NetworkSupervisor::getInstance()->getUniqueId().toString()),
-				OSCArgument(Polytempo_NetworkInterfaceManager::getInstance()->getSelectedIpAddress().ipAddress.toString()), 
-				OSCArgument(Polytempo_NetworkSupervisor::getInstance()->getLocalName()),
-				OSCArgument(index),
-				OSCArgument(lastRoundTrip)));
-		*/
 	}
+#endif
 }
 
 #ifdef POLYTEMPO_NETWORK

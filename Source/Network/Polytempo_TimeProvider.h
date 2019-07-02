@@ -10,8 +10,8 @@
 
 #pragma once
 #include "JuceHeader.h"
-#include "Polytempo_InterprocessCommunication.h"
 #ifdef POLYTEMPO_NETWORK
+#include "Polytempo_InterprocessCommunication.h"
 #include "../Views/PolytempoNetwork/Polytempo_TimeSyncControl.h"
 #endif
 
@@ -20,7 +20,7 @@
 #define SYNC_TIME_VALID_PERIOD_MS	10000
 #define TIME_SYNC_INTERVAL_MS		4000
 
-class Polytempo_TimeProvider : OSCReceiver::Listener<OSCReceiver::RealtimeCallback>, Timer
+class Polytempo_TimeProvider : Timer
 {
 public:
 	juce_DeclareSingleton(Polytempo_TimeProvider, true);
@@ -28,15 +28,16 @@ public:
 	Polytempo_TimeProvider();
 	~Polytempo_TimeProvider();
 
+	bool getSyncTime(uint32* pTime); 
+	int32 getMRT() const;
+
+#ifdef POLYTEMPO_NETWORK
 	void initialize(int oscPort);
 	void toggleMaster(bool master);
-	bool getSyncTime(uint32* pTime);
 	uint32 getDelaySafeTimestamp();
-	int32 getMRT() const;
 	bool isMaster() const;
 	void setRemoteMasterPeer(String ip, Uuid id, bool master);
 	void handleMessage(XmlElement message, Ipc* sender);
-#ifdef POLYTEMPO_NETWORK
 	void registerUserInterface(Polytempo_TimeSyncControl* pControl);
 #endif
 	enum MessageType { MessageType_Info, MessageType_Warning, MessageType_Error };
@@ -44,7 +45,6 @@ public:
 private:
 	void handleTimeSyncMessage(Uuid senderId, uint32 masterTime, int timeIndex, int32 roundTrip);
 	void createTimeIndex(int* pIndex, uint32* pTimestamp);
-	void oscMessageReceived(const OSCMessage& message) override;
 	void timerCallback() override;
 	void displayMessage(String message, MessageType messageType) const;
 	void resetTimeSync();
@@ -53,8 +53,6 @@ private:
 #ifdef POLYTEMPO_NETWORK
 	Polytempo_TimeSyncControl* pTimeSyncControl;
 #endif
-	//ScopedPointer<OSCSender> oscSender;
-	//ScopedPointer<OSCReceiver> oscReceiver;
 	int oscPort;
 
 	int32 relativeMsToMaster;

@@ -102,10 +102,6 @@
             file="../Source/Network/Polytempo_OSCListener.cpp"/>
       <FILE id="JgelSA" name="Polytempo_OSCListener.h" compile="0" resource="0"
             file="../Source/Network/Polytempo_OSCListener.h"/>
-      <FILE id="TyPrSr" name="Polytempo_OSCSender.cpp" compile="1" resource="0"
-            file="../Source/Network/Polytempo_OSCSender.cpp"/>
-      <FILE id="ZIpQiM" name="Polytempo_OSCSender.h" compile="0" resource="0"
-            file="../Source/Network/Polytempo_OSCSender.h"/>
       <FILE id="jfY0wO" name="Polytempo_Socket.cpp" compile="1" resource="0"
             file="../Source/Network/Polytempo_Socket.cpp"/>
       <FILE id="ExXKRM" name="Polytempo_Socket.h" compile="0" resource="0"
