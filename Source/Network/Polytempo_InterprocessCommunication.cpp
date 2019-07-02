@@ -113,12 +113,7 @@ void Ipc::messageReceived(const MemoryBlock& message)
 		else
 		{
 			// generic message
-			Logger::writeToLog(String((int)Time::getMillisecondCounterHiRes()) + " - Message received: " + message.toString());
-			MemoryBlock m;
-			String str = "Answer";
-			m.append(str.getCharPointer(), str.length() + 1);
-			sendMessage(m);
-			Logger::writeToLog(String((int)Time::getMillisecondCounterHiRes()) + " - Answer sent");
+			Logger::writeToLog("Unknown Message received: " + message.toString());
 		}
 	}
 }
@@ -163,7 +158,6 @@ void Polytempo_InterprocessCommunication::cleanUpServer()
 
 void Polytempo_InterprocessCommunication::cleanUpClient()
 {
-	stopTimer();
 	if(client != nullptr)
 	{
 		client->disconnect();
@@ -186,12 +180,6 @@ void Polytempo_InterprocessCommunication::connectToMaster(String ip)
 	if (ok)
 	{
 		Logger::writeToLog("Successfully connected to server " + ip);
-		MemoryBlock m;
-		String str = "Testdata";
-		m.append(str.getCharPointer(), str.length() + 1);
-		Logger::writeToLog(String((int)Time::getMillisecondCounterHiRes()) + " - Testdata sent");
-		client->sendMessage(m);
-		startTimer(5000);
 	}
 	else
 	{
@@ -234,18 +222,6 @@ bool Polytempo_InterprocessCommunication::notifyServer(XmlElement e) const
 	
 	client->sendMessage(xmlToMemoryBlock(e));
 	return true;
-}
-
-void Polytempo_InterprocessCommunication::timerCallback()
-{
-	if(client != nullptr)
-	{
-		MemoryBlock m;
-		String str = String(dataIndex++);
-		m.append(str.getCharPointer(), str.length() + 1);
-		Logger::writeToLog(String((int)Time::getMillisecondCounterHiRes()) + " - Testdata sent");
-		client->sendMessage(m);
-	}
 }
 
 juce_ImplementSingleton(Polytempo_InterprocessCommunication);

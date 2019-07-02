@@ -29,7 +29,7 @@ protected:
 	InterprocessConnection* createConnectionObject() override;
 };
 
-class Polytempo_InterprocessCommunication: public Timer
+class Polytempo_InterprocessCommunication
 {
 public:
 	juce_DeclareSingleton(Polytempo_InterprocessCommunication, false);
@@ -47,7 +47,6 @@ public:
 	void notifyAllClients(XmlElement e);
 	bool notifyServer(XmlElement e) const;
 
-	void timerCallback() override;
 private:
 	ScopedPointer<IpcServer> server;
 	ScopedPointer<Ipc> client;
