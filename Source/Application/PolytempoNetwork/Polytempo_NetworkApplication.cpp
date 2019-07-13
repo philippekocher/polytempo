@@ -62,10 +62,7 @@ void Polytempo_NetworkApplication::initialise(const String&)
     Polytempo_EventScheduler::getInstance()->startThread(5); // priority between 0 and 10
     
     // create network connection
-	broadcastWrapper = new Polytempo_BroadcastWrapper(OSC_PORT_COMMUNICATION);
-    oscListener = new Polytempo_OSCListener(OSC_PORT_COMMUNICATION);
-    Polytempo_EventDispatcher::getInstance()->setBroadcastSender(broadcastWrapper);
-	Polytempo_NetworkSupervisor::getInstance()->setBroadcastSender(broadcastWrapper);
+	oscListener = new Polytempo_OSCListener(OSC_PORT_COMMUNICATION);
 	Polytempo_NetworkSupervisor::getInstance()->createSocket(OSC_PORT_COMMUNICATION);
 	Polytempo_InterprocessCommunication::getInstance()->toggleMaster(false);
 
@@ -78,7 +75,7 @@ void Polytempo_NetworkApplication::initialise(const String&)
     Polytempo_ImageManager::getInstance();
     
 	// time sync
-	Polytempo_TimeProvider::getInstance()->initialize(OSC_PORT_TIME_SYNC);
+	Polytempo_TimeProvider::getInstance();
 
 #if (!JUCE_DEBUG)
     // contact web server
@@ -142,8 +139,7 @@ void Polytempo_NetworkApplication::shutdown()
     // delete scoped pointers
     mainWindow = nullptr;
     oscListener = nullptr;
-	broadcastWrapper = nullptr;
-    midiInput = nullptr;
+	midiInput = nullptr;
     score = nullptr;
 	menuBarModel = nullptr;
 

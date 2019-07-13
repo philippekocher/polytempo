@@ -39,8 +39,6 @@ Polytempo_NetworkSupervisor::Polytempo_NetworkSupervisor()
 
 	nodeName = new String(SystemStats::getFullUserName());
 
-	pBroadcastWrapper = nullptr;
-
 	startTimer(NETWORK_SUPERVISOR_PING_INTERVAL);
 }
 
@@ -83,11 +81,6 @@ void Polytempo_NetworkSupervisor::timerCallback()
 	ScopedPointer<OSCMessage> msg = createNodeMessage();
 	socket->write(*msg);
 	
-	if(pBroadcastWrapper != nullptr)
-	{
-		pBroadcastWrapper->SendOsc(msg);
-	}
-
 	if(component) component->repaint();
 }
 
@@ -196,11 +189,6 @@ void Polytempo_NetworkSupervisor::createSocket(int port)
 void Polytempo_NetworkSupervisor::setComponent(Component *aComponent)
 {
 	component = aComponent;
-}
-
-void Polytempo_NetworkSupervisor::setBroadcastSender(Polytempo_BroadcastWrapper* pBroadcaster)
-{
-	pBroadcastWrapper = pBroadcaster;
 }
 
 void Polytempo_NetworkSupervisor::handlePeer(Uuid id, String ip, String scoreName, String peerName, bool syncOk) const

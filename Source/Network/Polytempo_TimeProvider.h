@@ -32,7 +32,6 @@ public:
 	int32 getMRT() const;
 
 #ifdef POLYTEMPO_NETWORK
-	void initialize(int oscPort);
 	void toggleMaster(bool master);
 	uint32 getDelaySafeTimestamp();
 	bool isMaster() const;
@@ -53,8 +52,7 @@ private:
 #ifdef POLYTEMPO_NETWORK
 	Polytempo_TimeSyncControl* pTimeSyncControl;
 #endif
-	int oscPort;
-
+	
 	int32 relativeMsToMaster;
 	int32 maxRoundTrip;
 

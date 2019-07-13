@@ -32,7 +32,6 @@
 #include "../../Data/Polytempo_Score.h"
 #include "../../Audio+Midi/Polytempo_MidiInput.h"
 #include "../../Misc/Polytempo_Alerts.h"
-#include "../../Network/Polytempo_BroadcastWrapper.h"
 
 #define OSC_PORT_TIME_SYNC			47523
 #define OSC_PORT_COMMUNICATION		47522
@@ -73,7 +72,6 @@ private:
 private:
 	ScopedPointer<Polytempo_NetworkWindow> mainWindow;
     ScopedPointer<Polytempo_MenuBarModel> menuBarModel;
-    ScopedPointer<Polytempo_BroadcastWrapper> broadcastWrapper;
     ScopedPointer<Polytempo_OSCListener> oscListener;
     ScopedPointer<Polytempo_MidiInput> midiInput;
     ScopedPointer<Polytempo_Score> score;

@@ -15,11 +15,13 @@
 #include "Polytempo_NetworkSupervisor.h"
 #endif
 
-Polytempo_TimeProvider::Polytempo_TimeProvider(): oscPort(0), relativeMsToMaster(0), maxRoundTrip(0), timeDiffHistorySize(0), timeDiffHistoryWritePosition(0), roundTripHistorySize(0), roundTripHistoryWritePosition(0), masterFlag(false), sync(false), lastSentTimeIndex(0), lastSentTimestamp(0), lastReceivedTimestamp(0), lastRoundTrip(0)
+Polytempo_TimeProvider::Polytempo_TimeProvider(): relativeMsToMaster(0), maxRoundTrip(0), timeDiffHistorySize(0), timeDiffHistoryWritePosition(0), roundTripHistorySize(0), roundTripHistoryWritePosition(0), masterFlag(false), sync(false), lastSentTimeIndex(0), lastSentTimestamp(0), lastReceivedTimestamp(0), lastRoundTrip(0)
 {
 #ifdef POLYTEMPO_NETWORK
 	pTimeSyncControl = nullptr;
 #endif
+
+	toggleMaster(false);
 }
 
 Polytempo_TimeProvider::~Polytempo_TimeProvider()
@@ -100,12 +102,6 @@ void Polytempo_TimeProvider::createTimeIndex(int* pIndex, uint32* pTimestamp)
 
 
 #ifdef POLYTEMPO_NETWORK
-void Polytempo_TimeProvider::initialize(int port)
-{
-	oscPort = port;
-	toggleMaster(false);
-}
-
 void Polytempo_TimeProvider::toggleMaster(bool master)
 {
 	stopTimer();
