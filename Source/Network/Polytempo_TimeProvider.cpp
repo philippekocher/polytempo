@@ -175,7 +175,8 @@ void Polytempo_TimeProvider::handleMessage(XmlElement message, Ipc* sender)
 	{
 		Uuid senderId = Uuid(syncParams.getWithDefault("Id", ""));
 		String senderIp = syncParams.getWithDefault("IP", "");
-		String senderName = syncParams.getWithDefault("Name", "");
+		String senderScoreName = syncParams.getWithDefault("ScoreName", "");
+		String senderPeerName = syncParams.getWithDefault("PeerName", "");
 		int timeIndex = syncParams.getWithDefault("Index", 0);
 		int32 lastRoundTripFromClient = syncParams.getWithDefault("LastRT", 0);
 
@@ -185,7 +186,8 @@ void Polytempo_TimeProvider::handleMessage(XmlElement message, Ipc* sender)
 			NamedValueSet replayParams;
 			replayParams.set("Id", Polytempo_NetworkSupervisor::getInstance()->getUniqueId().toString());
 			replayParams.set("IP", Polytempo_NetworkInterfaceManager::getInstance()->getSelectedIpAddress().ipAddress.toString());
-			replayParams.set("Name", Polytempo_NetworkSupervisor::getInstance()->getLocalName());
+			replayParams.set("ScoreName", Polytempo_NetworkSupervisor::getInstance()->getScoreName());
+			replayParams.set("PeerName", Polytempo_NetworkSupervisor::getInstance()->getPeerName());
 			replayParams.set("Timestamp", int32(ts));
 			replayParams.set("Index", timeIndex);
 			replayParams.set("MaxRT", maxRoundTrip);
@@ -195,7 +197,7 @@ void Polytempo_TimeProvider::handleMessage(XmlElement message, Ipc* sender)
 			displayMessage(ok ? "Mastertime sent" : "Fail", ok ? MessageType_Info : MessageType_Error);
 
 			// update peer
-			Polytempo_NetworkSupervisor::getInstance()->handlePeer(senderId, senderIp, senderName, true); // TODO: sync ok
+			Polytempo_NetworkSupervisor::getInstance()->handlePeer(senderId, senderIp, senderScoreName, senderPeerName, true); // TODO: sync ok
 
 			// handle round trip time
 			roundTripTime[roundTripHistoryWritePosition] = lastRoundTripFromClient;
@@ -216,14 +218,15 @@ void Polytempo_TimeProvider::handleMessage(XmlElement message, Ipc* sender)
 	{
 		Uuid senderId = Uuid(syncParams.getWithDefault("Id", ""));
 		String senderIp = syncParams.getWithDefault("IP", "");
-		String senderName = syncParams.getWithDefault("Name", "");
+		String senderScoreName = syncParams.getWithDefault("ScoreName", "");
+		String senderPeerName = syncParams.getWithDefault("PeerName", "");
 		uint32 argMasterTime = uint32(int32(syncParams.getWithDefault("Timestamp", 0)));
 		int timeIndex = syncParams.getWithDefault("Index", 0);
 		int32 maxRoundTripFromMaster = syncParams.getWithDefault("MaxRT", 0);
 
 		handleTimeSyncMessage(senderId, argMasterTime, timeIndex, maxRoundTripFromMaster);
 
-		Polytempo_NetworkSupervisor::getInstance()->handlePeer(senderId, senderIp, senderName, true);
+		Polytempo_NetworkSupervisor::getInstance()->handlePeer(senderId, senderIp, senderScoreName, senderPeerName, true);
 	}
 }
 #endif
@@ -245,7 +248,8 @@ void Polytempo_TimeProvider::timerCallback()
 		NamedValueSet syncParams;
 		syncParams.set("Id", Polytempo_NetworkSupervisor::getInstance()->getUniqueId().toString());
 		syncParams.set("IP", Polytempo_NetworkInterfaceManager::getInstance()->getSelectedIpAddress().ipAddress.toString());
-		syncParams.set("Name", Polytempo_NetworkSupervisor::getInstance()->getLocalName());
+		syncParams.set("ScoreName", Polytempo_NetworkSupervisor::getInstance()->getScoreName());
+		syncParams.set("PeerName", Polytempo_NetworkSupervisor::getInstance()->getPeerName());
 		syncParams.set("Index", index);
 		syncParams.set("LastRT", lastRoundTrip);
 		XmlElement xml = XmlElement("TimeSyncRequest");

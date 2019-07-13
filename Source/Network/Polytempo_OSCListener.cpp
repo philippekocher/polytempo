@@ -58,7 +58,8 @@ void Polytempo_OSCListener::oscMessageReceived(const OSCMessage & message)
 			return;
 
 		String argIp = (argumentIterator++)->getString();
-		String argName = (argumentIterator++)->getString();
+		String argScoreName = (argumentIterator++)->getString();
+		String argPeerName = (argumentIterator++)->getString();
 		
 		bool isMaster = false;
 		if (argumentIterator && (*argumentIterator).isInt32())
@@ -73,7 +74,7 @@ void Polytempo_OSCListener::oscMessageReceived(const OSCMessage & message)
 			syncOk = syncTimeValid && safeTimeToCheck >= localSyncTime;
 		}
 
-		Polytempo_NetworkSupervisor::getInstance()->handlePeer(senderId, argIp, argName, syncOk);
+		Polytempo_NetworkSupervisor::getInstance()->handlePeer(senderId, argIp, argScoreName, argPeerName, syncOk);
 		Polytempo_TimeProvider::getInstance()->setRemoteMasterPeer(argIp, senderId, isMaster);
 	}
 

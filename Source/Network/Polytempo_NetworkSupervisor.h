@@ -43,12 +43,14 @@ public:
 	void timerCallback() override;
 
 	static String getAdapterInfo();
-    String getLocalName() const;
-    HashMap <Uuid, Polytempo_PeerInfo>* getPeers() const;
+    String getDescription() const;
+	String getScoreName() const; 
+	String getPeerName() const;
+	HashMap <Uuid, Polytempo_PeerInfo>* getPeers() const;
     void createSocket(int port);
     void setComponent(Component *aComponent);
 	void setBroadcastSender(Polytempo_BroadcastWrapper* pBroadcastWrapper);
-    void handlePeer(Uuid id, String ip, String name, bool syncOk) const;
+    void handlePeer(Uuid id, String ip, String scoreName, String peerName, bool syncOk) const;
 
     void eventNotification(Polytempo_Event *event) override;
 	Uuid getUniqueId();

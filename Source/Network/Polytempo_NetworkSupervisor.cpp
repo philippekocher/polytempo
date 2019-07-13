@@ -66,7 +66,8 @@ OSCMessage* Polytempo_NetworkSupervisor::createNodeMessage()
 		OSCAddressPattern("/node"),
 		OSCArgument(getUniqueId().toString()),
 		OSCArgument(Polytempo_NetworkInterfaceManager::getInstance()->getSelectedIpAddress().ipAddress.toString()),
-		OSCArgument(String(getLocalName())),
+		OSCArgument(String(getScoreName())),
+		OSCArgument(String(getPeerName())),
 		OSCArgument((int32)Polytempo_TimeProvider::getInstance()->isMaster()),
 		OSCArgument((int32)Polytempo_TimeProvider::getInstance()->getDelaySafeTimestamp()));
 }
@@ -166,9 +167,19 @@ void Polytempo_NetworkSupervisor::unicastFlood()
 	}
 }
 
-String Polytempo_NetworkSupervisor::getLocalName() const
+String Polytempo_NetworkSupervisor::getDescription() const
 {
-	return String(localName == nullptr ? "Untitled" : *localName) + String(" (") + String(*nodeName) + String(")");
+	return getScoreName() + String(" (") + getPeerName() + String(")");
+}
+
+String Polytempo_NetworkSupervisor::getScoreName() const
+{
+	return String(localName == nullptr ? "Untitled" : *localName);
+}
+
+String Polytempo_NetworkSupervisor::getPeerName() const
+{
+	return String(*nodeName);
 }
 
 HashMap <Uuid, Polytempo_PeerInfo>* Polytempo_NetworkSupervisor::getPeers() const
@@ -192,11 +203,12 @@ void Polytempo_NetworkSupervisor::setBroadcastSender(Polytempo_BroadcastWrapper*
 	pBroadcastWrapper = pBroadcaster;
 }
 
-void Polytempo_NetworkSupervisor::handlePeer(Uuid id, String ip, String name, bool syncOk) const
+void Polytempo_NetworkSupervisor::handlePeer(Uuid id, String ip, String scoreName, String peerName, bool syncOk) const
 {
 	Polytempo_PeerInfo info;
 	info.ip = ip;
-	info.name = name;
+	info.scoreName = scoreName;
+	info.peerName = peerName;
 	info.lastHeartBeat = Time::getMillisecondCounter();
 	info.syncState = syncOk;
 

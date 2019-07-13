@@ -29,7 +29,7 @@ void Polytempo_NetworkInfoView::paint (Graphics& g)
 	attributedPeers.append(Polytempo_NetworkSupervisor::getInstance()->getAdapterInfo() + "\n\n", Font(12.0f, Font::plain));
     attributedPeers.append("Local:\n", Font(12.0f, Font::bold));
     attributedPeers.append(" \n", Font(4.0f, Font::plain));
-    attributedPeers.append(Polytempo_NetworkSupervisor::getInstance()->getLocalName() + "\n", Font(12.0f, Font::plain));
+    attributedPeers.append(Polytempo_NetworkSupervisor::getInstance()->getDescription() + "\n", Font(12.0f, Font::plain));
 	attributedPeers.append(" \n", Font(12.0f, Font::plain));
 	attributedPeers.append("Connected peers:\n", Font(12, Font::bold));
 	uint32 currentTime = Time::getMillisecondCounter();
@@ -42,7 +42,7 @@ void Polytempo_NetworkInfoView::paint (Graphics& g)
 				? Colours::green
 				: Colours::orange;
 		attributedPeers.append(" \n", Font(4.0f, Font::plain));
-		attributedPeers.append(it.getValue().name + "\n", Font(12.0f, Font::plain), peerColor);
+		attributedPeers.append(it.getValue().scoreName + "(" + it.getValue().peerName + ")\n", Font(12.0f, Font::plain), peerColor);
 	}
 
 	attributedPeers.draw(g, Rectangle<int>(0, 10, getWidth(), getHeight()).toFloat());
