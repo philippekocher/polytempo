@@ -49,6 +49,7 @@ public:
     void createSocket(int port);
     void setComponent(Component *aComponent);
 	void handlePeer(Uuid id, String ip, String scoreName, String peerName, bool syncOk) const;
+	void resetPeers();
 
     void eventNotification(Polytempo_Event *event) override;
 	Uuid getUniqueId();

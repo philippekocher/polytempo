@@ -150,6 +150,7 @@ void Polytempo_TimeProvider::setRemoteMasterPeer(String ip, Uuid id, bool master
 	{
 		resetTimeSync();
 		displayMessage("Master changed", MessageType_Warning);
+		Polytempo_NetworkSupervisor::getInstance()->resetPeers();
 		Polytempo_InterprocessCommunication::getInstance()->connectToMaster(ip);
 	}
 

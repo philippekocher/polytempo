@@ -203,6 +203,11 @@ void Polytempo_NetworkSupervisor::handlePeer(Uuid id, String ip, String scoreNam
 	connectedPeersMap->set(id, info);
 }
 
+void Polytempo_NetworkSupervisor::resetPeers() const
+{
+	connectedPeersMap->clear();
+}
+
 void Polytempo_NetworkSupervisor::eventNotification(Polytempo_Event *event)
 {
 	if(event->getType() == eventType_Settings)

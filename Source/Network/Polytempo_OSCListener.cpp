@@ -74,8 +74,10 @@ void Polytempo_OSCListener::oscMessageReceived(const OSCMessage & message)
 			syncOk = syncTimeValid && safeTimeToCheck >= localSyncTime;
 		}
 
-		Polytempo_NetworkSupervisor::getInstance()->handlePeer(senderId, argIp, argScoreName, argPeerName, syncOk);
 		Polytempo_TimeProvider::getInstance()->setRemoteMasterPeer(argIp, senderId, isMaster);
+
+		if(Polytempo_TimeProvider::getInstance()->isMaster())
+			Polytempo_NetworkSupervisor::getInstance()->handlePeer(senderId, argIp, argScoreName, argPeerName, syncOk);
 	}
 
 #ifdef POLYTEMPO_NETWORK
