@@ -26,8 +26,9 @@
 #define __Polytempo_NetworkSupervisor__
 
 #include "../Scheduler/Polytempo_EventObserver.h"
-#include "Polytempo_Socket.h"
 #include "Polytempo_PeerInfo.h"
+#include "Polytempo_IPAddress.h"
+
 #define NETWORK_SUPERVISOR_PING_INTERVAL	1000
 
 class Polytempo_NetworkSupervisor : public Timer,
@@ -41,26 +42,24 @@ public:
 
 	void timerCallback() override;
 
-	static String getAdapterInfo();
-    String getDescription() const;
+	String getDescription() const;
 	String getScoreName() const; 
 	String getPeerName() const;
 	HashMap <Uuid, Polytempo_PeerInfo>* getPeers() const;
-    void createSocket(int port);
+    void createSender(int port);
     void setComponent(Component *aComponent);
-	void handlePeer(Uuid id, String ip, String scoreName, String peerName, bool syncOk) const;
+	void handlePeer(Uuid id, String scoreName, String peerName, bool syncOk) const;
 	void resetPeers() const;
 
     void eventNotification(Polytempo_Event *event) override;
 	Uuid getUniqueId();
-	void manualConnect(String ip);
-	void unicastFlood();
+	void unicastFlood(Polytempo_IPAddress ownIp);
 
 private:
-	OSCMessage* createNodeMessage();
+	OSCMessage* createNodeMessage(String ownIp);
 
 	Uuid uniqueId = nullptr;
-    ScopedPointer<Polytempo_Socket> socket;
+    ScopedPointer<OSCSender> oscSender;
     Component *component;
     
     ScopedPointer < String > localName;

@@ -63,8 +63,7 @@ void Polytempo_NetworkApplication::initialise(const String&)
     
     // create network connection
 	oscListener = new Polytempo_OSCListener(OSC_PORT_COMMUNICATION);
-	Polytempo_NetworkSupervisor::getInstance()->createSocket(OSC_PORT_COMMUNICATION);
-	Polytempo_InterprocessCommunication::getInstance()->toggleMaster(false);
+	Polytempo_NetworkSupervisor::getInstance()->createSender(OSC_PORT_COMMUNICATION);
 
     // audio and midi
     Polytempo_AudioClick::getInstance();

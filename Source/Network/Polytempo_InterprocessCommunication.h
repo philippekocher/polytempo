@@ -39,8 +39,8 @@ public:
 	void cleanUpServerConnections();
 	void cleanUpServer();
 	void cleanUpClient();
-	void toggleMaster(bool master);
-	void connectToMaster(String ip);
+	void reset(bool isMaster);
+	bool connectToMaster(String ip);
 	void registerNewServerConnection(Ipc* connection);
 	void notifyAllClients(MemoryBlock m);
 	static MemoryBlock xmlToMemoryBlock(XmlElement e);

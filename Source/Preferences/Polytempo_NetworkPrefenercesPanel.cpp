@@ -29,6 +29,9 @@
 #include "../Audio+Midi/Polytempo_AudioClick.h"
 #include "../Audio+Midi/Polytempo_MidiClick.h"
 #include "../Network/Polytempo_NetworkInterfaceManager.h"
+#include "../Network/Polytempo_NetworkSupervisor.h"
+#include "../Network/Polytempo_InterprocessCommunication.h"
+#include "../Network/Polytempo_TimeProvider.h"
 
 /** A TextButton that pops up a colour chooser to change its colours. */
 class ColourChangeButton : public TextButton,
@@ -958,8 +961,9 @@ class NetworkPreferencesPage : public Component, Button::Listener, ComboBox::Lis
 	Label*  ipListLabel;
 	ComboBox* ipList;
 	Button* refreshButton;
+	Button* manualConnectButton;
+	Button* floodButton;
 	Label*	adapterInfoLabel;
-	ToggleButton* adapterLock;
 	Array <Polytempo_IPAddress> ipAddresses;
 
 public:
@@ -974,18 +978,25 @@ public:
 		ipList->addListener(this);
 		updateIpList();
 
-		addAndMakeVisible(adapterLock = new ToggleButton("Lock to this adapter"));
-		adapterLock->setToggleState(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("networkAdapterLock", false), dontSendNotification);
-		adapterLock->addListener(this);
-
 		addAndMakeVisible(refreshButton = new TextButton(String()));
 		refreshButton->setButtonText(L"Refresh");
 		refreshButton->addListener(this);
+
+		addAndMakeVisible(manualConnectButton = new TextButton(String()));
+		manualConnectButton->setButtonText(L"Manual connect");
+		manualConnectButton->addListener(this);
+
+		addAndMakeVisible(floodButton = new TextButton(String()));
+		floodButton->setButtonText(L"Unicast Flood");
+		floodButton->addListener(this);
 
 		addAndMakeVisible(adapterInfoLabel = new Label(String(), String()));
 		adapterInfoLabel->setFont(Font(15.0000f, Font::plain));
 		adapterInfoLabel->setJustificationType(Justification::centredLeft);
 		adapterInfoLabel->setEditable(false, false, false);
+
+		manualConnectButton->setEnabled(!Polytempo_TimeProvider::getInstance()->isMaster());
+		floodButton->setEnabled(Polytempo_TimeProvider::getInstance()->isMaster());
 
 		updateIpList();
 	}
@@ -997,12 +1008,13 @@ public:
 
 	void updateIpList()
 	{		
+		Polytempo_IPAddress selectedIp = ipAddresses[ipList->getSelectedId() - 1];
 		ipList->clear();
 		Polytempo_NetworkInterfaceManager::getInstance()->getAvailableIpAddresses(ipAddresses);
 		for (int i = 0; i < ipAddresses.size(); i++)
 			ipList->addItem(ipAddresses[i].addressDescription() + ": " + ipAddresses[i].ipAddress.toString(), i+1);
 
-		int index = ipAddresses.indexOf(Polytempo_NetworkInterfaceManager::getInstance()->getSelectedIpAddress());
+		int index = ipAddresses.indexOf(selectedIp);
 		if (index >= 0)
 			ipList->setSelectedId(index+1);
 		else
@@ -1011,11 +1023,12 @@ public:
 
 	void resized() override
 	{
-		ipListLabel->setBounds(20, 50, proportionOfWidth(0.9f), 24);
-		ipList->setBounds(20, 80, proportionOfWidth(0.9f), 24);
-		adapterLock->setBounds(20, 110, proportionOfWidth(0.9f), 24);
-		refreshButton->setBounds(20, 140, proportionOfWidth(0.9f), 24);
-		adapterInfoLabel->setBounds(20, 170, proportionOfWidth(0.9f), 144);
+		ipListLabel->setBounds(20, 50, getWidth() - 40, 24);
+		ipList->setBounds(20, 80, getWidth() - 40, 24);
+		refreshButton->setBounds(20, 110, getWidth() - 40, 24);
+		manualConnectButton->setBounds(20, 140, proportionOfWidth(0.5) - 22, 24);
+		floodButton->setBounds(proportionOfWidth(0.5) + 2, 140, proportionOfWidth(0.5) - 22, 24);
+		adapterInfoLabel->setBounds(20, 170, getWidth() - 40, 144);
 	}
 
 	/* combobox & button listener
@@ -1026,9 +1039,50 @@ public:
 		{
 			updateIpList();
 		}
-		else if (button == adapterLock)
+		else if (button == manualConnectButton)
 		{
-			Polytempo_StoredPreferences::getInstance()->getProps().setValue("networkAdapterLock", adapterLock->getToggleState());
+			// manual connect
+			Polytempo_IPAddress selectedAddress = ipAddresses[ipList->getSelectedId() - 1];
+			AlertWindow* alertWindow = new AlertWindow("Manual Connect", "Connect to Master-IP-Address:", AlertWindow::NoIcon, this);
+
+			auto alertLambda = ([alertWindow](int result) {
+				if (result == 1) {
+					String ip = alertWindow->getTextEditorContents("ip");
+					bool ok = Polytempo_InterprocessCommunication::getInstance()->connectToMaster(ip);
+					if (!ok)
+					{
+						Polytempo_Alert::show("Error", "Error connectiong to Master on IP " + ip);
+					}
+				}
+			});
+
+			alertWindow->addTextEditor("ip", selectedAddress.ipAddress.toString().upToLastOccurrenceOf(".", true, true));
+			alertWindow->addButton("OK", 1, KeyPress(KeyPress::returnKey, 0, 0));
+			alertWindow->addButton("Cancel", 0, KeyPress(KeyPress::escapeKey, 0, 0));
+			alertWindow->enterModalState(false, ModalCallbackFunction::create(alertLambda), true);
+
+		}
+		else if (button == floodButton)
+		{
+			// unicast flood
+			Polytempo_IPAddress selectedAddress = ipAddresses[ipList->getSelectedId() - 1];
+			if (selectedAddress.subnetMask.address[2] < 255)
+			{
+				auto alertLambda = ([&](int result) {
+					if (result) {
+						MouseCursor::showWaitCursor();
+						Polytempo_NetworkSupervisor::getInstance()->unicastFlood(selectedAddress);
+						MouseCursor::hideWaitCursor();
+					}
+				});
+				Polytempo_OkCancelAlert::show("Unicast Flood", "Flooding this network may take several minutes. Proceed?", ModalCallbackFunction::create(alertLambda));
+			}
+			else
+			{
+				MouseCursor::showWaitCursor();
+				Polytempo_NetworkSupervisor::getInstance()->unicastFlood(selectedAddress);
+				MouseCursor::hideWaitCursor();
+			}
 		}
 	}
 
@@ -1037,8 +1091,7 @@ public:
 		if (box == ipList)
 		{
 			Polytempo_IPAddress selectedAddress = ipAddresses[ipList->getSelectedId() - 1];
-			Polytempo_NetworkInterfaceManager::getInstance()->setSelectedIpAddress(ipAddresses[ipList->getSelectedId()-1]);
-
+			
 			adapterInfoLabel->setText(
 				"Network type: "
 				+ selectedAddress.addressDescription()

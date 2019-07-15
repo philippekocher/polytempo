@@ -14,7 +14,6 @@
 class Polytempo_PeerInfo
 {
 public:
-	String	ip;
 	String	scoreName;
 	String	peerName;
 	uint32	lastHeartBeat;

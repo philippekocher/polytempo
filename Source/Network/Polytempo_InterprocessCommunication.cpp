@@ -12,6 +12,7 @@
 #include "Polytempo_TimeProvider.h"
 #include "../Scheduler/Polytempo_ScoreScheduler.h"
 #include "../Scheduler/Polytempo_EventScheduler.h"
+#include "../Misc/Polytempo_Alerts.h"
 
 Ipc::Ipc() : InterprocessConnection(false)
 {
@@ -128,7 +129,6 @@ InterprocessConnection* IpcServer::createConnectionObject()
 Polytempo_InterprocessCommunication::Polytempo_InterprocessCommunication(): dataIndex(0)
 {
 	server = new IpcServer();
-	server->beginWaitingForSocket(1234, String());
 }
 
 Polytempo_InterprocessCommunication::~Polytempo_InterprocessCommunication()
@@ -165,13 +165,24 @@ void Polytempo_InterprocessCommunication::cleanUpClient()
 	}
 }
 
-void Polytempo_InterprocessCommunication::toggleMaster(bool master)
+void Polytempo_InterprocessCommunication::reset(bool isMaster)
 {
 	cleanUpClient();
 	cleanUpServerConnections();
+
+	if(isMaster)
+	{
+		bool ok = server->beginWaitingForSocket(1234, String());
+		if (!ok)
+			Polytempo_Alert::show("TCP-Server", "Error starting TCP server");
+	}
+	else
+	{
+		server->stop();
+	}
 }
 
-void Polytempo_InterprocessCommunication::connectToMaster(String ip)
+bool Polytempo_InterprocessCommunication::connectToMaster(String ip)
 {
 	cleanUpClient();
 	dataIndex = 0;
@@ -185,6 +196,8 @@ void Polytempo_InterprocessCommunication::connectToMaster(String ip)
 	{
 		Logger::writeToLog("Error connecting to server " + ip);
 	}
+
+	return ok;
 }
 
 void Polytempo_InterprocessCommunication::registerNewServerConnection(Ipc* connection)

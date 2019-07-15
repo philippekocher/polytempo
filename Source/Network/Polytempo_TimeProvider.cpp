@@ -9,7 +9,6 @@
 */
 
 #include "Polytempo_TimeProvider.h"
-#include "Polytempo_NetworkInterfaceManager.h"
 #include "Polytempo_InterprocessCommunication.h"
 #ifdef POLYTEMPO_NETWORK
 #include "Polytempo_NetworkSupervisor.h"
@@ -106,6 +105,7 @@ void Polytempo_TimeProvider::toggleMaster(bool master)
 {
 	stopTimer();
 	masterFlag = master;
+	Polytempo_InterprocessCommunication::getInstance()->reset(master);
 	resetTimeSync();
 
 	if (!masterFlag)
@@ -151,7 +151,9 @@ void Polytempo_TimeProvider::setRemoteMasterPeer(String ip, Uuid id, bool master
 		resetTimeSync();
 		displayMessage("Master changed", MessageType_Warning);
 		Polytempo_NetworkSupervisor::getInstance()->resetPeers();
-		Polytempo_InterprocessCommunication::getInstance()->connectToMaster(ip);
+		bool ok = Polytempo_InterprocessCommunication::getInstance()->connectToMaster(ip);
+		if (!ok)
+			displayMessage("Connecting to master " + ip + " failed!", MessageType_Error);
 	}
 
 	lastMasterID = id;
@@ -171,7 +173,6 @@ void Polytempo_TimeProvider::handleMessage(XmlElement message, Ipc* sender)
 	if(message.getTagName() == "TimeSyncRequest")
 	{
 		Uuid senderId = Uuid(syncParams.getWithDefault("Id", ""));
-		String senderIp = syncParams.getWithDefault("IP", "");
 		String senderScoreName = syncParams.getWithDefault("ScoreName", "");
 		String senderPeerName = syncParams.getWithDefault("PeerName", "");
 		int timeIndex = syncParams.getWithDefault("Index", 0);
@@ -182,7 +183,6 @@ void Polytempo_TimeProvider::handleMessage(XmlElement message, Ipc* sender)
 			uint32 ts = Time::getMillisecondCounter();
 			NamedValueSet replayParams;
 			replayParams.set("Id", Polytempo_NetworkSupervisor::getInstance()->getUniqueId().toString());
-			replayParams.set("IP", Polytempo_NetworkInterfaceManager::getInstance()->getSelectedIpAddress().ipAddress.toString());
 			replayParams.set("ScoreName", Polytempo_NetworkSupervisor::getInstance()->getScoreName());
 			replayParams.set("PeerName", Polytempo_NetworkSupervisor::getInstance()->getPeerName());
 			replayParams.set("Timestamp", int32(ts));
@@ -194,7 +194,7 @@ void Polytempo_TimeProvider::handleMessage(XmlElement message, Ipc* sender)
 			displayMessage(ok ? "Mastertime sent" : "Fail", ok ? MessageType_Info : MessageType_Error);
 
 			// update peer
-			Polytempo_NetworkSupervisor::getInstance()->handlePeer(senderId, senderIp, senderScoreName, senderPeerName, true); // TODO: sync ok
+			Polytempo_NetworkSupervisor::getInstance()->handlePeer(senderId, senderScoreName, senderPeerName, true); // TODO: sync ok
 
 			// handle round trip time
 			roundTripTime[roundTripHistoryWritePosition] = lastRoundTripFromClient;
@@ -214,7 +214,6 @@ void Polytempo_TimeProvider::handleMessage(XmlElement message, Ipc* sender)
 	else if(message.getTagName() == "TimeSyncReply")
 	{
 		Uuid senderId = Uuid(syncParams.getWithDefault("Id", ""));
-		String senderIp = syncParams.getWithDefault("IP", "");
 		String senderScoreName = syncParams.getWithDefault("ScoreName", "");
 		String senderPeerName = syncParams.getWithDefault("PeerName", "");
 		uint32 argMasterTime = uint32(int32(syncParams.getWithDefault("Timestamp", 0)));
@@ -223,7 +222,7 @@ void Polytempo_TimeProvider::handleMessage(XmlElement message, Ipc* sender)
 
 		handleTimeSyncMessage(senderId, argMasterTime, timeIndex, maxRoundTripFromMaster);
 
-		Polytempo_NetworkSupervisor::getInstance()->handlePeer(senderId, senderIp, senderScoreName, senderPeerName, true);
+		Polytempo_NetworkSupervisor::getInstance()->handlePeer(senderId, senderScoreName, senderPeerName, true);
 	}
 }
 #endif
@@ -244,7 +243,6 @@ void Polytempo_TimeProvider::timerCallback()
 		
 		NamedValueSet syncParams;
 		syncParams.set("Id", Polytempo_NetworkSupervisor::getInstance()->getUniqueId().toString());
-		syncParams.set("IP", Polytempo_NetworkInterfaceManager::getInstance()->getSelectedIpAddress().ipAddress.toString());
 		syncParams.set("ScoreName", Polytempo_NetworkSupervisor::getInstance()->getScoreName());
 		syncParams.set("PeerName", Polytempo_NetworkSupervisor::getInstance()->getPeerName());
 		syncParams.set("Index", index);

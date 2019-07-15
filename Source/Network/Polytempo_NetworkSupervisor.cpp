@@ -34,7 +34,7 @@ Polytempo_NetworkSupervisor::Polytempo_NetworkSupervisor()
 {
     connectedPeersMap = new HashMap < Uuid, Polytempo_PeerInfo >();
     
-    socket = nullptr;
+    oscSender = nullptr;
     component = nullptr;
 
 	nodeName = new String(SystemStats::getFullUserName());
@@ -49,7 +49,7 @@ Polytempo_NetworkSupervisor::~Polytempo_NetworkSupervisor()
     connectedPeersMap = nullptr;
 	localName = nullptr;
 	nodeName = nullptr;
-	socket = nullptr;
+	oscSender = nullptr;
 
     clearSingletonInstance();
     
@@ -58,12 +58,12 @@ Polytempo_NetworkSupervisor::~Polytempo_NetworkSupervisor()
 
 juce_ImplementSingleton(Polytempo_NetworkSupervisor);
 
-OSCMessage* Polytempo_NetworkSupervisor::createNodeMessage()
+OSCMessage* Polytempo_NetworkSupervisor::createNodeMessage(String ownIp)
 {
 	return new OSCMessage(
 		OSCAddressPattern("/node"),
 		OSCArgument(getUniqueId().toString()),
-		OSCArgument(Polytempo_NetworkInterfaceManager::getInstance()->getSelectedIpAddress().ipAddress.toString()),
+		OSCArgument(ownIp),
 		OSCArgument(String(getScoreName())),
 		OSCArgument(String(getPeerName())),
 		OSCArgument((int32)Polytempo_TimeProvider::getInstance()->isMaster()),
@@ -72,22 +72,20 @@ OSCMessage* Polytempo_NetworkSupervisor::createNodeMessage()
 
 void Polytempo_NetworkSupervisor::timerCallback()
 {
-	if(socket == nullptr) return;
-	// nothing to do, if there is no socket
+	if(oscSender == nullptr || !Polytempo_TimeProvider::getInstance()->isMaster()) return;
+	// nothing to do, if there is no socket or client not in Master mode
     
-	socket->renewBroadcaster();
-    
-	// broadcast a heartbeat
-	ScopedPointer<OSCMessage> msg = createNodeMessage();
-	socket->write(*msg);
-	
-	if(component) component->repaint();
-}
+	Array<Polytempo_IPAddress> localIpAddresses;
+	Polytempo_NetworkInterfaceManager::getInstance()->getAvailableIpAddresses(localIpAddresses);
 
-String Polytempo_NetworkSupervisor::getAdapterInfo()
-{
-	Polytempo_IPAddress ip = Polytempo_NetworkInterfaceManager::getInstance()->getSelectedIpAddress();
-	return ip.addressDescription() + "\r\n" + ip.getNetworkAddress().toString() + "\r\n(" + ip.ipAddress.toString() + ")";
+	// broadcast a heartbeat
+	for (Polytempo_IPAddress localIpAddress : localIpAddresses)
+	{
+		ScopedPointer<OSCMessage> msg = createNodeMessage(localIpAddress.ipAddress.toString());
+		oscSender->sendToIPAddress(localIpAddress.getBroadcastAddress().toString(), currentPort, *msg);
+	}
+
+	if(component) component->repaint();
 }
 
 Uuid Polytempo_NetworkSupervisor::getUniqueId()
@@ -107,26 +105,13 @@ Uuid Polytempo_NetworkSupervisor::getUniqueId()
 	return uniqueId;
 }
 
-void Polytempo_NetworkSupervisor::manualConnect(String ip)
+void Polytempo_NetworkSupervisor::unicastFlood(Polytempo_IPAddress ownIp)
 {
 	OSCSender localSender;
-	localSender.connect(Polytempo_NetworkInterfaceManager::getInstance()->getSelectedIpAddress().ipAddress.toString(), 0);
-	ScopedPointer<OSCMessage> msg = this->createNodeMessage();
-	Logger::writeToLog("Sending node information to " + ip);
-	bool ok = localSender.sendToIPAddress(ip, currentPort, *msg);
-	if(!ok)
-	{
-		Polytempo_Alert::show("Error", "Error sending node information to " + ip);
-	}
-}
-
-void Polytempo_NetworkSupervisor::unicastFlood()
-{
-	OSCSender localSender;
-	localSender.connect(Polytempo_NetworkInterfaceManager::getInstance()->getSelectedIpAddress().ipAddress.toString(), 0);
-	ScopedPointer<OSCMessage> msg = this->createNodeMessage();
-	IPAddress currentIp = Polytempo_NetworkInterfaceManager::getInstance()->getSelectedIpAddress().getFirstNetworkAddress();
-	IPAddress lastIp = Polytempo_NetworkInterfaceManager::getInstance()->getSelectedIpAddress().getLastNetworkAddress();
+	localSender.connect(ownIp.ipAddress.toString(), 0);
+	ScopedPointer<OSCMessage> msg = this->createNodeMessage(ownIp.ipAddress.toString());
+	IPAddress currentIp = ownIp.getFirstNetworkAddress();
+	IPAddress lastIp = ownIp.getLastNetworkAddress();
 	
 	while (currentIp <= lastIp)
 	{
@@ -180,10 +165,11 @@ HashMap <Uuid, Polytempo_PeerInfo>* Polytempo_NetworkSupervisor::getPeers() cons
 	return connectedPeersMap;
 }
 
-void Polytempo_NetworkSupervisor::createSocket(int port)
+void Polytempo_NetworkSupervisor::createSender(int port)
 {
 	currentPort = port;
-	socket = new Polytempo_Socket("255.255.255.255", port); // dummy broadcaster, will be overwritten by renewBroadcaster()
+	oscSender = new OSCSender();
+	oscSender->connect("255.255.255.255", currentPort);
 }
 
 void Polytempo_NetworkSupervisor::setComponent(Component *aComponent)
@@ -191,10 +177,9 @@ void Polytempo_NetworkSupervisor::setComponent(Component *aComponent)
 	component = aComponent;
 }
 
-void Polytempo_NetworkSupervisor::handlePeer(Uuid id, String ip, String scoreName, String peerName, bool syncOk) const
+void Polytempo_NetworkSupervisor::handlePeer(Uuid id, String scoreName, String peerName, bool syncOk) const
 {
 	Polytempo_PeerInfo info;
-	info.ip = ip;
 	info.scoreName = scoreName;
 	info.peerName = peerName;
 	info.lastHeartBeat = Time::getMillisecondCounter();
