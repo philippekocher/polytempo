@@ -38,7 +38,7 @@ void Polytempo_NetworkInfoView::paint (Graphics& g)
 		{
 			Polytempo_PeerInfo peerInfo = peersMap->begin().getValue();
 			attributedPeers.append("Connected to Master:\n", Font(12, Font::bold));
-			Colour peerColor = (currentTime - peerInfo.lastHeartBeat) > 2 * NETWORK_SUPERVISOR_PING_INTERVAL
+			Colour peerColor = (currentTime - peerInfo.lastHeartBeat) > 2 *  TIME_SYNC_INTERVAL_MS
 				? Colours::red
 				: Colours::green;
 			attributedPeers.append(" \n", Font(4.0f, Font::plain));

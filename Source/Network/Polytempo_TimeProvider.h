@@ -18,7 +18,7 @@
 #define TIME_DIFF_HISTORY_SIZE		10
 #define	ROUND_TRIP_HISTORY_SIZE		20
 #define SYNC_TIME_VALID_PERIOD_MS	10000
-#define TIME_SYNC_INTERVAL_MS		4000
+#define TIME_SYNC_INTERVAL_MS		1000
 
 class Polytempo_TimeProvider : Timer
 {
