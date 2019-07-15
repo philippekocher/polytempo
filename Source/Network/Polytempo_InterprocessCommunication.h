@@ -10,7 +10,7 @@
 
 #pragma once
 #include "JuceHeader.h"
-
+#define POLYTEMPO_IPC_PORT	47524
 class Ipc : public InterprocessConnection
 {
 public:

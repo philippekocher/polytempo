@@ -172,7 +172,7 @@ void Polytempo_InterprocessCommunication::reset(bool isMaster)
 
 	if(isMaster)
 	{
-		bool ok = server->beginWaitingForSocket(1234, String());
+		bool ok = server->beginWaitingForSocket(POLYTEMPO_IPC_PORT, String());
 		if (!ok)
 			Polytempo_Alert::show("TCP-Server", "Error starting TCP server");
 	}
@@ -187,7 +187,7 @@ bool Polytempo_InterprocessCommunication::connectToMaster(String ip)
 	cleanUpClient();
 	dataIndex = 0;
 	client = new Ipc();
-	bool ok = client->connectToSocket(ip, 1234, 1000);
+	bool ok = client->connectToSocket(ip, POLYTEMPO_IPC_PORT, 1000);
 	if (ok)
 	{
 		Logger::writeToLog("Successfully connected to server " + ip);
