@@ -18,9 +18,8 @@ Polytempo_TimeProvider::Polytempo_TimeProvider(): relativeMsToMaster(0), maxRoun
 {
 #ifdef POLYTEMPO_NETWORK
 	pTimeSyncControl = nullptr;
-#endif
-
 	toggleMaster(false);
+#endif
 }
 
 Polytempo_TimeProvider::~Polytempo_TimeProvider()
