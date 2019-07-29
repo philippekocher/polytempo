@@ -57,22 +57,18 @@ void Ipc::messageReceived(const MemoryBlock& message)
 				{
 					String name = xml->getAttributeName(i);
 					messages.add(name);
-					int iii = xml->getIntAttribute(name, std::numeric_limits<int>::infinity());
-					if (juce_isfinite(iii))
+					String val = xml->getStringAttribute(name);
+					if (val.containsOnly("0123456789"))
 					{
-						messages.add(iii);
+						messages.add(val.getIntValue());
+					}
+					else if (val.containsOnly("0123456789."))
+					{
+						messages.add(val.getDoubleValue());
 					}
 					else
 					{
-						double ddd = xml->getDoubleAttribute(name, std::numeric_limits<double>::infinity());
-						if (juce_isfinite(ddd))
-						{
-							messages.add(ddd);
-						}
-						else
-						{
-							messages.add(xml->getStringAttribute(name));
-						}
+						messages.add(xml->getStringAttribute(name));
 					}
 				}
 				Polytempo_Event* e = Polytempo_Event::makeEvent(type, messages);
