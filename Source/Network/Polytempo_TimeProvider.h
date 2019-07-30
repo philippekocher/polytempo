@@ -35,7 +35,7 @@ public:
 	void toggleMaster(bool master);
 	uint32 getDelaySafeTimestamp();
 	bool isMaster() const;
-	void setRemoteMasterPeer(String ip, Uuid id, bool master);
+	void setRemoteMasterPeer(String ip, Uuid id);
 	void handleMessage(XmlElement message, Ipc* sender);
 	void registerUserInterface(Polytempo_TimeSyncControl* pControl);
 #endif

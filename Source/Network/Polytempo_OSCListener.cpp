@@ -51,33 +51,15 @@ void Polytempo_OSCListener::oscMessageReceived(const OSCMessage & message)
 	String addressPattern = message.getAddressPattern().toString();
 	OSCArgument* argumentIterator = message.begin();
 
-	if (addressPattern == "/node")
+	if (addressPattern == "/masteradvertise")
 	{
 		Uuid senderId = Uuid((argumentIterator++)->getString());		
 		if (senderId == Polytempo_NetworkSupervisor::getInstance()->getUniqueId())
 			return;
 
 		String argIp = (argumentIterator++)->getString();
-		String argScoreName = (argumentIterator++)->getString();
-		String argPeerName = (argumentIterator++)->getString();
 		
-		bool isMaster = false;
-		if (argumentIterator && (*argumentIterator).isInt32())
-			isMaster = (bool)(argumentIterator++)->getInt32();
-
-		bool syncOk = false;
-		if (argumentIterator && (*argumentIterator).isInt32())
-		{
-			uint32 localSyncTime;
-			bool syncTimeValid = Polytempo_TimeProvider::getInstance()->getSyncTime(&localSyncTime);
-			uint32 safeTimeToCheck = uint32((argumentIterator++)->getInt32());
-			syncOk = syncTimeValid && safeTimeToCheck >= localSyncTime;
-		}
-
-		Polytempo_TimeProvider::getInstance()->setRemoteMasterPeer(argIp, senderId, isMaster);
-
-		if(Polytempo_TimeProvider::getInstance()->isMaster())
-			Polytempo_NetworkSupervisor::getInstance()->handlePeer(senderId, argScoreName, argPeerName, syncOk);
+		Polytempo_TimeProvider::getInstance()->setRemoteMasterPeer(argIp, senderId);
 	}
 
 #ifdef POLYTEMPO_NETWORK

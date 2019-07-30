@@ -13,6 +13,7 @@
 #include "../Scheduler/Polytempo_ScoreScheduler.h"
 #include "../Scheduler/Polytempo_EventScheduler.h"
 #include "../Misc/Polytempo_Alerts.h"
+#include "Polytempo_NetworkSupervisor.h"
 
 Ipc::Ipc() : InterprocessConnection(false)
 {
@@ -26,93 +27,109 @@ void Ipc::connectionMade()
 {
 	Logger::writeToLog("Connection to " + getConnectedHostName());
 	lastConnectedHost = getConnectedHostName();
+	NamedValueSet params;
+	params.set("PeerName", Polytempo_NetworkSupervisor::getInstance()->getPeerName());
+	params.set("ScoreName", Polytempo_NetworkSupervisor::getInstance()->getScoreName());
+	XmlElement xml = XmlElement("Handshake");
+	params.copyToXmlAttributes(xml);
+	sendMessage(Polytempo_InterprocessCommunication::xmlToMemoryBlock(xml));
 }
 
 void Ipc::connectionLost()
 {
 	Logger::writeToLog("Connection lost: " + lastConnectedHost);
+	Polytempo_InterprocessCommunication::getInstance()->notifyConnectionLost(this);
 }
 
 void Ipc::messageReceived(const MemoryBlock& message)
 {
-	if (message.toString().startsWith("Answer"))
+	std::unique_ptr<XmlElement> xml = parseXML(message.toString());
+	if (xml != nullptr)
 	{
-		Logger::writeToLog(String((int)Time::getMillisecondCounterHiRes()) + " - Answer received");
+		if(xml->getTagName() == "Handshake")
+		{
+			// perform handshake
+			remotePeerName = xml->getStringAttribute("PeerName");
+			remoteScoreName = xml->getStringAttribute("ScoreName");
+		}
+		else if (xml->getTagName() == "TimeSyncRequest" || xml->getTagName() == "TimeSyncReply")
+		{
+			Polytempo_TimeProvider::getInstance()->handleMessage(*xml, this);
+		}
+		else if (xml->getTagName() == "Event")
+		{
+			String type = xml->getStringAttribute("Type");
+			xml->removeAttribute("Type");
+			Array<var> messages;
+			for (int i = 0; i < xml->getNumAttributes(); i++)
+			{
+				String name = xml->getAttributeName(i);
+				messages.add(name);
+				String val = xml->getStringAttribute(name);
+				if (val.containsOnly("0123456789"))
+				{
+					messages.add(val.getIntValue());
+				}
+				else if (val.containsOnly("0123456789."))
+				{
+					messages.add(val.getDoubleValue());
+				}
+				else
+				{
+					messages.add(xml->getStringAttribute(name));
+				}
+			}
+			Polytempo_Event* e = Polytempo_Event::makeEvent(type, messages);
+			if (e->getType() == eventType_None)
+			{
+				DBG("--unknown");
+				delete e;
+				return;
+			}
+
+			// calculate syncTime
+			uint32 syncTime;
+
+			if (e->hasProperty(eventPropertyString_TimeTag))
+				syncTime = uint32(int32(e->getProperty(eventPropertyString_TimeTag)));
+			else
+			{
+				Polytempo_TimeProvider::getInstance()->getSyncTime(&syncTime);
+			}
+
+			if (e->hasProperty(eventPropertyString_Time))
+			{
+				Polytempo_ScoreScheduler *scoreScheduler = Polytempo_ScoreScheduler::getInstance();
+
+				if (!scoreScheduler->isRunning()) return; // ignore an event that has a "time"
+														 // when the score scheduler isn't running
+
+				syncTime += e->getTime() - scoreScheduler->getScoreTime();
+			}
+
+			if (e->hasProperty(eventPropertyString_Defer))
+				syncTime += int(float(e->getProperty(eventPropertyString_Defer)) * 1000.0f);
+
+			e->setSyncTime(syncTime);
+
+			Polytempo_EventScheduler::getInstance()->scheduleEvent(e);
+		}
 	}
 	else
 	{
-		std::unique_ptr<XmlElement> xml = parseXML(message.toString());
-		if(xml != nullptr)
-		{
-			if(xml->getTagName() == "TimeSyncRequest" || xml->getTagName() == "TimeSyncReply")
-			{
-				Polytempo_TimeProvider::getInstance()->handleMessage(*xml, this);
-			}
-			else if(xml->getTagName() == "Event")
-			{
-				String type = xml->getStringAttribute("Type");
-				xml->removeAttribute("Type");
-				Array<var> messages;
-				for(int i = 0; i < xml->getNumAttributes(); i++)
-				{
-					String name = xml->getAttributeName(i);
-					messages.add(name);
-					String val = xml->getStringAttribute(name);
-					if (val.containsOnly("0123456789"))
-					{
-						messages.add(val.getIntValue());
-					}
-					else if (val.containsOnly("0123456789."))
-					{
-						messages.add(val.getDoubleValue());
-					}
-					else
-					{
-						messages.add(xml->getStringAttribute(name));
-					}
-				}
-				Polytempo_Event* e = Polytempo_Event::makeEvent(type, messages);
-				if (e->getType() == eventType_None)
-				{
-					DBG("--unknown");
-					delete e;
-					return;
-				}
-
-				// calculate syncTime
-				uint32 syncTime;
-
-				if (e->hasProperty(eventPropertyString_TimeTag))
-					syncTime = uint32(int32(e->getProperty(eventPropertyString_TimeTag)));
-				else
-				{
-					Polytempo_TimeProvider::getInstance()->getSyncTime(&syncTime);
-				}
-
-				if (e->hasProperty(eventPropertyString_Time))
-				{
-					Polytempo_ScoreScheduler *scoreScheduler = Polytempo_ScoreScheduler::getInstance();
-
-					if (!scoreScheduler->isRunning()) return; // ignore an event that has a "time"
-															 // when the score scheduler isn't running
-
-					syncTime += e->getTime() - scoreScheduler->getScoreTime();
-				}
-
-				if (e->hasProperty(eventPropertyString_Defer))
-					syncTime += int(float(e->getProperty(eventPropertyString_Defer)) * 1000.0f);
-
-				e->setSyncTime(syncTime);
-
-				Polytempo_EventScheduler::getInstance()->scheduleEvent(e);
-			}
-		}
-		else
-		{
-			// generic message
-			Logger::writeToLog("Unknown Message received: " + message.toString());
-		}
+		// generic message
+		Logger::writeToLog("Unknown Message received: " + message.toString());
 	}
+}
+
+String Ipc::getRemotePeerName()
+{
+	return remotePeerName;
+}
+
+String Ipc::getRemoteScoreName()
+{
+	return remoteScoreName;
 }
 
 InterprocessConnection* IpcServer::createConnectionObject()
@@ -231,6 +248,34 @@ bool Polytempo_InterprocessCommunication::notifyServer(XmlElement e) const
 	
 	client->sendMessage(xmlToMemoryBlock(e));
 	return true;
+}
+
+void Polytempo_InterprocessCommunication::notifyConnectionLost(Ipc* pConnection)
+{
+	if (pConnection != client)
+		serverConnections.removeObject(pConnection, false);
+}
+
+Polytempo_PeerInfo* Polytempo_InterprocessCommunication::getMasterInfo() const
+{
+	if (client == nullptr || !client->isConnected())
+		return nullptr;
+
+	Polytempo_PeerInfo* info = new Polytempo_PeerInfo();
+	info->peerName = client->getRemotePeerName();
+	info->scoreName = client->getRemoteScoreName();
+	return info;
+}
+
+void Polytempo_InterprocessCommunication::getClientsInfo(OwnedArray<Polytempo_PeerInfo>* pPeers)
+{
+	for (Ipc* serverConnection : serverConnections)
+	{
+		Polytempo_PeerInfo* info = new Polytempo_PeerInfo();
+		info->peerName = serverConnection->getRemotePeerName();
+		info->scoreName = serverConnection->getRemoteScoreName();
+		pPeers->add(info);
+	}
 }
 
 juce_ImplementSingleton(Polytempo_InterprocessCommunication);

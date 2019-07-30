@@ -125,18 +125,8 @@ bool Polytempo_TimeProvider::isMaster() const
 	return masterFlag;
 }
 
-void Polytempo_TimeProvider::setRemoteMasterPeer(String ip, Uuid id, bool master)
+void Polytempo_TimeProvider::setRemoteMasterPeer(String ip, Uuid id)
 {
-	if (!master)
-	{
-		if (lastMasterID == id)
-		{
-			// means previous master discontinued to be master
-			resetTimeSync();
-		}
-		return;
-	}
-
 	if (masterFlag)
 	{
 		displayMessage("Another master detected", MessageType_Error);
@@ -149,7 +139,6 @@ void Polytempo_TimeProvider::setRemoteMasterPeer(String ip, Uuid id, bool master
 	{
 		resetTimeSync();
 		displayMessage("Master changed", MessageType_Warning);
-		Polytempo_NetworkSupervisor::getInstance()->resetPeers();
 		bool ok = Polytempo_InterprocessCommunication::getInstance()->connectToMaster(ip);
 		if (!ok)
 			displayMessage("Connecting to master " + ip + " failed!", MessageType_Error);
@@ -192,9 +181,6 @@ void Polytempo_TimeProvider::handleMessage(XmlElement message, Ipc* sender)
 			bool ok = sender->sendMessage(Polytempo_InterprocessCommunication::xmlToMemoryBlock(xml));
 			displayMessage(ok ? "Mastertime sent" : "Fail", ok ? MessageType_Info : MessageType_Error);
 
-			// update peer
-			Polytempo_NetworkSupervisor::getInstance()->handlePeer(senderId, senderScoreName, senderPeerName, true); // TODO: sync ok
-
 			// handle round trip time
 			roundTripTime[roundTripHistoryWritePosition] = lastRoundTripFromClient;
 			roundTripHistorySize = jmin(++roundTripHistorySize, ROUND_TRIP_HISTORY_SIZE);
@@ -220,8 +206,6 @@ void Polytempo_TimeProvider::handleMessage(XmlElement message, Ipc* sender)
 		int32 maxRoundTripFromMaster = syncParams.getWithDefault("MaxRT", 0);
 
 		handleTimeSyncMessage(senderId, argMasterTime, timeIndex, maxRoundTripFromMaster);
-
-		Polytempo_NetworkSupervisor::getInstance()->handlePeer(senderId, senderScoreName, senderPeerName, true);
 	}
 }
 #endif
@@ -250,7 +234,7 @@ void Polytempo_TimeProvider::timerCallback()
 		syncParams.copyToXmlAttributes(xml);
 		bool ok = Polytempo_InterprocessCommunication::getInstance()->notifyServer(xml);
 		if (!ok)
-			displayMessage("send TS request failed", MessageType_Warning);
+			displayMessage("No connection to master", MessageType_Error);
 	}
 #endif
 }

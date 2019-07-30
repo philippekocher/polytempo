@@ -29,33 +29,28 @@ void Polytempo_NetworkInfoView::paint (Graphics& g)
     attributedPeers.append(" \n", Font(4.0f, Font::plain));
     attributedPeers.append(Polytempo_NetworkSupervisor::getInstance()->getDescription() + "\n", Font(12.0f, Font::plain));
 	attributedPeers.append(" \n", Font(12.0f, Font::plain));
-	HashMap<Uuid, Polytempo_PeerInfo>* peersMap = Polytempo_NetworkSupervisor::getInstance()->getPeers();
-	uint32 currentTime = Time::getMillisecondCounter();
-
-	if(!Polytempo_TimeProvider::getInstance()->isMaster())
+	
+	if (Polytempo_TimeProvider::getInstance()->isMaster())
 	{
-		if(peersMap->size() == 1)
+		OwnedArray<Polytempo_PeerInfo> peers;
+		Polytempo_InterprocessCommunication::getInstance()->getClientsInfo(&peers);
+
+		attributedPeers.append("Connected peers:\n", Font(12, Font::bold));
+		for (Polytempo_PeerInfo* peer : peers)
 		{
-			Polytempo_PeerInfo peerInfo = peersMap->begin().getValue();
-			attributedPeers.append("Connected to Master:\n", Font(12, Font::bold));
-			Colour peerColor = (currentTime - peerInfo.lastHeartBeat) > 2 *  TIME_SYNC_INTERVAL_MS
-				? Colours::red
-				: Colours::green;
 			attributedPeers.append(" \n", Font(4.0f, Font::plain));
-			attributedPeers.append(peerInfo.scoreName + " (" + peerInfo.peerName + ")\n", Font(12.0f, Font::plain), peerColor);
+			attributedPeers.append(peer->scoreName + " (" + peer->peerName + ")\n", Font(12.0f, Font::plain), Colours::darkgreen);
 		}
 	}
 	else
 	{
-		attributedPeers.append("Connected peers:\n", Font(12, Font::bold));
-		HashMap < Uuid, Polytempo_PeerInfo >::Iterator it(*peersMap);
-		while (it.next())
+		ScopedPointer<Polytempo_PeerInfo> peer = Polytempo_InterprocessCommunication::getInstance()->getMasterInfo();
+
+		if(peer != nullptr)
 		{
-			Colour peerColor = it.getValue().syncState
-				? Colours::green
-				: Colours::orange;
+			attributedPeers.append("Connected to Master:\n", Font(12, Font::bold));
 			attributedPeers.append(" \n", Font(4.0f, Font::plain));
-			attributedPeers.append(it.getValue().scoreName + " (" + it.getValue().peerName + ")\n", Font(12.0f, Font::plain), peerColor);
+			attributedPeers.append(peer->scoreName + " (" + peer->peerName + ")\n", Font(12.0f, Font::plain), Colours::darkgreen);
 		}
 	}
 	attributedPeers.draw(g, Rectangle<int>(0, 10, getWidth(), getHeight()).toFloat());

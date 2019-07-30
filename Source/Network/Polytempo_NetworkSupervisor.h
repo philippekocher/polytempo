@@ -45,18 +45,16 @@ public:
 	String getDescription() const;
 	String getScoreName() const; 
 	String getPeerName() const;
-	HashMap <Uuid, Polytempo_PeerInfo>* getPeers() const;
+
     void createSender(int port);
     void setComponent(Component *aComponent);
-	void handlePeer(Uuid id, String scoreName, String peerName, bool syncOk) const;
-	void resetPeers() const;
-
+	
     void eventNotification(Polytempo_Event *event) override;
 	Uuid getUniqueId();
 	void unicastFlood(Polytempo_IPAddress ownIp);
 
 private:
-	OSCMessage* createNodeMessage(String ownIp);
+	OSCMessage* createAdvertiseMessage(String ownIp);
 
 	Uuid uniqueId = nullptr;
     ScopedPointer<OSCSender> oscSender;
@@ -65,8 +63,7 @@ private:
     ScopedPointer < String > localName;
 	ScopedPointer < String > nodeName;
 
-    ScopedPointer < HashMap < Uuid, Polytempo_PeerInfo > > connectedPeersMap;
-	int currentPort;
+    int currentPort;
 };
 
 

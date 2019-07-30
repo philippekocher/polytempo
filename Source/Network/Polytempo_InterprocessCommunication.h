@@ -10,6 +10,7 @@
 
 #pragma once
 #include "JuceHeader.h"
+#include "Polytempo_PeerInfo.h"
 #define POLYTEMPO_IPC_PORT	47524
 class Ipc : public InterprocessConnection
 {
@@ -19,8 +20,13 @@ public:
 	void connectionMade() override;
 	void connectionLost() override;
 	void messageReceived(const MemoryBlock& message) override;
+	String getRemotePeerName();
+	String getRemoteScoreName();
+
 private:
 	String lastConnectedHost;
+	String remotePeerName;
+	String remoteScoreName;
 };
 
 class IpcServer : public InterprocessConnectionServer
@@ -46,6 +52,9 @@ public:
 	static MemoryBlock xmlToMemoryBlock(XmlElement e);
 	void notifyAllClients(XmlElement e);
 	bool notifyServer(XmlElement e) const;
+	void notifyConnectionLost(Ipc* pConnection);
+	Polytempo_PeerInfo* getMasterInfo() const;
+	void getClientsInfo(OwnedArray<Polytempo_PeerInfo>* pPeers);
 
 private:
 	ScopedPointer<IpcServer> server;
