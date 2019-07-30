@@ -43,14 +43,14 @@ public:
     
     const String getApplicationName()       { return ProjectInfo::projectName; }
     const String getApplicationVersion()    { return ProjectInfo::versionString; }
-    bool moreThanOneInstanceAllowed()       { return false; }
+    bool moreThanOneInstanceAllowed()       { return true; }
 
     void initialise(const String& commandLine);
     void shutdown();
     void systemRequestedQuit();
     void applicationShouldQuit();
     bool quitApplication = false;
-    void anotherInstanceStarted(const String& commandLine);
+    void anotherInstanceStarted(const String& commandLine) override;
     
     Polytempo_Score* getScore() { return score; };
     bool scoreFileExists() { return scoreFile.exists(); }

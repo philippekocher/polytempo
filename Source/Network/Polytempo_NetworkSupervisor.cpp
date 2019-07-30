@@ -90,18 +90,9 @@ void Polytempo_NetworkSupervisor::timerCallback()
 
 Uuid Polytempo_NetworkSupervisor::getUniqueId()
 {
-	if (uniqueId != nullptr)
-		return uniqueId;
-
-	String uuidStr = Polytempo_StoredPreferences::getInstance()->getProps().getValue("uniqueId", String());
-	if(uuidStr != String())
-		uniqueId = Uuid(uuidStr);
-	else
-	{
-		// create new UUID
+	if (uniqueId == nullptr)
 		uniqueId = Uuid();
-		Polytempo_StoredPreferences::getInstance()->getProps().setValue("uniqueId", uniqueId.toString());
-	}
+	
 	return uniqueId;
 }
 
