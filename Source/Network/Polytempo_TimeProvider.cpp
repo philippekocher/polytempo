@@ -145,7 +145,6 @@ void Polytempo_TimeProvider::setRemoteMasterPeer(String ip, Uuid id)
 	}
 
 	lastMasterID = id;
-	lastMasterIp = ip;
 }
 
 void Polytempo_TimeProvider::registerUserInterface(Polytempo_TimeSyncControl* pControl)
@@ -213,8 +212,7 @@ void Polytempo_TimeProvider::handleMessage(XmlElement message, Ipc* sender)
 void Polytempo_TimeProvider::timerCallback()
 {
 #ifdef POLYTEMPO_NETWORK
-	String timeSyncMasterIp = lastMasterIp;
-	if(timeSyncMasterIp.isEmpty())
+	if(Polytempo_InterprocessCommunication::getInstance()->getMasterInfo() == nullptr)
 	{
 		displayMessage("No master detected", MessageType_Error);
 	}
@@ -272,6 +270,5 @@ void Polytempo_TimeProvider::resetTimeSync()
 	relativeMsToMaster = 0;
 	maxRoundTrip = 0;
 	lastRoundTrip = 0;
-	lastMasterIp = String();
 	lastMasterID = Uuid::null();
 }

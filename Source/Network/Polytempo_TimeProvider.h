@@ -72,5 +72,4 @@ private:
 	int32 lastRoundTrip;
 
 	Uuid lastMasterID;
-	String lastMasterIp;
 };
