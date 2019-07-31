@@ -35,11 +35,18 @@ void Polytempo_NetworkInfoView::paint (Graphics& g)
 		OwnedArray<Polytempo_PeerInfo> peers;
 		Polytempo_InterprocessCommunication::getInstance()->getClientsInfo(&peers);
 
-		attributedPeers.append("Connected peers:\n", Font(12, Font::bold));
-		for (Polytempo_PeerInfo* peer : peers)
+		if(peers.size() == 0)
 		{
-			attributedPeers.append(" \n", Font(4.0f, Font::plain));
-			attributedPeers.append(peer->scoreName + " (" + peer->peerName + ")\n", Font(12.0f, Font::plain), Colours::darkgreen);
+			attributedPeers.append("No connected peers", Font(12, Font::plain), Colours::orangered);
+		}
+		else
+		{
+			attributedPeers.append("Connected peers:\n", Font(12, Font::bold));
+			for (Polytempo_PeerInfo* peer : peers)
+			{
+				attributedPeers.append(" \n", Font(4.0f, Font::plain));
+				attributedPeers.append(peer->scoreName + " (" + peer->peerName + ")\n", Font(12.0f, Font::plain), peer->connectionOk ? Colours::darkgreen : Colours::orangered);
+			}
 		}
 	}
 	else
@@ -50,7 +57,7 @@ void Polytempo_NetworkInfoView::paint (Graphics& g)
 		{
 			attributedPeers.append("Connected to Master:\n", Font(12, Font::bold));
 			attributedPeers.append(" \n", Font(4.0f, Font::plain));
-			attributedPeers.append(peer->scoreName + " (" + peer->peerName + ")\n", Font(12.0f, Font::plain), Colours::darkgreen);
+			attributedPeers.append(peer->scoreName + " (" + peer->peerName + ")\n", Font(12.0f, Font::plain), peer->connectionOk ? Colours::darkgreen : Colours::orangered);
 		}
 	}
 	attributedPeers.draw(g, Rectangle<int>(0, 10, getWidth(), getHeight()).toFloat());

@@ -135,7 +135,7 @@ void Polytempo_TimeProvider::setRemoteMasterPeer(String ip, Uuid id)
 	}
 
 	// master ID check
-	if (lastMasterID != id)
+	if (lastMasterID != id || !Polytempo_InterprocessCommunication::getInstance()->isClientConnected())
 	{
 		resetTimeSync();
 		displayMessage("Master changed", MessageType_Warning);
@@ -212,7 +212,7 @@ void Polytempo_TimeProvider::handleMessage(XmlElement message, Ipc* sender)
 void Polytempo_TimeProvider::timerCallback()
 {
 #ifdef POLYTEMPO_NETWORK
-	if(Polytempo_InterprocessCommunication::getInstance()->getMasterInfo() == nullptr)
+	if(!Polytempo_InterprocessCommunication::getInstance()->isClientConnected())
 	{
 		displayMessage("No master detected", MessageType_Error);
 	}

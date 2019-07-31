@@ -15,7 +15,7 @@
 #include "../Misc/Polytempo_Alerts.h"
 #include "Polytempo_NetworkSupervisor.h"
 
-Ipc::Ipc() : InterprocessConnection(false)
+Ipc::Ipc() : InterprocessConnection(false), lastHeartBeat(0)
 {
 }
 
@@ -25,8 +25,6 @@ Ipc::~Ipc()
 
 void Ipc::connectionMade()
 {
-	Logger::writeToLog("Connection to " + getConnectedHostName());
-	lastConnectedHost = getConnectedHostName();
 	NamedValueSet params;
 	params.set("PeerName", Polytempo_NetworkSupervisor::getInstance()->getPeerName());
 	params.set("ScoreName", Polytempo_NetworkSupervisor::getInstance()->getScoreName());
@@ -37,12 +35,12 @@ void Ipc::connectionMade()
 
 void Ipc::connectionLost()
 {
-	Logger::writeToLog("Connection lost: " + lastConnectedHost);
-	Polytempo_InterprocessCommunication::getInstance()->notifyConnectionLost(this);
+	Logger::writeToLog("Connection lost to " + getRemoteScoreName() + "(" + getRemotePeerName() + ")");
 }
 
 void Ipc::messageReceived(const MemoryBlock& message)
 {
+	this->lastHeartBeat = Time::getMillisecondCounter();
 	std::unique_ptr<XmlElement> xml = parseXML(message.toString());
 	if (xml != nullptr)
 	{
@@ -122,14 +120,19 @@ void Ipc::messageReceived(const MemoryBlock& message)
 	}
 }
 
-String Ipc::getRemotePeerName()
+String Ipc::getRemotePeerName() const
 {
 	return remotePeerName;
 }
 
-String Ipc::getRemoteScoreName()
+String Ipc::getRemoteScoreName() const
 {
 	return remoteScoreName;
+}
+
+uint32 Ipc::getLastHeartBeat() const
+{
+	return lastHeartBeat;
 }
 
 InterprocessConnection* IpcServer::createConnectionObject()
@@ -250,32 +253,47 @@ bool Polytempo_InterprocessCommunication::notifyServer(XmlElement e) const
 	return true;
 }
 
-void Polytempo_InterprocessCommunication::notifyConnectionLost(Ipc* pConnection)
-{
-	if (pConnection != client)
-		serverConnections.removeObject(pConnection, false);
-}
-
 Polytempo_PeerInfo* Polytempo_InterprocessCommunication::getMasterInfo() const
 {
 	if (client == nullptr || !client->isConnected())
 		return nullptr;
 
-	Polytempo_PeerInfo* info = new Polytempo_PeerInfo();
-	info->peerName = client->getRemotePeerName();
-	info->scoreName = client->getRemoteScoreName();
-	return info;
+	return getPeerInfoFromIpc(client, Time::getMillisecondCounter());
+}
+
+bool Polytempo_InterprocessCommunication::isClientConnected() const
+{
+	return client != nullptr && client->isConnected();
 }
 
 void Polytempo_InterprocessCommunication::getClientsInfo(OwnedArray<Polytempo_PeerInfo>* pPeers)
 {
+	uint32 currentTime = Time::getMillisecondCounter();
+
+	// clean up inactive connections
+	for (int i = 0; i < serverConnections.size(); i++)
+	{
+		if(currentTime - serverConnections[i]->getLastHeartBeat() > REMOVE_INVALID_CONNECTIONS_TIMEOUT)
+		{
+			serverConnections.remove(i);
+			i--;
+		}
+	}
+
 	for (Ipc* serverConnection : serverConnections)
 	{
-		Polytempo_PeerInfo* info = new Polytempo_PeerInfo();
-		info->peerName = serverConnection->getRemotePeerName();
-		info->scoreName = serverConnection->getRemoteScoreName();
-		pPeers->add(info);
+		pPeers->add(getPeerInfoFromIpc(serverConnection, currentTime));
 	}
+}
+
+Polytempo_PeerInfo* Polytempo_InterprocessCommunication::getPeerInfoFromIpc(Ipc* pIpc, uint32 referenceTime)
+{
+	Polytempo_PeerInfo* info = new Polytempo_PeerInfo();
+	info->peerName = pIpc->getRemotePeerName();
+	info->scoreName = pIpc->getRemoteScoreName();
+	info->connectionOk = pIpc->isConnected() && (referenceTime - pIpc->getLastHeartBeat() < 2 * TIME_SYNC_INTERVAL_MS);
+	
+	return info;
 }
 
 juce_ImplementSingleton(Polytempo_InterprocessCommunication);
