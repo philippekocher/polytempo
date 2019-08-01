@@ -11,6 +11,7 @@
 #pragma once
 #include "JuceHeader.h"
 #include "Polytempo_PeerInfo.h"
+#include "../Scheduler/Polytempo_Event.h"
 #define POLYTEMPO_IPC_PORT	47524
 #define REMOVE_INVALID_CONNECTIONS_TIMEOUT	10000
 
@@ -46,22 +47,23 @@ public:
 
 	Polytempo_InterprocessCommunication();
 	~Polytempo_InterprocessCommunication();
-	void cleanUpServerConnections();
-	void cleanUpServer();
-	void cleanUpClient();
 	void reset(bool isMaster);
 	bool connectToMaster(String ip);
 	void registerNewServerConnection(Ipc* connection);
-	void notifyAllClients(MemoryBlock m);
+	void notifyAllClients(MemoryBlock m, String namePattern = String());
 	static MemoryBlock xmlToMemoryBlock(XmlElement e);
-	void notifyAllClients(XmlElement e);
+	void notifyAllClients(XmlElement e, String namePattern = String());
 	bool notifyServer(XmlElement e) const;
 	Polytempo_PeerInfo* getMasterInfo() const;
 	bool isClientConnected() const;
 	void getClientsInfo(OwnedArray<Polytempo_PeerInfo>* pPeers);
+	void distributeEvent(Polytempo_Event* pEvent, String namePattern);
 
 private:
 	static Polytempo_PeerInfo* getPeerInfoFromIpc(Ipc* pIpc, uint32 referenceTime);
+	void cleanUpServerConnections();
+	void cleanUpServer();
+	void cleanUpClient();
 
 private:
 	ScopedPointer<IpcServer> server;

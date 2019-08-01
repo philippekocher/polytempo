@@ -163,5 +163,3 @@ void Polytempo_NetworkSupervisor::eventNotification(Polytempo_Event *event)
 		localName = new String(event->getProperty("name").toString());
 	}
 }
-
-

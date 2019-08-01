@@ -46,6 +46,32 @@ Polytempo_OSCListener::~Polytempo_OSCListener()
 	oscReceiver = nullptr;
 }
 
+Polytempo_Event* Polytempo_OSCListener::oscToEvent(const OSCMessage& message, String addressPattern)
+{
+	ScopedPointer<Array<var>> messages = new Array<var>();
+	OSCArgument* argumentIterator = message.begin();
+
+	DBG("osc: " << addressPattern);
+
+	while (argumentIterator != message.end())
+	{
+		if ((*argumentIterator).isString())
+			messages->add(var(String((argumentIterator)->getString())));
+		else if ((*argumentIterator).isInt32())
+			messages->add(var(int32((argumentIterator)->getInt32())));
+		else if ((*argumentIterator).isFloat32())
+			messages->add(var(float((argumentIterator)->getFloat32())));
+		else if ((*argumentIterator).isBlob())
+		DBG("<blob>");
+		else
+		DBG("<unknown>");
+
+		argumentIterator++;
+	}
+
+	return Polytempo_Event::makeEvent(addressPattern, *messages);
+}
+
 void Polytempo_OSCListener::oscMessageReceived(const OSCMessage & message)
 {
 	String addressPattern = message.getAddressPattern().toString();
@@ -93,32 +119,20 @@ void Polytempo_OSCListener::oscMessageReceived(const OSCMessage & message)
         }
         else window->setFullScreen(true);
     }
+	else if (addressPattern.startsWith("/client/") && Polytempo_TimeProvider::getInstance()->isMaster())
+	{
+		// parse pattern
+		addressPattern = addressPattern.substring(8);
+		String nodeNamePattern = addressPattern.upToFirstOccurrenceOf("/", false, false);
+		String messagePattern = addressPattern.substring(nodeNamePattern.length());
+		Polytempo_InterprocessCommunication::getInstance()->distributeEvent(oscToEvent(message, messagePattern), nodeNamePattern);
+	}
 #endif
 	else
 	{
-		ScopedPointer<Array<var>> messages = new Array<var>();
+		Polytempo_Event* event = oscToEvent(message, addressPattern);
 
-		DBG("osc: " << addressPattern);
-
-		while (argumentIterator != message.end())
-		{
-			if ((*argumentIterator).isString())
-				messages->add(var(String((argumentIterator)->getString())));
-			else if ((*argumentIterator).isInt32())
-				messages->add(var(int32((argumentIterator)->getInt32())));
-			else if ((*argumentIterator).isFloat32())
-				messages->add(var(float((argumentIterator)->getFloat32())));
-			else if ((*argumentIterator).isBlob())
-				DBG("<blob>");
-			else
-				DBG("<unknown>");
-
-			argumentIterator++;
-		}
-
-		Polytempo_Event* event = Polytempo_Event::makeEvent(addressPattern, *messages);
-        
-        if(event->getType() == eventType_None)
+		if(event->getType() == eventType_None)
         {
             DBG("--unknown");
             delete event;

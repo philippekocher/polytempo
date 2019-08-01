@@ -221,11 +221,12 @@ void Polytempo_InterprocessCommunication::registerNewServerConnection(Ipc* conne
 	serverConnections.addIfNotAlreadyThere(connection);
 }
 
-void Polytempo_InterprocessCommunication::notifyAllClients(MemoryBlock m)
+void Polytempo_InterprocessCommunication::notifyAllClients(MemoryBlock m, String namePattern)
 {
 	for (Ipc* connection : serverConnections)
 	{
-		connection->sendMessage(m);
+		if(namePattern == String() || connection->getRemoteScoreName().matchesWildcard(namePattern, true))
+			connection->sendMessage(m);
 	}
 }
 
@@ -239,9 +240,9 @@ MemoryBlock Polytempo_InterprocessCommunication::xmlToMemoryBlock(XmlElement e)
 	return m;
 }
 
-void Polytempo_InterprocessCommunication::notifyAllClients(XmlElement e)
+void Polytempo_InterprocessCommunication::notifyAllClients(XmlElement e, String namePattern)
 {
-	notifyAllClients(xmlToMemoryBlock(e));
+	notifyAllClients(xmlToMemoryBlock(e), namePattern);
 }
 
 bool Polytempo_InterprocessCommunication::notifyServer(XmlElement e) const
@@ -284,6 +285,18 @@ void Polytempo_InterprocessCommunication::getClientsInfo(OwnedArray<Polytempo_Pe
 	{
 		pPeers->add(getPeerInfoFromIpc(serverConnection, currentTime));
 	}
+}
+
+void Polytempo_InterprocessCommunication::distributeEvent(Polytempo_Event* pEvent, String namePattern)
+{
+	pEvent->setSyncTime(Polytempo_TimeProvider::getInstance()->getDelaySafeTimestamp());
+	String localScoreName = Polytempo_NetworkSupervisor::getInstance()->getScoreName();
+
+	XmlElement eventAsXml = pEvent->getXml();
+	if (localScoreName.matchesWildcard(namePattern, true))
+		Polytempo_EventScheduler::getInstance()->scheduleEvent(pEvent);
+
+	notifyAllClients(eventAsXml, namePattern);
 }
 
 Polytempo_PeerInfo* Polytempo_InterprocessCommunication::getPeerInfoFromIpc(Ipc* pIpc, uint32 referenceTime)
