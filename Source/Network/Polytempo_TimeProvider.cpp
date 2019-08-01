@@ -164,6 +164,7 @@ void Polytempo_TimeProvider::handleMessage(XmlElement message, Ipc* sender)
 		String senderPeerName = syncParams.getWithDefault("PeerName", "");
 		int timeIndex = syncParams.getWithDefault("Index", 0);
 		int32 lastRoundTripFromClient = syncParams.getWithDefault("LastRT", 0);
+		sender->setRemoteNames(senderScoreName, senderPeerName);
 
 		if (masterFlag)
 		{
@@ -203,6 +204,7 @@ void Polytempo_TimeProvider::handleMessage(XmlElement message, Ipc* sender)
 		uint32 argMasterTime = uint32(int32(syncParams.getWithDefault("Timestamp", 0)));
 		int timeIndex = syncParams.getWithDefault("Index", 0);
 		int32 maxRoundTripFromMaster = syncParams.getWithDefault("MaxRT", 0);
+		sender->setRemoteNames(senderScoreName, senderPeerName);
 
 		handleTimeSyncMessage(senderId, argMasterTime, timeIndex, maxRoundTripFromMaster);
 	}

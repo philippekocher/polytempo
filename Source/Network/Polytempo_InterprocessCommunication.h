@@ -26,6 +26,7 @@ public:
 	String getRemotePeerName() const;
 	String getRemoteScoreName() const;
 	uint32 getLastHeartBeat() const;
+	void setRemoteNames(String scoreName, String peerName);
 
 private:
 	String lastConnectedHost;

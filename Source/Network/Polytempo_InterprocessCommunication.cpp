@@ -135,6 +135,12 @@ uint32 Ipc::getLastHeartBeat() const
 	return lastHeartBeat;
 }
 
+void Ipc::setRemoteNames(String scoreName, String peerName)
+{
+	remoteScoreName = scoreName;
+	remotePeerName = peerName;
+}
+
 InterprocessConnection* IpcServer::createConnectionObject()
 {
 	Ipc* newConnection = new Ipc();
