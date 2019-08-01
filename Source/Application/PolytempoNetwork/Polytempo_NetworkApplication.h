@@ -33,7 +33,6 @@
 #include "../../Audio+Midi/Polytempo_MidiInput.h"
 #include "../../Misc/Polytempo_Alerts.h"
 
-#define OSC_PORT_TIME_SYNC			47523
 #define OSC_PORT_COMMUNICATION		47522
 
 class Polytempo_NetworkApplication : public JUCEApplication
