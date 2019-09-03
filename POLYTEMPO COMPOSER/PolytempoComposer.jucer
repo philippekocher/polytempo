@@ -53,6 +53,10 @@
       </GROUP>
       <GROUP id="{9034F0B6-8603-FA8F-29E2-97866D416D9E}" name="Views">
         <GROUP id="{79FACF80-572F-CB0F-D005-724E9C6AD232}" name="PolytempoComposer">
+          <FILE id="BQUbRK" name="Polytempo_GraphicExportView.cpp" compile="1"
+                resource="0" file="../Source/Views/PolytempoComposer/Polytempo_GraphicExportView.cpp"/>
+          <FILE id="lQnDf6" name="Polytempo_GraphicExportView.h" compile="0"
+                resource="0" file="../Source/Views/PolytempoComposer/Polytempo_GraphicExportView.h"/>
           <FILE id="EM2jrX" name="Polytempo_ListComponent.cpp" compile="1" resource="0"
                 file="../Source/Views/PolytempoComposer/Polytempo_ListComponent.cpp"/>
           <FILE id="e76fJb" name="Polytempo_ListComponent.h" compile="0" resource="0"

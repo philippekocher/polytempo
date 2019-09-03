@@ -39,7 +39,10 @@ Polytempo_ComposerWindow::Polytempo_ComposerWindow()
     setResizable(true,true);
     setResizeLimits(500, 400, 5000, 5000);
 
-    setContentOwned(mainView = new Polytempo_ComposerMainView(), true);
+    mainView = new Polytempo_ComposerMainView();
+    graphicExportView = new Polytempo_GraphicExportView();
+    
+    setContentNonOwned(mainView, false);
     
     setBounds(50, 50, 800, 500);
     setVisible(true);    
@@ -53,7 +56,7 @@ Polytempo_ComposerWindow::Polytempo_ComposerWindow()
     restoreWindowContentStateFromString(Polytempo_StoredPreferences::getInstance()->getProps().getValue("mainWindowContent"));
 
     // create and manage a MenuBarComponent
-	menuBarModel = new Polytempo_ComposerMenuBarModel();
+	menuBarModel = new Polytempo_ComposerMenuBarModel(this);
 #if !JUCE_MAC
     setMenuBar(menuBarModel);
 #endif
@@ -67,6 +70,7 @@ Polytempo_ComposerWindow::~Polytempo_ComposerWindow()
 {
 	setMenuBar(nullptr);
     mainView = nullptr;
+    graphicExportView = nullptr;
 }
 
 void Polytempo_ComposerWindow::closeButtonPressed()
@@ -75,6 +79,18 @@ void Polytempo_ComposerWindow::closeButtonPressed()
     // ask the app to quit when this happens, but you can change this to do
     // whatever you need.
     JUCEApplication::getInstance()->systemRequestedQuit();
+}
+
+void Polytempo_ComposerWindow::setContentID(contentID newContentID)
+{
+    if (newContentID == mainViewID)
+    {
+        setContentNonOwned(mainView, false);
+    }
+    else if (newContentID == graphicExportViewID)
+    {
+        setContentNonOwned(graphicExportView, false);
+    }
 }
 
 String Polytempo_ComposerWindow::getWindowContentStateAsString()
