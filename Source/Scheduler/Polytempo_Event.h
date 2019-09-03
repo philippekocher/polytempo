@@ -128,8 +128,9 @@ public:
     Polytempo_Event(Polytempo_EventType ty = eventType_None);
     Polytempo_Event(const Polytempo_Event&);
     ~Polytempo_Event();
-    
-    /* factories
+	XmlElement getXml();
+
+	/* factories
      --------------------------------------- */
     static Polytempo_Event* makeEvent(String typeString);
     static Polytempo_Event* makeEvent(Polytempo_EventType type);

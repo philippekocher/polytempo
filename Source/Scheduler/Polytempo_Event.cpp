@@ -52,6 +52,14 @@ Polytempo_Event::~Polytempo_Event()
     if(properties)    properties = nullptr;
 }
 
+XmlElement Polytempo_Event::getXml()
+{
+	XmlElement ret = XmlElement("Event");
+	ret.setAttribute("Type", getOscAddressFromType());
+	properties->copyToXmlAttributes(ret);
+	return ret;
+}
+
 // ----------------------------------------------------
 #pragma mark -
 #pragma mark factories

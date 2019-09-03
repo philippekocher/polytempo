@@ -11,6 +11,7 @@
 #include "JuceHeader.h"
 #include "Polytempo_NetworkInfoView.h"
 #include "../../Network/Polytempo_NetworkSupervisor.h"
+#include "../../Network/Polytempo_TimeProvider.h"
 
 //==============================================================================
 Polytempo_NetworkInfoView::Polytempo_NetworkInfoView()
@@ -24,27 +25,41 @@ Polytempo_NetworkInfoView::~Polytempo_NetworkInfoView()
 void Polytempo_NetworkInfoView::paint (Graphics& g)
 {
 	AttributedString attributedPeers;
-    attributedPeers.append("Network:\n", Font(12.0f, Font::bold));
-	attributedPeers.append(" \n", Font(4.0f, Font::plain));
-	attributedPeers.append(Polytempo_NetworkSupervisor::getInstance()->getAdapterInfo() + "\n\n", Font(12.0f, Font::plain));
     attributedPeers.append("Local:\n", Font(12.0f, Font::bold));
     attributedPeers.append(" \n", Font(4.0f, Font::plain));
-    attributedPeers.append(Polytempo_NetworkSupervisor::getInstance()->getLocalName() + "\n", Font(12.0f, Font::plain));
+    attributedPeers.append(Polytempo_NetworkSupervisor::getInstance()->getDescription() + "\n", Font(12.0f, Font::plain));
 	attributedPeers.append(" \n", Font(12.0f, Font::plain));
-	attributedPeers.append("Connected peers:\n", Font(12, Font::bold));
-	uint32 currentTime = Time::getMillisecondCounter();
-	HashMap < Uuid, Polytempo_PeerInfo >::Iterator it(*Polytempo_NetworkSupervisor::getInstance()->getPeers());
-	while (it.next())
+	
+	if (Polytempo_TimeProvider::getInstance()->isMaster())
 	{
-		Colour peerColor = (currentTime - it.getValue().lastHeartBeat) > 2*NETWORK_SUPERVISOR_PING_INTERVAL
-			? Colours::red
-			: it.getValue().syncState
-				? Colours::green
-				: Colours::orange;
-		attributedPeers.append(" \n", Font(4.0f, Font::plain));
-		attributedPeers.append(it.getValue().name + "\n", Font(12.0f, Font::plain), peerColor);
-	}
+		OwnedArray<Polytempo_PeerInfo> peers;
+		Polytempo_InterprocessCommunication::getInstance()->getClientsInfo(&peers);
 
+		if(peers.size() == 0)
+		{
+			attributedPeers.append("No connected peers", Font(12, Font::plain), Colours::orangered);
+		}
+		else
+		{
+			attributedPeers.append("Connected peers:\n", Font(12, Font::bold));
+			for (Polytempo_PeerInfo* peer : peers)
+			{
+				attributedPeers.append(" \n", Font(4.0f, Font::plain));
+				attributedPeers.append(peer->scoreName + " (" + peer->peerName + ")\n", Font(12.0f, Font::plain), peer->connectionOk ? Colours::darkgreen : Colours::orangered);
+			}
+		}
+	}
+	else
+	{
+		ScopedPointer<Polytempo_PeerInfo> peer = Polytempo_InterprocessCommunication::getInstance()->getMasterInfo();
+
+		if(peer != nullptr)
+		{
+			attributedPeers.append("Connected to Master:\n", Font(12, Font::bold));
+			attributedPeers.append(" \n", Font(4.0f, Font::plain));
+			attributedPeers.append(peer->scoreName + " (" + peer->peerName + ")\n", Font(12.0f, Font::plain), peer->connectionOk ? Colours::darkgreen : Colours::orangered);
+		}
+	}
 	attributedPeers.draw(g, Rectangle<int>(0, 10, getWidth(), getHeight()).toFloat());
 }
 

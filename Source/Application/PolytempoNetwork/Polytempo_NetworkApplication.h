@@ -32,9 +32,7 @@
 #include "../../Data/Polytempo_Score.h"
 #include "../../Audio+Midi/Polytempo_MidiInput.h"
 #include "../../Misc/Polytempo_Alerts.h"
-#include "../../Network/Polytempo_BroadcastWrapper.h"
 
-#define OSC_PORT_TIME_SYNC			47523
 #define OSC_PORT_COMMUNICATION		47522
 
 class Polytempo_NetworkApplication : public JUCEApplication
@@ -44,14 +42,14 @@ public:
     
     const String getApplicationName()       { return ProjectInfo::projectName; }
     const String getApplicationVersion()    { return ProjectInfo::versionString; }
-    bool moreThanOneInstanceAllowed()       { return false; }
+    bool moreThanOneInstanceAllowed()       { return true; }
 
     void initialise(const String& commandLine);
     void shutdown();
     void systemRequestedQuit();
     void applicationShouldQuit();
     bool quitApplication = false;
-    void anotherInstanceStarted(const String& commandLine);
+    void anotherInstanceStarted(const String& commandLine) override;
     
     Polytempo_Score* getScore() { return score; };
     bool scoreFileExists() { return scoreFile.exists(); }
@@ -73,7 +71,6 @@ private:
 private:
 	ScopedPointer<Polytempo_NetworkWindow> mainWindow;
     ScopedPointer<Polytempo_MenuBarModel> menuBarModel;
-    ScopedPointer<Polytempo_BroadcastWrapper> broadcastWrapper;
     ScopedPointer<Polytempo_OSCListener> oscListener;
     ScopedPointer<Polytempo_MidiInput> midiInput;
     ScopedPointer<Polytempo_Score> score;
