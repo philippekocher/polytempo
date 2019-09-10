@@ -76,7 +76,7 @@ StringArray Polytempo_ComposerMenuBarModel::getMenuBarNames()
 #if JUCE_MAC
     const char* const names[] = { "File", "Edit", "View", "Scheduler", /*"Window",*/ "Help", 0 };
 #else
-    const char* const names[] = { "File", "Edit", "View", "Scheduler", /*"Window",*/ "Help", 0 };
+    const char* const names[] = { "PolytempoComposer", "File", "Edit", "View", "Scheduler", /*"Window",*/ "Help", 0 };
 #endif
     
     return StringArray (names);
@@ -87,8 +87,8 @@ PopupMenu Polytempo_ComposerMenuBarModel::getMenuForIndex (int /*menuIndex*/, co
     ApplicationCommandManager* commandManager = &Polytempo_ComposerApplication::getCommandManager();
     PopupMenu menu;
     
-#ifdef WIN32
-    if (menuName == "PolytempoNetwork")
+#if !JUCE_MAC
+    if (menuName == "PolytempoComposer")
     {
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::aboutWindow);
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::preferencesWindow);
