@@ -1,4 +1,6 @@
 #include "Polytempo_GraphicExportPage.h"
+#include "../../Data/Polytempo_Composition.h"
+
 
 Polytempo_GraphicExportPage::Polytempo_GraphicExportPage()
 {
@@ -63,21 +65,34 @@ void Polytempo_GraphicExportViewport::paint(Graphics& g)
 
 void Polytempo_GraphicExportViewport::update()
 {
-    int pageHeight = getLocalBounds().getHeight();
-    int pageWidth = pageHeight * 0.7070707071;
-    
-    viewedComponent->setBounds(0,0,2000,pageHeight);
-
     viewedComponent->removeAllChildren();
     pages.clear();
+    addPage();
 
-    Polytempo_GraphicExportPage *page;
-    for(int i=0; i<1; i++)
+    Polytempo_Composition* composition = Polytempo_Composition::getInstance();
+    int i;
+    for(i=0;i<composition->getNumberOfSequences();i++)
     {
-        pages.add(page = new Polytempo_GraphicExportPage());
-        viewedComponent->addAndMakeVisible(page);
-        page->setBounds(i * (pageWidth + 10),0,pageWidth,pageHeight);
+        Polytempo_Sequence *sequence = composition->getSequence(i);
+        for(Polytempo_Event *event : sequence->getEvents())
+        {
+            DBG(event->getTypeString());
+            DBG(event->getPosition().toString()<<" : "<<event->getTime());
+        }
     }
+}
+
+void Polytempo_GraphicExportViewport::addPage()
+{
+    int pageHeight = getLocalBounds().getHeight();
+    int pageWidth = pageHeight * 0.7070707071;
+
+    Polytempo_GraphicExportPage *page = new Polytempo_GraphicExportPage();
+    
+    page->setBounds(pages.size() * (pageWidth + 10), 0, pageWidth, pageHeight);
+    pages.add(page);
+    viewedComponent->addAndMakeVisible(page);
+    viewedComponent->setBounds(0, 0, pages.size() * (pageWidth + 10), pageHeight);
 }
 
 void Polytempo_GraphicExportViewport::exportImages()

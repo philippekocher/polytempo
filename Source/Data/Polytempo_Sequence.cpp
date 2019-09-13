@@ -421,7 +421,7 @@ void Polytempo_Sequence::buildBeatPattern()
     if(controlPoints.size() == 0)
     {
         addControlPoint(0,0);   // start point
-        addControlPoint(1,1);   // end point
+        addControlPoint(4,1);   // end point
     }
     
     Rational position = 0;
@@ -466,7 +466,7 @@ void Polytempo_Sequence::updateEvents()
         Polytempo_ControlPoint *cp2 = controlPoints[cpIndex+1];
         
         event->setProperty(eventPropertyString_Time, Polytempo_TempoInterpolation::getTime(event->getPosition(), cp1, cp2));
-
+        
         event->setProperty("~sequence", sequenceIndex);
 
         if(event->getType() == eventType_Beat)

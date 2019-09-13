@@ -90,6 +90,7 @@ void Polytempo_ComposerWindow::setContentID(contentID newContentID)
     else if (newContentID == graphicExportViewID)
     {
         setContentNonOwned(graphicExportView, false);
+        graphicExportView->resized();
     }
 }
 

@@ -121,7 +121,8 @@ float Polytempo_TempoInterpolation::getTime(Rational pos, Polytempo_ControlPoint
     // no approximation needed
     if     (pos == cp1->position) return cp1->time;
     else if(pos == cp2->position) return cp2->time;
-    
+    else if(pos > cp2->position)  return NAN;
+        
     // approximation
     t0 = 0;
     incr = 0.5;

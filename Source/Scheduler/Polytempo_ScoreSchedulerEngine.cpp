@@ -58,7 +58,9 @@ void Polytempo_ComposerEngine::run()
     {
         scoreTime += int(scoreTimeIncrement() * tempoFactor);
         
-        while(nextScoreEvent && nextScoreEvent->getTime() <= scoreTime + lookAhead)
+        while(nextScoreEvent &&
+              nextScoreEvent->hasDefinedTime() &&
+              nextScoreEvent->getTime() <= scoreTime + lookAhead)
         {
             // calculate syncTime
             

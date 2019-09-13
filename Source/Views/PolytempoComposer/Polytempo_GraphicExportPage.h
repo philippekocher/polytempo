@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../../POLYTEMPO COMPOSER/JuceLibraryCode/JuceHeader.h"
+#include "../JuceLibraryCode/JuceHeader.h"
 
 
 class Polytempo_GraphicExportPage    : public Component
@@ -27,6 +27,7 @@ public:
     
     void paint (Graphics&);
     void update();
+    void addPage();
     
     void exportImages();
     
