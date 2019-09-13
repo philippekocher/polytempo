@@ -119,10 +119,10 @@ void Polytempo_OSCListener::oscMessageReceived(const OSCMessage & message)
         }
         else window->setFullScreen(true);
     }
-	else if (addressPattern.startsWith("/client/") && Polytempo_TimeProvider::getInstance()->isMaster())
+	else if (addressPattern.matchesWildcard("/*/*", true) && Polytempo_TimeProvider::getInstance()->isMaster())
 	{
 		// parse pattern
-		addressPattern = addressPattern.substring(8);
+		addressPattern = addressPattern.substring(1);
 		String nodeNamePattern = addressPattern.upToFirstOccurrenceOf("/", false, false);
 		String messagePattern = addressPattern.substring(nodeNamePattern.length());
 		Polytempo_InterprocessCommunication::getInstance()->distributeEvent(oscToEvent(message, messagePattern), nodeNamePattern);
