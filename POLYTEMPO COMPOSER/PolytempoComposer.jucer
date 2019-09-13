@@ -53,10 +53,6 @@
       </GROUP>
       <GROUP id="{9034F0B6-8603-FA8F-29E2-97866D416D9E}" name="Views">
         <GROUP id="{79FACF80-572F-CB0F-D005-724E9C6AD232}" name="PolytempoComposer">
-          <FILE id="BQUbRK" name="Polytempo_GraphicExportView.cpp" compile="1"
-                resource="0" file="../Source/Views/PolytempoComposer/Polytempo_GraphicExportView.cpp"/>
-          <FILE id="lQnDf6" name="Polytempo_GraphicExportView.h" compile="0"
-                resource="0" file="../Source/Views/PolytempoComposer/Polytempo_GraphicExportView.h"/>
           <FILE id="EM2jrX" name="Polytempo_ListComponent.cpp" compile="1" resource="0"
                 file="../Source/Views/PolytempoComposer/Polytempo_ListComponent.cpp"/>
           <FILE id="e76fJb" name="Polytempo_ListComponent.h" compile="0" resource="0"
@@ -107,6 +103,14 @@
                 resource="0" file="../Source/Views/PolytempoComposer/Polytempo_TransportComponent.cpp"/>
           <FILE id="IZn7s6" name="Polytempo_TransportComponent.h" compile="0"
                 resource="0" file="../Source/Views/PolytempoComposer/Polytempo_TransportComponent.h"/>
+          <FILE id="BQUbRK" name="Polytempo_GraphicExportView.cpp" compile="1"
+                resource="0" file="../Source/Views/PolytempoComposer/Polytempo_GraphicExportView.cpp"/>
+          <FILE id="lQnDf6" name="Polytempo_GraphicExportView.h" compile="0"
+                resource="0" file="../Source/Views/PolytempoComposer/Polytempo_GraphicExportView.h"/>
+          <FILE id="IiIOYP" name="Polytempo_GraphicExportPage.cpp" compile="1"
+                resource="0" file="../Source/Views/PolytempoComposer/Polytempo_GraphicExportPage.cpp"/>
+          <FILE id="I1gKsK" name="Polytempo_GraphicExportPage.h" compile="0"
+                resource="0" file="../Source/Views/PolytempoComposer/Polytempo_GraphicExportPage.h"/>
         </GROUP>
       </GROUP>
       <GROUP id="{073AE8D7-C8B3-A3FD-E751-5B5FA385BCB9}" name="Data">
