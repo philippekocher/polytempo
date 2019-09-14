@@ -66,8 +66,8 @@ private:
 	Atomic <bool> fullUpdateRequired;
 
 	HashMap < String, Polytempo_GraphicsViewRegion* >* pRegionMap;
-	ScopedPointer<Image> annotationImage;
-	ScopedPointer<Polytempo_GraphicsPalette> palette;
+	std::unique_ptr<Image> annotationImage;
+	std::unique_ptr<Polytempo_GraphicsPalette> palette;
 	Polytempo_GraphicsAnnotation temporaryAnnotation;
 	Point<int> lastPathPoint;
 

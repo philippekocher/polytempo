@@ -55,8 +55,8 @@ private:
     HashMap < String, var > sectionBoundsMap;
     HashMap < String, String > sectionImageIDMap;
     
-    ScopedPointer < Polytempo_Progressbar > progressbar;
-	ScopedPointer < Polytempo_GraphicsAnnotationLayer > annotationLayer;
+    std::unique_ptr < Polytempo_Progressbar > progressbar;
+	std::unique_ptr < Polytempo_GraphicsAnnotationLayer > annotationLayer;
 };
     
 

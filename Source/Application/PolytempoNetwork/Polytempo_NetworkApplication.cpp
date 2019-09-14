@@ -41,18 +41,18 @@ Polytempo_NetworkApplication::Polytempo_NetworkApplication()
 
 void Polytempo_NetworkApplication::initialise(const String&)
 {
-	fileLogger = FileLogger::createDefaultAppLogger("Polytempo Network", "appLog.log", "Polytemp Network Logfile", 10 * 1024 * 1024);
-	Logger::setCurrentLogger(fileLogger);
+	fileLogger.reset(FileLogger::createDefaultAppLogger("Polytempo Network", "appLog.log", "Polytemp Network Logfile", 10 * 1024 * 1024));
+	Logger::setCurrentLogger(fileLogger.get());
 
     // GUI
-    mainWindow = new Polytempo_NetworkWindow();
+    mainWindow.reset(new Polytempo_NetworkWindow());
     
     // look and feel
     lookAndFeelV3.setUsingNativeAlertWindows(true);
     Desktop::getInstance().setDefaultLookAndFeel(&lookAndFeelV3);
     
     // create and manage a MenuBarComponent
-    menuBarModel = new Polytempo_MenuBarModel(mainWindow);
+    menuBarModel.reset(new Polytempo_MenuBarModel(mainWindow.get()));
     
     // use keypresses that arrive in the windows to send out commands
     mainWindow->addKeyListener(commandManager.getKeyMappings());
@@ -62,13 +62,13 @@ void Polytempo_NetworkApplication::initialise(const String&)
     Polytempo_EventScheduler::getInstance()->startThread(5); // priority between 0 and 10
     
     // create network connection
-	oscListener = new Polytempo_OSCListener(OSC_PORT_COMMUNICATION);
+	oscListener.reset(new Polytempo_OSCListener(OSC_PORT_COMMUNICATION));
 	Polytempo_NetworkSupervisor::getInstance()->createSender(OSC_PORT_COMMUNICATION);
 
     // audio and midi
     Polytempo_AudioClick::getInstance();
     Polytempo_MidiClick::getInstance();
-    midiInput = new Polytempo_MidiInput();
+    midiInput.reset(new Polytempo_MidiInput());
     
     // image manager
     Polytempo_ImageManager::getInstance();
@@ -98,8 +98,8 @@ void Polytempo_NetworkApplication::initialise(const String&)
             Polytempo_Score::parse(scoreFile, &newScore);
             if(newScore != nullptr)
             {
-                score = newScore;
-                Polytempo_ScoreScheduler::getInstance()->setScore(score);
+                score.reset(newScore);
+                Polytempo_ScoreScheduler::getInstance()->setScore(score.get());
                 mainWindow->setName(scoreFile.getFileNameWithoutExtension());
     
                 if(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("fullScreen"))
@@ -132,7 +132,7 @@ void Polytempo_NetworkApplication::shutdown()
     for(int i=0;i<num;i++)
     {
         Component *c = Desktop::getInstance().getComponent(i);
-        if(c != mainWindow) delete c;
+        if(c != mainWindow.get()) delete c;
     }
     
     // delete scoped pointers
@@ -235,9 +235,9 @@ void Polytempo_NetworkApplication::newScore()
         return;
     }
     
-    score = new Polytempo_Score();
+    score.reset(new Polytempo_Score());
     score->addSection("sequence");
-    Polytempo_ScoreScheduler::getInstance()->setScore(score);
+    Polytempo_ScoreScheduler::getInstance()->setScore(score.get());
     
     mainWindow->setName("Untitled");
 }
@@ -362,8 +362,8 @@ void Polytempo_NetworkApplication::openScoreFile(File aFile)
 
         DBG("set score");
         scoreFile = newScoreFile;
-        score = newScore;
-        Polytempo_ScoreScheduler::getInstance()->setScore(score);
+        score.reset(newScore);
+        Polytempo_ScoreScheduler::getInstance()->setScore(score.get());
         mainWindow->setName(scoreFile.getFileNameWithoutExtension());
 		
         // add to recent files

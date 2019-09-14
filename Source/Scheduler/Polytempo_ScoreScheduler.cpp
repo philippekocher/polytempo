@@ -44,7 +44,7 @@ juce_ImplementSingleton (Polytempo_ScoreScheduler);
 
 void Polytempo_ScoreScheduler::setEngine(Polytempo_ScoreSchedulerEngine* theEngine)
 {
-    engine = theEngine;
+    engine.reset(theEngine);
     engine->setScheduler(this);
 }
 
@@ -185,9 +185,9 @@ void Polytempo_ScoreScheduler::gotoTime(int time)
     engine->setScoreTime(time);
     
     // update locator in all components
-    ScopedPointer<Polytempo_Event> schedulerTick = Polytempo_Event::makeEvent(eventType_Tick);
+	std::unique_ptr<Polytempo_Event> schedulerTick = std::unique_ptr<Polytempo_Event>(Polytempo_Event::makeEvent(eventType_Tick));
     schedulerTick->setValue(time * 0.001f);
-    Polytempo_EventScheduler::getInstance()->executeEvent(schedulerTick);
+    Polytempo_EventScheduler::getInstance()->executeEvent(schedulerTick.get());
 }
 
 void Polytempo_ScoreScheduler::storeLocator(int loc)

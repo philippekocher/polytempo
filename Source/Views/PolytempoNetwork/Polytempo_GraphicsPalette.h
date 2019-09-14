@@ -38,13 +38,13 @@ private:
 
 private:
 	Polytempo_GraphicsAnnotationLayer* pParent;
-	ScopedPointer<ImageButton> buttonOk;
-	ScopedPointer<ImageButton> buttonCancel;
-	ScopedPointer<ImageButton> buttonColor;
-	ScopedPointer<ImageButton> buttonTextSize;
-	ScopedPointer<ImageButton> buttonSettings;
-	ScopedPointer<ImageButton> buttonDelete;
-	ScopedPointer<ColourSelector> colorSelector;
+	std::unique_ptr<ImageButton> buttonOk;
+	std::unique_ptr<ImageButton> buttonCancel;
+	std::unique_ptr<ImageButton> buttonColor;
+	std::unique_ptr<ImageButton> buttonTextSize;
+	std::unique_ptr<ImageButton> buttonSettings;
+	std::unique_ptr<ImageButton> buttonDelete;
+	std::unique_ptr<ColourSelector> colorSelector;
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_GraphicsPalette)

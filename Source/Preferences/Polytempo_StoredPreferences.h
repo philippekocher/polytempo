@@ -49,8 +49,8 @@ public:
     //Array <Colour> swatchColours;
 
 private:
-    ScopedPointer<PropertiesFile> props;
-    ScopedPointer<PropertiesFile> defaults;
+	std::unique_ptr<PropertiesFile> props;
+	std::unique_ptr<PropertiesFile> defaults;
 };
 
 

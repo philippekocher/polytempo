@@ -21,7 +21,7 @@ Polytempo_GraphicsAnnotationLayer::Polytempo_GraphicsAnnotationLayer(HashMap < S
 	setAlwaysOnTop(true);
 	addKeyListener(this);
 	startTimer(TIMER_ID_REPAINT, MIN_INTERVAL_BETWEEN_REPAINTS_MS);
-	palette = new Polytempo_GraphicsPalette(this);
+	palette.reset(new Polytempo_GraphicsPalette(this));
 
 	Polytempo_GraphicsAnnotationManager::getInstance()->addChangeListener(this);
 }
@@ -63,7 +63,7 @@ void Polytempo_GraphicsAnnotationLayer::resized()
 
 void Polytempo_GraphicsAnnotationLayer::prepareAnnotationLayer()
 {
-	annotationImage = new Image(Image::ARGB, getWidth(), getHeight(), true);
+	annotationImage.reset(new Image(Image::ARGB, getWidth(), getHeight(), true));
 
 	bool anchorFlag = Polytempo_GraphicsAnnotationManager::getInstance()->getAnchorFlag();
 

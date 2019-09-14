@@ -69,7 +69,7 @@ public:
     int getScoreTime();
 
 private:
-    ScopedPointer < Polytempo_ScoreSchedulerEngine > engine;
+	std::unique_ptr < Polytempo_ScoreSchedulerEngine > engine;
     Array < class Polytempo_EventObserver * > observers;
     
     int storedLocator = 0; // milliseconds

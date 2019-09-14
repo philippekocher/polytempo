@@ -1063,28 +1063,28 @@ public:
 
 	void displayIpDetails(int index) const
 	{
-		Polytempo_IPAddress selectedAddress = ipAddresses[index];
+		Polytempo_IPAddress address = ipAddresses[index];
 
 		adapterInfoLabel->setText(
 			"Network type: "
-			+ selectedAddress.addressDescription()
+			+ address.addressDescription()
 			+ "\r\n"
 			+ "IP Address: "
-			+ selectedAddress.ipAddress.toString()
+			+ address.ipAddress.toString()
 			+ "\r\n"
 			+ "Network address: "
-			+ selectedAddress.getNetworkAddress().toString()
+			+ address.getNetworkAddress().toString()
 			+ "\r\n"
 			+ "Subnet mask: "
-			+ selectedAddress.subnetMask.toString()
+			+ address.subnetMask.toString()
 			+ "\r\n"
 			+ "Broadcast address: "
-			+ selectedAddress.getBroadcastAddress().toString()
+			+ address.getBroadcastAddress().toString()
 			+ "\r\n"
 			+ "IP range: "
-			+ selectedAddress.getFirstNetworkAddress().toString()
+			+ address.getFirstNetworkAddress().toString()
 			+ " - "
-			+ selectedAddress.getLastNetworkAddress().toString()
+			+ address.getLastNetworkAddress().toString()
 			+ "\r\n"
 			, sendNotification);
 	}
@@ -1093,7 +1093,7 @@ public:
 		return numRows;
 	}
 
-	void paintRowBackground(Graphics& g, int rowNumber, int width, int height, bool rowIsSelected) override{
+	void paintRowBackground(Graphics& g, int rowNumber, int /*width*/, int /*height*/, bool rowIsSelected) override{
 		const Colour alternateColour(getLookAndFeel().findColour(ListBox::backgroundColourId)
 			.interpolatedWith(getLookAndFeel().findColour(ListBox::textColourId), 0.03f));
 		if (rowIsSelected)
@@ -1102,7 +1102,7 @@ public:
 			g.fillAll(alternateColour);
 	}
 	
-	void paintCell(Graphics& g, int rowNumber, int columnId, int width, int height, bool rowIsSelected) override {
+	void paintCell(Graphics& g, int rowNumber, int columnId, int width, int height, bool /*rowIsSelected*/) override {
 		g.setColour(getLookAndFeel().findColour(ListBox::textColourId));
 		
 		if (rowNumber < ipAddresses.size() && rowNumber >= 0)
