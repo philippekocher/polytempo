@@ -3,14 +3,18 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 
 
-class Polytempo_GraphicExportPage    : public Component
+class Polytempo_GraphicExportPage : public Component
 {
 public:
-    Polytempo_GraphicExportPage();
+    Polytempo_GraphicExportPage(int pageNumber);
     ~Polytempo_GraphicExportPage();
 
     void paint (Graphics&) override;
-    void resized() override;
+//    void resized() override;
+    
+    void drawStaff (int x1, int x2, int y, int numberOfLines, int linesOffset, String name);
+    void drawBarline(int x, int y1, int y2);
+    void drawAuxiliaryLine(int x, int y1, int y2);
 
     void exportImage(String);
 
