@@ -13,13 +13,15 @@ public:
 //    void resized() override;
     
     void drawStaff (int x1, int x2, int y, int numberOfLines, int linesOffset, String name);
-    void drawBarline(int x, int y1, int y2);
+    void drawBarline(int x, int y1, int y2, String timeSignature);
     void drawAuxiliaryLine(int x, int y1, int y2);
+    void drawMarker(String marker, int x, int y);
 
     void exportImage(String);
 
 private:
     ScopedPointer <Image> image;
+    Point<int> markerPos;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_GraphicExportPage)
 };
 

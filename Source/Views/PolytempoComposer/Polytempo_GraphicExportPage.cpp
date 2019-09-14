@@ -47,12 +47,35 @@ void Polytempo_GraphicExportPage::drawStaff(int x, int y, int width, int numberO
         g.drawHorizontalLine(y + (n * linesOffset), x, x + width);
 }
 
-void Polytempo_GraphicExportPage::drawBarline(int x, int y1, int y2)
+void Polytempo_GraphicExportPage::drawBarline(int x, int y1, int y2, String timeSignature)
 {
     Graphics g (*image);
     g.setColour(Colours::black);
 
     g.drawLine(x, y1, x, y2, 3);
+    
+    if(timeSignature.isNotEmpty())
+    {
+        int timeSignatureFontHeight = 80;
+        StringArray tokens;
+        tokens.addTokens(timeSignature, "/", "");
+        tokens.removeEmptyStrings();
+        tokens.trim();
+        
+        g.setFont(timeSignatureFontHeight);
+        g.drawText(tokens[0],
+                   x - 200,
+                   y1 - timeSignatureFontHeight * 1.75,
+                   400,
+                   timeSignatureFontHeight,
+                   Justification::horizontallyCentred, false);
+        g.drawText(tokens[1],
+                   x - 200,
+                   y1 - timeSignatureFontHeight,
+                   400,
+                   timeSignatureFontHeight,
+                   Justification::horizontallyCentred, false);
+    }
 }
 
 void Polytempo_GraphicExportPage::drawAuxiliaryLine(int x, int y1, int y2)
@@ -62,6 +85,19 @@ void Polytempo_GraphicExportPage::drawAuxiliaryLine(int x, int y1, int y2)
     
     g.drawLine(x, y1, x, y2, 1);
 }
+
+void Polytempo_GraphicExportPage::drawMarker(String marker, int x, int y)
+{
+    Graphics g (*image);
+
+    g.setColour(Colours::black);
+    g.setFont(30.0f);
+    if(markerPos == Point<int>(x,y)) markerPos = Point<int>(x, markerPos.y + 25);
+    else                             markerPos = Point<int>(x, y);
+    
+    g.drawText(marker, markerPos.x - 200, markerPos.y, 400, 40, Justification::horizontallyCentred, true);
+}
+
 
 void Polytempo_GraphicExportPage::exportImage(String filepath)
 {
@@ -99,11 +135,16 @@ void Polytempo_GraphicExportViewport::update()
     addPage();
 
     Polytempo_Composition* composition = Polytempo_Composition::getInstance();
-    int sequenceIndex, pageIndex, systemIndex, posX, posY;
+    int pageIndex, sequenceIndex, systemIndex;
+    int beatPatternIndex, beatPatternCounter;
+    Polytempo_BeatPattern *beatPattern;
+    int posX, posY;
     for(sequenceIndex=0;sequenceIndex<composition->getNumberOfSequences();sequenceIndex++)
     {
         pageIndex = 0;
         systemIndex = 0;
+        beatPatternIndex = 0;
+        beatPatternCounter = 0;
         posX = 0;
         
         int marginLeft = 400;
@@ -113,8 +154,8 @@ void Polytempo_GraphicExportViewport::update()
         int systemWidth = 2480 - marginLeft - marginRight;
         int systemHeight = 1500;
         int systemsPerPage = 2;
-        int staffOffset = 300;
-        int lineOffset = 40;
+        int staffOffset = 280;
+        int lineOffset = 15;
         int numberOfLines = 5;
         
         Polytempo_Sequence *sequence = composition->getSequence(sequenceIndex);
@@ -152,9 +193,30 @@ void Polytempo_GraphicExportViewport::update()
             if(event->getType() == eventType_Beat)
             {
                 if(int(event->getProperty(eventPropertyString_Pattern)) < 20)
-                    pages[pageIndex]->drawBarline(posX, posY, posY + (numberOfLines-1) * lineOffset);
+                {
+                    if(beatPatternCounter == 0)
+                    {
+                        beatPattern = sequence->getBeatPattern(beatPatternIndex++);
+                        if(beatPattern != nullptr)
+                        {
+                            beatPatternCounter = beatPattern->getRepeats();
+
+                            pages[pageIndex]->drawBarline(posX, posY, posY + (numberOfLines-1) * lineOffset, beatPattern->getPattern());
+                        }
+                    }
+                    else
+                    {
+                        pages[pageIndex]->drawBarline(posX, posY, posY + (numberOfLines-1) * lineOffset, String());
+                    }
+                    beatPatternCounter--;
+
+                }
                 else
                     pages[pageIndex]->drawAuxiliaryLine(posX, posY, posY + (numberOfLines-1) * lineOffset);
+            }
+            else if(event->getType() == eventType_Marker)
+            {
+                pages[pageIndex]->drawMarker(event->getValue().toString(), posX, posY + (numberOfLines-1) * lineOffset);
             }
         }
         
