@@ -33,7 +33,7 @@
 
 Polytempo_OSCListener::Polytempo_OSCListener(int port) : m_Port(port)
 {
-	oscReceiver = new OSCReceiver();
+	oscReceiver.reset(new OSCReceiver());
 
 	if (!oscReceiver->connect(m_Port))
 		Polytempo_Alert::show("Error", "Can't bind to port: " + String(m_Port) + "\nProbably there is another socket already bound to this port");
@@ -46,35 +46,46 @@ Polytempo_OSCListener::~Polytempo_OSCListener()
 	oscReceiver = nullptr;
 }
 
+Polytempo_Event* Polytempo_OSCListener::oscToEvent(const OSCMessage& message, String addressPattern) const
+{
+	std::unique_ptr<Array<var>> messages = std::unique_ptr<Array<var>>{ new Array<var>() };
+	const OSCArgument* argumentIterator = message.begin();
+
+	DBG("osc: " << addressPattern);
+
+	while (argumentIterator != message.end())
+	{
+		if ((*argumentIterator).isString())
+			messages->add(var(String((argumentIterator)->getString())));
+		else if ((*argumentIterator).isInt32())
+			messages->add(var(int32((argumentIterator)->getInt32())));
+		else if ((*argumentIterator).isFloat32())
+			messages->add(var(float((argumentIterator)->getFloat32())));
+		else if ((*argumentIterator).isBlob())
+		DBG("<blob>");
+		else
+		DBG("<unknown>");
+
+		argumentIterator++;
+	}
+
+	return Polytempo_Event::makeEvent(addressPattern, *messages);
+}
+
 void Polytempo_OSCListener::oscMessageReceived(const OSCMessage & message)
 {
 	String addressPattern = message.getAddressPattern().toString();
-	OSCArgument* argumentIterator = message.begin();
+	const OSCArgument* argumentIterator = message.begin();
 
-	if (addressPattern == "/node")
+	if (addressPattern == "/masteradvertise")
 	{
 		Uuid senderId = Uuid((argumentIterator++)->getString());		
 		if (senderId == Polytempo_NetworkSupervisor::getInstance()->getUniqueId())
 			return;
 
 		String argIp = (argumentIterator++)->getString();
-		String argName = (argumentIterator++)->getString();
 		
-		bool isMaster = false;
-		if (argumentIterator && (*argumentIterator).isInt32())
-			isMaster = (bool)(argumentIterator++)->getInt32();
-
-		bool syncOk = false;
-		if (argumentIterator && (*argumentIterator).isInt32())
-		{
-			uint32 localSyncTime;
-			bool syncTimeValid = Polytempo_TimeProvider::getInstance()->getSyncTime(&localSyncTime);
-			uint32 safeTimeToCheck = uint32((argumentIterator++)->getInt32());
-			syncOk = syncTimeValid && safeTimeToCheck >= localSyncTime;
-		}
-
-		Polytempo_NetworkSupervisor::getInstance()->handlePeer(senderId, argIp, argName, syncOk);
-		Polytempo_TimeProvider::getInstance()->setRemoteMasterPeer(argIp, senderId, isMaster);
+		Polytempo_TimeProvider::getInstance()->setRemoteMasterPeer(argIp, senderId);
 	}
 
 #ifdef POLYTEMPO_NETWORK
@@ -108,32 +119,20 @@ void Polytempo_OSCListener::oscMessageReceived(const OSCMessage & message)
         }
         else window->setFullScreen(true);
     }
+	else if (addressPattern.matchesWildcard("/*/*", true) && Polytempo_TimeProvider::getInstance()->isMaster())
+	{
+		// parse pattern
+		addressPattern = addressPattern.substring(1);
+		String nodeNamePattern = addressPattern.upToFirstOccurrenceOf("/", false, false);
+		String messagePattern = addressPattern.substring(nodeNamePattern.length());
+		Polytempo_InterprocessCommunication::getInstance()->distributeEvent(oscToEvent(message, messagePattern), nodeNamePattern);
+	}
 #endif
 	else
 	{
-		ScopedPointer<Array<var>> messages = new Array<var>();
+		Polytempo_Event* event = oscToEvent(message, addressPattern);
 
-		DBG("osc: " << addressPattern);
-
-		while (argumentIterator != message.end())
-		{
-			if ((*argumentIterator).isString())
-				messages->add(var(String((argumentIterator)->getString())));
-			else if ((*argumentIterator).isInt32())
-				messages->add(var(int32((argumentIterator)->getInt32())));
-			else if ((*argumentIterator).isFloat32())
-				messages->add(var(float((argumentIterator)->getFloat32())));
-			else if ((*argumentIterator).isBlob())
-				DBG("<blob>");
-			else
-				DBG("<unknown>");
-
-			argumentIterator++;
-		}
-
-		Polytempo_Event* event = Polytempo_Event::makeEvent(addressPattern, *messages);
-        
-        if(event->getType() == eventType_None)
+		if(event->getType() == eventType_None)
         {
             DBG("--unknown");
             delete event;

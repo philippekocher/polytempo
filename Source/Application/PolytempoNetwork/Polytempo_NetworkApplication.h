@@ -32,9 +32,7 @@
 #include "../../Data/Polytempo_Score.h"
 #include "../../Audio+Midi/Polytempo_MidiInput.h"
 #include "../../Misc/Polytempo_Alerts.h"
-#include "../../Network/Polytempo_BroadcastWrapper.h"
 
-#define OSC_PORT_TIME_SYNC			47523
 #define OSC_PORT_COMMUNICATION		47522
 
 class Polytempo_NetworkApplication : public JUCEApplication
@@ -44,18 +42,18 @@ public:
     
     const String getApplicationName()       { return ProjectInfo::projectName; }
     const String getApplicationVersion()    { return ProjectInfo::versionString; }
-    bool moreThanOneInstanceAllowed()       { return false; }
+    bool moreThanOneInstanceAllowed()       { return true; }
 
     void initialise(const String& commandLine);
     void shutdown();
     void systemRequestedQuit();
     void applicationShouldQuit();
     bool quitApplication = false;
-    void anotherInstanceStarted(const String& commandLine);
+    void anotherInstanceStarted(const String& commandLine) override;
     
-    Polytempo_Score* getScore() { return score; };
+    Polytempo_Score* getScore() { return score.get(); };
     bool scoreFileExists() { return scoreFile.exists(); }
-    Polytempo_NetworkWindow* getMainWindow() { return mainWindow; }
+    Polytempo_NetworkWindow* getMainWindow() { return mainWindow.get(); }
     
     void unsavedChangesAlert(Polytempo_YesNoCancelAlert::callbackTag);
     void newScore();
@@ -71,16 +69,15 @@ private:
 	void saveAs(File targetFile);
 
 private:
-	ScopedPointer<Polytempo_NetworkWindow> mainWindow;
-    ScopedPointer<Polytempo_MenuBarModel> menuBarModel;
-    ScopedPointer<Polytempo_BroadcastWrapper> broadcastWrapper;
-    ScopedPointer<Polytempo_OSCListener> oscListener;
-    ScopedPointer<Polytempo_MidiInput> midiInput;
-    ScopedPointer<Polytempo_Score> score;
-	ScopedPointer<FileLogger> fileLogger;
+	std::unique_ptr<Polytempo_NetworkWindow> mainWindow;
+	std::unique_ptr<Polytempo_MenuBarModel> menuBarModel;
+	std::unique_ptr<Polytempo_OSCListener> oscListener;
+	std::unique_ptr<Polytempo_MidiInput> midiInput;
+	std::unique_ptr<Polytempo_Score> score;
+	std::unique_ptr<FileLogger> fileLogger;
 
 #ifdef JUCE_ANDROID
-	ScopedPointer<FileChooser> fc;
+	std::unique_ptr<FileChooser> fc;
 #endif
 
     ApplicationCommandManager commandManager;

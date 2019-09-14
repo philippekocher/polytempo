@@ -14,8 +14,7 @@
 class Polytempo_PeerInfo
 {
 public:
-	String	ip;
-	String	name;
-	uint32	lastHeartBeat;
-	bool	syncState;
+	String	scoreName;
+	String	peerName;
+	bool	connectionOk;
 };

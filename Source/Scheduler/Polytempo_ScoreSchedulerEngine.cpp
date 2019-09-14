@@ -117,8 +117,8 @@ void Polytempo_NetworkEngine::setScoreTime(int time)
     score->setTime(time, &events, &waitBeforeStart);
     
     Polytempo_EventScheduler *scheduler = Polytempo_EventScheduler::getInstance();
-	ScopedPointer<Polytempo_Event> clearAllEvent = Polytempo_Event::makeEvent(eventType_ClearAll);
-    scheduler->executeEvent(clearAllEvent);
+	std::unique_ptr<Polytempo_Event> clearAllEvent = std::unique_ptr<Polytempo_Event>(Polytempo_Event::makeEvent(eventType_ClearAll));
+    scheduler->executeEvent(clearAllEvent.get());
     
     for(int i=0;i<events.size();i++)
     {

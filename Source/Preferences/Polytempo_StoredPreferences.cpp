@@ -29,7 +29,7 @@
 //==============================================================================
 Polytempo_StoredPreferences::Polytempo_StoredPreferences()
 {
-    defaults = (PropertiesFile *) new Polytempo_DefaultPreferences();
+    defaults.reset((PropertiesFile *) new Polytempo_DefaultPreferences());
     flush();
 }
 
@@ -63,8 +63,8 @@ void Polytempo_StoredPreferences::flush()
         options.filenameSuffix       = "xml";
         options.osxLibrarySubFolder  = "Application Support";
 
-        props = new PropertiesFile(options);
-        props->setFallbackPropertySet(defaults);
+        props.reset(new PropertiesFile(options));
+        props->setFallbackPropertySet(defaults.get());
     }
 
     // recent files

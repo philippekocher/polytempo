@@ -63,7 +63,7 @@ void Polytempo_Progressbar::paint(Graphics &g)
     g.fillRect(bounds);
 }
 
-void Polytempo_Progressbar::setText(String text_)      { text = new String(text_); }
+void Polytempo_Progressbar::setText(String text_)      { text.reset(new String(text_)); }
 void Polytempo_Progressbar::setTime(int time_)         { time = time_; }
 void Polytempo_Progressbar::setDuration(float duration_) { duration = duration_; }
 

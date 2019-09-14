@@ -26,9 +26,9 @@
 #define __Polytempo_NetworkSupervisor__
 
 #include "../Scheduler/Polytempo_EventObserver.h"
-#include "Polytempo_Socket.h"
-#include "Polytempo_BroadcastWrapper.h"
 #include "Polytempo_PeerInfo.h"
+#include "Polytempo_IPAddress.h"
+
 #define NETWORK_SUPERVISOR_PING_INTERVAL	1000
 
 class Polytempo_NetworkSupervisor : public Timer,
@@ -42,33 +42,28 @@ public:
 
 	void timerCallback() override;
 
-	static String getAdapterInfo();
-    String getLocalName() const;
-    HashMap <Uuid, Polytempo_PeerInfo>* getPeers() const;
-    void createSocket(int port);
-    void setComponent(Component *aComponent);
-	void setBroadcastSender(Polytempo_BroadcastWrapper* pBroadcastWrapper);
-    void handlePeer(Uuid id, String ip, String name, bool syncOk) const;
+	String getDescription() const;
+	String getScoreName() const; 
+	String getPeerName() const;
 
+    void createSender(int port);
+    void setComponent(Component *aComponent);
+	
     void eventNotification(Polytempo_Event *event) override;
 	Uuid getUniqueId();
-	void manualConnect(String ip);
-	void unicastFlood();
+	void unicastFlood(Polytempo_IPAddress ownIp);
 
 private:
-	OSCMessage* createNodeMessage();
+	std::unique_ptr<OSCMessage> createAdvertiseMessage(String ownIp);
 
 	Uuid uniqueId = nullptr;
-    ScopedPointer<Polytempo_Socket> socket;
+	std::unique_ptr<OSCSender> oscSender;
     Component *component;
     
-    ScopedPointer < String > localName;
-	ScopedPointer < String > nodeName;
+	std::unique_ptr < String > localName;
+	std::unique_ptr < String > nodeName;
 
-    ScopedPointer < HashMap < Uuid, Polytempo_PeerInfo > > connectedPeersMap;
-
-	Polytempo_BroadcastWrapper* pBroadcastWrapper;
-	int currentPort;
+    int currentPort;
 };
 
 

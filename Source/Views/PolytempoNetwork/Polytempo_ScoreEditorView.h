@@ -31,7 +31,7 @@ public:
     
 private:
     CodeDocument codeDocument;
-    ScopedPointer<CodeEditorComponent> editor;
+	std::unique_ptr<CodeEditorComponent> editor;
 
     Polytempo_Score *score;
 };

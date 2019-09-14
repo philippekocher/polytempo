@@ -32,8 +32,8 @@ class SineWaveSound : public SynthesiserSound
 public:
     SineWaveSound()     {}
     
-    bool appliesToNote (int /*midiNoteNumber*/)     { return true; }
-    bool appliesToChannel (int /*midiChannel*/)     { return true; }
+    bool appliesToNote (int /*midiNoteNumber*/) override { return true; }
+    bool appliesToChannel (int /*midiChannel*/) override { return true; }
 };
 
 
@@ -41,13 +41,13 @@ class SineWaveVoice : public SynthesiserVoice
 {
 public:
     SineWaveVoice()
-    : angleDelta (0.0),
-    tailOff (0.0)
-    {}
-    
-    bool canPlaySound(SynthesiserSound* sound)
+		: currentAngle(0), angleDelta(0.0), level(0), tailOff(0.0)
+	{
+	}
+
+    bool canPlaySound(SynthesiserSound* sound) override
     {
-        return dynamic_cast <SineWaveSound*> (sound) != 0;
+        return dynamic_cast <SineWaveSound*> (sound) != nullptr;
     }
     
     void setChannel(int ch)
@@ -57,7 +57,7 @@ public:
     }
     
     void startNote(int midiNoteNumber, float velocity,
-                   SynthesiserSound* /*sound*/, int /*currentPitchWheelPosition*/)
+                   SynthesiserSound* /*sound*/, int /*currentPitchWheelPosition*/) override
     {
         currentAngle = 0.0;
         level = velocity * 0.15;
@@ -69,19 +69,19 @@ public:
         angleDelta = cyclesPerSample * 2.0 * double_Pi;
     }
     
-    void stopNote (float /*velocity*/, bool /*allowTailOff*/)
+    void stopNote (float /*velocity*/, bool /*allowTailOff*/) override
     {
         if (tailOff == 0.0) tailOff = 1.0;
         // we only need to begin a tail-off if it's not already doing so
     }
     
-    void pitchWheelMoved (int /*newValue*/)
+    void pitchWheelMoved (int /*newValue*/) override
     {}
     
-    void controllerMoved (int /*controllerNumber*/, int /*newValue*/)
+    void controllerMoved (int /*controllerNumber*/, int /*newValue*/) override
     {}
     
-    void renderNextBlock(AudioSampleBuffer& outputBuffer, int startSample, int numSamples)
+    void renderNextBlock(AudioSampleBuffer& outputBuffer, int startSample, int numSamples) override
     {
         if (angleDelta != 0.0)
         {
@@ -144,15 +144,15 @@ public:
         synth.addSound(new SineWaveSound());
     }
     
-    void prepareToPlay (int /*samplesPerBlockExpected*/, double sampleRate)
+    void prepareToPlay (int /*samplesPerBlockExpected*/, double sampleRate) override
     {
         synth.setCurrentPlaybackSampleRate(sampleRate);
     }
     
-    void releaseResources()
+    void releaseResources() override
     {}
     
-    void getNextAudioBlock(const AudioSourceChannelInfo& bufferToFill)
+    void getNextAudioBlock(const AudioSourceChannelInfo& bufferToFill) override
     {
         // the synth adds its output to the audio buffer, so we have to clear it first
         bufferToFill.clearActiveBufferRegion();
@@ -167,11 +167,11 @@ public:
 Polytempo_AudioClick::Polytempo_AudioClick()
 :audioDeviceManager(Polytempo_AudioDeviceManager::getSharedAudioDeviceManager())
 {
-    synthAudioSource = new SynthAudioSource(keyboardState, synth);
-    audioSourcePlayer = new AudioSourcePlayer();
-    audioSourcePlayer->setSource(synthAudioSource);
+    synthAudioSource.reset(new SynthAudioSource(keyboardState, synth));
+    audioSourcePlayer.reset(new AudioSourcePlayer());
+    audioSourcePlayer->setSource(synthAudioSource.get());
     
-    audioDeviceManager.addAudioCallback(audioSourcePlayer);
+    audioDeviceManager.addAudioCallback(audioSourcePlayer.get());
     
     // add one voice to our synth
     synth.addVoice(new SineWaveVoice());
@@ -187,7 +187,7 @@ Polytempo_AudioClick::Polytempo_AudioClick()
 Polytempo_AudioClick::~Polytempo_AudioClick()
 {
     audioSourcePlayer->setSource(0);
-    audioDeviceManager.removeAudioCallback(audioSourcePlayer);
+    audioDeviceManager.removeAudioCallback(audioSourcePlayer.get());
     audioDeviceManager.closeAudioDevice();
     
     audioSourcePlayer = nullptr;

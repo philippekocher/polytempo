@@ -40,13 +40,13 @@ Polytempo_NetworkWindow::Polytempo_NetworkWindow()
     setResizable(true, true);
     setResizeLimits(800, 450, 99999, 99999);
 
-    mainView = new Polytempo_NetworkMainView();
-    pageEditorView = new Polytempo_PageEditorView();
-    regionEditorView = new Polytempo_RegionEditorView();
-    scoreEditorView = new Polytempo_ScoreEditorView();
+    mainView.reset(new Polytempo_NetworkMainView());
+    pageEditorView.reset(new Polytempo_PageEditorView());
+    regionEditorView.reset(new Polytempo_RegionEditorView());
+    scoreEditorView.reset(new Polytempo_ScoreEditorView());
 
     // sets the main content component for the window
-    setContentNonOwned(mainView, false);
+    setContentNonOwned(mainView.get(), false);
 
 #if defined JUCE_ANDROID || defined JUCE_IOS
     setFullScreen(true);
@@ -117,21 +117,21 @@ void Polytempo_NetworkWindow::performSetContentID()
     if (currentContentID == pageEditorViewID)
     {
         pageEditorView->refresh();
-        setContentNonOwned(pageEditorView, false);
+        setContentNonOwned(pageEditorView.get(), false);
     }
     else if (currentContentID == regionEditorViewID)
     {
         regionEditorView->refresh();
-        setContentNonOwned(regionEditorView, false);
+        setContentNonOwned(regionEditorView.get(), false);
     }
     else if (currentContentID == scoreEditorViewID)
     {
         scoreEditorView->refresh();
-        setContentNonOwned(scoreEditorView, false);
+        setContentNonOwned(scoreEditorView.get(), false);
     }
     else
     {
-        setContentNonOwned(mainView, false);
+        setContentNonOwned(mainView.get(), false);
 
         // apply all changes that should be visible in the main view
         Polytempo_ImageManager::getInstance()->deleteAll();
@@ -147,10 +147,10 @@ int Polytempo_NetworkWindow::getContentID()
 
 Component* Polytempo_NetworkWindow::getContentComponent()
 {
-    if(currentContentID == mainViewID) return mainView;
-    if(currentContentID == pageEditorViewID)  return pageEditorView;
-    if(currentContentID == regionEditorViewID)  return regionEditorView;
-    if(currentContentID == scoreEditorViewID)  return scoreEditorView;
+    if(currentContentID == mainViewID) return mainView.get();
+    if(currentContentID == pageEditorViewID)  return pageEditorView.get();
+    if(currentContentID == regionEditorViewID)  return regionEditorView.get();
+    if(currentContentID == scoreEditorViewID)  return scoreEditorView.get();
 
     return nullptr;
 }

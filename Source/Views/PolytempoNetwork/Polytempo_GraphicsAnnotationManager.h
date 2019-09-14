@@ -41,11 +41,11 @@ public:
 private:
 	Polytempo_GraphicsAnnotationManager() : showAnchorPoints(false), annotationPending(false), pCurrentPendingAnnotationLyer(nullptr)
 	{
-	};
+	}
 
 private:
 	OwnedArray<Polytempo_GraphicsAnnotationSet> annotationSets;
-	ScopedPointer<File> currentDirectory;
+	std::unique_ptr<File> currentDirectory;
 	String currentScoreName;
 	bool showAnchorPoints;
 	bool annotationPending;

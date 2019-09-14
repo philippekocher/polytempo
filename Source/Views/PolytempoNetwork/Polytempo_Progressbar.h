@@ -44,7 +44,7 @@ public:
 
     
 private:
-    ScopedPointer < String > text;
+    std::unique_ptr < String > text;
     int   time;
     float duration, elapsedTime;
     OwnedArray < class Rectangle<float> > regionBounds;

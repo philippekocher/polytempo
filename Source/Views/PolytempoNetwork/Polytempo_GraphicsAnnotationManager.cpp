@@ -85,7 +85,7 @@ void Polytempo_GraphicsAnnotationManager::initialize(String folder, String score
 	annotationSets.clear();
 
 	annotationPending = false;
-	currentDirectory = new File(folder);
+	currentDirectory.reset(new File(folder));
 	currentScoreName = scoreName;
 
 	if (!currentDirectory->exists())
