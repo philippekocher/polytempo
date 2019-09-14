@@ -125,10 +125,12 @@ Polytempo_GraphicsAnnotationSettingsDialog::Polytempo_GraphicsAnnotationSettings
 	table.getHeader().resizeAllColumnsToFit(getWidth());
 	numRows = pAnnotationSet->size();
 	
-	addAndMakeVisible(addLayerBtn = new TextButton("Add layer"));
+	addLayerBtn.reset(new TextButton("Add layer"));
+	addAndMakeVisible(addLayerBtn.get());
 	addLayerBtn->addListener(this);
 
-	addAndMakeVisible(showAnchorPointsToggle = new ToggleButton("Show anchor points"));
+	showAnchorPointsToggle.reset(new ToggleButton("Show anchor points"));
+	addAndMakeVisible(showAnchorPointsToggle.get());
 	showAnchorPointsToggle->setToggleState(Polytempo_GraphicsAnnotationManager::getInstance()->getAnchorFlag(), dontSendNotification);
 	showAnchorPointsToggle->addListener(this);
 }
@@ -270,13 +272,13 @@ void Polytempo_GraphicsAnnotationSettingsDialog::paintCell(Graphics& g, int /*ro
 
 void Polytempo_GraphicsAnnotationSettingsDialog::buttonClicked(Button* btn)
 {
-	if(btn == addLayerBtn)
+	if(btn == addLayerBtn.get())
 	{
 		Polytempo_GraphicsAnnotationManager::getInstance()->createAndAddNewLayer(false);
 		numRows = pAnnotationSet->size();
 		table.updateContent();
 	}
-	if(btn == showAnchorPointsToggle)
+	if(btn == showAnchorPointsToggle.get())
 	{
 		Polytempo_GraphicsAnnotationManager::getInstance()->setAnchorFlag(showAnchorPointsToggle->getToggleState());
 	}

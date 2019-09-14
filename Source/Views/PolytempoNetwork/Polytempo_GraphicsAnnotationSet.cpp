@@ -87,8 +87,8 @@ void Polytempo_GraphicsAnnotationSet::loadFromFile()
 	if (!file.exists())
 		return;
 
-	ScopedPointer<XmlDocument> xmlDoc = new XmlDocument(file);
-	ScopedPointer<XmlElement> root = xmlDoc->getDocumentElement();
+	std::unique_ptr<XmlDocument> xmlDoc = std::make_unique<XmlDocument>(file);
+	std::unique_ptr<XmlElement> root = xmlDoc->getDocumentElement();
 	if (root->getTagName() != XML_TAG_ROOT)
 		return;
 		
@@ -133,7 +133,7 @@ String Polytempo_GraphicsAnnotationSet::getFileName(String newLayerName) const
 bool Polytempo_GraphicsAnnotationSet::SaveToFile()
 {
 	File file = File(getFileName());
-	ScopedPointer<XmlElement> xmlMain = new XmlElement(XML_TAG_ROOT);
+	std::unique_ptr<XmlElement> xmlMain = std::make_unique<XmlElement>(XML_TAG_ROOT);
 	xmlMain->setAttribute(XML_ATTRIBUTE_SCORENAME, scoreName);
 	xmlMain->setAttribute(XML_ATTRIBUTE_LAYERNAME, annotationLayerName);
 	xmlMain->setAttribute(XML_ATTRIBUTE_SHOW, show);
@@ -155,7 +155,7 @@ bool Polytempo_GraphicsAnnotationSet::SaveToFile()
 	}
 	xmlMain->addChildElement(xmlAnnotations);
 
-	String xmlDocStr = xmlMain->createDocument("");
+	String xmlDocStr = xmlMain->toString();
 	file.deleteFile();
 	Result result = file.create();
 	if (result.failed())

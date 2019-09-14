@@ -25,15 +25,14 @@
 #include "Polytempo_GraphicsView.h"
 #include "Polytempo_ImageManager.h"
 #include "../../Preferences/Polytempo_StoredPreferences.h"
-#include "../../Misc/Polytempo_Alerts.h"
 
 
 Polytempo_GraphicsView::Polytempo_GraphicsView()
 {
     setOpaque (true);
-	annotationLayer = new Polytempo_GraphicsAnnotationLayer(&regionsMap);
+	annotationLayer.reset(new Polytempo_GraphicsAnnotationLayer(&regionsMap));
 	annotationLayer->setVisible(true);
-	addChildComponent(annotationLayer);
+	addChildComponent(annotationLayer.get());
 }
 
 Polytempo_GraphicsView::~Polytempo_GraphicsView()

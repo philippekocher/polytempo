@@ -54,7 +54,7 @@ public:
     }
 };
 
-void Polytempo_Score_Section::sort() const
+void Polytempo_Score_Section::sort()
 {
 	Polytempo_EventComparator sorter;
 	events.sort(sorter, true); // true = retain order of equal elements
@@ -65,10 +65,10 @@ Polytempo_Score::Polytempo_Score()
     nextEventIndex = 0;
     currentSectionIndex = -1;
     
-    sectionMap = new StringArray();
+    sectionMap.reset(new StringArray());
     
     // add "init" section
-    initSection = new Polytempo_Score_Section();
+    initSection.reset(new Polytempo_Score_Section());
 }
 
 Polytempo_Score::~Polytempo_Score()
@@ -90,11 +90,11 @@ bool Polytempo_Score::isDirty()
 void Polytempo_Score::clear(bool clearInit)
 {
     sections.clear();
-    sectionMap = new StringArray();
+    sectionMap.reset(new StringArray());
     currentSectionIndex = -1;
     
     if(clearInit)
-        initSection = new Polytempo_Score_Section();
+        initSection.reset(new Polytempo_Score_Section());
 }
 
 void Polytempo_Score::addEvent(Polytempo_Event *event, bool addToInit)
@@ -356,7 +356,7 @@ bool Polytempo_Score::getMarkerForTime(int time, String* marker)
 
 Polytempo_Score_Section* Polytempo_Score::getInitSection()
 {
-    return initSection;
+    return initSection.get();
 }
 
 OwnedArray < Polytempo_Event >* Polytempo_Score::getInitEvents()
@@ -405,7 +405,7 @@ String Polytempo_Score::getJsonString()
         var jsonSection1, jsonSection2;
         Polytempo_Score_Section *section;
         
-        if(i == -1) section = initSection;
+        if(i == -1) section = initSection.get();
         else        section = sections[i];
         
         for(int j=0;j<section->events.size();j++)

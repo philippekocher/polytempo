@@ -187,7 +187,7 @@ private:
     void showMenu();
 
     TreeView *tree;
-    ScopedPointer < TreeItem > rootItem;
+	std::unique_ptr < TreeItem > rootItem;
     TreeItem *selectedItem;
     Polytempo_Event *selectedEvent;
     var imageID;
@@ -218,7 +218,7 @@ private:
     Label *sectionInstancesLabel;
     Polytempo_SectionInstancesViewport* sectionInstancesViewport;
     
-    ScopedPointer<FileChooser> fc;
+	std::unique_ptr<FileChooser> fc;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_PageEditorView)
 };

@@ -47,10 +47,10 @@ public:
     
     ~ColourChangeButton() {}
     
-    void clicked()
+    void clicked() override
     {
 #if JUCE_MODAL_LOOPS_PERMITTED
-        colourSelector = new ColourSelector(juce::ColourSelector::showColourAtTop | juce::ColourSelector::showSliders | juce::ColourSelector::showColourspace);
+        colourSelector.reset(new ColourSelector(juce::ColourSelector::showColourAtTop | juce::ColourSelector::showSliders | juce::ColourSelector::showColourspace));
         
         colourSelector->setCurrentColour(findColour(TextButton::buttonColourId));
         colourSelector->addChangeListener(this);
@@ -63,7 +63,7 @@ public:
 #endif
     }
     
-    void changeListenerCallback(ChangeBroadcaster* source)
+    void changeListenerCallback(ChangeBroadcaster* source) override
     {
         ColourSelector* cs = dynamic_cast <ColourSelector*>(source);
         
@@ -71,7 +71,7 @@ public:
     }
     
 private:
-    ScopedPointer<ColourSelector> colourSelector;
+	std::unique_ptr<ColourSelector> colourSelector;
 
 };
 
@@ -385,7 +385,7 @@ ChangeListener
     
     AudioDeviceManager& audioDeviceManager;
     AudioDeviceSelectorComponent* deviceSelector;
-    ScopedPointer<XmlElement> audioDeviceManagerState;
+	std::unique_ptr<XmlElement> audioDeviceManagerState;
     
 public:
     AudioPreferencesPage()
@@ -628,7 +628,7 @@ public:
         if(source == &audioDeviceManager)
         {
             audioDeviceManagerState = audioDeviceManager.createStateXml();
-            Polytempo_StoredPreferences::getInstance()->getProps().setValue("audioDevice", audioDeviceManagerState);
+            Polytempo_StoredPreferences::getInstance()->getProps().setValue("audioDevice", audioDeviceManagerState.get());
         }
     }
     
@@ -956,26 +956,29 @@ public:
 #pragma mark -
 #pragma mark Network Preferences Page
 
-class NetworkPreferencesPage : public Component, Button::Listener, ComboBox::Listener
+class NetworkPreferencesPage : public Component, Button::Listener, TableListBoxModel
 {
-	Label*  ipListLabel;
-	ComboBox* ipList;
+	TableListBox* ipList;
 	Button* refreshButton;
 	Button* manualConnectButton;
-	Button* floodButton;
 	Label*	adapterInfoLabel;
 	Array <Polytempo_IPAddress> ipAddresses;
+	Polytempo_IPAddress selectedAddress;
+	int numRows = 0;
+
+	const static int ColumnIdIp = 1;
+	const static int ColumnIdRange = 2;
+	const static int ColumnIdType = 3;
 
 public:
 	NetworkPreferencesPage()
 	{
-		addAndMakeVisible(ipListLabel = new Label(String(), L"IP-Address"));
-		ipListLabel->setFont(Font(15.0000f, Font::plain));
-		ipListLabel->setJustificationType(Justification::centredLeft);
-		ipListLabel->setEditable(false, false, false);
+		addAndMakeVisible(ipList = new TableListBox());
+		ipList->setModel(this);
+		ipList->getHeader().addColumn("IP-Address", ColumnIdIp, 110);
+		ipList->getHeader().addColumn("IP-Range", ColumnIdRange, 220);
+		ipList->getHeader().addColumn("Type", ColumnIdType, 130);
 		
-		addAndMakeVisible(ipList = new ComboBox(String()));
-		ipList->addListener(this);
 		updateIpList();
 
 		addAndMakeVisible(refreshButton = new TextButton(String()));
@@ -986,18 +989,13 @@ public:
 		manualConnectButton->setButtonText(L"Manual connect");
 		manualConnectButton->addListener(this);
 
-		addAndMakeVisible(floodButton = new TextButton(String()));
-		floodButton->setButtonText(L"Unicast Flood");
-		floodButton->addListener(this);
-
 		addAndMakeVisible(adapterInfoLabel = new Label(String(), String()));
 		adapterInfoLabel->setFont(Font(15.0000f, Font::plain));
 		adapterInfoLabel->setJustificationType(Justification::centredLeft);
 		adapterInfoLabel->setEditable(false, false, false);
 
 		manualConnectButton->setEnabled(!Polytempo_TimeProvider::getInstance()->isMaster());
-		floodButton->setEnabled(Polytempo_TimeProvider::getInstance()->isMaster());
-
+	
 		updateIpList();
 	}
 
@@ -1007,28 +1005,19 @@ public:
 	}
 
 	void updateIpList()
-	{		
-		Polytempo_IPAddress selectedIp = ipAddresses[ipList->getSelectedId() - 1];
-		ipList->clear();
+	{	
+		numRows = 0;
 		Polytempo_NetworkInterfaceManager::getInstance()->getAvailableIpAddresses(ipAddresses);
-		for (int i = 0; i < ipAddresses.size(); i++)
-			ipList->addItem(ipAddresses[i].addressDescription() + ": " + ipAddresses[i].ipAddress.toString(), i+1);
-
-		int index = ipAddresses.indexOf(selectedIp);
-		if (index >= 0)
-			ipList->setSelectedId(index+1);
-		else
-			ipList->setSelectedId(0);
+		numRows = ipAddresses.size();
+		ipList->updateContent();
 	}
 
 	void resized() override
 	{
-		ipListLabel->setBounds(20, 50, getWidth() - 40, 24);
-		ipList->setBounds(20, 80, getWidth() - 40, 24);
-		refreshButton->setBounds(20, 110, getWidth() - 40, 24);
-		manualConnectButton->setBounds(20, 140, proportionOfWidth(0.5) - 22, 24);
-		floodButton->setBounds(proportionOfWidth(0.5) + 2, 140, proportionOfWidth(0.5) - 22, 24);
-		adapterInfoLabel->setBounds(20, 170, getWidth() - 40, 144);
+		ipList->setBounds(20, 110, getWidth() - 40, getHeight() - 260);
+		refreshButton->setBounds(20, 40, getWidth() - 40, 24);
+		manualConnectButton->setBounds(20, 70, getWidth() - 40, 24);
+		adapterInfoLabel->setBounds(20, getHeight() - 150, getWidth() - 40, 150);
 	}
 
 	/* combobox & button listener
@@ -1042,7 +1031,6 @@ public:
 		else if (button == manualConnectButton)
 		{
 			// manual connect
-			Polytempo_IPAddress selectedAddress = ipAddresses[ipList->getSelectedId() - 1];
 			AlertWindow* alertWindow = new AlertWindow("Manual Connect", "Connect to Master-IP-Address:", AlertWindow::NoIcon, this);
 
 			auto alertLambda = ([alertWindow](int result) {
@@ -1056,65 +1044,86 @@ public:
 				}
 			});
 
-			alertWindow->addTextEditor("ip", selectedAddress.ipAddress.toString().upToLastOccurrenceOf(".", true, true));
+			alertWindow->addTextEditor("ip", selectedAddress.ipAddress.isNull() ? "" : selectedAddress.ipAddress.toString().upToLastOccurrenceOf(".", true, true));
 			alertWindow->addButton("OK", 1, KeyPress(KeyPress::returnKey, 0, 0));
 			alertWindow->addButton("Cancel", 0, KeyPress(KeyPress::escapeKey, 0, 0));
 			alertWindow->enterModalState(false, ModalCallbackFunction::create(alertLambda), true);
 
 		}
-		else if (button == floodButton)
+	}
+
+	void selectedRowsChanged(int lastRowSelected) override
+	{
+		if (lastRowSelected >= 0 && lastRowSelected < ipAddresses.size())
 		{
-			// unicast flood
-			Polytempo_IPAddress selectedAddress = ipAddresses[ipList->getSelectedId() - 1];
-			if (selectedAddress.subnetMask.address[2] < 255)
-			{
-				auto alertLambda = ([&](int result) {
-					if (result) {
-						MouseCursor::showWaitCursor();
-						Polytempo_NetworkSupervisor::getInstance()->unicastFlood(selectedAddress);
-						MouseCursor::hideWaitCursor();
-					}
-				});
-				Polytempo_OkCancelAlert::show("Unicast Flood", "Flooding this network may take several minutes. Proceed?", ModalCallbackFunction::create(alertLambda));
-			}
-			else
-			{
-				MouseCursor::showWaitCursor();
-				Polytempo_NetworkSupervisor::getInstance()->unicastFlood(selectedAddress);
-				MouseCursor::hideWaitCursor();
-			}
+			displayIpDetails(lastRowSelected);
+			selectedAddress = ipAddresses[lastRowSelected];
 		}
 	}
 
-	void comboBoxChanged(ComboBox* box) override
+	void displayIpDetails(int index) const
 	{
-		if (box == ipList)
+		Polytempo_IPAddress address = ipAddresses[index];
+
+		adapterInfoLabel->setText(
+			"Network type: "
+			+ address.addressDescription()
+			+ "\r\n"
+			+ "IP Address: "
+			+ address.ipAddress.toString()
+			+ "\r\n"
+			+ "Network address: "
+			+ address.getNetworkAddress().toString()
+			+ "\r\n"
+			+ "Subnet mask: "
+			+ address.subnetMask.toString()
+			+ "\r\n"
+			+ "Broadcast address: "
+			+ address.getBroadcastAddress().toString()
+			+ "\r\n"
+			+ "IP range: "
+			+ address.getFirstNetworkAddress().toString()
+			+ " - "
+			+ address.getLastNetworkAddress().toString()
+			+ "\r\n"
+			, sendNotification);
+	}
+
+	int getNumRows() override{
+		return numRows;
+	}
+
+	void paintRowBackground(Graphics& g, int rowNumber, int /*width*/, int /*height*/, bool rowIsSelected) override{
+		const Colour alternateColour(getLookAndFeel().findColour(ListBox::backgroundColourId)
+			.interpolatedWith(getLookAndFeel().findColour(ListBox::textColourId), 0.03f));
+		if (rowIsSelected)
+			g.fillAll(Colours::lightblue);
+		else if (rowNumber % 2)
+			g.fillAll(alternateColour);
+	}
+	
+	void paintCell(Graphics& g, int rowNumber, int columnId, int width, int height, bool /*rowIsSelected*/) override {
+		g.setColour(getLookAndFeel().findColour(ListBox::textColourId));
+		
+		if (rowNumber < ipAddresses.size() && rowNumber >= 0)
 		{
-			Polytempo_IPAddress selectedAddress = ipAddresses[ipList->getSelectedId() - 1];
-			
-			adapterInfoLabel->setText(
-				"Network type: "
-				+ selectedAddress.addressDescription()
-				+ "\r\n"
-				+ "IP Address: "
-				+ selectedAddress.ipAddress.toString()
-				+ "\r\n"
-				+ "Network address: "
-				+ selectedAddress.getNetworkAddress().toString()
-				+ "\r\n"
-				+ "Subnet mask: "
-				+ selectedAddress.subnetMask.toString()
-				+ "\r\n"
-				+ "Broadcast address: "
-				+ selectedAddress.getBroadcastAddress().toString()
-				+ "\r\n"
-				+ "IP range: "
-				+ selectedAddress.getFirstNetworkAddress().toString()
-				+ " - "
-				+ selectedAddress.getLastNetworkAddress().toString()
-				+ "\r\n"
-			, NotificationType::sendNotification);
+			String text;
+			switch (columnId)
+			{
+			case ColumnIdIp:
+				text = ipAddresses[rowNumber].ipAddress.toString(); break;
+			case ColumnIdRange:
+				text = ipAddresses[rowNumber].getFirstNetworkAddress().toString() + " - " + ipAddresses[rowNumber].getLastNetworkAddress().toString(); break;
+			case ColumnIdType:
+				text = ipAddresses[rowNumber].addressDescription(); break;
+			default:
+				text = "";
+			}
+		
+			g.drawText(text, 2, 0, width - 4, height, Justification::centredLeft, true);
 		}
+
+		g.fillRect(width - 1, 0, 1, height);
 	}
 };
 

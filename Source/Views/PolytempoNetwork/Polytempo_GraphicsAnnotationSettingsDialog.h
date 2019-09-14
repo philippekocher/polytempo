@@ -42,8 +42,8 @@ public:
 
 private:
 	TableListBox table;
-	ScopedPointer<TextButton> addLayerBtn;
-	ScopedPointer<ToggleButton> showAnchorPointsToggle;
+	std::unique_ptr<TextButton> addLayerBtn;
+	std::unique_ptr<ToggleButton> showAnchorPointsToggle;
 	
 	int numRows;
 	OwnedArray<Polytempo_GraphicsAnnotationSet>* pAnnotationSet;

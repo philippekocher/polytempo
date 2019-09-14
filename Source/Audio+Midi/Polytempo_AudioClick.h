@@ -49,8 +49,8 @@ private:
     Synthesiser synth;
     AudioDeviceManager& audioDeviceManager;
     
-    ScopedPointer <AudioSourcePlayer> audioSourcePlayer;
-    ScopedPointer <SynthAudioSource> synthAudioSource;
+	std::unique_ptr <AudioSourcePlayer> audioSourcePlayer;
+	std::unique_ptr <SynthAudioSource> synthAudioSource;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_AudioClick)
 };

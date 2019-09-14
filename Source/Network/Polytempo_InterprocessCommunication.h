@@ -67,8 +67,8 @@ private:
 	void cleanUpClient();
 
 private:
-	ScopedPointer<IpcServer> server;
-	ScopedPointer<Ipc> client;
+	std::unique_ptr<IpcServer> server;
+	std::unique_ptr<Ipc> client;
 	OwnedArray<Ipc> serverConnections;
 	int dataIndex;
 };

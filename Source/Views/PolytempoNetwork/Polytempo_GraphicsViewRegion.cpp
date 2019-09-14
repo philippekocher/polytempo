@@ -23,7 +23,6 @@
  ============================================================================== */
 
 #include "Polytempo_GraphicsViewRegion.h"
-#include "../../Scheduler/Polytempo_Event.h"
 #include "../../Application/PolytempoNetwork/Polytempo_NetworkApplication.h"
 
 
@@ -180,7 +179,7 @@ void Polytempo_GraphicsViewRegion::setViewImage(Image* img, var rect)
 void Polytempo_GraphicsViewRegion::setText(String text_)
 {
     contentType = contentType_Text;
-    text = new String(text_);
+    text.reset(new String(text_));
 
     resized();
 }
@@ -188,14 +187,14 @@ void Polytempo_GraphicsViewRegion::setText(String text_)
 void Polytempo_GraphicsViewRegion::setProgressbar(String txt, float time, float duration)
 {
     contentType = contentType_Progressbar;
-    progressbar = new Polytempo_Progressbar();
+    progressbar.reset(new Polytempo_Progressbar());
     progressbar->setText(txt);
     progressbar->setTime(int(time));
     progressbar->setDuration(duration);
     
     progressbar->setBounds(getLocalBounds().reduced(15,10));  // inset rect
 
-    addAndMakeVisible(progressbar);
+    addAndMakeVisible(progressbar.get());
 
     resized();
 }

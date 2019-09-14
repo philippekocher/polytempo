@@ -54,14 +54,14 @@ public:
 	void unicastFlood(Polytempo_IPAddress ownIp);
 
 private:
-	OSCMessage* createAdvertiseMessage(String ownIp);
+	std::unique_ptr<OSCMessage> createAdvertiseMessage(String ownIp);
 
 	Uuid uniqueId = nullptr;
-    ScopedPointer<OSCSender> oscSender;
+	std::unique_ptr<OSCSender> oscSender;
     Component *component;
     
-    ScopedPointer < String > localName;
-	ScopedPointer < String > nodeName;
+	std::unique_ptr < String > localName;
+	std::unique_ptr < String > nodeName;
 
     int currentPort;
 };

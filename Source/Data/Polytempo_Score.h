@@ -30,7 +30,7 @@
 class Polytempo_Score_Section
 {
 public:
-	void sort() const;
+	void sort();
 	OwnedArray < Polytempo_Event > events;
 };
 
@@ -79,9 +79,9 @@ private:
     //static void parseXML(File& XMLFile, Polytempo_Score** scoreFile);
     void parseVar(var);
     
-    ScopedPointer < StringArray > sectionMap;
+	std::unique_ptr < StringArray > sectionMap;
     OwnedArray < Polytempo_Score_Section > sections;
-    ScopedPointer < Polytempo_Score_Section > initSection;
+	std::unique_ptr < Polytempo_Score_Section > initSection;
     
     int    currentSectionIndex;
     uint32 nextEventIndex;

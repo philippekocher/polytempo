@@ -35,7 +35,7 @@ Polytempo_NetworkSupervisor::Polytempo_NetworkSupervisor()
     oscSender = nullptr;
     component = nullptr;
 
-	nodeName = new String(SystemStats::getFullUserName());
+	nodeName.reset(new String(SystemStats::getFullUserName()));
 
 	startTimer(NETWORK_SUPERVISOR_PING_INTERVAL);
 }
@@ -55,9 +55,9 @@ Polytempo_NetworkSupervisor::~Polytempo_NetworkSupervisor()
 
 juce_ImplementSingleton(Polytempo_NetworkSupervisor);
 
-OSCMessage* Polytempo_NetworkSupervisor::createAdvertiseMessage(String ownIp)
+std::unique_ptr<OSCMessage> Polytempo_NetworkSupervisor::createAdvertiseMessage(String ownIp)
 {
-	return new OSCMessage(
+	return std::make_unique<OSCMessage>(
 		OSCAddressPattern("/masteradvertise"),
 		OSCArgument(getUniqueId().toString()),
 		OSCArgument(ownIp));
@@ -74,7 +74,7 @@ void Polytempo_NetworkSupervisor::timerCallback()
 	// broadcast a heartbeat
 	for (Polytempo_IPAddress localIpAddress : localIpAddresses)
 	{
-		ScopedPointer<OSCMessage> msg = createAdvertiseMessage(localIpAddress.ipAddress.toString());
+		std::unique_ptr<OSCMessage> msg = createAdvertiseMessage(localIpAddress.ipAddress.toString());
 		oscSender->sendToIPAddress(localIpAddress.getBroadcastAddress().toString(), currentPort, *msg);
 	}
 
@@ -93,7 +93,7 @@ void Polytempo_NetworkSupervisor::unicastFlood(Polytempo_IPAddress ownIp)
 {
 	OSCSender localSender;
 	localSender.connect(ownIp.ipAddress.toString(), 0);
-	ScopedPointer<OSCMessage> msg = this->createAdvertiseMessage(ownIp.ipAddress.toString());
+	std::unique_ptr<OSCMessage> msg = this->createAdvertiseMessage(ownIp.ipAddress.toString());
 	IPAddress currentIp = ownIp.getFirstNetworkAddress();
 	IPAddress lastIp = ownIp.getLastNetworkAddress();
 	
@@ -147,7 +147,7 @@ String Polytempo_NetworkSupervisor::getPeerName() const
 void Polytempo_NetworkSupervisor::createSender(int port)
 {
 	currentPort = port;
-	oscSender = new OSCSender();
+	oscSender.reset(new OSCSender());
 	oscSender->connect("255.255.255.255", currentPort);
 }
 
@@ -160,6 +160,6 @@ void Polytempo_NetworkSupervisor::eventNotification(Polytempo_Event *event)
 {
 	if(event->getType() == eventType_Settings)
 	{
-		localName = new String(event->getProperty("name").toString());
+		localName.reset(new String(event->getProperty("name").toString()));
 	}
 }

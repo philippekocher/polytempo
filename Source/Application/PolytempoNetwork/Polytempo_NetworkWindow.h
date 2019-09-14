@@ -55,10 +55,10 @@ public:
     bool applyChanges();
 
 private:
-    ScopedPointer <Polytempo_NetworkMainView> mainView;
-    ScopedPointer <Polytempo_PageEditorView> pageEditorView;
-    ScopedPointer <Polytempo_RegionEditorView> regionEditorView;
-    ScopedPointer <Polytempo_ScoreEditorView> scoreEditorView;
+	std::unique_ptr <Polytempo_NetworkMainView> mainView;
+	std::unique_ptr <Polytempo_PageEditorView> pageEditorView;
+	std::unique_ptr <Polytempo_RegionEditorView> regionEditorView;
+	std::unique_ptr <Polytempo_ScoreEditorView> scoreEditorView;
 
     OpenGLContext openGLContext;
     
