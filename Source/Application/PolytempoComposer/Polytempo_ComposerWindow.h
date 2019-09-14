@@ -72,12 +72,12 @@ public:
     String getWindowContentStateAsString();
     void   restoreWindowContentStateFromString(const String&);
     
-    Polytempo_ComposerMainView* getMainView() { return mainView; }
+    Polytempo_ComposerMainView* getMainView() { return mainView.get(); }
     
 private:
-    ScopedPointer<Polytempo_ComposerMenuBarModel> menuBarModel;
-    ScopedPointer<Polytempo_ComposerMainView> mainView;
-    ScopedPointer<Polytempo_GraphicExportView> graphicExportView;
+    std::unique_ptr<Polytempo_ComposerMenuBarModel> menuBarModel;
+    std::unique_ptr<Polytempo_ComposerMainView> mainView;
+    std::unique_ptr<Polytempo_GraphicExportView> graphicExportView;
     Polytempo_LookAndFeel lookAndFeel;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_ComposerWindow)

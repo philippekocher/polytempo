@@ -5,7 +5,7 @@
 Polytempo_GraphicExportPage::Polytempo_GraphicExportPage(int pageNumber)
 {
     // A4 at 300 ppi is 2480 x 3508 pixels
-    image = new Image(Image::RGB, 2480, 3508, true);
+    image.reset(new Image(Image::RGB, 2480, 3508, true));
     
     Graphics g (*image);
     g.setColour(Colours::white);
@@ -116,7 +116,8 @@ Polytempo_GraphicExportViewport::Polytempo_GraphicExportViewport()
 {
     setScrollBarsShown(false, true, false, true);
     
-    setViewedComponent(viewedComponent = new Component(), false);
+    viewedComponent.reset(new Component());
+    setViewedComponent(viewedComponent.get(), false);
     setViewPositionProportionately(0.0, 0.0);
 }
 

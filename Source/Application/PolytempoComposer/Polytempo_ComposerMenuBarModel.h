@@ -49,7 +49,7 @@ public:
 private:
     Polytempo_ComposerWindow *window;
 #if JUCE_MAC
-    ScopedPointer<PopupMenu> extraAppleMenuItems;
+    std::unique_ptr<PopupMenu> extraAppleMenuItems;
 #endif
 
 };

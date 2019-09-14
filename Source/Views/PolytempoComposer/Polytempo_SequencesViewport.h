@@ -90,11 +90,11 @@ private:
     int sequenceIndex;
     TextEditor sequenceName;
     
-    ScopedPointer < Polytempo_Button > settingsButton;
-    ScopedPointer < Polytempo_Button > soloButton;
-    ScopedPointer < Polytempo_Button > muteButton;
+    std::unique_ptr<Polytempo_Button> settingsButton;
+    std::unique_ptr<Polytempo_Button> soloButton;
+    std::unique_ptr<Polytempo_Button> muteButton;
 
-    ScopedPointer<Polytempo_ColourButton> colourSelector;
+    std::unique_ptr<Polytempo_ColourButton> colourSelector;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_SequenceControlComponent)
 };
@@ -110,7 +110,7 @@ public:
     void resized();
 
 private:
-    ScopedPointer <Component> viewedComponent;
+    std::unique_ptr<Component> viewedComponent;
     OwnedArray <Polytempo_SequenceControlComponent> sequenceControls;
 };
 

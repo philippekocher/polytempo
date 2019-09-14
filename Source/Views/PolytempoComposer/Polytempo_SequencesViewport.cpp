@@ -34,7 +34,8 @@ Polytempo_SequencesViewport::Polytempo_SequencesViewport()
 {
     setScrollBarsShown(false, true, false, true);
     
-    setViewedComponent(viewedComponent = new Polytempo_SequencesComponent(), false);
+    viewedComponent.reset(new Polytempo_SequencesComponent());
+    setViewedComponent(viewedComponent.get(), false);
     setViewPositionProportionately(0.0, 0.0);
     
     viewedComponent->setMouseClickGrabsKeyboardFocus(false);
@@ -104,7 +105,8 @@ Polytempo_SequenceControlComponent::Polytempo_SequenceControlComponent(int i) : 
 {
     setMouseClickGrabsKeyboardFocus(false);
 
-    addAndMakeVisible(colourSelector = new Polytempo_ColourButton(sequenceIndex));
+    colourSelector.reset(new Polytempo_ColourButton(sequenceIndex));
+    addAndMakeVisible(colourSelector.get());
     colourSelector->setWantsKeyboardFocus(false);
     
     addAndMakeVisible(sequenceName);
@@ -115,12 +117,16 @@ Polytempo_SequenceControlComponent::Polytempo_SequenceControlComponent(int i) : 
     sequenceName.setColour(TextEditor::focusedOutlineColourId, Colours::white);
     sequenceName.setText(Polytempo_Composition::getInstance()->getSequence(sequenceIndex)->getName());
 
-    addAndMakeVisible(settingsButton = new Polytempo_Button("Playback Settings"));
+    settingsButton.reset(new Polytempo_Button("Playback Settings"));
+    addAndMakeVisible(settingsButton.get());
     settingsButton->addListener(this);
     
-    addAndMakeVisible(soloButton = new Polytempo_Button("Solo", Polytempo_Button::buttonType_toggleYellow));
+    soloButton.reset(new Polytempo_Button("Solo", Polytempo_Button::buttonType_toggleYellow));
+    addAndMakeVisible(soloButton.get());
     soloButton->addListener(this);
-    addAndMakeVisible(muteButton = new Polytempo_Button("Mute", Polytempo_Button::buttonType_toggleYellow));
+    
+    muteButton.reset(new Polytempo_Button("Mute", Polytempo_Button::buttonType_toggleYellow));
+    addAndMakeVisible(muteButton.get());
     muteButton->addListener(this);
 }
 
@@ -195,13 +201,13 @@ void Polytempo_SequenceControlComponent::buttonClicked(Button* button)
 {
     bool buttonState = button->getToggleState();
  
-    if(button == settingsButton)
+    if(button == settingsButton.get())
     {
         button->setToggleState(true, dontSendNotification);
         Polytempo_SequencePlaybackSettings::show(Polytempo_Composition::getInstance()->getSequence(sequenceIndex));
         button->setToggleState(false, dontSendNotification);
     }
-    else if(button == muteButton)
+    else if(button == muteButton.get())
     {
         Polytempo_Composition::getInstance()->getSequence(sequenceIndex)->mute = buttonState;
     }

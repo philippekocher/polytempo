@@ -20,7 +20,7 @@ public:
     void exportImage(String);
 
 private:
-    ScopedPointer <Image> image;
+    std::unique_ptr<Image> image;
     Point<int> markerPos;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_GraphicExportPage)
 };
@@ -38,6 +38,6 @@ public:
     void exportImages();
     
 private:
-    ScopedPointer <Component> viewedComponent;
+    std::unique_ptr<Component> viewedComponent;
     OwnedArray <Polytempo_GraphicExportPage> pages;
 };

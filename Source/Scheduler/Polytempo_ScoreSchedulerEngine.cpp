@@ -93,7 +93,6 @@ void Polytempo_ComposerEngine::run()
             
             // get next event
             nextScoreEvent = score->getNextEvent();
-            DBG("next");
         }
         
         schedulerTick->setValue(scoreTime * 0.001f);

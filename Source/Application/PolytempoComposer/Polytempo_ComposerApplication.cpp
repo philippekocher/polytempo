@@ -38,7 +38,7 @@ Polytempo_ComposerApplication::Polytempo_ComposerApplication() {}
     
 void Polytempo_ComposerApplication::initialise(const String& /*commandLine*/)
 {
-    commandManager = new ApplicationCommandManager();
+    commandManager.reset(new ApplicationCommandManager());
     commandManager->registerAllCommandsForTarget(this);
     
     // scheduler
@@ -50,9 +50,9 @@ void Polytempo_ComposerApplication::initialise(const String& /*commandLine*/)
     Polytempo_MidiClick::getInstance();
 
     // window
-    composerWindow = new Polytempo_ComposerWindow();
+    composerWindow.reset(new Polytempo_ComposerWindow());
     
-    Polytempo_Composition::getInstance()->setMainWindow(composerWindow);
+    Polytempo_Composition::getInstance()->setMainWindow(composerWindow.get());
     Polytempo_Composition::getInstance()->newComposition();
 
     // return to beginning

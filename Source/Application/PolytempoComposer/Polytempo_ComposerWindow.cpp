@@ -28,7 +28,6 @@
 #include "Polytempo_ComposerApplication.h"
 #include "../../Preferences/Polytempo_StoredPreferences.h"
 
-//static ScopedPointer<ApplicationCommandManager> applicationCommandManager;
 
 Polytempo_ComposerWindow::Polytempo_ComposerWindow()
 : DocumentWindow (String(),
@@ -39,10 +38,10 @@ Polytempo_ComposerWindow::Polytempo_ComposerWindow()
     setResizable(true,true);
     setResizeLimits(500, 400, 5000, 5000);
 
-    mainView = new Polytempo_ComposerMainView();
-    graphicExportView = new Polytempo_GraphicExportView();
+    mainView.reset(new Polytempo_ComposerMainView());
+    graphicExportView.reset(new Polytempo_GraphicExportView());
     
-    setContentNonOwned(mainView, false);
+    setContentNonOwned(mainView.get(), false);
     
     setBounds(50, 50, 800, 500);
     setVisible(true);    
@@ -56,9 +55,9 @@ Polytempo_ComposerWindow::Polytempo_ComposerWindow()
     restoreWindowContentStateFromString(Polytempo_StoredPreferences::getInstance()->getProps().getValue("mainWindowContent"));
 
     // create and manage a MenuBarComponent
-	menuBarModel = new Polytempo_ComposerMenuBarModel(this);
+	menuBarModel.reset(new Polytempo_ComposerMenuBarModel(this));
 #if !JUCE_MAC
-    setMenuBar(menuBarModel);
+    setMenuBar(menuBarModel.get());
 #endif
     
     // use keypresses that arrive in this window to send out commands
@@ -85,11 +84,11 @@ void Polytempo_ComposerWindow::setContentID(contentID newContentID)
 {
     if (newContentID == mainViewID)
     {
-        setContentNonOwned(mainView, false);
+        setContentNonOwned(mainView.get(), false);
     }
     else if (newContentID == graphicExportViewID)
     {
-        setContentNonOwned(graphicExportView, false);
+        setContentNonOwned(graphicExportView.get(), false);
         graphicExportView->resized();
     }
 }

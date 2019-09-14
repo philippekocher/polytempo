@@ -86,7 +86,7 @@ private:
     Component *mainComponent;
     OwnedArray <Polytempo_Sequence> sequences;
 
-    ScopedPointer <Polytempo_Score> score;
+    std::unique_ptr <Polytempo_Score> score;
     
     File compositionFile = File();
     bool dirty = false;
