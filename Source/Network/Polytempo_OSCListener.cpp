@@ -33,7 +33,7 @@
 
 Polytempo_OSCListener::Polytempo_OSCListener(int port) : m_Port(port)
 {
-	oscReceiver = new OSCReceiver();
+	oscReceiver.reset(new OSCReceiver());
 
 	if (!oscReceiver->connect(m_Port))
 		Polytempo_Alert::show("Error", "Can't bind to port: " + String(m_Port) + "\nProbably there is another socket already bound to this port");
@@ -46,10 +46,10 @@ Polytempo_OSCListener::~Polytempo_OSCListener()
 	oscReceiver = nullptr;
 }
 
-Polytempo_Event* Polytempo_OSCListener::oscToEvent(const OSCMessage& message, String addressPattern)
+Polytempo_Event* Polytempo_OSCListener::oscToEvent(const OSCMessage& message, String addressPattern) const
 {
-	ScopedPointer<Array<var>> messages = new Array<var>();
-	OSCArgument* argumentIterator = message.begin();
+	std::unique_ptr<Array<var>> messages = std::unique_ptr<Array<var>>{ new Array<var>() };
+	const OSCArgument* argumentIterator = message.begin();
 
 	DBG("osc: " << addressPattern);
 
@@ -75,7 +75,7 @@ Polytempo_Event* Polytempo_OSCListener::oscToEvent(const OSCMessage& message, St
 void Polytempo_OSCListener::oscMessageReceived(const OSCMessage & message)
 {
 	String addressPattern = message.getAddressPattern().toString();
-	OSCArgument* argumentIterator = message.begin();
+	const OSCArgument* argumentIterator = message.begin();
 
 	if (addressPattern == "/masteradvertise")
 	{

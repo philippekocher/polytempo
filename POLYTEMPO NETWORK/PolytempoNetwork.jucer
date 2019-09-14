@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="at55VB" name="PolytempoNetwork" projectType="guiapp" version="0.3.2"
-              bundleIdentifier="net.icst.PolytempoNetwork" jucerVersion="5.4.3"
+              bundleIdentifier="net.icst.PolytempoNetwork" jucerVersion="5.4.4"
               companyName="ICST Institute for Computermusic and Sound Technology, Zurich"
               includeBinaryInAppConfig="1" companyWebsite="www.icst.net" defines="POLYTEMPO_NETWORK=1"
               displaySplashScreen="1" reportAppUsage="1" splashScreenColour="Dark"

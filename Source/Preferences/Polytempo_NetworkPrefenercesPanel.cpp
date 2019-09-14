@@ -47,10 +47,10 @@ public:
     
     ~ColourChangeButton() {}
     
-    void clicked()
+    void clicked() override
     {
 #if JUCE_MODAL_LOOPS_PERMITTED
-        colourSelector = new ColourSelector(juce::ColourSelector::showColourAtTop | juce::ColourSelector::showSliders | juce::ColourSelector::showColourspace);
+        colourSelector.reset(new ColourSelector(juce::ColourSelector::showColourAtTop | juce::ColourSelector::showSliders | juce::ColourSelector::showColourspace));
         
         colourSelector->setCurrentColour(findColour(TextButton::buttonColourId));
         colourSelector->addChangeListener(this);
@@ -63,7 +63,7 @@ public:
 #endif
     }
     
-    void changeListenerCallback(ChangeBroadcaster* source)
+    void changeListenerCallback(ChangeBroadcaster* source) override
     {
         ColourSelector* cs = dynamic_cast <ColourSelector*>(source);
         
@@ -71,7 +71,7 @@ public:
     }
     
 private:
-    ScopedPointer<ColourSelector> colourSelector;
+	std::unique_ptr<ColourSelector> colourSelector;
 
 };
 
@@ -385,7 +385,7 @@ ChangeListener
     
     AudioDeviceManager& audioDeviceManager;
     AudioDeviceSelectorComponent* deviceSelector;
-    ScopedPointer<XmlElement> audioDeviceManagerState;
+	std::unique_ptr<XmlElement> audioDeviceManagerState;
     
 public:
     AudioPreferencesPage()
@@ -628,7 +628,7 @@ public:
         if(source == &audioDeviceManager)
         {
             audioDeviceManagerState = audioDeviceManager.createStateXml();
-            Polytempo_StoredPreferences::getInstance()->getProps().setValue("audioDevice", audioDeviceManagerState);
+            Polytempo_StoredPreferences::getInstance()->getProps().setValue("audioDevice", audioDeviceManagerState.get());
         }
     }
     

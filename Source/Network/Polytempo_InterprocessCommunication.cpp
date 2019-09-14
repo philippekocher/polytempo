@@ -150,7 +150,7 @@ InterprocessConnection* IpcServer::createConnectionObject()
 
 Polytempo_InterprocessCommunication::Polytempo_InterprocessCommunication(): dataIndex(0)
 {
-	server = new IpcServer();
+	server.reset(new IpcServer());
 }
 
 Polytempo_InterprocessCommunication::~Polytempo_InterprocessCommunication()
@@ -208,7 +208,7 @@ bool Polytempo_InterprocessCommunication::connectToMaster(String ip)
 {
 	cleanUpClient();
 	dataIndex = 0;
-	client = new Ipc();
+	client.reset(new Ipc());
 	bool ok = client->connectToSocket(ip, POLYTEMPO_IPC_PORT, 1000);
 	if (ok)
 	{
@@ -224,7 +224,8 @@ bool Polytempo_InterprocessCommunication::connectToMaster(String ip)
 
 void Polytempo_InterprocessCommunication::registerNewServerConnection(Ipc* connection)
 {
-	serverConnections.addIfNotAlreadyThere(connection);
+	if(!serverConnections.contains(connection))
+		serverConnections.add(connection);
 }
 
 void Polytempo_InterprocessCommunication::notifyAllClients(MemoryBlock m, String namePattern)
@@ -240,7 +241,7 @@ MemoryBlock Polytempo_InterprocessCommunication::xmlToMemoryBlock(XmlElement e)
 {
 	MemoryBlock m;
 	MemoryOutputStream os;
-	e.writeToStream(os, "");
+	e.writeTo(os);
 	String s = os.toString();
 	m.append(s.getCharPointer(), s.length());
 	return m;
@@ -265,7 +266,7 @@ Polytempo_PeerInfo* Polytempo_InterprocessCommunication::getMasterInfo() const
 	if (client == nullptr || !client->isConnected())
 		return nullptr;
 
-	return getPeerInfoFromIpc(client, Time::getMillisecondCounter());
+	return getPeerInfoFromIpc(client.get(), Time::getMillisecondCounter());
 }
 
 bool Polytempo_InterprocessCommunication::isClientConnected() const

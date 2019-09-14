@@ -88,7 +88,7 @@ void Polytempo_GraphicsAnnotationSet::loadFromFile()
 		return;
 
 	ScopedPointer<XmlDocument> xmlDoc = new XmlDocument(file);
-	ScopedPointer<XmlElement> root = xmlDoc->getDocumentElement();
+	std::unique_ptr<XmlElement> root = xmlDoc->getDocumentElement();
 	if (root->getTagName() != XML_TAG_ROOT)
 		return;
 		

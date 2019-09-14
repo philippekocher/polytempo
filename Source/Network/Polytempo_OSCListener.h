@@ -36,10 +36,10 @@ public:
 
 private:
 	void oscMessageReceived(const OSCMessage& message) override;
-	Polytempo_Event* oscToEvent(const OSCMessage& message, String addressPattern);
+	Polytempo_Event* oscToEvent(const OSCMessage& message, String addressPattern) const;
 	int m_Port;
     
-    ScopedPointer < OSCReceiver > oscReceiver;
+	std::unique_ptr < OSCReceiver > oscReceiver;
         
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_OSCListener);
 };
