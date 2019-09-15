@@ -93,6 +93,14 @@ void Polytempo_ComposerWindow::setContentID(contentID newContentID)
     }
 }
 
+int Polytempo_ComposerWindow::getContentID()
+{
+    if(getContentComponent() == mainView.get()) return mainViewID;
+    if(getContentComponent() == graphicExportView.get()) return graphicExportViewID;
+    else return -1;
+}
+
+
 String Polytempo_ComposerWindow::getWindowContentStateAsString()
 {
     return mainView->getComponentStateAsString();
