@@ -143,7 +143,6 @@ void Polytempo_NetworkApplication::shutdown()
 	menuBarModel = nullptr;
 
     // delete singletons
-    Polytempo_StoredPreferences::deleteInstance();
     Polytempo_AudioClick::deleteInstance();
     Polytempo_MidiClick::deleteInstance();
     Polytempo_NetworkSupervisor::deleteInstance();
@@ -154,6 +153,7 @@ void Polytempo_NetworkApplication::shutdown()
 	Polytempo_TimeProvider::deleteInstance();
     Polytempo_EventDispatcher::deleteInstance();
 	Polytempo_InterprocessCommunication::deleteInstance();
+	Polytempo_StoredPreferences::deleteInstance();
 
 	Logger::setCurrentLogger(nullptr);
 	fileLogger = nullptr;

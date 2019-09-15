@@ -95,7 +95,10 @@ namespace Polytempo_CommandIDs
 		annotationColor,
 		annotationTextSize,
 		annotationLayerSettings,
-		annotationLayerEditMode,
+		annotationOff,
+		annotationReadOnly,
+		annotationStandard,
+		annotationEdit,
 
         openRecent // must be last!
     };

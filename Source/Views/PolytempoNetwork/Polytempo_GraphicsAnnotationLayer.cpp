@@ -127,6 +127,10 @@ Polytempo_GraphicsViewRegion* Polytempo_GraphicsAnnotationLayer::getRegionAt(Poi
 
 void Polytempo_GraphicsAnnotationLayer::handleStartEditing(Point<int> mousePosition)
 {
+	Polytempo_GraphicsAnnotationManager::eAnnotationMode mode = Polytempo_GraphicsAnnotationManager::getInstance()->getAnnotationMode();
+	if (mode != Polytempo_GraphicsAnnotationManager::Standard && mode != Polytempo_GraphicsAnnotationManager::Edit)
+		return;
+
 	Polytempo_GraphicsViewRegion * pRegion = getRegionAt(mousePosition);
 
 	if (pRegion == nullptr || !pRegion->annotationsAllowed())

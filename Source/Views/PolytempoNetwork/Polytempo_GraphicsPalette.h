@@ -42,7 +42,6 @@ private:
 	std::unique_ptr<ImageButton> buttonCancel;
 	std::unique_ptr<ImageButton> buttonColor;
 	std::unique_ptr<ImageButton> buttonTextSize;
-	std::unique_ptr<ImageButton> buttonSettings;
 	std::unique_ptr<ImageButton> buttonDelete;
 	std::unique_ptr<ColourSelector> colorSelector;
 

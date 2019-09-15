@@ -60,6 +60,8 @@ Polytempo_DefaultPreferences::Polytempo_DefaultPreferences()
     setValue("audioBeatVolume", 1.0);
     setValue("audioCuePitch", 90);
     setValue("audioCueVolume", 1.0);
+
+	setValue("annotationMode", 1);
 }
 
 Polytempo_DefaultPreferences::~Polytempo_DefaultPreferences()

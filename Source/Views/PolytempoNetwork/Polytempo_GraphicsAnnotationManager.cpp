@@ -17,6 +17,9 @@ juce_ImplementSingleton(Polytempo_GraphicsAnnotationManager)
 void Polytempo_GraphicsAnnotationManager::getAnnotationsForImage(String imageId, OwnedArray<Polytempo_GraphicsAnnotation>* pAnnotations) const
 {
 	pAnnotations->clear();
+	if (annotationMode == Off)
+		return;
+
 	for(int iSet = 0; iSet < annotationSets.size(); iSet++)
 	{
 		if (annotationSets[iSet]->getShow())
@@ -71,13 +74,7 @@ void Polytempo_GraphicsAnnotationManager::saveAll() const
 
 bool Polytempo_GraphicsAnnotationManager::getAnchorFlag() const
 {
-	return showAnchorPoints;
-}
-
-void Polytempo_GraphicsAnnotationManager::setAnchorFlag(bool anchorFlag)
-{
-	showAnchorPoints = anchorFlag;
-	sendChangeMessage();
+	return annotationMode == Edit;
 }
 
 void Polytempo_GraphicsAnnotationManager::initialize(String folder, String scoreName)
@@ -225,4 +222,15 @@ void Polytempo_GraphicsAnnotationManager::resetAnnotationPending(Polytempo_Graph
 Polytempo_GraphicsAnnotationLayer* Polytempo_GraphicsAnnotationManager::getCurrentPendingAnnotationLayer() const
 {
 	return pCurrentPendingAnnotationLyer;
+}
+
+void Polytempo_GraphicsAnnotationManager::setAnnotationMode(eAnnotationMode mode)
+{
+	annotationMode = mode;
+	sendChangeMessage();
+}
+
+Polytempo_GraphicsAnnotationManager::eAnnotationMode Polytempo_GraphicsAnnotationManager::getAnnotationMode() const
+{
+	return annotationMode;
 }

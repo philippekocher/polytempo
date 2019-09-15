@@ -30,6 +30,7 @@
 #include "../../Misc/Polytempo_Button.h"
 #include "Polytempo_TimeSyncControl.h"
 #include "Polytempo_NetworkInfoView.h"
+#include "Polytempo_AnnotationView.h"
 
 
 class Polytempo_AuxiliaryView : public Component,
@@ -66,10 +67,10 @@ private:
 
     Polytempo_Textbox *timeTextbox;
     
-//  Polytempo_Textbox *realTimeTextbox;
-	
     Polytempo_Textbox *tempoFactorTextbox;
-    
+
+	Polytempo_AnnotationView *annotationView;
+
 	Polytempo_TimeSyncControl *timeSyncControl;
 
 	String            tempoFactor;

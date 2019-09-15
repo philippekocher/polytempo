@@ -26,7 +26,6 @@
 #include "../../Scheduler/Polytempo_ScoreScheduler.h"
 #include "../../Scheduler/Polytempo_EventDispatcher.h"
 #include "../../Preferences/Polytempo_StoredPreferences.h"
-#include "../../Network/Polytempo_NetworkSupervisor.h"
 #include "../../Misc/Polytempo_Textbox.h"
 #include "../../Network/Polytempo_TimeProvider.h"
 
@@ -74,6 +73,8 @@ Polytempo_AuxiliaryView::Polytempo_AuxiliaryView()
     tempoFactorTextbox->addListener(this);
     tempoFactorTextbox->setText("1.0", dontSendNotification);
     
+	addAndMakeVisible(annotationView = new Polytempo_AnnotationView());
+
 	addAndMakeVisible(timeSyncControl = new Polytempo_TimeSyncControl());
 	Polytempo_TimeProvider::getInstance()->registerUserInterface(timeSyncControl);
 
@@ -94,6 +95,7 @@ void Polytempo_AuxiliaryView::paint (Graphics& g)
 
     g.setColour(Colours::black);
     g.drawHorizontalLine(290, 0.0f, (float)getWidth());
+	g.drawHorizontalLine(355, 0.0f, (float)getWidth());
     g.setColour(Colours::grey);
     g.drawVerticalLine(0, 0.0f, (float)getHeight());
 }
@@ -124,6 +126,9 @@ void Polytempo_AuxiliaryView::resized()
     yPosition +=55;
     
     tempoFactorTextbox->setBounds(10, yPosition, getWidth() - 20, 34);
+	yPosition += 60;
+
+	annotationView->setBounds(10, yPosition, getWidth() - 20, 50);
 	yPosition += 60;
 
 	timeSyncControl->setBounds(10, yPosition, getWidth() - 20, 50);

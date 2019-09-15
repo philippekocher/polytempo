@@ -145,6 +145,10 @@
     </GROUP>
     <GROUP id="{387130A6-2BE3-19EF-2CB5-6ADE3718BBBC}" name="Views">
       <GROUP id="{59998D8D-099D-1311-792D-74F9D735FAFF}" name="PolytempoNetwork">
+        <FILE id="niU8oo" name="Polytempo_AnnotationView.cpp" compile="1" resource="0"
+              file="../Source/Views/PolytempoNetwork/Polytempo_AnnotationView.cpp"/>
+        <FILE id="QrHXQA" name="Polytempo_AnnotationView.h" compile="0" resource="0"
+              file="../Source/Views/PolytempoNetwork/Polytempo_AnnotationView.h"/>
         <FILE id="HPH9Eh" name="Polytempo_ScoreEditorView.cpp" compile="1"
               resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_ScoreEditorView.cpp"/>
         <FILE id="M5sBZw" name="Polytempo_ScoreEditorView.h" compile="0" resource="0"
