@@ -33,7 +33,7 @@ Polytempo_Event::Polytempo_Event(Polytempo_EventType t)
     position = 0;
     owned = false;
     
-    properties = new NamedValueSet();
+    properties.reset(new NamedValueSet());
 }
 
 Polytempo_Event::Polytempo_Event(const Polytempo_Event& event)
@@ -44,7 +44,7 @@ Polytempo_Event::Polytempo_Event(const Polytempo_Event& event)
     position = event.position;
     owned = event.owned;
     
-    properties = new NamedValueSet(*event.properties);
+    properties.reset(new NamedValueSet(*event.properties));
 }
 
 Polytempo_Event::~Polytempo_Event()
@@ -355,7 +355,7 @@ void Polytempo_Event::setProperty(String key, var value)
     else if(key == "position")
         position = value;
     
-    if(!properties) properties = new NamedValueSet();
+    if(!properties) properties.reset(new NamedValueSet());
     
     properties->set(key,value);
 }
@@ -379,5 +379,5 @@ void Polytempo_Event::removeProperty(String key)
 
 NamedValueSet* Polytempo_Event::getProperties() const
 {
-    return properties;
+    return properties.get();
 }

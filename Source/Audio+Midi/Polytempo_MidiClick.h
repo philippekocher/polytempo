@@ -52,8 +52,8 @@ private:
     int downbeatPitch, beatPitch, cuePitch;
     int downbeatVelocity, beatVelocity, cueVelocity;
     int channel, outputDeviceIndex;
-    
-    ScopedPointer <MidiOutput> midiOutput;
+
+	std::unique_ptr<MidiOutput> midiOutput;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_MidiClick)
 };

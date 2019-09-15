@@ -36,7 +36,7 @@ Polytempo_MidiClick::Polytempo_MidiClick()
     cueVelocity = Polytempo_StoredPreferences::getInstance()->getProps().getIntValue("midiCueVelocity");
     channel = Polytempo_StoredPreferences::getInstance()->getProps().getIntValue("midiChannel");
     
-    juce::StringArray midiDevices = MidiOutput::getDevices();
+    StringArray midiDevices = MidiOutput::getDevices();
     outputDeviceIndex = midiDevices.indexOf(Polytempo_StoredPreferences::getInstance()->getProps().getValue("midiOutputDevice"));
     if(outputDeviceIndex < 0) outputDeviceIndex = 0;
     midiOutput = MidiOutput::openDevice(outputDeviceIndex);

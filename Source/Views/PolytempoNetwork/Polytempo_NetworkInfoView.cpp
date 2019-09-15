@@ -51,7 +51,7 @@ void Polytempo_NetworkInfoView::paint (Graphics& g)
 	}
 	else
 	{
-		ScopedPointer<Polytempo_PeerInfo> peer = Polytempo_InterprocessCommunication::getInstance()->getMasterInfo();
+		std::unique_ptr<Polytempo_PeerInfo> peer = std::unique_ptr<Polytempo_PeerInfo>(Polytempo_InterprocessCommunication::getInstance()->getMasterInfo());
 
 		if(peer != nullptr)
 		{

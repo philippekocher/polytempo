@@ -179,7 +179,7 @@ private:
     
     bool                owned;     // indicate if this event is owned by a another data structure (e.g. a score) 
 
-    ScopedPointer < NamedValueSet > properties;
+	std::unique_ptr < NamedValueSet > properties;
 };
 
 

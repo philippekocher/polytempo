@@ -76,8 +76,8 @@ private:
     float borderSize;
     Rectangle < float > relativeBounds;
     Image  *image;
-    ScopedPointer < String > text;
-    ScopedPointer < Polytempo_Progressbar > progressbar;
+	std::unique_ptr < String > text;
+	std::unique_ptr < Polytempo_Progressbar > progressbar;
 	float imageZoom = 1;
 	float maxImageZoom = -1;    
 

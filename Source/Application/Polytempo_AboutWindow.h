@@ -37,14 +37,14 @@ public:
     void closeButtonPressed();
     
 private:
-    ScopedPointer<Label> label1;
-    ScopedPointer<Label> label2;
-    ScopedPointer<Label> label3;
-    ScopedPointer<Label> label4;
-    ScopedPointer<ImageComponent> iconComponent;
-    ScopedPointer<HyperlinkButton> link1;
-    ScopedPointer<HyperlinkButton> link2;
-    ScopedPointer<Component> aboutComponent;
+    std::unique_ptr<Label> label1;
+	std::unique_ptr<Label> label2;
+	std::unique_ptr<Label> label3;
+	std::unique_ptr<Label> label4;
+	std::unique_ptr<ImageComponent> iconComponent;
+	std::unique_ptr<HyperlinkButton> link1;
+	std::unique_ptr<HyperlinkButton> link2;
+	std::unique_ptr<Component> aboutComponent;
 };
 
 
