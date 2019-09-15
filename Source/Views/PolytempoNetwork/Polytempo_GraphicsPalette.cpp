@@ -90,7 +90,7 @@ void Polytempo_GraphicsPalette::show(bool show) const
 		buttonCancel->setTopLeftPosition(BUTTON_SIZE, 0);
 		buttonColor->setTopLeftPosition(2 * BUTTON_SIZE, 0);
 		buttonTextSize->setTopLeftPosition(3 * BUTTON_SIZE, 0);
-		buttonDelete->setTopLeftPosition(5 * BUTTON_SIZE, 0);
+		buttonDelete->setTopLeftPosition(4 * BUTTON_SIZE, 0);
 	}
 
 	buttonOk->setVisible(show);
