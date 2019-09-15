@@ -119,7 +119,7 @@ Polytempo_GraphicsAnnotationSettingsDialog::Polytempo_GraphicsAnnotationSettings
 
 	addAndMakeVisible(table);
 	table.setModel(this);
-	table.getHeader().addColumn("Show", COLUMN_ID_SHOW, 35);
+	table.getHeader().addColumn("Show", COLUMN_ID_SHOW, 45);
 	table.getHeader().addColumn("Edit", COLUMN_ID_EDIT, 35);
 	table.getHeader().addColumn("Name", 3, 200);
 	table.getHeader().resizeAllColumnsToFit(getWidth());
@@ -277,7 +277,7 @@ void Polytempo_GraphicsAnnotationSettingsDialog::buttonClicked(Button* btn)
 void Polytempo_GraphicsAnnotationSettingsDialog::show(OwnedArray < Polytempo_GraphicsAnnotationSet>* pAnnotationSet)
 {
 	Polytempo_GraphicsAnnotationSettingsDialog *p = new Polytempo_GraphicsAnnotationSettingsDialog(pAnnotationSet);
-	p->setSize(500, 690);
+	p->setSize(300, 390);
 
 	DialogWindow::LaunchOptions options;
 	options.content.setOwned(p);
