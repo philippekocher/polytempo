@@ -40,13 +40,13 @@ class Polytempo_NetworkApplication : public JUCEApplication
 public:
     Polytempo_NetworkApplication();
     
-    const String getApplicationName()       { return ProjectInfo::projectName; }
-    const String getApplicationVersion()    { return ProjectInfo::versionString; }
-    bool moreThanOneInstanceAllowed()       { return true; }
+    const String getApplicationName() override    { return ProjectInfo::projectName; }
+    const String getApplicationVersion() override { return ProjectInfo::versionString; }
+    bool moreThanOneInstanceAllowed() override    { return true; }
 
-    void initialise(const String& commandLine);
-    void shutdown();
-    void systemRequestedQuit();
+    void initialise(const String& commandLine) override;
+    void shutdown() override;
+    void systemRequestedQuit() override;
     void applicationShouldQuit();
     bool quitApplication = false;
     void anotherInstanceStarted(const String& commandLine) override;

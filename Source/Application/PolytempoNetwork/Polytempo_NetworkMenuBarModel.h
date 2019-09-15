@@ -52,7 +52,7 @@ private:
     Polytempo_NetworkWindow *window;
     
 #if JUCE_MAC
-    ScopedPointer<PopupMenu> extraAppleMenuItems;
+    std::unique_ptr<PopupMenu> extraAppleMenuItems;
 #endif
 
 };
