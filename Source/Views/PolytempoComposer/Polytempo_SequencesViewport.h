@@ -30,7 +30,6 @@
 #include "../../Data/Polytempo_Composition.h"
 #include "../../Misc/Polytempo_Button.h"
 
-
 class Polytempo_ColourButton : public Button, ChangeListener
 {
 public:
@@ -81,6 +80,8 @@ public:
     void paint (Graphics&);
     void resized();
     
+    void showGraphicalSettings(bool);
+
     void mouseDown(const MouseEvent &);
     
     void textEditorTextChanged(TextEditor&);
@@ -89,8 +90,10 @@ public:
 private:
     int sequenceIndex;
     TextEditor sequenceName;
+    bool graphicalSettingsShown;
     
-    std::unique_ptr<Polytempo_Button> settingsButton;
+    std::unique_ptr<Polytempo_Button> playbackSettingsButton;
+    std::unique_ptr<Polytempo_Button> graphicalSettingsButton;
     std::unique_ptr<Polytempo_Button> soloButton;
     std::unique_ptr<Polytempo_Button> muteButton;
 
@@ -109,7 +112,10 @@ public:
     void paint (Graphics&);
     void resized();
 
+    void showGraphicalSettings(bool);
+
 private:
+    bool graphicalSettingsShown;
     std::unique_ptr<Component> viewedComponent;
     OwnedArray <Polytempo_SequenceControlComponent> sequenceControls;
 };

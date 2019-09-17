@@ -55,7 +55,11 @@ void Polytempo_Composition::updateContent()
 {
     findCoincidingControlPoints();
     
-    if(mainWindow) mainWindow->repaint();
+    if(mainWindow)
+    {
+        mainWindow->repaint();
+        mainWindow->getContentComponent()->resized();
+    }
     
     Polytempo_ComposerApplication::getCommandManager().commandStatusChanged(); // update menubar
     Polytempo_AudioClick::getInstance()->setNumVoices(sequenceCounter);

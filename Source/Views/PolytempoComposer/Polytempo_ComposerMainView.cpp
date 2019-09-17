@@ -59,9 +59,7 @@ Polytempo_ComposerMainView::~Polytempo_ComposerMainView()
 }
 
 void Polytempo_ComposerMainView::paint (Graphics& g)
-{
-    g.fillAll(Colour(245,245,245));
-}
+{}
 
 
 void Polytempo_ComposerMainView::resized()
@@ -85,6 +83,7 @@ void Polytempo_ComposerMainView::resized()
     toolbarComponent->setBounds(r.withHeight(TOOLBAR_HEIGHT));
     transportComponent->setBounds(r.withY(r.getHeight() - SEQUENCES_HEIGHT - TRANSPORT_HEIGHT).withHeight(TRANSPORT_HEIGHT));
     sequencesViewport.setBounds(r.removeFromBottom(SEQUENCES_HEIGHT));
+    sequencesViewport.showGraphicalSettings(false);
 }
 
 void Polytempo_ComposerMainView::childBoundsChanged(Component* child)

@@ -464,7 +464,8 @@ void Polytempo_ComposerMenuBarModel::getCommandInfo(CommandID commandID, Applica
         case Polytempo_CommandIDs::returnToBeginning:
             result.setInfo ("Return to beginning", "Return to beginning", infoCategory, 0);
             result.addDefaultKeypress ('\r', ModifierKeys::commandModifier);
-            result.setActive(window->getContentID() == Polytempo_ComposerWindow::mainViewID)            break;
+            result.setActive(window->getContentID() == Polytempo_ComposerWindow::mainViewID);
+            break;
 
             /*
              case gotoCmd:
@@ -599,6 +600,7 @@ bool Polytempo_ComposerMenuBarModel::perform (const InvocationInfo& info)
             break;
         case Polytempo_CommandIDs::showGraphicExportView:
             window->setContentID(Polytempo_ComposerWindow::graphicExportViewID);
+            Polytempo_ScoreScheduler::getInstance()->stop();
             break;
         case Polytempo_CommandIDs::showTimeMap:
             Polytempo_ComposerApplication::getMainView().setLeftComponent(Polytempo_ComposerMainView::componentType_TimeMap);

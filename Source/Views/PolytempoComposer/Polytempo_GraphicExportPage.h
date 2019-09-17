@@ -13,8 +13,8 @@ public:
 //    void resized() override;
     
     void drawStaff (int x1, int x2, int y, int numberOfLines, int linesOffset, String name);
-    void drawBarline(int x, int y1, int y2, String timeSignature);
-    void drawAuxiliaryLine(int x, int y1, int y2);
+    void drawBarline(int x, int y, int numberOfLines, int linesOffset, String timeSignature);
+    void drawAuxiliaryLine(int x, int y, int numberOfLines, int linesOffset);
     void drawMarker(String marker, int x, int y);
 
     void exportImage(String);

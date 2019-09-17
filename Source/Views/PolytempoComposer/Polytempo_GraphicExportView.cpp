@@ -21,6 +21,7 @@ void Polytempo_GraphicExportView::resized()
 
     graphicExportViewport.setBounds(r.withTrimmedBottom(120));
     sequencesViewport.setBounds(r.removeFromBottom(120));
+    sequencesViewport.showGraphicalSettings(true);
     
     graphicExportViewport.update();
     //graphicExportViewport.exportImages();

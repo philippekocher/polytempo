@@ -634,6 +634,11 @@ DynamicObject* Polytempo_Sequence::getObject()
     object->setProperty("oscReceiver", oscReceiver);
     object->setProperty("oscPort", oscPort);
     
+    object->setProperty("showName", showName);
+    object->setProperty("staffOffset", staffOffset);
+    object->setProperty("lineOffset", lineOffset);
+    object->setProperty("numberOfLines", numberOfLines);
+    
     return object;
 }
 
@@ -705,4 +710,12 @@ void Polytempo_Sequence::setObject(DynamicObject* object)
     
     mute = object->getProperty("mute");
     
+    if(object->hasProperty("showName"))
+        showName = object->getProperty("showName");
+    if(object->hasProperty("staffOffset"))
+        staffOffset = object->getProperty("staffOffset");
+    if(object->hasProperty("lineOffset"))
+        lineOffset = object->getProperty("lineOffset");
+    if(object->hasProperty("numberOfLines"))
+        numberOfLines = object->getProperty("numberOfLines");
 }

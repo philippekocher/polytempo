@@ -47,8 +47,17 @@ void Polytempo_GraphicExportPage::drawStaff(int x, int y, int width, int numberO
         g.drawHorizontalLine(y + (n * linesOffset), x, x + width);
 }
 
-void Polytempo_GraphicExportPage::drawBarline(int x, int y1, int y2, String timeSignature)
+void Polytempo_GraphicExportPage::drawBarline(int x, int y, int numberOfLines, int linesOffset, String timeSignature)
 {
+    int y1 = y;
+    int y2 = y + numberOfLines * (linesOffset - 1);
+    
+    if(numberOfLines < 1)
+    {
+        y1 -= linesOffset;
+        y2 += linesOffset;
+    }
+
     Graphics g (*image);
     g.setColour(Colours::black);
 
@@ -78,8 +87,17 @@ void Polytempo_GraphicExportPage::drawBarline(int x, int y1, int y2, String time
     }
 }
 
-void Polytempo_GraphicExportPage::drawAuxiliaryLine(int x, int y1, int y2)
+void Polytempo_GraphicExportPage::drawAuxiliaryLine(int x, int y, int numberOfLines, int linesOffset)
 {
+    int y1 = y;
+    int y2 = y + numberOfLines * (linesOffset - 1);
+    
+    if(numberOfLines < 1)
+    {
+        y1 -= linesOffset;
+        y2 += linesOffset;
+    }
+
     Graphics g (*image);
     g.setColour(Colours::grey);
     
@@ -140,6 +158,7 @@ void Polytempo_GraphicExportViewport::update()
     int beatPatternIndex, beatPatternCounter;
     Polytempo_BeatPattern *beatPattern;
     int posX, posY;
+    int staffOffset = 0;
     for(sequenceIndex=0;sequenceIndex<composition->getNumberOfSequences();sequenceIndex++)
     {
         pageIndex = 0;
@@ -150,28 +169,27 @@ void Polytempo_GraphicExportViewport::update()
         
         int marginLeft = 400;
         int marginRight = 200;
-        int marginTop = 200;
+        int marginTop = 0;
         int marginBottom = 200;
         int systemWidth = 2480 - marginLeft - marginRight;
         int systemHeight = 1500;
         int systemsPerPage = 2;
-        int staffOffset = 280;
-        int lineOffset = 15;
-        int numberOfLines = 5;
         
         Polytempo_Sequence *sequence = composition->getSequence(sequenceIndex);
-        
+        staffOffset += sequence->staffOffset;
+        String sequenceName = sequence->showName ? sequence->getName() : String();
+
         for(Polytempo_Event *event : sequence->getEvents())
         {
             if(!event->hasDefinedTime()) continue;
             
             posX = event->getTime() * 0.2 - (pageIndex * systemsPerPage + systemIndex) * systemWidth;
-            posY = marginTop + systemIndex * systemHeight + sequenceIndex * staffOffset;
+            posY = marginTop + systemIndex * systemHeight + staffOffset;
 
             if(posX > systemWidth) // reach the end of a line
             {
                 // draw staff
-                pages[pageIndex]->drawStaff(marginLeft, posY, systemWidth, numberOfLines, lineOffset, sequence->getName());
+                pages[pageIndex]->drawStaff(marginLeft, posY, systemWidth, sequence->numberOfLines, sequence->lineOffset, sequenceName);
 
                 systemIndex++;
 
@@ -184,9 +202,8 @@ void Polytempo_GraphicExportViewport::update()
                     if(pageIndex == pages.size()) addPage();
                     
                     systemIndex = 0;
-                    posY = marginTop + sequenceIndex * staffOffset;
-                }
-                
+                    posY = marginTop + staffOffset;
+                }                
             }
             
             posX += marginLeft;
@@ -202,28 +219,27 @@ void Polytempo_GraphicExportViewport::update()
                         {
                             beatPatternCounter = beatPattern->getRepeats();
 
-                            pages[pageIndex]->drawBarline(posX, posY, posY + (numberOfLines-1) * lineOffset, beatPattern->getPattern());
+                            pages[pageIndex]->drawBarline(posX, posY, sequence->numberOfLines, sequence->lineOffset, beatPattern->getPattern());
                         }
                     }
                     else
                     {
-                        pages[pageIndex]->drawBarline(posX, posY, posY + (numberOfLines-1) * lineOffset, String());
+                        pages[pageIndex]->drawBarline(posX, posY, sequence->numberOfLines, sequence->lineOffset, String());
                     }
                     beatPatternCounter--;
 
                 }
                 else
-                    pages[pageIndex]->drawAuxiliaryLine(posX, posY, posY + (numberOfLines-1) * lineOffset);
+                    pages[pageIndex]->drawAuxiliaryLine(posX, posY, sequence->numberOfLines-1, sequence->lineOffset);
             }
             else if(event->getType() == eventType_Marker)
             {
-                pages[pageIndex]->drawMarker(event->getValue().toString(), posX, posY + (numberOfLines-1) * lineOffset);
+                pages[pageIndex]->drawMarker(event->getValue().toString(), posX, posY + (sequence->numberOfLines-1) * sequence->lineOffset);
             }
         }
         
         // draw staff up to the last event
-        pages[pageIndex]->drawStaff(marginLeft, marginTop + systemIndex * systemHeight + sequenceIndex * staffOffset, posX - marginLeft, numberOfLines, lineOffset, sequence->getName());
-
+        pages[pageIndex]->drawStaff(marginLeft, marginTop + systemIndex * systemHeight + staffOffset, posX - marginLeft, sequence->numberOfLines, sequence->lineOffset, sequenceName);
     }
 }
 

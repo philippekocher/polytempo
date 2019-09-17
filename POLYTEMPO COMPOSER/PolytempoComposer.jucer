@@ -83,6 +83,10 @@
                 file="../Source/Views/PolytempoComposer/Polytempo_Ruler.cpp"/>
           <FILE id="IoPcfG" name="Polytempo_Ruler.h" compile="0" resource="0"
                 file="../Source/Views/PolytempoComposer/Polytempo_Ruler.h"/>
+          <FILE id="AzykKf" name="Polytempo_SequenceGraphicalSettings.cpp" compile="1"
+                resource="0" file="../Source/Views/PolytempoComposer/Polytempo_SequenceGraphicalSettings.cpp"/>
+          <FILE id="Zc54Uc" name="Polytempo_SequenceGraphicalSettings.h" compile="0"
+                resource="0" file="../Source/Views/PolytempoComposer/Polytempo_SequenceGraphicalSettings.h"/>
           <FILE id="zZwq62" name="Polytempo_SequencePlaybackSettings.cpp" compile="1"
                 resource="0" file="../Source/Views/PolytempoComposer/Polytempo_SequencePlaybackSettings.cpp"/>
           <FILE id="BU79PK" name="Polytempo_SequencePlaybackSettings.h" compile="0"

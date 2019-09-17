@@ -1,0 +1,36 @@
+#pragma once
+
+#include "../../Data/Polytempo_Sequence.h"
+#include "../../Misc/Polytempo_Textbox.h"
+#include "../../Misc/Polytempo_Button.h"
+
+
+class Polytempo_SequenceGraphicalSettings : public Component,
+public Button::Listener,
+public Label::Listener
+{
+public:
+    Polytempo_SequenceGraphicalSettings(Polytempo_Sequence*);
+    ~Polytempo_SequenceGraphicalSettings();
+    
+    void paint(Graphics&) override;
+    void resized() override;
+    
+    /* listeners
+     --------------------------------------- */
+    void buttonClicked(Button* button) override;
+    void labelTextChanged(Label* textbox) override;
+    
+    static void show(Polytempo_Sequence*);
+
+private:
+    Polytempo_Sequence* sequence;
+    
+    Polytempo_Textbox *staffOffsetTextbox;
+    Polytempo_Textbox *numberOfLinesTextbox;
+    Polytempo_Textbox *lineOffsetTextbox;
+    
+    ToggleButton      *showNameButton;
+    
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_SequenceGraphicalSettings)
+};
