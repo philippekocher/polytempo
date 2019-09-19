@@ -132,11 +132,11 @@ private:
     friend class Polytempo_SequenceControlComponent;
     bool mute = false;
     
-    friend class Polytempo_GraphicExportViewport;
+    friend class Polytempo_GraphicExportView;
     friend class Polytempo_SequenceGraphicalSettings;
     bool showName = true;
-    int staffOffset = 280;
-    int lineOffset = 15;
+    int staffOffset = 140;
+    int lineOffset = 8;
     int numberOfLines = 5;
 };
 

@@ -7,7 +7,6 @@ Polytempo_SequenceGraphicalSettings::Polytempo_SequenceGraphicalSettings(Polytem
 :sequence(theSequence)
 {
     addAndMakeVisible(showNameButton = new ToggleButton("Show Name"));
-//    showNameButton->setButtonText("Play Audio Click");
     showNameButton->setToggleState(sequence->showName, dontSendNotification);
     showNameButton->addListener(this);
     
