@@ -33,6 +33,8 @@ Polytempo_AnnotationView::Polytempo_AnnotationView()
 	displayMode();
 
 	Polytempo_GraphicsAnnotationManager::getInstance()->addChangeListener(this);
+
+	Polytempo_GraphicsPalette::getInstance()->initialize(this);
 }
 
 Polytempo_AnnotationView::~Polytempo_AnnotationView()
@@ -49,6 +51,10 @@ void Polytempo_AnnotationView::resized()
 	annotationMasterToggle->setBounds(0, 5, getWidth(), 18);
 	annotationModeComboBox->setBounds(0, 24, getWidth()-30, 22);
 	buttonSettings->setBounds(getWidth() - 22, 24, 22, 22);
+
+	int paletteHeight = Polytempo_GraphicsPalette::getInstance()->resize(Point<int>(0, 60));
+	setSize(getWidth(), 60 + paletteHeight);
+	getParentComponent()->resized();
 }
 
 void Polytempo_AnnotationView::updateState() const

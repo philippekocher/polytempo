@@ -39,41 +39,35 @@ void Polytempo_GraphicsPalette::initialize(Component* pParent)
 	Image imageDelete = CreateImageWithSolidBackground(ImageCache::getFromMemory(BinaryData::delete_png, BinaryData::delete_pngSize), BUTTON_SIZE, BUTTON_SIZE);
 
 	buttonColor.reset(new ImageButton("Color"));
-	buttonColor->setImages(false, false, false, imageColorPalette, 1.0f, Colours::transparentWhite, Image(), overOpacity, overColour, Image(), downOpacity, Colours::green);
+	buttonColor->setImages(false, true, false, imageColorPalette, 1.0f, Colours::transparentWhite, Image(), overOpacity, overColour, Image(), downOpacity, Colours::green);
 	buttonColor->setBounds(0, 0, BUTTON_SIZE, BUTTON_SIZE);
 	buttonColor->addListener(this);
 	pParentComponent->addChildComponent(buttonColor.get());
 
 	buttonTextSize.reset(new ImageButton("Size"));
-	buttonTextSize->setImages(false, false, false, imageFontSize, 1.0f, Colours::transparentWhite, Image(), overOpacity, overColour, Image(), downOpacity, Colours::green);
+	buttonTextSize->setImages(false, true, false, imageFontSize, 1.0f, Colours::transparentWhite, Image(), overOpacity, overColour, Image(), downOpacity, Colours::green);
 	buttonTextSize->setBounds(0, 0, BUTTON_SIZE, BUTTON_SIZE);
 	buttonTextSize->setTriggeredOnMouseDown(true);
 	buttonTextSize->addListener(this);
 	pParentComponent->addChildComponent(buttonTextSize.get());
 
 	buttonOk.reset(new ImageButton("OK"));
-	buttonOk->setImages(false, false, false, imageOk, 1.0f, Colours::transparentWhite, Image(), overOpacity, overColour, Image(), downOpacity, Colours::green);
+	buttonOk->setImages(false, true, false, imageOk, 1.0f, Colours::transparentWhite, Image(), overOpacity, overColour, Image(), downOpacity, Colours::green);
 	buttonOk->setBounds(0, 0, BUTTON_SIZE, BUTTON_SIZE);
 	buttonOk->addListener(this);
 	pParentComponent->addChildComponent(buttonOk.get());
 
 	buttonCancel.reset(new ImageButton("Cancel"));
-	buttonCancel->setImages(false, false, false, imageCancel, 1.0f, Colours::transparentWhite, Image(), overOpacity, overColour, Image(), downOpacity, Colours::red);
+	buttonCancel->setImages(false, true, false, imageCancel, 1.0f, Colours::transparentWhite, Image(), overOpacity, overColour, Image(), downOpacity, Colours::red);
 	buttonCancel->setBounds(0, 0, BUTTON_SIZE, BUTTON_SIZE);
 	buttonCancel->addListener(this);
 	pParentComponent->addChildComponent(buttonCancel.get());
 
 	buttonDelete.reset(new ImageButton("Delete"));
-	buttonDelete->setImages(false, false, false, imageDelete, 1.0f, Colours::transparentWhite, Image(), overOpacity, overColour, Image(), downOpacity, Colours::red);
+	buttonDelete->setImages(false, true, false, imageDelete, 1.0f, Colours::transparentWhite, Image(), overOpacity, overColour, Image(), downOpacity, Colours::red);
 	buttonDelete->setBounds(0, 0, BUTTON_SIZE, BUTTON_SIZE);
 	buttonDelete->addListener(this);
 	pParentComponent->addChildComponent(buttonDelete.get());
-
-	colorSelector.reset(new ColourSelector(ColourSelector::ColourSelectorOptions::showAlphaChannel | ColourSelector::ColourSelectorOptions::showColourspace | ColourSelector::ColourSelectorOptions::showSliders | ColourSelector::ColourSelectorOptions::showColourAtTop));
-	colorSelector->setBounds(0, 0, 200, 200);
-	colorSelector->setCurrentColour(Colours::red);
-	colorSelector->addChangeListener(this);
-	pParentComponent->addChildComponent(colorSelector.get());
 }
 
 
@@ -104,9 +98,6 @@ void Polytempo_GraphicsPalette::setVisible(bool show)
 	if (Polytempo_GraphicsAnnotationManager::getInstance()->getAnchorFlag())
 		buttonDelete->setVisible(show);
 
-	if (!show)
-		colorSelector->setVisible(false);
-
 	pParentComponent->resized();
 
 	if(pAnnotationLayer != nullptr)
@@ -118,18 +109,28 @@ int Polytempo_GraphicsPalette::isVisible() const
 	return visibleFlag;
 }
 
-void Polytempo_GraphicsPalette::resize(Point<int> offset) const
+int Polytempo_GraphicsPalette::resize(Point<int> offset) const
 {
-	buttonOk->setTopLeftPosition(offset.getX(), offset.getY());
-	buttonCancel->setTopLeftPosition(offset.getX() + BUTTON_SIZE, offset.getY());
-	buttonColor->setTopLeftPosition(offset.getX() + 2 * BUTTON_SIZE, offset.getY());
-	buttonTextSize->setTopLeftPosition(offset.getX() + 3 * BUTTON_SIZE, offset.getY());
-	buttonDelete->setTopLeftPosition(offset.getX() + 4 * BUTTON_SIZE, offset.getY());
+	// returns the height of the palette
+
+	int totalWidth = pParentComponent->getWidth() - 10;
+
+	int buttonSize = int(totalWidth / 5);
+	buttonOk->setBounds(offset.getX(), offset.getY(), buttonSize, buttonSize);
+	buttonCancel->setBounds(offset.getX() + buttonSize, offset.getY(), buttonSize, buttonSize);
+	buttonColor->setBounds(offset.getX() + 2 * buttonSize, offset.getY(), buttonSize, buttonSize);
+	buttonTextSize->setBounds(offset.getX() + 3 * buttonSize, offset.getY(), buttonSize, buttonSize);
+	buttonDelete->setBounds(offset.getX() + 4 * buttonSize, offset.getY(), buttonSize, buttonSize);
+
+	if (isVisible())
+		return buttonSize + 5;
+	
+	return 0;
 }
 
-Colour Polytempo_GraphicsPalette::getCurrentColour() const
+Colour Polytempo_GraphicsPalette::getLastColour() const
 {
-	return colorSelector->getCurrentColour();
+	return lastColor;
 }
 
 
@@ -157,9 +158,10 @@ PopupMenu Polytempo_GraphicsPalette::getTextSizePopupMenu() const
 
 void Polytempo_GraphicsPalette::changeListenerCallback(ChangeBroadcaster* source)
 {
-	if (source == colorSelector.get())
+	if (auto* cs = dynamic_cast<ColourSelector*> (source))
 	{
-		pAnnotationLayer->setTemporaryColor(colorSelector->getCurrentColour());
+		lastColor = cs->getCurrentColour();
+		pAnnotationLayer->setTemporaryColor(cs->getCurrentColour());
 	}
 }
 
@@ -181,9 +183,11 @@ void Polytempo_GraphicsPalette::buttonClicked(Button* source)
 	else if (source == buttonColor.get())
 	{
 		pAnnotationLayer->stopAutoAccept();
-		colorSelector->setTopLeftPosition(5, buttonOk->getBottom());
-		colorSelector->setVisible(!colorSelector->isVisible());
+		ColourSelector* colorSelector = new ColourSelector(ColourSelector::ColourSelectorOptions::showAlphaChannel | ColourSelector::ColourSelectorOptions::showColourspace | ColourSelector::ColourSelectorOptions::showSliders | ColourSelector::ColourSelectorOptions::showColourAtTop);
+		colorSelector->addChangeListener(this); 
 		colorSelector->setCurrentColour(pAnnotationLayer->getTemporaryColor());
+		colorSelector->setSize(300, 400);
+		CallOutBox::launchAsynchronously(colorSelector, pParentComponent->getScreenBounds(), nullptr);
 	}
 	else if (source == buttonTextSize.get())
 	{

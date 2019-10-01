@@ -31,8 +31,8 @@ public:
 	void setAnnotationLayer(Polytempo_GraphicsAnnotationLayer* pParent);
 	void setVisible(bool show);
 	int isVisible() const;
-	void resize(Point<int> offset) const;
-	Colour getCurrentColour() const;
+	int resize(Point<int> offset) const;
+	Colour getLastColour() const;
 	void hitBtnColor();
 	void hitBtnTextSize();
 	void setTemporaryFontSize(float size) const;
@@ -52,9 +52,9 @@ private:
 	std::unique_ptr<ImageButton> buttonColor;
 	std::unique_ptr<ImageButton> buttonTextSize;
 	std::unique_ptr<ImageButton> buttonDelete;
-	std::unique_ptr<ColourSelector> colorSelector;
 	bool visibleFlag;
 	Component* pParentComponent;
+	Colour lastColor;
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_GraphicsPalette)

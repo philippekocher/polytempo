@@ -149,7 +149,7 @@ void Polytempo_GraphicsAnnotationLayer::handleStartEditing(Point<int> mousePosit
 		temporaryAnnotation.id = Uuid();
 		temporaryAnnotation.imageId = pRegion->getImageID();
 		temporaryAnnotation.referencePoint = imageCoordiantes;
-		temporaryAnnotation.color = Polytempo_GraphicsPalette::getInstance()->getCurrentColour();
+		temporaryAnnotation.color = Polytempo_GraphicsPalette::getInstance()->getLastColour();
 		temporaryAnnotation.fontSize = STANDARD_FONT_SIZE;
 		temporaryAnnotation.pRegion = pRegion;
 	}

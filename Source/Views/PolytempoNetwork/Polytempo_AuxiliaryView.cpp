@@ -81,8 +81,6 @@ Polytempo_AuxiliaryView::Polytempo_AuxiliaryView()
 
     addAndMakeVisible(networkInfoView = new Polytempo_NetworkInfoView());
 	networkInfoView->setColour(Label::backgroundColourId, Colours::lightblue);
-
-	Polytempo_GraphicsPalette::getInstance()->initialize(this);
 }
 
 Polytempo_AuxiliaryView::~Polytempo_AuxiliaryView()
@@ -136,15 +134,8 @@ void Polytempo_AuxiliaryView::resized()
 	separator1Position = yPosition;
 	yPosition += 10;
 
-	int annotationHeight;
-	if (Polytempo_GraphicsPalette::getInstance()->isVisible())
-		annotationHeight = 90;
-	else
-		annotationHeight = 55;
-
-	annotationView->setBounds(10, yPosition, getWidth() - 20, annotationHeight);
-	Polytempo_GraphicsPalette::getInstance()->resize(Point<int>(10, yPosition + 55));
-	yPosition += annotationHeight + 5;
+	annotationView->setBounds(10, yPosition, getWidth() - 20, annotationView->getHeight());
+	yPosition += annotationView->getHeight() + 5;
 
 	separator2Position = yPosition;
 	yPosition += 5;
