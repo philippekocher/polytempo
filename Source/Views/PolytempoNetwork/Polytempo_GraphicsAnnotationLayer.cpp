@@ -21,7 +21,8 @@ Polytempo_GraphicsAnnotationLayer::Polytempo_GraphicsAnnotationLayer(HashMap < S
 	setAlwaysOnTop(true);
 	addKeyListener(this);
 	startTimer(TIMER_ID_REPAINT, MIN_INTERVAL_BETWEEN_REPAINTS_MS);
-	palette.reset(new Polytempo_GraphicsPalette(this));
+	Polytempo_GraphicsPalette::getInstance()->setAnnotationLayer(this);
+	setWantsKeyboardFocus(true);
 
 	Polytempo_GraphicsAnnotationManager::getInstance()->addChangeListener(this);
 }
@@ -87,6 +88,7 @@ void Polytempo_GraphicsAnnotationLayer::prepareAnnotationLayer()
 void Polytempo_GraphicsAnnotationLayer::paintAnnotation(Graphics& g, const Polytempo_GraphicsAnnotation* annotation, bool anchorFlag, Colour anchorColor)
 {
 	PathStrokeType strokeType(PathStrokeType::rounded);
+	strokeType.setStrokeThickness(5.0f);
 
 	g.setColour(annotation->color);
 	if (!annotation->freeHandPath.isEmpty())
@@ -147,7 +149,7 @@ void Polytempo_GraphicsAnnotationLayer::handleStartEditing(Point<int> mousePosit
 		temporaryAnnotation.id = Uuid();
 		temporaryAnnotation.imageId = pRegion->getImageID();
 		temporaryAnnotation.referencePoint = imageCoordiantes;
-		temporaryAnnotation.color = palette->getCurrentColour();
+		temporaryAnnotation.color = Polytempo_GraphicsPalette::getInstance()->getCurrentColour();
 		temporaryAnnotation.fontSize = STANDARD_FONT_SIZE;
 		temporaryAnnotation.pRegion = pRegion;
 	}
@@ -158,8 +160,8 @@ void Polytempo_GraphicsAnnotationLayer::handleStartEditing(Point<int> mousePosit
 	status = FreehandEditing;
 	setMouseCursor(MouseCursor::CrosshairCursor);
 
-	grabKeyboardFocus();
 	repaint();
+	grabKeyboardFocus();
 }
 
 void Polytempo_GraphicsAnnotationLayer::handleFreeHandPainting(const Point<int>& mousePosition)
@@ -203,7 +205,7 @@ void Polytempo_GraphicsAnnotationLayer::handleEndEdit()
 {
 	status = Default;
 	setMouseCursor(MouseCursor::NormalCursor);
-	palette->show(false);
+	Polytempo_GraphicsPalette::getInstance()->setVisible(false);
 
 	Polytempo_GraphicsAnnotationManager::getInstance()->resetAnnotationPending(this);
 	fullUpdateRequired.set(true);
@@ -249,7 +251,8 @@ void Polytempo_GraphicsAnnotationLayer::mouseUp(const MouseEvent& event)
 
 	if (status == FreehandEditing)
 	{
-		palette->show(true);
+		Polytempo_GraphicsPalette::getInstance()->setVisible(true);
+		grabKeyboardFocus();
 		startTimer(TIMER_ID_AUTO_ACCEPT, AUTO_ACCEPT_INTERVAL_MS);
 	}
 }
@@ -291,7 +294,7 @@ void Polytempo_GraphicsAnnotationLayer::timerCallback(int timerID)
 
 bool Polytempo_GraphicsAnnotationLayer::keyPressed(const KeyPress& key, Component* /*originatingComponent*/)
 {
-	if (status != Default && key.isValid())
+	if (status != Default && key.isValid() && !key.getModifiers().isCtrlDown())
 	{
 		if (key == KeyPress::escapeKey)
 			handleEndEditCancel();
@@ -345,12 +348,17 @@ void Polytempo_GraphicsAnnotationLayer::stopAutoAccept()
 
 void Polytempo_GraphicsAnnotationLayer::hitBtnColor() const
 {
-	palette->hitBtnColor();
+	Polytempo_GraphicsPalette::getInstance()->hitBtnColor();
 }
 
 void Polytempo_GraphicsAnnotationLayer::hitBtnTextSize() const
 {
-	palette->hitBtnTextSize();
+	Polytempo_GraphicsPalette::getInstance()->hitBtnTextSize();
+}
+
+Colour Polytempo_GraphicsAnnotationLayer::getTemporaryColor() const
+{
+	return temporaryAnnotation.color;
 }
 
 void Polytempo_GraphicsAnnotationLayer::setTemporaryFontSize(float fontSize)

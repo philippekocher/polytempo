@@ -41,6 +41,7 @@ public:
 	void stopAutoAccept();
 	void hitBtnColor() const;
 	void hitBtnTextSize() const;
+	Colour getTemporaryColor() const;
 
 private:
 	void mouseDown(const MouseEvent& event) override;
@@ -67,7 +68,6 @@ private:
 
 	HashMap < String, Polytempo_GraphicsViewRegion* >* pRegionMap;
 	std::unique_ptr<Image> annotationImage;
-	std::unique_ptr<Polytempo_GraphicsPalette> palette;
 	Polytempo_GraphicsAnnotation temporaryAnnotation;
 	Point<int> lastPathPoint;
 

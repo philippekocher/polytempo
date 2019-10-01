@@ -483,43 +483,43 @@ void Polytempo_MenuBarModel::getCommandInfo(CommandID commandID, ApplicationComm
 
 		case Polytempo_CommandIDs::annotationColor:
 			result.setInfo("Color...", "Change the color of the current annotation", infoCategory, 0);
-			result.addDefaultKeypress('c', ModifierKeys::noModifiers);
+			result.addDefaultKeypress('c', ModifierKeys::ctrlModifier);
 			result.setActive(Polytempo_GraphicsAnnotationManager::getInstance()->isAnnotationPending());
 			break;
 
 		case Polytempo_CommandIDs::annotationTextSize:
 			result.setInfo("Text size...", "Change the text size of the current annotation", infoCategory, 0);
-			result.addDefaultKeypress('t', ModifierKeys::noModifiers);
+			result.addDefaultKeypress('t', ModifierKeys::ctrlModifier);
 			result.setActive(Polytempo_GraphicsAnnotationManager::getInstance()->isAnnotationPending());
 			break;
 
 		case Polytempo_CommandIDs::annotationLayerSettings:
 			result.setInfo("Layer settings...", "Annotation layer settings", infoCategory, 0);
-			result.addDefaultKeypress('l', ModifierKeys::noModifiers);
+			result.addDefaultKeypress('l', ModifierKeys::ctrlModifier);
 			result.setActive(Polytempo_GraphicsAnnotationManager::getInstance()->getAnnotationMode() != Polytempo_GraphicsAnnotationManager::Off);
 			break;
 
 		case Polytempo_CommandIDs::annotationOff:
 			result.setInfo("Off", "Global Annotations Toggle", infoCategory, 0);
-			result.addDefaultKeypress('a', ModifierKeys::noModifiers);
+			result.addDefaultKeypress('a', ModifierKeys::ctrlModifier);
 			result.setTicked(Polytempo_GraphicsAnnotationManager::getInstance()->getAnnotationMode() == Polytempo_GraphicsAnnotationManager::Off);
 			break;
 
     	case Polytempo_CommandIDs::annotationReadOnly:
 			result.setInfo("Read only", "Read Only Annotations", infoCategory, 0);
-			result.addDefaultKeypress('r', ModifierKeys::noModifiers);
+			result.addDefaultKeypress('r', ModifierKeys::ctrlModifier);
 			result.setTicked(Polytempo_GraphicsAnnotationManager::getInstance()->getAnnotationMode() == Polytempo_GraphicsAnnotationManager::ReadOnly);
 			break;
 
     	case Polytempo_CommandIDs::annotationStandard:
 			result.setInfo("Standard", "Allow adding new annotations", infoCategory, 0);
-			result.addDefaultKeypress('s', ModifierKeys::noModifiers);
+			result.addDefaultKeypress('s', ModifierKeys::ctrlModifier);
 			result.setTicked(Polytempo_GraphicsAnnotationManager::getInstance()->getAnnotationMode() == Polytempo_GraphicsAnnotationManager::Standard);
 			break;
 
     	case Polytempo_CommandIDs::annotationEdit:
 			result.setInfo("Edit mode", "Allow editing existing annotations", infoCategory, 0);
-			result.addDefaultKeypress('e', ModifierKeys::noModifiers);
+			result.addDefaultKeypress('e', ModifierKeys::ctrlModifier);
 			result.setTicked(Polytempo_GraphicsAnnotationManager::getInstance()->getAnnotationMode() == Polytempo_GraphicsAnnotationManager::Edit);
 			break;
 

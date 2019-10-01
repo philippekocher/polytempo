@@ -77,7 +77,10 @@ private:
     
     AttributedString peers;
     Polytempo_NetworkInfoView       *networkInfoView;
-    
+	
+	int separator1Position;
+	int separator2Position;
+
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_AuxiliaryView)
 };
 
