@@ -336,7 +336,7 @@ void Polytempo_GraphicsAnnotationLayer::setTemporaryColor(Colour colour)
 {
 	if (status != Default)
 	{
-		temporaryAnnotation.color = colour;
+		temporaryAnnotation.color = colour.withAlpha(uint8(jmax(uint8(50), colour.getAlpha())));
 		fullUpdateRequired.set(true);
 	}
 }
