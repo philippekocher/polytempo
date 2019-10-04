@@ -81,10 +81,10 @@ void Polytempo_NetworkApplication::initialise(const String&)
     getApplicationName();
     getApplicationVersion();
     URL url = URL("http://polytempo.zhdk.ch/stats/log.php?application="+getApplicationName()+"&version="+getApplicationVersion());
-    ScopedPointer<InputStream> stream = url.createInputStream(true);
+    InputStream* stream = url.createInputStream(true);
     if(stream != nullptr)
         DBG(stream->readString());
-    stream = nullptr;
+    delete(stream);
 #endif
     
     // open default score file
