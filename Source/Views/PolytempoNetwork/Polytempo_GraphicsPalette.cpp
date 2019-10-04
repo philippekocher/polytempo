@@ -18,6 +18,7 @@ juce_ImplementSingleton(Polytempo_GraphicsPalette)
 //==============================================================================
 Polytempo_GraphicsPalette::Polytempo_GraphicsPalette(): pAnnotationLayer(nullptr), visibleFlag(false), pParentComponent(nullptr)
 {
+    lastColor = Colours::red;
 }
 
 Polytempo_GraphicsPalette::~Polytempo_GraphicsPalette()
