@@ -13,8 +13,12 @@
       <FILE id="YnUEiS" name="delete.png" compile="0" resource="1" file="../Resources/delete.png"/>
       <FILE id="i2gAFH" name="fontSize.png" compile="0" resource="1" file="../Resources/fontSize.png"/>
       <FILE id="KOwPbh" name="icon.png" compile="0" resource="1" file="../Resources/icon.png"/>
+      <FILE id="lWfBHL" name="lineWeight.png" compile="0" resource="1" file="../Resources/lineWeight.png"/>
       <FILE id="H1LQCA" name="no.png" compile="0" resource="1" file="../Resources/no.png"/>
       <FILE id="dXyJSH" name="settings.png" compile="0" resource="1" file="../Resources/settings.png"/>
+      <FILE id="q4UK21" name="textSize.png" compile="0" resource="1" file="../Resources/textSize.png"/>
+      <FILE id="NOnqtp" name="transparency.png" compile="0" resource="1"
+            file="../Resources/transparency.png"/>
       <FILE id="crbSPw" name="yes.png" compile="0" resource="1" file="../Resources/yes.png"/>
     </GROUP>
     <FILE id="wwqCqe" name="Polytempo_NetworkMain.cpp" compile="1" resource="0"

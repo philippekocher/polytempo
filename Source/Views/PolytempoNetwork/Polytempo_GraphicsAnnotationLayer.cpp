@@ -88,7 +88,7 @@ void Polytempo_GraphicsAnnotationLayer::prepareAnnotationLayer()
 void Polytempo_GraphicsAnnotationLayer::paintAnnotation(Graphics& g, const Polytempo_GraphicsAnnotation* annotation, bool anchorFlag, Colour anchorColor)
 {
 	PathStrokeType strokeType(PathStrokeType::rounded);
-	strokeType.setStrokeThickness(5.0f);
+	strokeType.setStrokeThickness(annotation->lineWeight);
 
 	g.setColour(annotation->color);
 	if (!annotation->freeHandPath.isEmpty())
@@ -150,7 +150,8 @@ void Polytempo_GraphicsAnnotationLayer::handleStartEditing(Point<int> mousePosit
 		temporaryAnnotation.imageId = pRegion->getImageID();
 		temporaryAnnotation.referencePoint = imageCoordiantes;
 		temporaryAnnotation.color = Polytempo_GraphicsPalette::getInstance()->getLastColour();
-		temporaryAnnotation.fontSize = STANDARD_FONT_SIZE;
+		temporaryAnnotation.fontSize = Polytempo_GraphicsPalette::getInstance()->getLastTextSize();
+        temporaryAnnotation.lineWeight = Polytempo_GraphicsPalette::getInstance()->getLastLineWeight();
 		temporaryAnnotation.pRegion = pRegion;
 	}
 
@@ -174,7 +175,7 @@ void Polytempo_GraphicsAnnotationLayer::handleFreeHandPainting(const Point<int>&
 
 		if (temporaryAnnotation.freeHandPath.isEmpty())
 		{
-			temporaryAnnotation.freeHandPath.addLineSegment(Line<float>(x, y, x, y), FREE_HAND_LINE_THICKNESS);
+			temporaryAnnotation.freeHandPath.addLineSegment(Line<float>(x, y, x, y), Polytempo_GraphicsPalette::getInstance()->getLastLineWeight());
 		}
 		else
 		{
@@ -232,8 +233,7 @@ void Polytempo_GraphicsAnnotationLayer::mouseDown(const MouseEvent& event)
 			handleStartEditing(event.getPosition());
 		}
 		else
-		{
-			temporaryAnnotation.freeHandPath.startNewSubPath(pRegion->getImageCoordinatesAt(event.getPosition()));
+		{			temporaryAnnotation.freeHandPath.startNewSubPath(pRegion->getImageCoordinatesAt(event.getPosition()));
 		}
 		stopTimer(TIMER_ID_AUTO_ACCEPT);
 	}
@@ -346,19 +346,26 @@ void Polytempo_GraphicsAnnotationLayer::stopAutoAccept()
 	stopTimer(TIMER_ID_AUTO_ACCEPT);
 }
 
-void Polytempo_GraphicsAnnotationLayer::hitBtnColor() const
+void Polytempo_GraphicsAnnotationLayer::restartAutoAccept()
 {
-	Polytempo_GraphicsPalette::getInstance()->hitBtnColor();
-}
-
-void Polytempo_GraphicsAnnotationLayer::hitBtnTextSize() const
-{
-	Polytempo_GraphicsPalette::getInstance()->hitBtnTextSize();
+    if(status == FreehandEditing)
+        startTimer(TIMER_ID_AUTO_ACCEPT, AUTO_ACCEPT_INTERVAL_MS);
 }
 
 Colour Polytempo_GraphicsAnnotationLayer::getTemporaryColor() const
 {
 	return temporaryAnnotation.color;
+}
+
+float Polytempo_GraphicsAnnotationLayer::getTemporaryLineWeight() const
+{
+    return temporaryAnnotation.lineWeight;
+}
+
+void Polytempo_GraphicsAnnotationLayer::setTemporaryLineWeight(float lineWeight)
+{
+    temporaryAnnotation.lineWeight = lineWeight;
+    fullUpdateRequired.set(true);
 }
 
 void Polytempo_GraphicsAnnotationLayer::setTemporaryFontSize(float fontSize)

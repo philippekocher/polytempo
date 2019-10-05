@@ -32,6 +32,8 @@ Polytempo_AnnotationView::Polytempo_AnnotationView()
 	buttonSettings->addListener(this);
 	displayMode();
 
+    addMouseListener(this, true);
+    
 	Polytempo_GraphicsAnnotationManager::getInstance()->addChangeListener(this);
 
 	Polytempo_GraphicsPalette::getInstance()->initialize(this);
@@ -94,6 +96,16 @@ void Polytempo_AnnotationView::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
 void Polytempo_AnnotationView::changeListenerCallback(ChangeBroadcaster* /*source*/)
 {
 	displayMode();
+}
+
+void Polytempo_AnnotationView::mouseEnter(const MouseEvent &event)
+{
+    Polytempo_GraphicsPalette::getInstance()->mouseEntered();
+}
+
+void Polytempo_AnnotationView::mouseExit(const MouseEvent &event)
+{
+    Polytempo_GraphicsPalette::getInstance()->mouseLeft();
 }
 
 void Polytempo_AnnotationView::displayMode() const

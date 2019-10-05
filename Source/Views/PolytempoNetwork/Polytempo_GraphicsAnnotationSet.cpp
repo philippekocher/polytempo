@@ -119,8 +119,9 @@ void Polytempo_GraphicsAnnotationSet::loadFromFile()
 			Colour::fromString(xmlAnnotation->getStringAttribute(XML_ATTRIBUTE_COLOR)),
 			path,
 			xmlAnnotation->getStringAttribute(XML_ATTRIBUTE_TEXT),
-			float(xmlAnnotation->getDoubleAttribute(XML_ATTRIBUTE_FONTSIZE, STANDARD_FONT_SIZE))));
-
+			float(xmlAnnotation->getDoubleAttribute(XML_ATTRIBUTE_FONTSIZE, STANDARD_FONT_SIZE)),
+            float(xmlAnnotation->getDoubleAttribute(XML_ATTRIBUTE_LINEWEIGHT, STANDARD_LINE_WEIGHT))));
+            
 		xmlAnnotation = xmlAnnotation->getNextElement();
 	}
 }
@@ -151,6 +152,7 @@ bool Polytempo_GraphicsAnnotationSet::SaveToFile()
 		xmlAnnotation->setAttribute(XML_ATTRIBUTE_PATH, annotation->freeHandPath.toString());
 		xmlAnnotation->setAttribute(XML_ATTRIBUTE_COLOR, annotation->color.toString());
 		xmlAnnotation->setAttribute(XML_ATTRIBUTE_FONTSIZE, annotation->fontSize);
+        xmlAnnotation->setAttribute(XML_ATTRIBUTE_LINEWEIGHT, annotation->lineWeight);
 		xmlAnnotations->addChildElement(xmlAnnotation);
 	}
 	xmlMain->addChildElement(xmlAnnotations);

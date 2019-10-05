@@ -32,5 +32,7 @@ private:
 	void buttonClicked(Button*) override;
 	void comboBoxChanged(ComboBox* comboBoxThatHasChanged) override;
 	void changeListenerCallback(ChangeBroadcaster* source) override;
+    void mouseEnter(const MouseEvent &event) override;
+    void mouseExit(const MouseEvent &event) override;
 	void displayMode() const;
 };

@@ -172,8 +172,6 @@ PopupMenu Polytempo_MenuBarModel::getMenuForIndex(int, const String& menuName)
 
 		menu.addSeparator();
 
-		menu.addCommandItem(commandManager, Polytempo_CommandIDs::annotationColor);
-		menu.addCommandItem(commandManager, Polytempo_CommandIDs::annotationTextSize);
 		menu.addCommandItem(commandManager, Polytempo_CommandIDs::annotationLayerSettings);
 
 		PopupMenu subMenu;
@@ -262,8 +260,6 @@ void Polytempo_MenuBarModel::getAllCommands(Array <CommandID>& commands)
 		Polytempo_CommandIDs::annotationAccept,
 		Polytempo_CommandIDs::annotationCancel,
 		Polytempo_CommandIDs::annotationDelete,
-		Polytempo_CommandIDs::annotationColor,
-		Polytempo_CommandIDs::annotationTextSize,
 		Polytempo_CommandIDs::annotationLayerSettings,
 		Polytempo_CommandIDs::annotationOff,
 		Polytempo_CommandIDs::annotationReadOnly,
@@ -481,18 +477,6 @@ void Polytempo_MenuBarModel::getCommandInfo(CommandID commandID, ApplicationComm
 			result.setActive(Polytempo_GraphicsAnnotationManager::getInstance()->isAnnotationPending() && Polytempo_GraphicsAnnotationManager::getInstance()->getAnchorFlag());
 			break;
 
-		case Polytempo_CommandIDs::annotationColor:
-			result.setInfo("Color...", "Change the color of the current annotation", infoCategory, 0);
-			result.addDefaultKeypress('c', ModifierKeys::ctrlModifier);
-			result.setActive(Polytempo_GraphicsAnnotationManager::getInstance()->isAnnotationPending());
-			break;
-
-		case Polytempo_CommandIDs::annotationTextSize:
-			result.setInfo("Text size...", "Change the text size of the current annotation", infoCategory, 0);
-			result.addDefaultKeypress('t', ModifierKeys::ctrlModifier);
-			result.setActive(Polytempo_GraphicsAnnotationManager::getInstance()->isAnnotationPending());
-			break;
-
 		case Polytempo_CommandIDs::annotationLayerSettings:
 			result.setInfo("Layer settings...", "Annotation layer settings", infoCategory, 0);
 			result.addDefaultKeypress('l', ModifierKeys::ctrlModifier);
@@ -699,18 +683,6 @@ bool Polytempo_MenuBarModel::perform(const InvocationInfo& info)
 			pAnnotationLayer = Polytempo_GraphicsAnnotationManager::getInstance()->getCurrentPendingAnnotationLayer();
     		if(pAnnotationLayer != nullptr)
 				pAnnotationLayer->handleDeleteSelected();
-			break;
-
-		case Polytempo_CommandIDs::annotationColor:
-			pAnnotationLayer = Polytempo_GraphicsAnnotationManager::getInstance()->getCurrentPendingAnnotationLayer();
-    		if(pAnnotationLayer != nullptr)
-				pAnnotationLayer->hitBtnColor();
-    		break;
-
-		case Polytempo_CommandIDs::annotationTextSize:
-			pAnnotationLayer = Polytempo_GraphicsAnnotationManager::getInstance()->getCurrentPendingAnnotationLayer();
-			if (pAnnotationLayer != nullptr)
-				pAnnotationLayer->hitBtnTextSize();
 			break;
 
 		case Polytempo_CommandIDs::annotationLayerSettings:

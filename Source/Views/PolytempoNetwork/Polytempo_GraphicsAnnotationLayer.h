@@ -18,7 +18,6 @@
 #define TIMER_ID_REPAINT					1000
 #define TIMER_ID_AUTO_ACCEPT				1001
 #define MIN_INTERVAL_BETWEEN_REPAINTS_MS	20
-#define FREE_HAND_LINE_THICKNESS			2
 #define MIN_MOUSE_DOWN_TIME_MS				500
 #define AUTO_ACCEPT_INTERVAL_MS				5000
 
@@ -39,9 +38,10 @@ public:
 	int getTemporaryFontSize() const;
 	void setTemporaryColor(Colour colour);
 	void stopAutoAccept();
-	void hitBtnColor() const;
-	void hitBtnTextSize() const;
+    void restartAutoAccept();
 	Colour getTemporaryColor() const;
+    float getTemporaryLineWeight() const;
+    void setTemporaryLineWeight(float lineWeight);
 
 private:
 	void mouseDown(const MouseEvent& event) override;
