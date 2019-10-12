@@ -49,11 +49,16 @@ void Polytempo_GraphicsAnnotationLayer::paint (Graphics& g)
 			int(0), int(0), int(annotationImage->getWidth()), int(annotationImage->getHeight()));
 	}
 
-	if(status == FreehandEditing && temporaryAnnotation.pRegion != nullptr)
+	if((status == FreehandEditing || status == Selected) && temporaryAnnotation.pRegion != nullptr)
 	{
 		g.addTransform(temporaryAnnotation.pRegion->getImageToScreenTransform());
 		paintAnnotation(g, &temporaryAnnotation, true, Colours::red);
 	}
+    else if(status == DragDrop && temporaryAnnotationMove.pRegion != nullptr)
+    {
+        g.addTransform(temporaryAnnotation.pRegion->getImageToScreenTransform());
+        paintAnnotation(g, &temporaryAnnotationMove, true, Colours::red);
+    }
 }
 
 void Polytempo_GraphicsAnnotationLayer::resized()
@@ -138,29 +143,54 @@ void Polytempo_GraphicsAnnotationLayer::handleStartEditing(Point<int> mousePosit
 	if (pRegion == nullptr || !pRegion->annotationsAllowed())
 		return;
 
+    if(status == Selected)
+    {
+        handleEndEditAccept();
+    }
+
 	if (!Polytempo_GraphicsAnnotationManager::getInstance()->trySetAnnotationPending(this))
 		return;
 
 	Point<float> imageCoordiantes = pRegion->getImageCoordinatesAt(mousePosition);
 
-	if (!tryGetExistingAnnotation(imageCoordiantes, pRegion))
-	{
-		temporaryAnnotation.clear();
-		temporaryAnnotation.id = Uuid();
-		temporaryAnnotation.imageId = pRegion->getImageID();
-		temporaryAnnotation.referencePoint = imageCoordiantes;
-		temporaryAnnotation.color = Polytempo_GraphicsPalette::getInstance()->getLastColour();
-		temporaryAnnotation.fontSize = Polytempo_GraphicsPalette::getInstance()->getLastTextSize();
-        temporaryAnnotation.lineWeight = Polytempo_GraphicsPalette::getInstance()->getLastLineWeight();
-		temporaryAnnotation.pRegion = pRegion;
-	}
+    bool existingAnnotationHit = tryGetExistingAnnotation(imageCoordiantes, pRegion);
+    
+    if(mode == Polytempo_GraphicsAnnotationManager::Edit)
+    {
+        if(existingAnnotationHit)
+        {
+            temporaryAnnotationMove = temporaryAnnotation;
+            temporaryAnnotationMove.color = Colours::black;
+            temporaryAnnotationMove.lineWeight = 2.0f;
+            setStatus(DragDrop);
+            Polytempo_GraphicsPalette::getInstance()->setVisible(true);
+        }
+        else
+        {
+            handleEndEditAccept();
+            setStatus(Default);
+        }
+    }
+    else
+    {
+        if (!existingAnnotationHit)
+        {
+            temporaryAnnotation.clear();
+            temporaryAnnotation.id = Uuid();
+            temporaryAnnotation.imageId = pRegion->getImageID();
+            temporaryAnnotation.referencePoint = imageCoordiantes;
+            temporaryAnnotation.color = Polytempo_GraphicsPalette::getInstance()->getLastColour();
+            temporaryAnnotation.fontSize = Polytempo_GraphicsPalette::getInstance()->getLastTextSize();
+            temporaryAnnotation.lineWeight = Polytempo_GraphicsPalette::getInstance()->getLastLineWeight();
+            temporaryAnnotation.pRegion = pRegion;
+        }
 
-	if (!temporaryAnnotation.freeHandPath.isEmpty())
-        temporaryAnnotation.freeHandPath.startNewSubPath(imageCoordiantes);
+        if (!temporaryAnnotation.freeHandPath.isEmpty())
+            temporaryAnnotation.freeHandPath.startNewSubPath(imageCoordiantes);
 
-	status = FreehandEditing;
-	setMouseCursor(MouseCursor::CrosshairCursor);
-
+        setStatus(FreehandEditing);
+    }
+    
 	repaint();
 	grabKeyboardFocus();
 }
@@ -204,8 +234,7 @@ void Polytempo_GraphicsAnnotationLayer::handleEndEditCancel()
 
 void Polytempo_GraphicsAnnotationLayer::handleEndEdit()
 {
-	status = Default;
-	setMouseCursor(MouseCursor::NormalCursor);
+	setStatus(Default);
 	Polytempo_GraphicsPalette::getInstance()->setVisible(false);
 
 	Polytempo_GraphicsAnnotationManager::getInstance()->resetAnnotationPending(this);
@@ -218,9 +247,31 @@ void Polytempo_GraphicsAnnotationLayer::handleDeleteSelected()
 	handleEndEditCancel();
 }
 
+
+void Polytempo_GraphicsAnnotationLayer::setStatus(Status newStatus)
+{
+    status = newStatus;
+    
+    switch(status)
+    {
+        case Default:
+        case Selected:
+            setMouseCursor(MouseCursor::NormalCursor);
+            break;
+            
+        case FreehandEditing:
+            setMouseCursor(MouseCursor::CrosshairCursor);
+            break;
+            
+        case DragDrop:
+            setMouseCursor(MouseCursor::DraggingHandCursor);
+            break;
+    }
+}
+
 void Polytempo_GraphicsAnnotationLayer::mouseDown(const MouseEvent& event)
 {
-	if (status == Default)
+	if (status == Default || status == Selected)
 	{
 		handleStartEditing(event.getPosition());
 	}
@@ -255,6 +306,16 @@ void Polytempo_GraphicsAnnotationLayer::mouseUp(const MouseEvent& event)
 		grabKeyboardFocus();
 		startTimer(TIMER_ID_AUTO_ACCEPT, AUTO_ACCEPT_INTERVAL_MS);
 	}
+    else if(status == DragDrop)
+    {
+        temporaryAnnotation.freeHandPath = temporaryAnnotationMove.freeHandPath;
+        temporaryAnnotation.referencePoint = temporaryAnnotationMove.referencePoint;
+        temporaryAnnotationMove.clear();
+        Polytempo_GraphicsAnnotationManager::getInstance()->addAnnotation(temporaryAnnotation); // immediate commit
+        fullUpdateRequired.set(true);
+        setStatus(Selected);
+        repaint();
+    }
 }
 
 void Polytempo_GraphicsAnnotationLayer::mouseDrag(const MouseEvent& event)
@@ -263,6 +324,20 @@ void Polytempo_GraphicsAnnotationLayer::mouseDrag(const MouseEvent& event)
 	{
 		handleFreeHandPainting(event.getPosition());
 	}
+    else if(status == DragDrop)
+    {
+        Point<float> imagePt = temporaryAnnotation.pRegion->getImageCoordinatesAt(event.getPosition());
+        if(temporaryAnnotation.pRegion->imageRectangleContains(imagePt))
+        {
+            float x = imagePt.getX();
+            float y = imagePt.getY();
+
+            temporaryAnnotationMove.referencePoint.setXY(x, y);
+            temporaryAnnotationMove.freeHandPath = temporaryAnnotation.freeHandPath;
+            temporaryAnnotationMove.freeHandPath.applyTransform(AffineTransform::translation(x - temporaryAnnotation.referencePoint.getX(), y - temporaryAnnotation.referencePoint.getY()));
+            repaint();
+        }
+    }
 }
 
 void Polytempo_GraphicsAnnotationLayer::mouseDoubleClick(const MouseEvent& event)
@@ -337,6 +412,13 @@ void Polytempo_GraphicsAnnotationLayer::setTemporaryColor(Colour colour)
 	if (status != Default)
 	{
 		temporaryAnnotation.color = colour.withAlpha(uint8(jmax(uint8(50), colour.getAlpha())));
+        
+        if(status == Selected)
+        {
+            // direct commit if in edit mode
+            Polytempo_GraphicsAnnotationManager::getInstance()->addAnnotation(temporaryAnnotation);
+        }
+        
 		fullUpdateRequired.set(true);
 	}
 }
@@ -365,12 +447,24 @@ float Polytempo_GraphicsAnnotationLayer::getTemporaryLineWeight() const
 void Polytempo_GraphicsAnnotationLayer::setTemporaryLineWeight(float lineWeight)
 {
     temporaryAnnotation.lineWeight = lineWeight;
+    if(status == Selected)
+    {
+        // direct commit if in edit mode
+        Polytempo_GraphicsAnnotationManager::getInstance()->addAnnotation(temporaryAnnotation);
+    }
+    
     fullUpdateRequired.set(true);
 }
 
 void Polytempo_GraphicsAnnotationLayer::setTemporaryFontSize(float fontSize)
 {
 	temporaryAnnotation.fontSize = fontSize;
+    if(status == Selected)
+    {
+        // direct commit if in edit mode
+        Polytempo_GraphicsAnnotationManager::getInstance()->addAnnotation(temporaryAnnotation);
+    }
+    
 	fullUpdateRequired.set(true);
 }
 
@@ -378,6 +472,12 @@ void Polytempo_GraphicsAnnotationLayer::changeListenerCallback(ChangeBroadcaster
 {
 	if (source == Polytempo_GraphicsAnnotationManager::getInstance())
 	{
+        Polytempo_GraphicsAnnotationManager::eAnnotationMode currentMode = Polytempo_GraphicsAnnotationManager::getInstance()->getAnnotationMode();
+        if(currentMode != lastAnnotationMode && Polytempo_GraphicsAnnotationManager::getInstance()->isAnnotationPending())
+            handleEndEditAccept();
+        
+        lastAnnotationMode = currentMode;
+        
 		fullUpdateRequired.set(true);
 	}
 }

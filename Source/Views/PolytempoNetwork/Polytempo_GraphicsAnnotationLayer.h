@@ -44,7 +44,9 @@ public:
     void setTemporaryLineWeight(float lineWeight);
 
 private:
-	void mouseDown(const MouseEvent& event) override;
+	enum Status { Default, FreehandEditing, DragDrop, Selected } status;
+    
+    void mouseDown(const MouseEvent& event) override;
 	void mouseUp(const MouseEvent& event) override;
 	void mouseDrag(const MouseEvent& event) override;
 	void mouseDoubleClick(const MouseEvent& event) override; 
@@ -61,15 +63,17 @@ private:
 	void handleStartEditing(Point<int> point);
 	void handleFreeHandPainting(const Point<int>& mousePosition);
 	void handleEndEdit();
+    void setStatus(Status newStatus);
 
 private:
-	enum Status { Default, FreehandEditing } status;
 	Atomic <bool> fullUpdateRequired;
 
 	HashMap < String, Polytempo_GraphicsViewRegion* >* pRegionMap;
 	std::unique_ptr<Image> annotationImage;
 	Polytempo_GraphicsAnnotation temporaryAnnotation;
+    Polytempo_GraphicsAnnotation temporaryAnnotationMove;
 	Point<int> lastPathPoint;
+    int lastAnnotationMode;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_GraphicsAnnotationLayer)
 };

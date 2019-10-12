@@ -117,7 +117,10 @@ void Polytempo_GraphicsPalette::setVisible(bool show)
 	visibleFlag = show;
 
 	buttonOk->setVisible(show);
-	buttonCancel->setVisible(show);
+    
+    bool showCancel = show && Polytempo_GraphicsAnnotationManager::getInstance()->getAnnotationMode() != Polytempo_GraphicsAnnotationManager::Edit;
+    
+	buttonCancel->setVisible(showCancel);
 	colorSelector->setVisible(show);
     transparencySlider->setVisible(show);
 	textSizeSlider->setVisible(show);
@@ -125,8 +128,9 @@ void Polytempo_GraphicsPalette::setVisible(bool show)
     transparencyLabel->setVisible(show);
     textSizeLabel->setVisible(show);
     lineWeightLabel->setVisible(show);
-	if (Polytempo_GraphicsAnnotationManager::getInstance()->getAnchorFlag())
-		buttonDelete->setVisible(show);
+    
+    bool showDelete = show && Polytempo_GraphicsAnnotationManager::getInstance()->getAnchorFlag();
+		buttonDelete->setVisible(showDelete);
 
 	pParentComponent->resized();
 
@@ -158,7 +162,7 @@ int Polytempo_GraphicsPalette::resize(Point<int> offset) const
 	int buttonSize = int(totalWidth / 5);
 	buttonOk->setBounds(offset.getX(), offset.getY(), buttonSize, buttonSize);
 	buttonCancel->setBounds(offset.getX() + buttonSize, offset.getY(), buttonSize, buttonSize);
-	buttonDelete->setBounds(offset.getX() + 2 * buttonSize, offset.getY(), buttonSize, buttonSize);
+	buttonDelete->setBounds(offset.getX() + 4 * buttonSize, offset.getY(), buttonSize, buttonSize);
 
     currentY += buttonSize + 4;
     
