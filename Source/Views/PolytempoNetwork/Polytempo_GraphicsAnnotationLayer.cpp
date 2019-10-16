@@ -167,7 +167,7 @@ void Polytempo_GraphicsAnnotationLayer::handleStartEditing(Point<int> mousePosit
         }
         else
         {
-            handleEndEditAccept();
+            handleEndEditCancel();
             setStatus(Default);
         }
     }
