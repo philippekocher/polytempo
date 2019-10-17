@@ -40,7 +40,8 @@ void Polytempo_GraphicsAnnotationManager::createAndAddNewLayer(bool editable)
 	} while (File(filename).exists());
 
 	Polytempo_GraphicsAnnotationSet* pSet = new Polytempo_GraphicsAnnotationSet(filename, this);
-	pSet->setEdit(editable);
+    pSet->setEdit(editable);
+    pSet->setShow(true);
 	pSet->SaveToFile();
 
 	annotationSets.add(pSet);
