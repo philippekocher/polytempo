@@ -125,7 +125,9 @@ Polytempo_GraphicsViewRegion* Polytempo_GraphicsAnnotationLayer::getRegionAt(Poi
 		Polytempo_GraphicsViewRegion* pRegion = it1.getValue();
 		if (pRegion->getBounds().contains(point.getX(), point.getY()))
 		{
-			return pRegion;
+			Point<float> imagePt = pRegion->getImageCoordinatesAt(point);
+			if (pRegion->imageRectangleContains(imagePt))
+				return pRegion;
 		}
 	}
 
@@ -294,7 +296,7 @@ void Polytempo_GraphicsAnnotationLayer::mouseUp(const MouseEvent& event)
 {
 	if (status == Default)
 	{
-		if (event.getLengthOfMousePress() > MIN_MOUSE_DOWN_TIME_MS)
+		if (event.getLengthOfMousePress() > MIN_MOUSE_DOWN_TIME_MS && event.getDistanceFromDragStart() < 10)
 		{
 			handleStartEditing(event.getPosition());
 		}
