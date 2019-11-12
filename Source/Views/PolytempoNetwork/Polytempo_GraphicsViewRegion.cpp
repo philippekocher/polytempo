@@ -24,7 +24,7 @@
 
 #include "Polytempo_GraphicsViewRegion.h"
 #include "../../Application/PolytempoNetwork/Polytempo_NetworkApplication.h"
-
+#include "Polytempo_GraphicsAnnotationManager.h"
 
 Polytempo_GraphicsViewRegion::Polytempo_GraphicsViewRegion(var id)
 {
@@ -35,12 +35,16 @@ Polytempo_GraphicsViewRegion::Polytempo_GraphicsViewRegion(var id)
     regionID = id;
     contentType = contentType_Empty;
 	allowAnnotations = false;
+    
+    Polytempo_GraphicsAnnotationManager::getInstance()->addChangeListener(this);
 }
 
 Polytempo_GraphicsViewRegion::~Polytempo_GraphicsViewRegion()
 {
     text  = nullptr;
     progressbar = nullptr;
+    
+    Polytempo_GraphicsAnnotationManager::getInstance()->removeChangeListener(this);
 }
 
 void Polytempo_GraphicsViewRegion::paint(Graphics& g)
@@ -51,6 +55,12 @@ void Polytempo_GraphicsViewRegion::paint(Graphics& g)
         
     if(contentType == contentType_Image && image != nullptr)
     {
+        Polytempo_GraphicsAnnotationManager::eAnnotationMode annotationMode = Polytempo_GraphicsAnnotationManager::getInstance()->getAnnotationMode();
+        if(annotationMode ==  Polytempo_GraphicsAnnotationManager::Standard || annotationMode == Polytempo_GraphicsAnnotationManager::Edit)
+        {
+            g.fillAll(Colours::lightgrey.brighter(0.7));
+        }
+        
         g.drawImage(*image,
                     targetArea.getX(), targetArea.getY(), targetArea.getWidth(), targetArea.getHeight(),
                     (int)imageLeft, (int)imageTop, (int)imageWidth, (int)imageHeight);
@@ -240,3 +250,9 @@ bool Polytempo_GraphicsViewRegion::imageRectangleContains(Point<float> point) co
 {
 	return currentImageRectangle.contains(point);
 }
+
+void Polytempo_GraphicsViewRegion::changeListenerCallback(ChangeBroadcaster *source)
+{
+    repaint();
+}
+
