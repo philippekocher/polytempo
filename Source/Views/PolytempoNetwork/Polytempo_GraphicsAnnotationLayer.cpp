@@ -377,14 +377,16 @@ bool Polytempo_GraphicsAnnotationLayer::keyPressed(const KeyPress& key, Componen
 			handleEndEditAccept();
 		else if (key == KeyPress::backspaceKey)
 		{
-			if (temporaryAnnotation.text.length() > 0)
-				temporaryAnnotation.text = temporaryAnnotation.text.dropLastCharacters(1);
+			if (temporaryAnnotation.text.length() == 0)
+                return false; // handle as delete command in NetworkMenuBarModel
+            
+            temporaryAnnotation.text = temporaryAnnotation.text.dropLastCharacters(1);
 			startTimer(TIMER_ID_AUTO_ACCEPT, AUTO_ACCEPT_INTERVAL_MS);
 			fullUpdateRequired.set(true);
 		}
 		else if (key == KeyPress::deleteKey)
 		{
-			return false;
+			return false; // handle as delete command in NetworkMenuBarModel
 		}
 		else
 		{

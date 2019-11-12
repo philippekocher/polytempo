@@ -474,6 +474,7 @@ void Polytempo_MenuBarModel::getCommandInfo(CommandID commandID, ApplicationComm
 		case Polytempo_CommandIDs::annotationDelete:
 			result.setInfo("Delete", "Delete the current annotation", infoCategory, 0);
 			result.addDefaultKeypress(KeyPress::deleteKey, ModifierKeys::noModifiers);
+            result.addDefaultKeypress(KeyPress::backspaceKey, ModifierKeys::noModifiers);
 			result.setActive(Polytempo_GraphicsAnnotationManager::getInstance()->isAnnotationPending() && Polytempo_GraphicsAnnotationManager::getInstance()->getAnchorFlag());
 			break;
 
