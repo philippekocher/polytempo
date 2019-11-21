@@ -119,7 +119,7 @@ Polytempo_GraphicsAnnotationSettingsDialog::Polytempo_GraphicsAnnotationSettings
 
 	addAndMakeVisible(table);
 	table.setModel(this);
-	table.getHeader().addColumn("Show", COLUMN_ID_SHOW, 35);
+	table.getHeader().addColumn("Show", COLUMN_ID_SHOW, 45);
 	table.getHeader().addColumn("Edit", COLUMN_ID_EDIT, 35);
 	table.getHeader().addColumn("Name", 3, 200);
 	table.getHeader().resizeAllColumnsToFit(getWidth());
@@ -128,11 +128,6 @@ Polytempo_GraphicsAnnotationSettingsDialog::Polytempo_GraphicsAnnotationSettings
 	addLayerBtn.reset(new TextButton("Add layer"));
 	addAndMakeVisible(addLayerBtn.get());
 	addLayerBtn->addListener(this);
-
-	showAnchorPointsToggle.reset(new ToggleButton("Show anchor points"));
-	addAndMakeVisible(showAnchorPointsToggle.get());
-	showAnchorPointsToggle->setToggleState(Polytempo_GraphicsAnnotationManager::getInstance()->getAnchorFlag(), dontSendNotification);
-	showAnchorPointsToggle->addListener(this);
 }
 
 Polytempo_GraphicsAnnotationSettingsDialog::~Polytempo_GraphicsAnnotationSettingsDialog()
@@ -152,9 +147,8 @@ void Polytempo_GraphicsAnnotationSettingsDialog::resized()
     int left = getBounds().getX() + 2;
 	int width = getWidth() - 4;
 
-	table.setBounds(left, getBounds().getY() + 2, width, getBounds().getHeight() - 40);
-	addLayerBtn->setBounds(left, getHeight() - 40, width, 20);
-	showAnchorPointsToggle->setBounds(left, getHeight() - 20, width, 20);
+	table.setBounds(left, getBounds().getY() + 2, width, getBounds().getHeight() - 20);
+	addLayerBtn->setBounds(left, getHeight() - 20, width, 20);
 }
 
 int Polytempo_GraphicsAnnotationSettingsDialog::getNumRows()
@@ -278,16 +272,12 @@ void Polytempo_GraphicsAnnotationSettingsDialog::buttonClicked(Button* btn)
 		numRows = pAnnotationSet->size();
 		table.updateContent();
 	}
-	if(btn == showAnchorPointsToggle.get())
-	{
-		Polytempo_GraphicsAnnotationManager::getInstance()->setAnchorFlag(showAnchorPointsToggle->getToggleState());
-	}
 }
 
 void Polytempo_GraphicsAnnotationSettingsDialog::show(OwnedArray < Polytempo_GraphicsAnnotationSet>* pAnnotationSet)
 {
 	Polytempo_GraphicsAnnotationSettingsDialog *p = new Polytempo_GraphicsAnnotationSettingsDialog(pAnnotationSet);
-	p->setSize(500, 690);
+	p->setSize(300, 390);
 
 	DialogWindow::LaunchOptions options;
 	options.content.setOwned(p);

@@ -13,8 +13,12 @@
       <FILE id="YnUEiS" name="delete.png" compile="0" resource="1" file="../Resources/delete.png"/>
       <FILE id="i2gAFH" name="fontSize.png" compile="0" resource="1" file="../Resources/fontSize.png"/>
       <FILE id="KOwPbh" name="icon.png" compile="0" resource="1" file="../Resources/icon.png"/>
+      <FILE id="lWfBHL" name="lineWeight.png" compile="0" resource="1" file="../Resources/lineWeight.png"/>
       <FILE id="H1LQCA" name="no.png" compile="0" resource="1" file="../Resources/no.png"/>
       <FILE id="dXyJSH" name="settings.png" compile="0" resource="1" file="../Resources/settings.png"/>
+      <FILE id="q4UK21" name="textSize.png" compile="0" resource="1" file="../Resources/textSize.png"/>
+      <FILE id="NOnqtp" name="transparency.png" compile="0" resource="1"
+            file="../Resources/transparency.png"/>
       <FILE id="crbSPw" name="yes.png" compile="0" resource="1" file="../Resources/yes.png"/>
     </GROUP>
     <FILE id="wwqCqe" name="Polytempo_NetworkMain.cpp" compile="1" resource="0"
@@ -145,6 +149,10 @@
     </GROUP>
     <GROUP id="{387130A6-2BE3-19EF-2CB5-6ADE3718BBBC}" name="Views">
       <GROUP id="{59998D8D-099D-1311-792D-74F9D735FAFF}" name="PolytempoNetwork">
+        <FILE id="niU8oo" name="Polytempo_AnnotationView.cpp" compile="1" resource="0"
+              file="../Source/Views/PolytempoNetwork/Polytempo_AnnotationView.cpp"/>
+        <FILE id="QrHXQA" name="Polytempo_AnnotationView.h" compile="0" resource="0"
+              file="../Source/Views/PolytempoNetwork/Polytempo_AnnotationView.h"/>
         <FILE id="HPH9Eh" name="Polytempo_ScoreEditorView.cpp" compile="1"
               resource="0" file="../Source/Views/PolytempoNetwork/Polytempo_ScoreEditorView.cpp"/>
         <FILE id="M5sBZw" name="Polytempo_ScoreEditorView.h" compile="0" resource="0"
@@ -246,7 +254,8 @@
   </MODULES>
   <EXPORTFORMATS>
     <XCODE_MAC targetFolder="Builds/MacOSX/PolytempoNetwork" smallIcon="KOwPbh"
-               customPList="&lt;plist&gt;&lt;dict&gt;&#10;    &lt;key&gt;NSAppTransportSecurity&lt;/key&gt;  &#10;    &lt;dict&gt;  &#10;        &lt;key&gt;NSAllowsArbitraryLoads&lt;/key&gt;&#10;        &lt;true/&gt;  &#10;    &lt;/dict&gt;&#10;&lt;/dict&gt;&lt;/plist&gt;">
+               customPList="&lt;plist&gt;&lt;dict&gt;&#10;    &lt;key&gt;NSAppTransportSecurity&lt;/key&gt;  &#10;    &lt;dict&gt;  &#10;        &lt;key&gt;NSAllowsArbitraryLoads&lt;/key&gt;&#10;        &lt;true/&gt;  &#10;    &lt;/dict&gt;&#10;&lt;/dict&gt;&lt;/plist&gt;"
+               bigIcon="KOwPbh">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" osxCompatibility="10.9 SDK" isDebug="1" optimisation="1"
                        targetName="PolytempoNetwork" enablePluginBinaryCopyStep="1"/>

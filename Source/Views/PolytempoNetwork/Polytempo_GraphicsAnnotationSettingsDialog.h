@@ -43,7 +43,6 @@ public:
 private:
 	TableListBox table;
 	std::unique_ptr<TextButton> addLayerBtn;
-	std::unique_ptr<ToggleButton> showAnchorPointsToggle;
 	
 	int numRows;
 	OwnedArray<Polytempo_GraphicsAnnotationSet>* pAnnotationSet;

@@ -28,6 +28,7 @@
 #define XML_ATTRIBUTE_PATH			"Path"
 #define XML_ATTRIBUTE_COLOR			"Color"
 #define XML_ATTRIBUTE_FONTSIZE		"FontSize"
+#define XML_ATTRIBUTE_LINEWEIGHT    "LineWeight"
 
 class Polytempo_GraphicsAnnotationSet : ChangeBroadcaster
 {

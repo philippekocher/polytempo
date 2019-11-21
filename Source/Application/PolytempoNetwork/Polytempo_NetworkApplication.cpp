@@ -81,10 +81,10 @@ void Polytempo_NetworkApplication::initialise(const String&)
     getApplicationName();
     getApplicationVersion();
     URL url = URL("http://polytempo.zhdk.ch/stats/log.php?application="+getApplicationName()+"&version="+getApplicationVersion());
-    ScopedPointer<InputStream> stream = url.createInputStream(true);
+    InputStream* stream = url.createInputStream(true);
     if(stream != nullptr)
         DBG(stream->readString());
-    stream = nullptr;
+    delete(stream);
 #endif
     
     // open default score file
@@ -143,7 +143,6 @@ void Polytempo_NetworkApplication::shutdown()
 	menuBarModel = nullptr;
 
     // delete singletons
-    Polytempo_StoredPreferences::deleteInstance();
     Polytempo_AudioClick::deleteInstance();
     Polytempo_MidiClick::deleteInstance();
     Polytempo_NetworkSupervisor::deleteInstance();
@@ -154,6 +153,7 @@ void Polytempo_NetworkApplication::shutdown()
 	Polytempo_TimeProvider::deleteInstance();
     Polytempo_EventDispatcher::deleteInstance();
 	Polytempo_InterprocessCommunication::deleteInstance();
+	Polytempo_StoredPreferences::deleteInstance();
 
 	Logger::setCurrentLogger(nullptr);
 	fileLogger = nullptr;

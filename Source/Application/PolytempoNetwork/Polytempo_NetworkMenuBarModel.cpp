@@ -29,7 +29,6 @@
 #include "../../Preferences/Polytempo_NetworkPreferencesPanel.h"
 #include "../../Preferences/Polytempo_StoredPreferences.h"
 #include "../../Scheduler/Polytempo_ScoreScheduler.h"
-#include "../../Scheduler/Polytempo_EventDispatcher.h"
 #include "../../Views/PolytempoNetwork/Polytempo_GraphicsAnnotationManager.h"
 
 
@@ -173,10 +172,14 @@ PopupMenu Polytempo_MenuBarModel::getMenuForIndex(int, const String& menuName)
 
 		menu.addSeparator();
 
-		menu.addCommandItem(commandManager, Polytempo_CommandIDs::annotationColor);
-		menu.addCommandItem(commandManager, Polytempo_CommandIDs::annotationTextSize);
 		menu.addCommandItem(commandManager, Polytempo_CommandIDs::annotationLayerSettings);
-		menu.addCommandItem(commandManager, Polytempo_CommandIDs::annotationLayerEditMode);
+
+		PopupMenu subMenu;
+		subMenu.addCommandItem(commandManager, Polytempo_CommandIDs::annotationOff);
+		subMenu.addCommandItem(commandManager, Polytempo_CommandIDs::annotationReadOnly);
+		subMenu.addCommandItem(commandManager, Polytempo_CommandIDs::annotationStandard);
+		subMenu.addCommandItem(commandManager, Polytempo_CommandIDs::annotationEdit);
+		menu.addSubMenu("Annotation mode", subMenu);
 	}
 	else if (menuName == "Window")
     {
@@ -257,10 +260,11 @@ void Polytempo_MenuBarModel::getAllCommands(Array <CommandID>& commands)
 		Polytempo_CommandIDs::annotationAccept,
 		Polytempo_CommandIDs::annotationCancel,
 		Polytempo_CommandIDs::annotationDelete,
-		Polytempo_CommandIDs::annotationColor,
-		Polytempo_CommandIDs::annotationTextSize,
 		Polytempo_CommandIDs::annotationLayerSettings,
-		Polytempo_CommandIDs::annotationLayerEditMode,
+		Polytempo_CommandIDs::annotationOff,
+		Polytempo_CommandIDs::annotationReadOnly,
+		Polytempo_CommandIDs::annotationStandard,
+		Polytempo_CommandIDs::annotationEdit,
 
         Polytempo_CommandIDs::aboutWindow,
         Polytempo_CommandIDs::preferencesWindow,
@@ -470,30 +474,38 @@ void Polytempo_MenuBarModel::getCommandInfo(CommandID commandID, ApplicationComm
 		case Polytempo_CommandIDs::annotationDelete:
 			result.setInfo("Delete", "Delete the current annotation", infoCategory, 0);
 			result.addDefaultKeypress(KeyPress::deleteKey, ModifierKeys::noModifiers);
+            result.addDefaultKeypress(KeyPress::backspaceKey, ModifierKeys::noModifiers);
 			result.setActive(Polytempo_GraphicsAnnotationManager::getInstance()->isAnnotationPending() && Polytempo_GraphicsAnnotationManager::getInstance()->getAnchorFlag());
-			break;
-
-		case Polytempo_CommandIDs::annotationColor:
-			result.setInfo("Color...", "Change the color of the current annotation", infoCategory, 0);
-			result.addDefaultKeypress('c', ModifierKeys::noModifiers);
-			result.setActive(Polytempo_GraphicsAnnotationManager::getInstance()->isAnnotationPending());
-			break;
-
-		case Polytempo_CommandIDs::annotationTextSize:
-			result.setInfo("Text size...", "Change the text size of the current annotation", infoCategory, 0);
-			result.addDefaultKeypress('t', ModifierKeys::noModifiers);
-			result.setActive(Polytempo_GraphicsAnnotationManager::getInstance()->isAnnotationPending());
 			break;
 
 		case Polytempo_CommandIDs::annotationLayerSettings:
 			result.setInfo("Layer settings...", "Annotation layer settings", infoCategory, 0);
-			result.addDefaultKeypress('l', ModifierKeys::noModifiers);
+			result.addDefaultKeypress('l', ModifierKeys::ctrlModifier);
+			result.setActive(Polytempo_GraphicsAnnotationManager::getInstance()->getAnnotationMode() != Polytempo_GraphicsAnnotationManager::Off);
 			break;
 
-		case Polytempo_CommandIDs::annotationLayerEditMode:
-			result.setInfo("Edit mode", "Toggle edit mode", infoCategory, 0);
-			result.addDefaultKeypress('e', ModifierKeys::noModifiers);
-			result.setTicked(Polytempo_GraphicsAnnotationManager::getInstance()->getAnchorFlag());
+		case Polytempo_CommandIDs::annotationOff:
+			result.setInfo("Off", "Global Annotations Toggle", infoCategory, 0);
+			result.addDefaultKeypress('a', ModifierKeys::ctrlModifier);
+			result.setTicked(Polytempo_GraphicsAnnotationManager::getInstance()->getAnnotationMode() == Polytempo_GraphicsAnnotationManager::Off);
+			break;
+
+    	case Polytempo_CommandIDs::annotationReadOnly:
+			result.setInfo("Read only", "Read Only Annotations", infoCategory, 0);
+			result.addDefaultKeypress('r', ModifierKeys::ctrlModifier);
+			result.setTicked(Polytempo_GraphicsAnnotationManager::getInstance()->getAnnotationMode() == Polytempo_GraphicsAnnotationManager::ReadOnly);
+			break;
+
+    	case Polytempo_CommandIDs::annotationStandard:
+			result.setInfo("Standard", "Allow adding new annotations", infoCategory, 0);
+			result.addDefaultKeypress('s', ModifierKeys::ctrlModifier);
+			result.setTicked(Polytempo_GraphicsAnnotationManager::getInstance()->getAnnotationMode() == Polytempo_GraphicsAnnotationManager::Standard);
+			break;
+
+    	case Polytempo_CommandIDs::annotationEdit:
+			result.setInfo("Edit mode", "Allow editing existing annotations", infoCategory, 0);
+			result.addDefaultKeypress('e', ModifierKeys::ctrlModifier);
+			result.setTicked(Polytempo_GraphicsAnnotationManager::getInstance()->getAnnotationMode() == Polytempo_GraphicsAnnotationManager::Edit);
 			break;
 
         /* help menu
@@ -674,24 +686,28 @@ bool Polytempo_MenuBarModel::perform(const InvocationInfo& info)
 				pAnnotationLayer->handleDeleteSelected();
 			break;
 
-		case Polytempo_CommandIDs::annotationColor:
-			pAnnotationLayer = Polytempo_GraphicsAnnotationManager::getInstance()->getCurrentPendingAnnotationLayer();
-    		if(pAnnotationLayer != nullptr)
-				pAnnotationLayer->hitBtnColor();
-    		break;
-
-		case Polytempo_CommandIDs::annotationTextSize:
-			pAnnotationLayer = Polytempo_GraphicsAnnotationManager::getInstance()->getCurrentPendingAnnotationLayer();
-			if (pAnnotationLayer != nullptr)
-				pAnnotationLayer->hitBtnTextSize();
-			break;
-
 		case Polytempo_CommandIDs::annotationLayerSettings:
 			Polytempo_GraphicsAnnotationManager::getInstance()->showSettingsDialog();
 			break;
 
-		case Polytempo_CommandIDs::annotationLayerEditMode:
-			Polytempo_GraphicsAnnotationManager::getInstance()->setAnchorFlag(!Polytempo_GraphicsAnnotationManager::getInstance()->getAnchorFlag());
+		case Polytempo_CommandIDs::annotationOff:
+			if (Polytempo_GraphicsAnnotationManager::getInstance()->getAnnotationMode() != Polytempo_GraphicsAnnotationManager::Off)
+				Polytempo_GraphicsAnnotationManager::getInstance()->setAnnotationMode(Polytempo_GraphicsAnnotationManager::Off);
+			break;
+
+    	case Polytempo_CommandIDs::annotationReadOnly:
+			if (Polytempo_GraphicsAnnotationManager::getInstance()->getAnnotationMode() != Polytempo_GraphicsAnnotationManager::ReadOnly)
+				Polytempo_GraphicsAnnotationManager::getInstance()->setAnnotationMode(Polytempo_GraphicsAnnotationManager::ReadOnly);
+			break;
+
+    	case Polytempo_CommandIDs::annotationStandard:
+			if (Polytempo_GraphicsAnnotationManager::getInstance()->getAnnotationMode() != Polytempo_GraphicsAnnotationManager::Standard)
+				Polytempo_GraphicsAnnotationManager::getInstance()->setAnnotationMode(Polytempo_GraphicsAnnotationManager::Standard);
+			break;
+
+    	case Polytempo_CommandIDs::annotationEdit:
+			if (Polytempo_GraphicsAnnotationManager::getInstance()->getAnnotationMode() != Polytempo_GraphicsAnnotationManager::Edit)
+				Polytempo_GraphicsAnnotationManager::getInstance()->setAnnotationMode(Polytempo_GraphicsAnnotationManager::Edit);
 			break;
 
         /* help menu

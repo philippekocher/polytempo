@@ -37,12 +37,12 @@ enum Polytempo_ViewContentType
     contentType_Progressbar
 };
 
-class Polytempo_GraphicsViewRegion : public Component
+class Polytempo_GraphicsViewRegion : public Component, public ChangeListener
 {
 public:
     Polytempo_GraphicsViewRegion(var = var());
     ~Polytempo_GraphicsViewRegion();
-
+    
     void paint(Graphics& g) override;
     void resized() override;
 	void setImage(Image *img, var rect, String imageId);
@@ -69,6 +69,7 @@ public:
 
 private:
 	void setViewImage(Image* img, var rect);
+    void changeListenerCallback(ChangeBroadcaster *source) override;
 
     var regionID;
     Polytempo_ViewContentType contentType;

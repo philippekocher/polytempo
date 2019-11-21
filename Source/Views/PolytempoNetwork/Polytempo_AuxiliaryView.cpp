@@ -26,9 +26,9 @@
 #include "../../Scheduler/Polytempo_ScoreScheduler.h"
 #include "../../Scheduler/Polytempo_EventDispatcher.h"
 #include "../../Preferences/Polytempo_StoredPreferences.h"
-#include "../../Network/Polytempo_NetworkSupervisor.h"
 #include "../../Misc/Polytempo_Textbox.h"
 #include "../../Network/Polytempo_TimeProvider.h"
+#include "Polytempo_GraphicsPalette.h"
 
 
 Polytempo_AuxiliaryView::Polytempo_AuxiliaryView()
@@ -74,6 +74,8 @@ Polytempo_AuxiliaryView::Polytempo_AuxiliaryView()
     tempoFactorTextbox->addListener(this);
     tempoFactorTextbox->setText("1.0", dontSendNotification);
     
+	addAndMakeVisible(annotationView = new Polytempo_AnnotationView());
+
 	addAndMakeVisible(timeSyncControl = new Polytempo_TimeSyncControl());
 	Polytempo_TimeProvider::getInstance()->registerUserInterface(timeSyncControl);
 
@@ -83,7 +85,9 @@ Polytempo_AuxiliaryView::Polytempo_AuxiliaryView()
 
 Polytempo_AuxiliaryView::~Polytempo_AuxiliaryView()
 {
-    deleteAllChildren();
+	Polytempo_GraphicsPalette::deleteInstance();
+
+	deleteAllChildren();
 }
 
 void Polytempo_AuxiliaryView::paint (Graphics& g)
@@ -93,7 +97,8 @@ void Polytempo_AuxiliaryView::paint (Graphics& g)
 	networkInfoView->repaint();
 
     g.setColour(Colours::black);
-    g.drawHorizontalLine(290, 0.0f, (float)getWidth());
+    g.drawHorizontalLine(separator1Position, 0.0f, (float)getWidth());
+	g.drawHorizontalLine(separator2Position, 0.0f, (float)getWidth());
     g.setColour(Colours::grey);
     g.drawVerticalLine(0, 0.0f, (float)getHeight());
 }
@@ -124,12 +129,23 @@ void Polytempo_AuxiliaryView::resized()
     yPosition +=55;
     
     tempoFactorTextbox->setBounds(10, yPosition, getWidth() - 20, 34);
-	yPosition += 60;
+	yPosition += 50;
+
+	separator1Position = yPosition;
+	yPosition += 10;
+
+	annotationView->setBounds(10, yPosition, getWidth() - 20, annotationView->getHeight());
+	yPosition += annotationView->getHeight() + 5;
+
+	separator2Position = yPosition;
+	yPosition += 5;
 
 	timeSyncControl->setBounds(10, yPosition, getWidth() - 20, 50);
 	yPosition += 45;
 
 	networkInfoView->setBounds(10, yPosition, getWidth() - 20, getHeight() - yPosition);
+
+	repaint();
 }
 
 void Polytempo_AuxiliaryView::eventNotification(Polytempo_Event *event)
