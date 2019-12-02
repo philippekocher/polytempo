@@ -88,12 +88,12 @@ void Polytempo_AnnotationView::changeListenerCallback(ChangeBroadcaster* /*sourc
 	displayMode();
 }
 
-void Polytempo_AnnotationView::mouseEnter(const MouseEvent &event)
+void Polytempo_AnnotationView::mouseEnter(const MouseEvent &)
 {
     Polytempo_GraphicsPalette::getInstance()->mouseEntered();
 }
 
-void Polytempo_AnnotationView::mouseExit(const MouseEvent &event)
+void Polytempo_AnnotationView::mouseExit(const MouseEvent &)
 {
     Polytempo_GraphicsPalette::getInstance()->mouseLeft();
 }

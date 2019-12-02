@@ -249,13 +249,13 @@ void Polytempo_GraphicsPalette::sliderValueChanged(Slider *slider)
     }
     if(slider == textSizeSlider.get())
     {
-        setTemporaryFontSize(textSizeSlider->getValue());
-        lastTextSize = textSizeSlider->getValue();
+        setTemporaryFontSize(float(textSizeSlider->getValue()));
+        lastTextSize = float(textSizeSlider->getValue());
     }
     else if(slider == lineWeightSlider.get())
     {
-        pAnnotationLayer->setTemporaryLineWeight(lineWeightSlider->getValue());
-        lastLineWeight = lineWeightSlider->getValue();
+        pAnnotationLayer->setTemporaryLineWeight(float(lineWeightSlider->getValue()));
+        lastLineWeight = float(lineWeightSlider->getValue());
     }
 }
 

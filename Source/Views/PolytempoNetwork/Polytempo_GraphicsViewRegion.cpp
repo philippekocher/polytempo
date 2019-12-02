@@ -34,7 +34,7 @@ void Polytempo_GraphicsViewRegion::paint(Graphics& g)
         Polytempo_GraphicsAnnotationManager::eAnnotationMode annotationMode = Polytempo_GraphicsAnnotationManager::getInstance()->getAnnotationMode();
         if(annotationMode ==  Polytempo_GraphicsAnnotationManager::Standard || annotationMode == Polytempo_GraphicsAnnotationManager::Edit)
         {
-            g.fillAll(Colours::lightgrey.brighter(0.7));
+            g.fillAll(Colours::lightgrey.brighter(0.7f));
         }
         
         g.drawImage(*image,
@@ -227,7 +227,7 @@ bool Polytempo_GraphicsViewRegion::imageRectangleContains(Point<float> point) co
 	return currentImageRectangle.contains(point);
 }
 
-void Polytempo_GraphicsViewRegion::changeListenerCallback(ChangeBroadcaster *source)
+void Polytempo_GraphicsViewRegion::changeListenerCallback(ChangeBroadcaster*)
 {
     repaint();
 }
