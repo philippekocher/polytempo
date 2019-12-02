@@ -1,5 +1,4 @@
-#ifndef __Polytempo_NetworkMainView__
-#define __Polytempo_NetworkMainView__
+#pragma once
 
 #include "JuceHeader.h"
 
@@ -38,6 +37,3 @@ private:
     //------------------------------------------------------------------------------
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_NetworkMainView)
 };
-
-
-#endif  // __Polytempo_NetworkMainView__

@@ -1,4 +1,5 @@
 #pragma once
+
 #include "JuceHeader.h"
 #ifdef POLYTEMPO_NETWORK
 #include "Polytempo_InterprocessCommunication.h"

@@ -1,12 +1,8 @@
-#ifndef __Polytempo_MidiInput__
-#define __Polytempo_MidiInput__
-
+#pragma once
 
 #include "Polytempo_AudioDeviceManager.h"
 
-
 class Polytempo_MidiInput : public MidiInputCallback
-
 {
 public:
     Polytempo_MidiInput()
@@ -34,7 +30,3 @@ private:
 //    AudioDeviceManager& audioDeviceManager;
     
 };
-
-
-
-#endif  // __Polytempo_MidiInput__

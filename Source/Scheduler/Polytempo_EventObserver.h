@@ -1,5 +1,4 @@
-#ifndef __Polytempo_EventObserver__
-#define __Polytempo_EventObserver__
+#pragma once
 
 #include "Polytempo_Event.h"
 
@@ -10,6 +9,3 @@ public:
     virtual ~Polytempo_EventObserver();
     virtual void eventNotification(Polytempo_Event *event) = 0;
 };
-
-
-#endif // __Polytempo_EventObserver__ 

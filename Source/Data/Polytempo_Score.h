@@ -1,5 +1,4 @@
-#ifndef __Polytempo_Score__
-#define __Polytempo_Score__
+#pragma once
 
 #include "../Scheduler/Polytempo_Event.h"
 
@@ -65,5 +64,3 @@ private:
     bool dirty = false;
     bool jsonStringInTwoBlocks = true;
 };
-
-#endif // __Polytempo_Score__

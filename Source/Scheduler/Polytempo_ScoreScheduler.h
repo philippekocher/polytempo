@@ -1,10 +1,8 @@
-#ifndef __Polytempo_ScoreScheduler__
-#define __Polytempo_ScoreScheduler__
+#pragma once
 
 #include "../Data/Polytempo_Score.h"
 #include "Polytempo_ScoreSchedulerEngine.h"
 #include "../Scheduler/Polytempo_EventObserver.h"
-
 
 class Polytempo_ScoreSchedulerEngine;
 
@@ -52,6 +50,3 @@ private:
     
     Polytempo_Score *score = nullptr;
 };
-
-
-#endif // __Polytempo_ScoreScheduler__

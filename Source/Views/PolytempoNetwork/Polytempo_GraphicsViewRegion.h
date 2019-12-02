@@ -1,9 +1,6 @@
-#ifndef __Polytempo_GraphicsViewRegion__
-#define __Polytempo_GraphicsViewRegion__
-
+#pragma once
 
 #include "Polytempo_Progressbar.h"
-
 
 enum Polytempo_ViewContentType
 {
@@ -68,8 +65,3 @@ private:
 	AffineTransform screenToImage;
 	float imageLeft, imageTop, imageWidth, imageHeight;
 };
-    
-
-
-
-#endif   // __Polytempo_GraphicsViewRegion__

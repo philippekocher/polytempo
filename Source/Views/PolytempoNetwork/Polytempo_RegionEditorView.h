@@ -6,7 +6,6 @@
 #include "../../Misc/DragHandle.h"
 #include "../../Misc/Polytempo_Textbox.h"
 
-
 class Polytempo_RegionEditorView : public Component,
                                    public DragHandleListener,
                                    public Label::Listener,

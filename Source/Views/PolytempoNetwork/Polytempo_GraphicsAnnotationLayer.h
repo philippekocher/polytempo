@@ -11,9 +11,6 @@
 #define MIN_MOUSE_DOWN_TIME_MS				500
 #define AUTO_ACCEPT_INTERVAL_MS				5000
 
-//==============================================================================
-/*
-*/
 class Polytempo_GraphicsAnnotationLayer    : public Component, MultiTimer, KeyListener, ChangeListener
 {
 public:

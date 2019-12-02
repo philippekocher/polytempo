@@ -1,5 +1,4 @@
-#ifndef POLYTEMPO_IPADDRESS_H_INCLUDED
-#define POLYTEMPO_IPADDRESS_H_INCLUDED
+#pragma once
 
 #include "JuceHeader.h"
 
@@ -25,6 +24,3 @@ public:
 	IPAddress subnetMask;
 	String adapterName;
 };
-
-
-#endif  // POLYTEMPO_IPADDRESS_H_INCLUDED

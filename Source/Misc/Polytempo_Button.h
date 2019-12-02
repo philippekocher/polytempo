@@ -1,6 +1,4 @@
-#ifndef __Polytempo_Button__
-#define __Polytempo_Button__
-
+#pragma once
 
 class Polytempo_Button : public TextButton
 {
@@ -60,5 +58,3 @@ public:
         }
     }
 };
-
-#endif  // __Polytempo_Button__

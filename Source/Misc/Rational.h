@@ -1,5 +1,4 @@
-#ifndef __Rational__
-#define __Rational__
+#pragma once
 
 #include "JuceHeader.h"
 
@@ -197,7 +196,3 @@ private:
         denominator /= a;
     }
 };
-
-
-
-#endif  // __Rational__

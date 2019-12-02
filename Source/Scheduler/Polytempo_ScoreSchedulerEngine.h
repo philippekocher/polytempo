@@ -1,10 +1,7 @@
-#ifndef __Polytempo_ScoreSchedulerEngine__
-#define __Polytempo_ScoreSchedulerEngine__
-
+#pragma once
 
 #include "../Data/Polytempo_Score.h"
 #include "Polytempo_ScoreScheduler.h"
-
 
 class Polytempo_ScoreScheduler;
 
@@ -97,6 +94,3 @@ private:
     int   lastDownbeat;
 //    Polytempo_Event *currentMarker;
 };
-
-
-#endif  // __Polytempo_ScoreSchedulerEngine__

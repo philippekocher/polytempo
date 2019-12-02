@@ -1,8 +1,6 @@
-#ifndef __Polytempo_EventScheduler__
-#define __Polytempo_EventScheduler__
+#pragma once
 
 #include "Polytempo_EventObserver.h"
-
 
 class Polytempo_EventScheduler : public Thread
 {
@@ -38,6 +36,3 @@ private:
     bool deleteEvents = false;
 
 };
-
-
-#endif // __Polytempo_EventScheduler__

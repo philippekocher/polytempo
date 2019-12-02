@@ -3,9 +3,6 @@
 #include "JuceHeader.h"
 #include "Polytempo_GraphicsAnnotationSet.h"
 
-//==============================================================================
-/*
-*/
 class Polytempo_GraphicsAnnotationSettingsDialog : public Component, public TableListBoxModel, private Button::Listener
 {
 public:

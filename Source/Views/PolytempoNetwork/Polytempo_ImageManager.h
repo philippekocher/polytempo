@@ -1,8 +1,6 @@
-#ifndef __Polytempo_ImageManager__
-#define __Polytempo_ImageManager__
+#pragma once
 
 #include "../../Scheduler/Polytempo_EventObserver.h"
-
 
 class Polytempo_ImageManager : public Polytempo_EventObserver
 {
@@ -26,5 +24,3 @@ private:
     HashMap < var, Polytempo_Event* > loadImageEventMap;
     HashMap < var, Image* > imageMap;
 };
-    
-#endif  // __Polytempo_ImageManager__

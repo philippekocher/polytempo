@@ -7,7 +7,6 @@
 #include "Polytempo_PageEditorComponent.h"
 #include "Polytempo_SectionInstancesComponent.h"
 
-
 class TreeItem : public TreeViewItem, private ValueTree::Listener
 {
 public:

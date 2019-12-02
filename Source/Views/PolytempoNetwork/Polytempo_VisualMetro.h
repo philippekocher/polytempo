@@ -1,5 +1,4 @@
-#ifndef __Polytempo_VisualMetro__
-#define __Polytempo_VisualMetro__
+#pragma once
 
 #include "../../Scheduler/Polytempo_EventObserver.h"
 
@@ -42,5 +41,3 @@ private:
     Polytempo_VisualConductorComponent *hComponent;
     Polytempo_VisualConductorComponent *vComponent;
 };
-
-#endif   // __Polytempo_VisualMetro__

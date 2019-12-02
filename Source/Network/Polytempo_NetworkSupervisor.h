@@ -1,5 +1,4 @@
-#ifndef __Polytempo_NetworkSupervisor__
-#define __Polytempo_NetworkSupervisor__
+#pragma once
 
 #include "../Scheduler/Polytempo_EventObserver.h"
 #include "Polytempo_PeerInfo.h"
@@ -41,6 +40,3 @@ private:
 
     int currentPort;
 };
-
-
-#endif  // __Polytempo_NetworkSupervisor__

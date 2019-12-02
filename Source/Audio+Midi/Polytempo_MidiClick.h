@@ -1,9 +1,6 @@
-#ifndef __Polytempo_MidiClick__
-#define __Polytempo_MidiClick__
-
+#pragma once
 
 #include "../Scheduler/Polytempo_EventObserver.h"
-
 
 class Polytempo_MidiClick : public Polytempo_EventObserver
 {
@@ -33,6 +30,3 @@ private:
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_MidiClick)
 };
-
-
-#endif /* defined(__Polytempo_MidiClick__) */

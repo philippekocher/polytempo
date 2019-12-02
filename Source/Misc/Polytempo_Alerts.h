@@ -1,6 +1,4 @@
-#ifndef __Polytempo_Alerts__
-#define __Polytempo_Alerts__
-
+#pragma once
 
 class Polytempo_Alert
 {
@@ -57,6 +55,3 @@ public:
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_YesNoCancelAlert)
 };
-
-
-#endif  // __Polytempo_Alerts__

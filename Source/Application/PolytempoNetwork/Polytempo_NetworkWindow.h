@@ -1,9 +1,9 @@
 #pragma once
+
 #include "../../Views/PolytempoNetwork/Polytempo_PageEditorView.h"
 #include "../../Views/PolytempoNetwork/Polytempo_RegionEditorView.h"
 #include "../../Views/PolytempoNetwork/Polytempo_ScoreEditorView.h"
 #include "../../Views/PolytempoNetwork/Polytempo_NetworkMainView.h"
-
 
 class Polytempo_NetworkWindow : public DocumentWindow
 {

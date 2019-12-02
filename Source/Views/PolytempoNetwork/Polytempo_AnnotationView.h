@@ -1,6 +1,6 @@
 #pragma once
-#include "JuceHeader.h"
 
+#include "JuceHeader.h"
 
 class Polytempo_AnnotationView : public Component, Button::Listener, ComboBox::Listener, ChangeListener
 {

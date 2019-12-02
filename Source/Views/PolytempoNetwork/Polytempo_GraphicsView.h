@@ -1,10 +1,8 @@
-#ifndef __Polytempo_GraphicsView__
-#define __Polytempo_GraphicsView__
+#pragma once
 
 #include "Polytempo_GraphicsViewRegion.h"
 #include "../../Scheduler/Polytempo_EventObserver.h"
 #include "Polytempo_GraphicsAnnotationLayer.h"
-
 
 class Polytempo_GraphicsView : public Component,
                                public Polytempo_EventObserver
@@ -34,8 +32,3 @@ private:
     std::unique_ptr < Polytempo_Progressbar > progressbar;
 	std::unique_ptr < Polytempo_GraphicsAnnotationLayer > annotationLayer;
 };
-    
-
-
-
-#endif   // __Polytempo_GraphicsView__

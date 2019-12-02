@@ -1,13 +1,11 @@
 #pragma once
 
 #include "JuceHeader.h"
+
 #define BUTTON_SIZE 35
 
 class Polytempo_GraphicsAnnotationLayer;
 
-//==============================================================================
-/*
-*/
 class Polytempo_GraphicsPalette : public Button::Listener, Slider::Listener, ChangeListener
 {
 private:

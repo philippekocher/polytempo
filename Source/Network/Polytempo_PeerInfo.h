@@ -1,4 +1,5 @@
 #pragma once
+
 #include "JuceHeader.h"
 
 class Polytempo_PeerInfo

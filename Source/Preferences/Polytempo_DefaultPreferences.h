@@ -2,7 +2,6 @@
 
 #include "JuceHeader.h"
 
-
 class Polytempo_DefaultPreferences : public PropertySet
 {
 public:

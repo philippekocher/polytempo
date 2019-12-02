@@ -1,5 +1,4 @@
-#ifndef __Polytempo_AboutWindow__
-#define __Polytempo_AboutWindow__
+#pragma once
 
 #include "JuceHeader.h"
 
@@ -22,6 +21,3 @@ private:
 	std::unique_ptr<HyperlinkButton> link2;
 	std::unique_ptr<Component> aboutComponent;
 };
-
-
-#endif  // __Polytempo_AboutWindow__

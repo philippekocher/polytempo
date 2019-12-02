@@ -4,7 +4,6 @@
 #include "../../Data/Polytempo_Score.h"
 #include "../../Misc/DragHandle.h"
 
-
 class Polytempo_PageEditorComponent : public Component,
                                       public ChangeListener,
                                       public DragHandleListener

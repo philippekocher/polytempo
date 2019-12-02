@@ -1,8 +1,6 @@
-#ifndef __Polytempo_Event__
-#define __Polytempo_Event__
+#pragma once
 
 #include "../Misc/Rational.h"
-
 
 enum Polytempo_EventType
 {
@@ -157,7 +155,3 @@ private:
 
 	std::unique_ptr < NamedValueSet > properties;
 };
-
-
-
-#endif // __Polytempo_Event__

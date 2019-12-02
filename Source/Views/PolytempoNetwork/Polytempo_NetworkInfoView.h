@@ -2,9 +2,6 @@
 
 #include "JuceHeader.h"
 
-//==============================================================================
-/*
-*/
 class Polytempo_NetworkInfoView    : public Component
 {
 public:

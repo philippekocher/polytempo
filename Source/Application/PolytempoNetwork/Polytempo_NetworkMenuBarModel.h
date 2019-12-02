@@ -1,12 +1,9 @@
-#ifndef __PolytempoPolytempo__Polytempo_MenuBarModel__
-#define __PolytempoPolytempo__Polytempo_MenuBarModel__
+#pragma once
 
 #include "Polytempo_NetworkWindow.h"
 
-
 class Polytempo_MenuBarModel : public MenuBarModel,
                                public ApplicationCommandTarget
-
 {
 public:
     Polytempo_MenuBarModel(Polytempo_NetworkWindow*);
@@ -32,6 +29,3 @@ private:
 #endif
 
 };
-
-
-#endif /* defined(__PolytempoPolytempo__Polytempo_MenuBarModel__) */

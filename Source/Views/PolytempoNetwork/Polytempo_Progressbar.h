@@ -1,5 +1,4 @@
-#ifndef __Polytempo_Progressbar__
-#define __Polytempo_Progressbar__
+#pragma once
 
 #include "../../Scheduler/Polytempo_EventObserver.h"
 
@@ -25,7 +24,3 @@ private:
     float duration, elapsedTime;
     OwnedArray < class Rectangle<float> > regionBounds;
 };
-
-
-
-#endif  // __Polytempo_Progressbar__

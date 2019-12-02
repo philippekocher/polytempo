@@ -1,8 +1,6 @@
-#ifndef __Polytempo_AudioClick__
-#define __Polytempo_AudioClick__
+#pragma once
 
 #include "../Scheduler/Polytempo_EventObserver.h"
-
 
 class SynthAudioSource;
 
@@ -30,6 +28,3 @@ private:
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_AudioClick)
 };
-
-
-#endif /* __Polytempo_AudioClick__ */

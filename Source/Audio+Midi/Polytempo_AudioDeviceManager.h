@@ -1,9 +1,6 @@
-#ifndef __Polytempo_AudioDeviceManager__
-#define __Polytempo_AudioDeviceManager__
-
+#pragma once
 
 #include "../Preferences/Polytempo_StoredPreferences.h"
-
 
 static AudioDeviceManager* sharedAudioDeviceManager;
 
@@ -29,6 +26,3 @@ public:
         delete sharedAudioDeviceManager;
     }
 };
-
-
-#endif  // __Polytempo_AudioDeviceManager__

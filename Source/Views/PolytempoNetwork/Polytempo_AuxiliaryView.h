@@ -1,5 +1,4 @@
-#ifndef __Polytempo_AuxiliaryView__
-#define __Polytempo_AuxiliaryView__
+#pragma once
 
 #include "../../Scheduler/Polytempo_EventObserver.h"
 #include "../../Misc/Polytempo_Textbox.h"
@@ -7,7 +6,6 @@
 #include "Polytempo_TimeSyncControl.h"
 #include "Polytempo_NetworkInfoView.h"
 #include "Polytempo_AnnotationView.h"
-
 
 class Polytempo_AuxiliaryView : public Component,
                                 public Label::Listener,
@@ -59,6 +57,3 @@ private:
 
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_AuxiliaryView)
 };
-
-
-#endif  // __Polytempo_AuxiliaryView__

@@ -1,8 +1,6 @@
-#ifndef __Polytempo_NetworkPreferencesPanel__
-#define __Polytempo_NetworkPreferencesPanel__
+#pragma once
 
 #include "JuceHeader.h"
-
 
 class Polytempo_NetworkPreferencesPanel : public PreferencesPanel
 {
@@ -14,6 +12,3 @@ public:
 
     static void show();
 };
-
-
-#endif // __Polytempo_NetworkPreferencesPanel__

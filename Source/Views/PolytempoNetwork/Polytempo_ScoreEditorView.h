@@ -4,7 +4,6 @@
 #include "../../Data/Polytempo_Score.h"
 #include "../../Scheduler/Polytempo_EventObserver.h"
 
-
 class Polytempo_ScoreEditorView : public Component, public Polytempo_EventObserver
 {
 public:

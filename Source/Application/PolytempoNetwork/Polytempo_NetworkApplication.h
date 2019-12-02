@@ -1,6 +1,4 @@
-#ifndef __Polytempo_NetworkApplication__
-#define __Polytempo_NetworkApplication__
-
+#pragma once
 
 #include "Polytempo_NetworkWindow.h"
 #include "Polytempo_NetworkMenuBarModel.h"
@@ -60,6 +58,3 @@ private:
     File scoreFile, newScoreFile;
     LookAndFeel_V3 lookAndFeelV3;
 };
-
-
-#endif  // __Polytempo_NetworkApplication__

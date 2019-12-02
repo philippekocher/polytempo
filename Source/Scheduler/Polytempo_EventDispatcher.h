@@ -1,5 +1,4 @@
-#ifndef __Polytempo_EventDispatcher__
-#define __Polytempo_EventDispatcher__
+#pragma once
 
 #include "Polytempo_EventScheduler.h"
 #include "../Preferences/Polytempo_StoredPreferences.h"
@@ -10,5 +9,3 @@ public:
 	juce_DeclareSingleton(Polytempo_EventDispatcher, false)
 	void broadcastEvent(Polytempo_Event *event);
 };
-
-#endif  // __Polytempo_EventDispatcher__

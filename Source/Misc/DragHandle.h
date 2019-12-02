@@ -1,5 +1,4 @@
-#ifndef __DragHandle__
-#define __DragHandle__
+#pragma once
 
 class DragHandle;
 
@@ -94,5 +93,3 @@ private:
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DragHandle)
 };
-
-#endif  // __Handle__

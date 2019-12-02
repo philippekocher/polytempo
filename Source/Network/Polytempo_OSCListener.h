@@ -1,5 +1,4 @@
-#ifndef __Polytempo_OSCListener__
-#define __Polytempo_OSCListener__
+#pragma once
 
 #include "JuceHeader.h"
 #include "../Scheduler/Polytempo_Event.h"
@@ -19,5 +18,3 @@ private:
         
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_OSCListener);
 };
-
-#endif // __Polytempo_OSCListener__

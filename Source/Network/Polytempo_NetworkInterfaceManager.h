@@ -1,5 +1,4 @@
-#ifndef POLYTEMPO_NETWORKINTERFACEMANAGER_H_INCLUDED
-#define POLYTEMPO_NETWORKINTERFACEMANAGER_H_INCLUDED
+#pragma once
 
 #include "Polytempo_IPAddress.h"
 
@@ -16,7 +15,3 @@ public:
 private:
 	Array<Polytempo_IPAddress> availableIpAddresses;
 };
-
-
-
-#endif  // POLYTEMPO_NETWORKINTERFACEMANAGER_H_INCLUDED

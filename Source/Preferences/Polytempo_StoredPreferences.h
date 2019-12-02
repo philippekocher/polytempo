@@ -1,8 +1,6 @@
-#ifndef __Polytempo_StoredPreferences__
-#define __Polytempo_StoredPreferences__
+#pragma once
 
 #include "JuceHeader.h"
-
 
 //==============================================================================
 /**
@@ -28,6 +26,3 @@ private:
 	std::unique_ptr<PropertiesFile> props;
 	std::unique_ptr<PropertiesFile> defaults;
 };
-
-
-#endif   // __Polytempo_StoredPreferences__

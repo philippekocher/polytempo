@@ -1,6 +1,4 @@
-#ifndef __Polytempo_CommandIDs__
-#define __Polytempo_CommandIDs__
-
+#pragma once
 
 namespace Polytempo_CommandIDs
 {
@@ -77,5 +75,3 @@ namespace Polytempo_CommandIDs
         openRecent // must be last!
     };
 }
-
-#endif  // __Polytempo_CommandIDs__
