@@ -1,13 +1,3 @@
-/*
-  ==============================================================================
-
-    Polytempo_AnnotationView.cpp
-    Created: 14 Sep 2019 5:19:28pm
-    Author:  Christian Schweizer
-
-  ==============================================================================
-*/
-
 #include "Polytempo_AnnotationView.h"
 #include "Polytempo_GraphicsAnnotationManager.h"
 

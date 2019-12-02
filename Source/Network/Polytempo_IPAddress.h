@@ -1,17 +1,7 @@
-/*
-  ==============================================================================
-
-    Polytempo_IPAddress.h
-    Created: 12 Feb 2017 10:05:45am
-    Author:  christian.schweizer
-
-  ==============================================================================
-*/
-
 #ifndef POLYTEMPO_IPADDRESS_H_INCLUDED
 #define POLYTEMPO_IPADDRESS_H_INCLUDED
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include "JuceHeader.h"
 
 class Polytempo_IPAddress
 {

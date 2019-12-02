@@ -1,13 +1,3 @@
-/*
-  ==============================================================================
-
-    Polytempo_TimeSyncControl.h
-    Created: 4 Dec 2017 10:40:17pm
-    Author:  christian.schweizer
-
-  ==============================================================================
-*/
-
 #pragma once
 
 #include "JuceHeader.h"

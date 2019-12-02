@@ -1,13 +1,3 @@
-/*
-  ==============================================================================
-
-    Polytempo_NetworkInfoView.h
-    Created: 5 Dec 2017 2:41:16pm
-    Author:  christian.schweizer
-
-  ==============================================================================
-*/
-
 #pragma once
 
 #include "JuceHeader.h"

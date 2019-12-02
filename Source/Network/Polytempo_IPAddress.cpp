@@ -1,13 +1,3 @@
-/*
-  ==============================================================================
-
-    Polytempo_IPAddress.cpp
-    Created: 12 Feb 2017 10:05:45am
-    Author:  christian.schweizer
-
-  ==============================================================================
-*/
-
 #include "Polytempo_IPAddress.h"
 
 #if JUCE_WINDOWS

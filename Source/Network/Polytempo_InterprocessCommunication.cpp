@@ -1,13 +1,3 @@
-/*
-  ==============================================================================
-
-    Polytempo_ InterprocessCommunication.cpp
-    Created: 7 Jun 2019 4:51:30pm
-    Author:  chris
-
-  ==============================================================================
-*/
-
 #include "Polytempo_InterprocessCommunication.h"
 #include "Polytempo_TimeProvider.h"
 #include "../Scheduler/Polytempo_ScoreScheduler.h"

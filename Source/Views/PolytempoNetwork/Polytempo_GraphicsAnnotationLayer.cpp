@@ -1,13 +1,3 @@
-/*
-  ==============================================================================
-
-    Polytempo_GraphicsAnnotationLayer.cpp
-    Created: 22 Jul 2018 5:42:33am
-    Author:  christian.schweizer
-
-  ==============================================================================
-*/
-
 #include "JuceHeader.h"
 #include "Polytempo_GraphicsAnnotationLayer.h"
 #include "Polytempo_GraphicsAnnotationManager.h"

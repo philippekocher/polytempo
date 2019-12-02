@@ -1,13 +1,3 @@
-/*
-  ==============================================================================
-
-    Polytempo_ScoreEditorView.cpp
-    Created: 30 Nov 2018 10:19:37am
-    Author:  Philippe Kocher
-
-  ==============================================================================
-*/
-
 #include "Polytempo_ScoreEditorView.h"
 #include "../../Application/PolytempoNetwork/Polytempo_NetworkApplication.h"
 #include "../../Misc/Polytempo_Alerts.h"

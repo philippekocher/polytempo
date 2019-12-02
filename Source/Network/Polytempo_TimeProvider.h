@@ -1,13 +1,3 @@
-/*
-  ==============================================================================
-
-    Polytempo_TimeProvider.h
-    Created: 30 Nov 2017 7:58:57pm
-    Author:  christian.schweizer
-
-  ==============================================================================
-*/
-
 #pragma once
 #include "JuceHeader.h"
 #ifdef POLYTEMPO_NETWORK

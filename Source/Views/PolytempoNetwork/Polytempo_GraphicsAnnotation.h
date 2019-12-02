@@ -1,13 +1,3 @@
-/*
-  ==============================================================================
-
-    Polytempo_GraphicsAnnotation.h
-    Created: 28 Jul 2017 5:26:47am
-    Author:  christian.schweizer
-
-  ==============================================================================
-*/
-
 #pragma once
 
 #include "JuceHeader.h"

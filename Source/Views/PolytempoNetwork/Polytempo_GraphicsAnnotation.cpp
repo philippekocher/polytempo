@@ -1,13 +1,3 @@
-/*
-  ==============================================================================
-
-    Polytempo_GraphicsAnnotation.cpp
-    Created: 28 Jul 2017 5:26:47am
-    Author:  christian.schweizer
-
-  ==============================================================================
-*/
-
 #include "Polytempo_GraphicsAnnotation.h"
 
 Polytempo_GraphicsAnnotation::Polytempo_GraphicsAnnotation()

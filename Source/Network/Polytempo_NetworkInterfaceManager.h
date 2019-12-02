@@ -1,13 +1,3 @@
-/*
-  ==============================================================================
-
-    Polytempo_NetworkInterfaceManager.h
-    Created: 12 Feb 2017 11:25:07am
-    Author:  christian.schweizer
-
-  ==============================================================================
-*/
-
 #ifndef POLYTEMPO_NETWORKINTERFACEMANAGER_H_INCLUDED
 #define POLYTEMPO_NETWORKINTERFACEMANAGER_H_INCLUDED
 

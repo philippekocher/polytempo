@@ -1,13 +1,3 @@
-/*
-  ==============================================================================
-
-    Polytempo_GraphicsAnnotationLayer.h
-    Created: 22 Jul 2018 5:42:33am
-    Author:  christian.schweizer
-
-  ==============================================================================
-*/
-
 #pragma once
 
 #include "JuceHeader.h"

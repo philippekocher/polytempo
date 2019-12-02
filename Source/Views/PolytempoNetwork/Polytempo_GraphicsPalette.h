@@ -1,13 +1,3 @@
-/*
-  ==============================================================================
-
-    Polytempo_GraphicsPalette.h
-    Created: 16 Jul 2018 8:56:42am
-    Author:  christian.schweizer
-
-  ==============================================================================
-*/
-
 #pragma once
 
 #include "JuceHeader.h"

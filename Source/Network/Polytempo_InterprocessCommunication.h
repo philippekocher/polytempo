@@ -1,13 +1,3 @@
-/*
-  ==============================================================================
-
-    Polytempo_ InterprocessCommunication.h
-    Created: 7 Jun 2019 4:51:30pm
-    Author:  chris
-
-  ==============================================================================
-*/
-
 #pragma once
 #include "JuceHeader.h"
 #include "Polytempo_PeerInfo.h"

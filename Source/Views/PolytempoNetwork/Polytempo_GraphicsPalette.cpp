@@ -1,13 +1,3 @@
-/*
-  ==============================================================================
-
-    Polytempo_GraphicsPalette.cpp
-    Created: 16 Jul 2018 8:56:42am
-    Author:  christian.schweizer
-
-  ==============================================================================
-*/
-
 #include "JuceHeader.h"
 #include "Polytempo_GraphicsPalette.h"
 #include <string>

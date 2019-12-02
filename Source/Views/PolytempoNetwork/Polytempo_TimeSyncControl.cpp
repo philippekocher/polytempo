@@ -1,13 +1,3 @@
-/*
-  ==============================================================================
-
-    Polytempo_TimeSyncControl.cpp
-    Created: 4 Dec 2017 10:40:17pm
-    Author:  christian.schweizer
-
-  ==============================================================================
-*/
-
 #include "Polytempo_TimeSyncControl.h"
 #include "../../Network/Polytempo_TimeProvider.h"
 

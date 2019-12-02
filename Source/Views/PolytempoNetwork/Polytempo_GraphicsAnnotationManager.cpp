@@ -1,13 +1,3 @@
-/*
-  ==============================================================================
-
-    Polytempo_GraphicsAnnotationManager.cpp
-    Created: 28 Jul 2017 4:27:28pm
-    Author:  christian.schweizer
-
-  ==============================================================================
-*/
-
 #include "Polytempo_GraphicsAnnotationManager.h"
 #include "Polytempo_GraphicsAnnotationSettingsDialog.h"
 #include <string>

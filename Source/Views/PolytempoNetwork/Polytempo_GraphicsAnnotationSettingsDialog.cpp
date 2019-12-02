@@ -1,13 +1,3 @@
-/*
-  ==============================================================================
-
-    Polytempo_GraphicsAnnotationSettingsDialog.cpp
-    Created: 30 Aug 2017 3:32:09pm
-    Author:  christian.schweizer
-
-  ==============================================================================
-*/
-
 #include "JuceHeader.h"
 #include "Polytempo_GraphicsAnnotationSettingsDialog.h"
 #include "Polytempo_GraphicsAnnotationSet.h"

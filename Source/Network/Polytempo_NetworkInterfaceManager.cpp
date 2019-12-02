@@ -1,13 +1,3 @@
-/*
-  ==============================================================================
-
-    Polytempo_NetworkInterfaceManager.cpp
-    Created: 12 Feb 2017 11:25:07am
-    Author:  christian.schweizer
-
-  ==============================================================================
-*/
-
 #include "Polytempo_NetworkInterfaceManager.h"
 #include "../Preferences/Polytempo_StoredPreferences.h"
 
