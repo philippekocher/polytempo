@@ -16,16 +16,16 @@ public:
     Polytempo_AuxiliaryView();
     ~Polytempo_AuxiliaryView();
 
-    void paint (Graphics&);
-    void resized();
-    void eventNotification(Polytempo_Event *event);
+    void paint (Graphics&) override;
+    void resized() override;
+    void eventNotification(Polytempo_Event *event) override;
 
     /** Called when a Label goes into editing mode */
-    void editorShown(Label* label, TextEditor&);
-    void labelTextChanged(Label* labelThatHasChanged);
+    void editorShown(Label* label, TextEditor&) override;
+    void labelTextChanged(Label* labelThatHasChanged) override;
     
-    void buttonClicked(Button *button);
-    void buttonStateChanged(Button *button);
+    void buttonClicked(Button *button) override;
+    void buttonStateChanged(Button *button) override;
     
 private:
     Polytempo_Textbox *markerTextbox;

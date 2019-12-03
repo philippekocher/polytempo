@@ -2,7 +2,6 @@
 
 #include "JuceHeader.h"
 #include "Polytempo_GraphicsViewRegion.h"
-#include "Polytempo_GraphicsPalette.h"
 #include "Polytempo_GraphicsAnnotation.h"
 
 #define TIMER_ID_REPAINT					1000

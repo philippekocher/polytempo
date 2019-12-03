@@ -23,7 +23,6 @@ namespace Polytempo_CommandIDs
         help,
         visitWebsite,
         
-        
         // network
         zoomIn, zoomOut,
  
@@ -38,7 +37,6 @@ namespace Polytempo_CommandIDs
         addRegion,
         deleteSelected,
 
-        
         // composer
         zoomInX, zoomOutX,
         zoomInY, zoomOutY,

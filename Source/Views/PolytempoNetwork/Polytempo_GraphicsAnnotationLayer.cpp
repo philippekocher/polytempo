@@ -1,9 +1,9 @@
 #include "JuceHeader.h"
 #include "Polytempo_GraphicsAnnotationLayer.h"
 #include "Polytempo_GraphicsAnnotationManager.h"
+#include "Polytempo_GraphicsPalette.h"
 #include <float.h>
 
-//==============================================================================
 Polytempo_GraphicsAnnotationLayer::Polytempo_GraphicsAnnotationLayer(HashMap < String, Polytempo_GraphicsViewRegion* >* pRegionMap)
 {
 	this->pRegionMap = pRegionMap;
@@ -239,7 +239,6 @@ void Polytempo_GraphicsAnnotationLayer::handleDeleteSelected()
 	handleEndEditCancel();
 }
 
-
 void Polytempo_GraphicsAnnotationLayer::setStatus(Status newStatus)
 {
     status = newStatus;
@@ -276,7 +275,8 @@ void Polytempo_GraphicsAnnotationLayer::mouseDown(const MouseEvent& event)
 			handleStartEditing(event.getPosition());
 		}
 		else
-		{			temporaryAnnotation.freeHandPath.startNewSubPath(pRegion->getImageCoordinatesAt(event.getPosition()));
+		{			
+			temporaryAnnotation.freeHandPath.startNewSubPath(pRegion->getImageCoordinatesAt(event.getPosition()));
 		}
 		stopTimer(TIMER_ID_AUTO_ACCEPT);
 	}
@@ -475,7 +475,6 @@ void Polytempo_GraphicsAnnotationLayer::changeListenerCallback(ChangeBroadcaster
 		fullUpdateRequired.set(true);
 	}
 }
-
 
 bool Polytempo_GraphicsAnnotationLayer::tryGetExistingAnnotation(Point<float> point, Polytempo_GraphicsViewRegion* pRegion)
 {

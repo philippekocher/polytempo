@@ -51,7 +51,6 @@ public:
 
 private:
     static void parseJSON(File& JSONFile, Polytempo_Score** scoreFile);
-    //static void parseXML(File& XMLFile, Polytempo_Score** scoreFile);
     void parseVar(var);
     
 	std::unique_ptr < StringArray > sectionMap;

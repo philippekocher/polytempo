@@ -4,7 +4,6 @@
 #include "Polytempo_AuxiliaryView.h"
 #include "../../Preferences/Polytempo_StoredPreferences.h"
 
-
 Polytempo_NetworkMainView::Polytempo_NetworkMainView()
 {
     Polytempo_StoredPreferences::getInstance()->getProps().addChangeListener(this);
@@ -19,9 +18,6 @@ Polytempo_NetworkMainView::~Polytempo_NetworkMainView()
 {
     deleteAllChildren();
 }
-
-#pragma mark -
-#pragma mark graphics
 
 void Polytempo_NetworkMainView::paint(Graphics& g)
 {

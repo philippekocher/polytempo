@@ -2,7 +2,6 @@
 #include "../../Application/PolytempoNetwork/Polytempo_NetworkApplication.h"
 #include "../../Misc/Polytempo_Alerts.h"
 
-
 Polytempo_ScoreEditorView::Polytempo_ScoreEditorView()
 {
     setOpaque(true);
@@ -27,7 +26,6 @@ void Polytempo_ScoreEditorView::resized()
 
 void Polytempo_ScoreEditorView::refresh()
 {
-    
     Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
     score = app->getScore();
     
@@ -60,10 +58,6 @@ bool Polytempo_ScoreEditorView::applyChanges()
     
     return result;
 }
-
-//------------------------------------------------------------------------------
-#pragma mark -
-#pragma mark event observer
 
 void Polytempo_ScoreEditorView::eventNotification(Polytempo_Event *event)
 {

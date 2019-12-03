@@ -29,7 +29,6 @@ bool Polytempo_ScoreScheduler::isRunning()
     return engine->isRunning() && !engine->isPausing();
 }
 
-
 // ----------------------------------------------------
 
 void Polytempo_ScoreScheduler::eventNotification(Polytempo_Event *event)
@@ -57,7 +56,6 @@ void Polytempo_ScoreScheduler::startStop()
 
 void Polytempo_ScoreScheduler::start()
 {
-    //DBG("start");
     if(!score)                    return;
     if(engine->isRunning() &&
        !engine->isPausing())      return;
@@ -68,7 +66,6 @@ void Polytempo_ScoreScheduler::start()
 
 void Polytempo_ScoreScheduler::stop()
 {
-    //DBG("stop");
     engine->stop();
     engine->pause(false);
     Polytempo_EventScheduler::getInstance()->deletePendingEvents();
@@ -76,7 +73,6 @@ void Polytempo_ScoreScheduler::stop()
 
 void Polytempo_ScoreScheduler::pause(Polytempo_Event* event)
 {
-    //DBG("pause");
     engine->pause(true);
   
     if(!event->getProperty("resume").isVoid())
@@ -130,7 +126,6 @@ bool Polytempo_ScoreScheduler::gotoMarker(String marker, bool storeLocator)
 {
     if(!score) return false;
     
-    //DBG("goto marker "<<event->getProperty("value").toString());
     int time;
     
     if(score->getTimeForMarker(marker, &time))

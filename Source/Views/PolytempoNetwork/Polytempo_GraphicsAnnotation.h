@@ -38,7 +38,4 @@ public:
 	float fontSize;
     float lineWeight;
 	Polytempo_GraphicsViewRegion* pRegion;	// temporary usage
-
-private:
-
 };

@@ -11,9 +11,9 @@ public:
     Polytempo_GraphicsView ();
     ~Polytempo_GraphicsView ();
 
-    void paint(Graphics& g);
-    void resized();
-    void eventNotification(Polytempo_Event *event);
+    void paint(Graphics& g) override;
+    void resized() override;
+    void eventNotification(Polytempo_Event *event) override;
     
 private:
     void deleteAll();

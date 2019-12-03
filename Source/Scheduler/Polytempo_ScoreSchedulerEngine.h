@@ -10,7 +10,7 @@ class Polytempo_ScoreSchedulerEngine : public Thread
 public:
     Polytempo_ScoreSchedulerEngine() : Thread("Polytempo_ScoreScheduler_Thread") {};
     
-    void run() = 0;
+    void run() override = 0;
     bool isRunning()
     {
         return !shouldStop;
@@ -77,20 +77,17 @@ private:
 class Polytempo_ComposerEngine : public Polytempo_ScoreSchedulerEngine
 {
 public:
-    void stop();
-    void setScoreTime(int time);
-    void run();
+    void setScoreTime(int time) override;
+    void run() override;
 };
 
 class Polytempo_NetworkEngine : public Polytempo_ScoreSchedulerEngine
 {
 public:
-    void stop();
-    void setScoreTime(int time);
-    void run();
+    void setScoreTime(int time) override;
+    void run() override;
     
 private:
     float waitBeforeStart;
     int   lastDownbeat;
-//    Polytempo_Event *currentMarker;
 };

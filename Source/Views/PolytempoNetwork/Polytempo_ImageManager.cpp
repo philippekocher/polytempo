@@ -2,7 +2,6 @@
 #include "../../Preferences/Polytempo_StoredPreferences.h"
 #include "../../Misc/Polytempo_Alerts.h"
 
-
 Polytempo_ImageManager::~Polytempo_ImageManager()
 {
     deleteAll();
@@ -13,8 +12,10 @@ juce_ImplementSingleton(Polytempo_ImageManager);
 
 Image* Polytempo_ImageManager::getImage(var imageID)
 {
-    if(imageMap.contains(imageID)) return imageMap[imageID];
-    else return nullptr;
+    if(imageMap.contains(imageID)) 
+		return imageMap[imageID];
+	
+	return nullptr;
 }
 
 HashMap < var, Image* >& Polytempo_ImageManager::getImages()
@@ -24,8 +25,10 @@ HashMap < var, Image* >& Polytempo_ImageManager::getImages()
 
 String Polytempo_ImageManager::getFileName(var imageID)
 {
-    if(loadImageEventMap.contains(imageID)) return loadImageEventMap[imageID]->getProperty(eventPropertyString_URL);
-    else return String();
+    if(loadImageEventMap.contains(imageID)) 
+		return loadImageEventMap[imageID]->getProperty(eventPropertyString_URL);
+	
+	return String();
 }
 
 void Polytempo_ImageManager::deleteAll()
@@ -60,16 +63,12 @@ bool Polytempo_ImageManager::loadImage(Polytempo_Event *event)
         delete image;
         return false;
     }
-    else
-    {
-        delete imageMap.getReference(imageID); // delete the image previously stored under this ID
-        
-        loadImageEventMap.set(imageID, event);
-        imageMap.set(imageID, image);
+	
+	delete imageMap.getReference(imageID); // delete the image previously stored under this ID
+	loadImageEventMap.set(imageID, event);
+	imageMap.set(imageID, image);
 
-        return true;
-    }
-    return false;
+	return true;
 }
 
 bool Polytempo_ImageManager::replaceImage(var imageID, String url)
@@ -92,18 +91,15 @@ bool Polytempo_ImageManager::replaceImage(var imageID, String url)
             delete image;
             return false;
         }
-        else
-        {
-            delete imageMap.getReference(imageID); // delete the image previously stored under this ID
-        
-            Polytempo_Event *event = loadImageEventMap[imageID];
-            event->setProperty(eventPropertyString_URL, url);
-
-            imageMap.set(imageID, image);
+	    
+    	delete imageMap.getReference(imageID); // delete the image previously stored under this ID
+	    Polytempo_Event *event = loadImageEventMap[imageID];
+	    event->setProperty(eventPropertyString_URL, url);
+	    imageMap.set(imageID, image);
   
-            return true;
-        }
+	    return true;
     }
+
     return false;
 }
 
@@ -115,7 +111,8 @@ bool Polytempo_ImageManager::deleteImage(var imageID)
         imageMap.remove(imageID);        
         return true;
     }
-    else return false;
+	
+	return false;
 }
 
 

@@ -1,7 +1,6 @@
 #include "Polytempo_MidiClick.h"
 #include "../Preferences/Polytempo_StoredPreferences.h"
 
-
 Polytempo_MidiClick::Polytempo_MidiClick()
 {
     downbeatPitch = Polytempo_StoredPreferences::getInstance()->getProps().getIntValue("midiDownbeatPitch");
@@ -82,7 +81,6 @@ void Polytempo_MidiClick::eventNotification(Polytempo_Event *event)
 #endif
     }
 }
-
 
 void Polytempo_MidiClick::setDownbeatPitch(int value) { downbeatPitch = value; }
 void Polytempo_MidiClick::setDownbeatVelocity(int value)  { downbeatVelocity = value; }

@@ -70,14 +70,10 @@ enum Polytempo_EventType
 #define eventTypeString_Settings        "settings"
 
 #define eventTypeString_ClearAll        "clearAll"
-//#define eventTypeString_DeleteAll       "deleteAll"  // only local
-//#define eventTypeString_Ready           "ready"  // only local
-
 
 /* ------------------------------------------------------
    property strings as used in human readable scores
    and in OSC communication */
-
 
 #define eventPropertyString_Value       "value"
 #define eventPropertyString_TimeTag     "timeTag"
@@ -143,7 +139,6 @@ public:
     bool hasProperty(String key) const;
     void removeProperty(String key);
     NamedValueSet* getProperties() const;
-    
     
 private:
     Polytempo_EventType type;

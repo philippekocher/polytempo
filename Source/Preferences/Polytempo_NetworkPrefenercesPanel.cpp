@@ -26,9 +26,9 @@ public:
     void clicked() override
     {
 #if JUCE_MODAL_LOOPS_PERMITTED
-        colourSelector.reset(new ColourSelector(juce::ColourSelector::showColourAtTop | juce::ColourSelector::showSliders | juce::ColourSelector::showColourspace));
+        colourSelector.reset(new ColourSelector(ColourSelector::showColourAtTop | ColourSelector::showSliders | ColourSelector::showColourspace));
         
-        colourSelector->setCurrentColour(findColour(TextButton::buttonColourId));
+        colourSelector->setCurrentColour(findColour(buttonColourId));
         colourSelector->addChangeListener(this);
         colourSelector->setColour(ColourSelector::backgroundColourId, Colours::transparentBlack);
         colourSelector->setSize(300, 400);
@@ -43,7 +43,7 @@ public:
     {
         ColourSelector* cs = dynamic_cast <ColourSelector*>(source);
         
-        setColour(TextButton::buttonColourId, cs->getCurrentColour());
+        setColour(buttonColourId, cs->getCurrentColour());
     }
     
 private:
@@ -90,7 +90,7 @@ public:
         deleteAllChildren();
     }
     
-    void resized()
+    void resized() override
     {
         defaultFilePath->setBounds     (20,  70, proportionOfWidth(0.9f), 24);
         defaultFilePathLabel->setBounds(18,  35, 200, 24);
@@ -101,24 +101,24 @@ public:
     
     /* text editor & button listener
      --------------------------------------- */
-    void textEditorTextChanged (TextEditor& editor)
+    void textEditorTextChanged (TextEditor& editor) override
     {
         DBG(editor.getText());
         Polytempo_StoredPreferences::getInstance()->getProps().setValue("defaultFilePath", editor.getText());
 
     }
     
-    void textEditorReturnKeyPressed (TextEditor&)
+    void textEditorReturnKeyPressed (TextEditor&) override
     {}
     
-    void textEditorEscapeKeyPressed (TextEditor&)
+    void textEditorEscapeKeyPressed (TextEditor&) override
     {}
     
-    void textEditorFocusLost (TextEditor&)
+    void textEditorFocusLost (TextEditor&) override
     {}
     
     
-    void buttonClicked(Button* button)
+    void buttonClicked(Button* button) override
     {
         if(button == chooseDefaultFile)
         {
@@ -270,7 +270,7 @@ public:
         deleteAllChildren();
     }
     
-    void resized()
+    void resized() override
     {
         showVisualMetro->setBounds   (20,  50, proportionOfWidth(0.9f), 24);
         stripWidthLabel->setBounds   (20,  80, 90, 24);
@@ -290,7 +290,7 @@ public:
     
     /* slider & button listener
      --------------------------------------- */
-    void sliderValueChanged(Slider* slider)
+    void sliderValueChanged(Slider* slider) override
     {
 		if (slider == stripWidthSlider)
 		{
@@ -298,7 +298,7 @@ public:
 		}
     }
     
-    void buttonClicked(Button* button)
+    void buttonClicked(Button* button) override
     {
         if(button == showVisualMetro)
         {
@@ -330,7 +330,7 @@ public:
         }
     }
     
-    void buttonStateChanged(Button*)
+    void buttonStateChanged(Button*) override
     {}
 };
 
@@ -751,7 +751,7 @@ public:
         midiOutputDeviceList->addListener(this);
         
         // find the device stored in the settings
-        juce::StringArray midiDevices = MidiOutput::getDevices();
+        StringArray midiDevices = MidiOutput::getDevices();
         int index = midiDevices.indexOf(Polytempo_StoredPreferences::getInstance()->getProps().getValue("midiOutputDevice"));
         if(index < 0) index = 0; // otherwise set first device
         midiOutputDeviceList->setSelectedId(index+1, dontSendNotification);
@@ -914,7 +914,7 @@ public:
             int index = midiOutputDeviceList->getSelectedItemIndex();
             Polytempo_MidiClick::getInstance()->setOutputDeviceIndex(index);
             
-            juce::StringArray midiDevices = MidiOutput::getDevices();
+            StringArray midiDevices = MidiOutput::getDevices();
             Polytempo_StoredPreferences::getInstance()->getProps().setValue("midiOutputDevice", midiDevices[index]);
         }
     }
@@ -1024,7 +1024,6 @@ public:
 			alertWindow->addButton("OK", 1, KeyPress(KeyPress::returnKey, 0, 0));
 			alertWindow->addButton("Cancel", 0, KeyPress(KeyPress::escapeKey, 0, 0));
 			alertWindow->enterModalState(false, ModalCallbackFunction::create(alertLambda), true);
-
 		}
 	}
 
@@ -1137,16 +1136,20 @@ Component* Polytempo_NetworkPreferencesPanel::createComponentForPage(const Strin
 
     if(pageName == generalPreferencesPage)
         return new GeneralPreferencesPage();
-    else if(pageName == visualPreferencesPage)
-        return new VisualPreferencesPage();
-    else if(pageName == audioPreferencesPage)
-        return new AudioPreferencesPage();
-    else if(pageName == midiPreferencesPage)
-        return new MidiPreferencesPage();
-	else if (pageName == networkPreferencesPage)
+	
+	if(pageName == visualPreferencesPage)
+		return new VisualPreferencesPage();
+	
+	if(pageName == audioPreferencesPage)
+		return new AudioPreferencesPage();
+	
+	if(pageName == midiPreferencesPage)
+		return new MidiPreferencesPage();
+	
+	if (pageName == networkPreferencesPage)
 		return new NetworkPreferencesPage();
 
-    return new Component();
+	return new Component();
 }
 
 void Polytempo_NetworkPreferencesPanel::show()

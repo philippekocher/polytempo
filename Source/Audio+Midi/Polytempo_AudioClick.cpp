@@ -2,7 +2,6 @@
 #include "../Preferences/Polytempo_StoredPreferences.h"
 #include "Polytempo_AudioDeviceManager.h"
 
-
 class SineWaveSound : public SynthesiserSound
 {
 public:
@@ -11,7 +10,6 @@ public:
     bool appliesToNote (int /*midiNoteNumber*/) override { return true; }
     bool appliesToChannel (int /*midiChannel*/) override { return true; }
 };
-
 
 class SineWaveVoice : public SynthesiserVoice
 {

@@ -193,10 +193,6 @@ void Polytempo_RegionEditorView::addRegion()
     repaint();
 }
 
-//------------------------------------------------------------------------------
-#pragma mark -
-#pragma mark drag handle listener
-
 void Polytempo_RegionEditorView::draggingSessionEnded()
 {}
 
@@ -229,10 +225,6 @@ void Polytempo_RegionEditorView::positionChanged(DragHandle* handle)
     repaint();
 }
 
-//------------------------------------------------------------------------------
-#pragma mark -
-#pragma mark label listener
-
 void Polytempo_RegionEditorView::editorShown(Label*, TextEditor&)
 {}
 
@@ -264,10 +256,6 @@ void Polytempo_RegionEditorView::labelTextChanged(Label* label)
         repaint();
     }
 }
-
-//------------------------------------------------------------------------------
-#pragma mark -
-#pragma mark event observer
 
 void Polytempo_RegionEditorView::eventNotification(Polytempo_Event *event)
 {

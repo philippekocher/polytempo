@@ -78,7 +78,6 @@ void Polytempo_SectionInstancesComponent::setImageEvents(Array< Polytempo_Event*
     }
 }
 
-// Label Listener
 void Polytempo_SectionInstancesComponent::editorShown(Label*, TextEditor&)
 {}
 
@@ -154,7 +153,6 @@ void Polytempo_SectionInstancesComponent::buttonClicked(Button* button)
     }
 }
 
-
 void Polytempo_SectionInstancesComponent::addTextboxes(int num)
 {
     while(num-- > 0)
@@ -187,6 +185,3 @@ void Polytempo_SectionInstancesComponent::addTextboxes(int num)
     }
     resized();
 }
-
-
-

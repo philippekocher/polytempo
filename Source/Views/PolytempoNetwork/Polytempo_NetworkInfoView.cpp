@@ -3,7 +3,6 @@
 #include "../../Network/Polytempo_NetworkSupervisor.h"
 #include "../../Network/Polytempo_TimeProvider.h"
 
-//==============================================================================
 Polytempo_NetworkInfoView::Polytempo_NetworkInfoView()
 {
 }

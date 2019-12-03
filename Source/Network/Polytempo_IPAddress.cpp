@@ -111,7 +111,7 @@ struct GetAdaptersInfoHelper
 
 void Polytempo_IPAddress::findAllAddresses(Array<Polytempo_IPAddress>& result)
 {
-	result.addIfNotAlreadyThere(Polytempo_IPAddress(Polytempo_IPAddress::local()));
+	result.addIfNotAlreadyThere(Polytempo_IPAddress(local()));
 
 	GetAdaptersInfoHelper gah;
 

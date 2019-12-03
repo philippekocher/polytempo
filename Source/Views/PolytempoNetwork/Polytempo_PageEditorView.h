@@ -147,9 +147,6 @@ public:
     void editorShown(Label* label, TextEditor&) override;
     void labelTextChanged(Label* labelThatHasChanged) override;
     
-    // Change Listener
-    void changeListenerCallback(ChangeBroadcaster*);
-    
     // Button Listener
     void buttonClicked(Button*) override;
     

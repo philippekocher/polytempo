@@ -13,17 +13,17 @@ public:
     ~Polytempo_PageEditorComponent();
     
     void update();
-    void paint(Graphics&);
-    void resized();
+    void paint(Graphics&) override;
+    void resized() override;
     void setImage(Image*);
     void setSectionRect(Rectangle < float >);
     void setEditedEvent(Polytempo_Event*);
     
     // Drag Handle Listener
-    void positionChanged(DragHandle*);
-    void draggingSessionEnded();
+    void positionChanged(DragHandle*) override;
+    void draggingSessionEnded() override;
     
-    void changeListenerCallback(ChangeBroadcaster* bc);
+    void changeListenerCallback(ChangeBroadcaster* bc) override;
     
 private:
     Image *image;

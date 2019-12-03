@@ -30,12 +30,13 @@ public:
         {
             return tokens[0].getIntValue() * 60 + tokens[1].getFloatValue();
         }
-        else if(tokens.size() == 3)
-        {
-            return tokens[0].getIntValue() * 3600 + tokens[1].getIntValue() * 60 + tokens[2].getFloatValue();
-        }
-        
-        return timeString.getFloatValue();
+	    
+    	if(tokens.size() == 3)
+	    {
+		    return tokens[0].getIntValue() * 3600 + tokens[1].getIntValue() * 60 + tokens[2].getFloatValue();
+	    }
+
+	    return timeString.getFloatValue();
     }
     
     
@@ -56,15 +57,15 @@ public:
         switch(type)
         {
             case textboxType_normal:
-                setColour(Label::backgroundColourId, Colour(235,235,235));
-                setColour(Label::textColourId, Colour(100,100,100));
+                setColour(backgroundColourId, Colour(235,235,235));
+                setColour(textColourId, Colour(100,100,100));
                 setColour(TextEditor::backgroundColourId, Colours::white);
                 setColour(TextEditor::textColourId, Colours::black);
                 break;
     
             case textboxType_black:
-                setColour(Label::backgroundColourId, Colours::black);
-                setColour(Label::textColourId, Colours::white);
+                setColour(backgroundColourId, Colours::black);
+                setColour(textColourId, Colours::white);
                 setColour(TextEditor::backgroundColourId, Colours::white);
                 setColour(TextEditor::textColourId, Colours::black);
                 break;
@@ -87,22 +88,27 @@ public:
     
     void textWasEdited()
     {
-        if(numericalRangeMin == 0 && numericalRangeMax == 0)   return;
-        else if(getText().getFloatValue() < numericalRangeMin) setText(String(numericalRangeMin), dontSendNotification);
-        else if(getText().getFloatValue() > numericalRangeMax) setText(String(numericalRangeMax), dontSendNotification);
+        if(numericalRangeMin == 0 && numericalRangeMax == 0)   
+			return;
+	    
+    	if(getText().getFloatValue() < numericalRangeMin) 
+			setText(String(numericalRangeMin), dontSendNotification);
+	    
+    	else if(getText().getFloatValue() > numericalRangeMax) 
+			setText(String(numericalRangeMax), dontSendNotification);
     }
     
     void enablementChanged()
     {
         if(isEnabled())
         {
-            textboxLabel->setColour(Label::textColourId, Colour(0,0,0));
-            setColour(Label::backgroundColourId, Colour(235,235,235));
+            textboxLabel->setColour(textColourId, Colour(0,0,0));
+            setColour(backgroundColourId, Colour(235,235,235));
         }
         else
         {
-            textboxLabel->setColour(Label::textColourId, Colour(200,200,200));
-            setColour(Label::backgroundColourId, Colour(245,245,245));
+            textboxLabel->setColour(textColourId, Colour(200,200,200));
+            setColour(backgroundColourId, Colour(245,245,245));
         }
     }
     

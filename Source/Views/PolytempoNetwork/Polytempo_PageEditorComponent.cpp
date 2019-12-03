@@ -3,7 +3,6 @@
 #include "../../Application/PolytempoNetwork/Polytempo_NetworkApplication.h"
 #include "Polytempo_PageEditorView.h"
 
-
 Polytempo_PageEditorComponent::Polytempo_PageEditorComponent()
 {
 	image = nullptr;
@@ -104,10 +103,6 @@ void Polytempo_PageEditorComponent::setEditedEvent(Polytempo_Event *event)
     
 }
 
-//------------------------------------------------------------------------------
-#pragma mark -
-#pragma mark drag handle listener
-
 void Polytempo_PageEditorComponent::draggingSessionEnded()
 {}
 
@@ -143,11 +138,6 @@ void Polytempo_PageEditorComponent::positionChanged(DragHandle* handle)
     ((Polytempo_PageEditorView*)parent)->update();
 }
 
-
-//------------------------------------------------------------------------------
-#pragma mark -
-#pragma mark change listener
-
 void Polytempo_PageEditorComponent::changeListenerCallback(ChangeBroadcaster*)
 {
     if(!isVisible()) return;
@@ -158,5 +148,3 @@ void Polytempo_PageEditorComponent::changeListenerCallback(ChangeBroadcaster*)
         resized();
     }
 }
-
-

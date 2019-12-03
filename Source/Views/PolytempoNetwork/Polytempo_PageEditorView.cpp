@@ -7,8 +7,6 @@
 
 #define TREE_VIEW_WIDTH 200
 
-
-
 static ValueTree createTree(const String& imageID, const String& sectionID)
 {
     ValueTree t ("Item");
@@ -181,7 +179,6 @@ void Polytempo_PageEditorView::refresh()
 
 void Polytempo_PageEditorView::update()
 {
-//    DBG("update()");
     if(selectedItem)
     {
         imageID = selectedItem->getProperty("imageID");
@@ -319,10 +316,6 @@ void Polytempo_PageEditorView::resized()
     sectionInstancesLabel->setBounds(getWidth() - TREE_VIEW_WIDTH + 5, 140, TREE_VIEW_WIDTH - 20, 34);
     sectionInstancesViewport->setBounds(r.withLeft(int(getWidth()) - TREE_VIEW_WIDTH + 1).withTrimmedTop(170));
 }
-
-//------------------------------------------------------------------------------
-#pragma mark -
-#pragma mark actions
 
 #if defined JUCE_ANDROID || defined JUCE_IOS
 void Polytempo_PageEditorView::mouseDoubleClick(const MouseEvent &event)
@@ -474,7 +467,6 @@ int Polytempo_PageEditorView::findNewID(String eventPropertyString, Array < Poly
     return newID;
 }
 
-
 void Polytempo_PageEditorView::loadImage()
 {
     File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("scoreFileDirectory"));
@@ -565,10 +557,6 @@ void Polytempo_PageEditorView::addInstance()
     }
 }
 
-//------------------------------------------------------------------------------
-#pragma mark -
-#pragma mark retrieve state
-
 bool Polytempo_PageEditorView::hasSelectedImage()
 {
     return imageID != var();
@@ -578,11 +566,6 @@ bool Polytempo_PageEditorView::hasSelectedSection()
 {
     return sectionID != var();
 }
-
-
-//------------------------------------------------------------------------------
-#pragma mark -
-#pragma mark label listener
 
 void Polytempo_PageEditorView::editorShown(Label*, TextEditor&)
 {}
@@ -616,10 +599,6 @@ void Polytempo_PageEditorView::labelTextChanged(Label* label)
     }
 }
 
-//------------------------------------------------------------------------------
-#pragma mark -
-#pragma mark button listener
-
 void Polytempo_PageEditorView::buttonClicked(Button* button) {
     if (button == chooseImageFile) {
         File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue(
@@ -652,10 +631,6 @@ void Polytempo_PageEditorView::buttonClicked(Button* button) {
     }
 }
 
-//------------------------------------------------------------------------------
-#pragma mark -
-#pragma mark event observer
-
 void Polytempo_PageEditorView::eventNotification(Polytempo_Event *event)
 {
     if(event->getType() == eventType_DeleteAll && isVisible())
@@ -670,6 +645,3 @@ void Polytempo_PageEditorView::eventNotification(Polytempo_Event *event)
         refresh();
     }
 }
-
-
-

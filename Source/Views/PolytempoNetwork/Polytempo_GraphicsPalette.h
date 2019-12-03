@@ -8,7 +8,6 @@ class Polytempo_GraphicsAnnotationLayer;
 
 class Polytempo_GraphicsPalette : public Button::Listener, Slider::Listener, ChangeListener
 {
-private:
 	Polytempo_GraphicsPalette();
 	~Polytempo_GraphicsPalette();
 
@@ -54,8 +53,7 @@ private:
     float lastLineWeight;
     float lastTextSize;
 
-private:
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_GraphicsPalette)
+	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_GraphicsPalette)
 };
 
 class FontSizeCallback : public ModalComponentManager::Callback

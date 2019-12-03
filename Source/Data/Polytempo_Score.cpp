@@ -3,7 +3,6 @@
 #include "../Misc/Polytempo_Alerts.h"
 #include "../Scheduler/Polytempo_EventScheduler.h"
 
-
 class Polytempo_EventComparator
 {
 public:
@@ -294,8 +293,8 @@ Polytempo_Event* Polytempo_Score::getFirstEvent()
 {
     if(currentSectionIndex != -1)
         return sections[currentSectionIndex]->events[0];
-    else
-        return nullptr;
+	
+	return nullptr;
 }
 
 bool Polytempo_Score::getTimeForMarker(String marker, int *time)
@@ -455,7 +454,6 @@ bool Polytempo_Score::setJsonString(String jsonString)
     return true;
 }
 
-
 void Polytempo_Score::parse(File& file, Polytempo_Score **scoreFile)
 {
     if(file.getFileExtension() == ".json" || file.getFileExtension() == ".ptsco") Polytempo_Score::parseJSON(file, scoreFile);
@@ -464,7 +462,6 @@ void Polytempo_Score::parse(File& file, Polytempo_Score **scoreFile)
 
 void Polytempo_Score::parseJSON(File& JSONFile, Polytempo_Score** score)
 {
-    //DBG("parse json");
     var jsonVar = JSON::parse(JSONFile);
     
     if(jsonVar == var())
@@ -542,4 +539,3 @@ void Polytempo_Score::writeToFile(File& file)
     
     dirty = false;
 }
-

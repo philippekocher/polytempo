@@ -17,7 +17,7 @@ public:
     void setEngine(Polytempo_ScoreSchedulerEngine*);
     bool isRunning();
     
-    void eventNotification(Polytempo_Event *event);
+    void eventNotification(Polytempo_Event *event) override;
 
     /* playback
      --------------------------------------- */

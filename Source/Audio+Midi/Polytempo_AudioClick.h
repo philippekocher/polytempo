@@ -13,7 +13,7 @@ public:
     juce_DeclareSingleton(Polytempo_AudioClick, false);
 
     void setNumVoices(int num);
-    void eventNotification(Polytempo_Event *event);
+    void eventNotification(Polytempo_Event *event) override;
     
     int downbeatPitch, beatPitch, cuePitch;
     float downbeatVolume, beatVolume, cueVolume;

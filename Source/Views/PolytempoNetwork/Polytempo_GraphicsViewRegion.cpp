@@ -1,5 +1,4 @@
 #include "Polytempo_GraphicsViewRegion.h"
-#include "../../Application/PolytempoNetwork/Polytempo_NetworkApplication.h"
 #include "Polytempo_GraphicsAnnotationManager.h"
 
 Polytempo_GraphicsViewRegion::Polytempo_GraphicsViewRegion(var id)
@@ -62,7 +61,6 @@ void Polytempo_GraphicsViewRegion::paint(Graphics& g)
 
 void Polytempo_GraphicsViewRegion::resized()
 {
-    //DBG("region resized");
     Rectangle <int> parentBounds = getParentComponent()->getBounds();
     
     setBounds((int)(parentBounds.getWidth()   * relativeBounds.getX()),
@@ -191,7 +189,6 @@ void Polytempo_GraphicsViewRegion::setMaxImageZoom(float maxZoom)
     else               maxImageZoom = -1;
 }
 
-
 Polytempo_ViewContentType Polytempo_GraphicsViewRegion::getContentType() { return contentType; }
 
 AffineTransform& Polytempo_GraphicsViewRegion::getImageToScreenTransform()
@@ -231,4 +228,3 @@ void Polytempo_GraphicsViewRegion::changeListenerCallback(ChangeBroadcaster*)
 {
     repaint();
 }
-

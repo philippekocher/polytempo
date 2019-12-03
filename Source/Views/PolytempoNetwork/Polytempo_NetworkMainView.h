@@ -15,25 +15,17 @@ class Polytempo_NetworkMainView : public Component,
                                   public ChangeListener
 {
 public:
-    //------------------------------------------------------------------------------
     Polytempo_NetworkMainView();
     ~Polytempo_NetworkMainView();
 
-    /* graphics
-     --------------------------------------- */
-    
-    void paint (Graphics& g);
-    void resized();
-
-    /* slider & button listener
-     --------------------------------------- */
-    void changeListenerCallback (ChangeBroadcaster* source);
+    void paint (Graphics& g) override;
+    void resized() override;
+    void changeListenerCallback (ChangeBroadcaster* source) override;
 
 private:
     Polytempo_VisualMetro *visualMetro;
     Polytempo_GraphicsView *graphicsView;
     Polytempo_AuxiliaryView *auxiliaryView;
     
-    //------------------------------------------------------------------------------
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_NetworkMainView)
 };

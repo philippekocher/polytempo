@@ -5,7 +5,7 @@
 //==============================================================================
 Polytempo_StoredPreferences::Polytempo_StoredPreferences()
 {
-    defaults.reset((PropertiesFile *) new Polytempo_DefaultPreferences());
+    defaults.reset((PropertiesFile*) new Polytempo_DefaultPreferences());
     flush();
 }
 

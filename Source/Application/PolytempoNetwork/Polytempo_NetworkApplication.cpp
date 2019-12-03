@@ -358,5 +358,3 @@ ApplicationCommandManager* Polytempo_NetworkApplication::getCommandManager()
     
     return &(app->commandManager);
 }
-
-//------------------------------------------------------------------------------

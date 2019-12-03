@@ -79,15 +79,10 @@ public:
     
     String toString()
     {
-        if(denominator == 1) return String(numerator);
-//        if(denominator < numerator)
-//        {
-//            const int i = int(numerator/denominator);
-//            const int n = numerator - i*denominator;
-//            
-//            return String(i)+" + "+String(n)+"/"+String(denominator);
-//        }
-        return String(numerator)+"/"+String(denominator);
+        if(denominator == 1) 
+			return String(numerator);
+        
+    	return String(numerator)+"/"+String(denominator);
     }
     
     float  toFloat()  { return float(numerator)/denominator; }

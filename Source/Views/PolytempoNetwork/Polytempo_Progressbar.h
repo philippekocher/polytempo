@@ -9,18 +9,18 @@ public:
     Polytempo_Progressbar();
     ~Polytempo_Progressbar();
     
-    void paint(Graphics& g);
+    void paint(Graphics& g) override;
     
     void setText(String text);
     void setTime(int time);
     void setDuration(float duration);
     
-    void eventNotification(Polytempo_Event *event);
+    void eventNotification(Polytempo_Event *event) override;
 
     
 private:
     std::unique_ptr < String > text;
-    int   time;
+    int time;
     float duration, elapsedTime;
     OwnedArray < class Rectangle<float> > regionBounds;
 };

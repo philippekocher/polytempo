@@ -18,7 +18,7 @@ public:
     bool replaceImage(var imageID, String url);
     bool deleteImage(var imageID);
     
-    void eventNotification(Polytempo_Event*);
+    void eventNotification(Polytempo_Event*) override;
     
 private:
     HashMap < var, Polytempo_Event* > loadImageEventMap;

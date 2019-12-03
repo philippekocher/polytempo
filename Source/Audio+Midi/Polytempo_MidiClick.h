@@ -10,7 +10,7 @@ public:
     
     juce_DeclareSingleton (Polytempo_MidiClick, false);
     
-    void eventNotification(Polytempo_Event *event);
+    void eventNotification(Polytempo_Event *event) override;
     
     void setDownbeatPitch(int value);
     void setDownbeatVelocity(int value);

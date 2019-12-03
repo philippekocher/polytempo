@@ -3,7 +3,6 @@
 #include "../../Application/PolytempoNetwork/Polytempo_NetworkApplication.h"
 #include "../../Preferences/Polytempo_StoredPreferences.h"
 
-
 class Polytempo_VisualConductorComponent : public Component
 {
 public:
@@ -20,7 +19,7 @@ public:
     }
     ~Polytempo_VisualConductorComponent() {}
     
-    void paint (Graphics& g) 
+    void paint (Graphics& g) override
     {
         int width = getWidth();
         int height = getHeight();
@@ -102,9 +101,6 @@ Polytempo_VisualMetro::Polytempo_VisualMetro()
 
     addAndMakeVisible (hComponent = new Polytempo_VisualConductorComponent());
     addAndMakeVisible (vComponent = new Polytempo_VisualConductorComponent());
-    
-    // optimized redraw - better??
-    //setBufferedToImage(true);
 }
 
 Polytempo_VisualMetro::~Polytempo_VisualMetro()
@@ -323,4 +319,3 @@ void Polytempo_VisualMetro::eventNotification(Polytempo_Event *event)
         }
     }
 }
-

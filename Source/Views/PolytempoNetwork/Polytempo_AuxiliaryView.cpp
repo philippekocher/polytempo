@@ -6,7 +6,6 @@
 #include "../../Network/Polytempo_TimeProvider.h"
 #include "Polytempo_GraphicsPalette.h"
 
-
 Polytempo_AuxiliaryView::Polytempo_AuxiliaryView()
 {
     addAndMakeVisible(imageBackwards = new Polytempo_Button("<<", Polytempo_Button::buttonType_black));

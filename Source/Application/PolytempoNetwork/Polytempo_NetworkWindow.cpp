@@ -9,7 +9,7 @@
 Polytempo_NetworkWindow::Polytempo_NetworkWindow()
     : DocumentWindow (JUCEApplication::getInstance()->getApplicationName(),
                       Colours::lightgrey,
-                      DocumentWindow::allButtons)
+                      allButtons)
 {
     setUsingNativeTitleBar(true);
     setTitleBarButtonsRequired(7, true);
@@ -135,6 +135,6 @@ bool Polytempo_NetworkWindow::applyChanges()
 {
     if(currentContentID == scoreEditorViewID)
         return scoreEditorView->applyChanges();
-    else
-        return true;
+	
+	return true;
 }

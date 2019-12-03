@@ -1,6 +1,5 @@
 #include "Polytempo_Event.h"
 
-
 Polytempo_Event::Polytempo_Event(Polytempo_EventType t)
 {
     type = t;
@@ -281,11 +280,6 @@ int Polytempo_Event::getTime() const
 {
     return time;
 }
-
-//int Polytempo_Event::getMilisecondTime()
-//{
-//    return (int)(time * 1000.0f + 0.5f);
-//}
 
 void  Polytempo_Event::setSyncTime(uint32 t)
 {

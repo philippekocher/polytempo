@@ -36,7 +36,6 @@ void Polytempo_EventScheduler::scheduleScoreEvent(Polytempo_Event *event)
     {
         scheduledScoreEvents.add(event);
     }
-    // DBG("scheduled score events: "<<scheduledScoreEvents.size());
 }
 
 void Polytempo_EventScheduler::deletePendingEvents()
@@ -74,7 +73,6 @@ void Polytempo_EventScheduler::executeEvent(Polytempo_Event *event)
     // execute the event immediately
     notify(event);
 }
-
 
 // ----------------------------------------------------
 #pragma mark -

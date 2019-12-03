@@ -1,5 +1,6 @@
 #include "Polytempo_AnnotationView.h"
 #include "Polytempo_GraphicsAnnotationManager.h"
+#include "Polytempo_GraphicsPalette.h"
 
 Polytempo_AnnotationView::Polytempo_AnnotationView()
 {

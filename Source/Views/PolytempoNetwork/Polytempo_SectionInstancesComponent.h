@@ -13,18 +13,18 @@ public:
     Polytempo_SectionInstancesComponent();
     ~Polytempo_SectionInstancesComponent();
     
-    void paint(Graphics&);
-    void resized();
+    void paint(Graphics&) override;
+    void resized() override;
 
     void setModel(Polytempo_PageEditorView *);
     void setImageEvents(Array< Polytempo_Event* >&, var&);
 
     // Label Listener
-    void editorShown(Label*, TextEditor&);
-    void labelTextChanged(Label*);
+    void editorShown(Label*, TextEditor&) override;
+    void labelTextChanged(Label*) override;
 
     // Button Listener
-    void buttonClicked(Button*);
+    void buttonClicked(Button*) override;
 
 private:
     Array < Polytempo_Textbox *> markerTextboxes;

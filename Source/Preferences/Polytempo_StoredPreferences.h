@@ -20,8 +20,6 @@ public:
 
     RecentlyOpenedFilesList recentFiles;
 
-    //Array <Colour> swatchColours;
-
 private:
 	std::unique_ptr<PropertiesFile> props;
 	std::unique_ptr<PropertiesFile> defaults;

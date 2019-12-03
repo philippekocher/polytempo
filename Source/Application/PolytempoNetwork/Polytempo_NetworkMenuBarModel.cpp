@@ -51,9 +51,9 @@ Polytempo_MenuBarModel::~Polytempo_MenuBarModel()
 StringArray Polytempo_MenuBarModel::getMenuBarNames()
 {
 #if JUCE_MAC
-    const char* const names[] = { "File", "Edit", "View", "Scheduler", /*"Window",*/ "Annotations", "Help", 0 };
+    const char* const names[] = { "File", "Edit", "View", "Scheduler", "Annotations", "Help", 0 };
 #else
-    const char* const names[] = { "PolytempoNetwork", "File", "Edit", "View", "Scheduler", "Annotations", /*"Window",*/ "Help", 0 };
+    const char* const names[] = { "PolytempoNetwork", "File", "Edit", "View", "Scheduler", "Annotations", "Help", 0 };
 #endif
 
     return StringArray (names);
@@ -231,7 +231,6 @@ void Polytempo_MenuBarModel::getAllCommands(Array <CommandID>& commands)
         Polytempo_CommandIDs::markerBwd,
         Polytempo_CommandIDs::imageFwd,
         Polytempo_CommandIDs::imageBwd,
-        //Polytempo_CommandIDs::gotoTime,
 
 		Polytempo_CommandIDs::annotationAccept,
 		Polytempo_CommandIDs::annotationCancel,

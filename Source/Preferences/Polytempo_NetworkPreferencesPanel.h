@@ -8,7 +8,7 @@ public:
     Polytempo_NetworkPreferencesPanel();
     ~Polytempo_NetworkPreferencesPanel();
     
-    Component* createComponentForPage(const String& pageName);
+    Component* createComponentForPage(const String& pageName) override;
 
     static void show();
 };

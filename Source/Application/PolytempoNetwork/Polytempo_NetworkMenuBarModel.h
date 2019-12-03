@@ -9,23 +9,19 @@ public:
     Polytempo_MenuBarModel(Polytempo_NetworkWindow*);
     ~Polytempo_MenuBarModel();
         
-    StringArray getMenuBarNames();
-    PopupMenu getMenuForIndex (int menuIndex, const String& menuName);
-    void menuItemSelected (int menuID, int topLevelMenuIndex);
+    StringArray getMenuBarNames() override;
+    PopupMenu getMenuForIndex (int menuIndex, const String& menuName) override;
+    void menuItemSelected (int menuID, int topLevelMenuIndex) override;
 
-    ApplicationCommandTarget* getNextCommandTarget();
-    void getAllCommands (Array <CommandID>& commands);
-    void getCommandInfo (CommandID commandID, ApplicationCommandInfo& result);
-	bool perform (const InvocationInfo& info);
-    
-    void showAboutWindow();
+    ApplicationCommandTarget* getNextCommandTarget() override;
+    void getAllCommands (Array <CommandID>& commands) override;
+    void getCommandInfo (CommandID commandID, ApplicationCommandInfo& result) override;
+	bool perform (const InvocationInfo& info) override;
     
 private:
-    
     Polytempo_NetworkWindow *window;
     
 #if JUCE_MAC
     std::unique_ptr<PopupMenu> extraAppleMenuItems;
 #endif
-
 };

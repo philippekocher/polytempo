@@ -5,22 +5,22 @@
 class Polytempo_VisualConductorComponent;
 
 class Polytempo_VisualMetro : public  Component,
-                              private Timer,
+                              Timer,
                               public  Polytempo_EventObserver
 {
 public:
     Polytempo_VisualMetro();
     ~Polytempo_VisualMetro();
 
-    void paint (Graphics& g);
+    void paint (Graphics& g) override;
     
     void setForegroundColour (Colour& colour);
     void setBackgroundColour (Colour& colour);
     void setFrameColour (Colour& colour);
     void setWidth (float val);
     
-    void timerCallback();
-    void eventNotification(Polytempo_Event *event);
+    void timerCallback() override;
+    void eventNotification(Polytempo_Event *event) override;
 
 private:
     float width;

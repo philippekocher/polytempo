@@ -11,7 +11,7 @@ public:
     Polytempo_NetworkWindow();
     ~Polytempo_NetworkWindow();
 
-    void closeButtonPressed();
+    void closeButtonPressed() override;
     
     enum contentID
     {

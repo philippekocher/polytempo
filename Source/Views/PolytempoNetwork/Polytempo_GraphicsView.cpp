@@ -2,7 +2,6 @@
 #include "Polytempo_ImageManager.h"
 #include "../../Preferences/Polytempo_StoredPreferences.h"
 
-
 Polytempo_GraphicsView::Polytempo_GraphicsView()
 {
     setOpaque (true);
@@ -56,7 +55,6 @@ void Polytempo_GraphicsView::clearAll()
     HashMap < String, Polytempo_GraphicsViewRegion* >::Iterator it1(regionsMap);
     while(it1.next()) { it1.getValue()->setVisible(false); }
 }
-
 
 void Polytempo_GraphicsView::addRegion(Polytempo_Event *event)
 {
