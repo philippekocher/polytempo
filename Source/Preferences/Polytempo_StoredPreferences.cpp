@@ -1,11 +1,10 @@
 #include "Polytempo_StoredPreferences.h"
 #include "Polytempo_DefaultPreferences.h"
 
-
 //==============================================================================
 Polytempo_StoredPreferences::Polytempo_StoredPreferences()
 {
-    defaults.reset((PropertiesFile*) new Polytempo_DefaultPreferences());
+    defaults.reset((PropertiesFile*)new Polytempo_DefaultPreferences());
     flush();
 }
 
@@ -18,7 +17,6 @@ Polytempo_StoredPreferences::~Polytempo_StoredPreferences()
 }
 
 juce_ImplementSingleton (Polytempo_StoredPreferences);
-
 
 PropertiesFile& Polytempo_StoredPreferences::getProps()
 {
@@ -34,10 +32,10 @@ void Polytempo_StoredPreferences::flush()
     else
     {
         PropertiesFile::Options options;
-        options.folderName           = "Polytempo/"+JUCEApplication::getInstance()->getApplicationName();
-        options.applicationName      = "settings";
-        options.filenameSuffix       = "xml";
-        options.osxLibrarySubFolder  = "Application Support";
+        options.folderName = "Polytempo/" + JUCEApplication::getInstance()->getApplicationName();
+        options.applicationName = "settings";
+        options.filenameSuffix = "xml";
+        options.osxLibrarySubFolder = "Application Support";
 
         props.reset(new PropertiesFile(options));
         props->setFallbackPropertySet(defaults.get());

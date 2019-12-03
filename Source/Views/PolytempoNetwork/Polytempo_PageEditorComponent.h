@@ -11,27 +11,27 @@ class Polytempo_PageEditorComponent : public Component,
 public:
     Polytempo_PageEditorComponent();
     ~Polytempo_PageEditorComponent();
-    
+
     void update();
     void paint(Graphics&) override;
     void resized() override;
     void setImage(Image*);
-    void setSectionRect(Rectangle < float >);
+    void setSectionRect(Rectangle<float>);
     void setEditedEvent(Polytempo_Event*);
-    
+
     // Drag Handle Listener
     void positionChanged(DragHandle*) override;
     void draggingSessionEnded() override;
-    
+
     void changeListenerCallback(ChangeBroadcaster* bc) override;
-    
+
 private:
-    Image *image;
+    Image* image;
     float zoomFactor;
 
-    Rectangle < float > sectionRect;
-    Array < DragHandle* > dragHandles;
-    
-    Polytempo_Event *editedEvent;
-    Polytempo_Score *score;
+    Rectangle<float> sectionRect;
+    Array<DragHandle*> dragHandles;
+
+    Polytempo_Event* editedEvent;
+    Polytempo_Score* score;
 };

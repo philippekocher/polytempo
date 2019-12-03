@@ -1,8 +1,7 @@
 #include "Polytempo_DefaultPreferences.h"
 
-
 Polytempo_DefaultPreferences::Polytempo_DefaultPreferences()
-{    
+{
     // composer
     setValue("zoomX", 50);
     setValue("timeMapZoomY", 20);
@@ -17,10 +16,10 @@ Polytempo_DefaultPreferences::Polytempo_DefaultPreferences()
     setValue("stripNormalColour", "ff000000");
     setValue("stripCueColour", "ffff0000");
     setValue("stripBackgroundColour", "ffeeeeee");
-    setValue("stripFrameColour", "ff000000");    
+    setValue("stripFrameColour", "ff000000");
     setValue("showAuxiliaryView", 1);
     setValue("zoom", 0.4);
-    
+
     // common
     setValue("midiDownbeatPitch", 100);
     setValue("midiDownbeatVelocity", 127);
@@ -29,7 +28,7 @@ Polytempo_DefaultPreferences::Polytempo_DefaultPreferences()
     setValue("midiCuePitch", 90);
     setValue("midiCueVelocity", 127);
     setValue("midiChannel", 1);
-    
+
     setValue("audioDownbeatPitch", 100);
     setValue("audioDownbeatVolume", 1.0);
     setValue("audioBeatPitch", 95);
@@ -37,7 +36,7 @@ Polytempo_DefaultPreferences::Polytempo_DefaultPreferences()
     setValue("audioCuePitch", 90);
     setValue("audioCueVolume", 1.0);
 
-	setValue("annotationMode", 1);
+    setValue("annotationMode", 1);
 }
 
 Polytempo_DefaultPreferences::~Polytempo_DefaultPreferences()

@@ -8,12 +8,13 @@ public:
     Polytempo_MidiInput()
     {
     }
+
     ~Polytempo_MidiInput()
     {
     }
-    
+
     void handleIncomingMidiMessage(MidiInput*, const MidiMessage& message) override
     {
-		DBG(message.getDescription());
+        DBG(message.getDescription());
     }
 };

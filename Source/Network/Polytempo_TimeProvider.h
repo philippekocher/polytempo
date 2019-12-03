@@ -14,53 +14,58 @@
 class Polytempo_TimeProvider : Timer
 {
 public:
-	juce_DeclareSingleton(Polytempo_TimeProvider, true);
+    juce_DeclareSingleton(Polytempo_TimeProvider, true);
 
-	Polytempo_TimeProvider();
-	~Polytempo_TimeProvider();
+    Polytempo_TimeProvider();
+    ~Polytempo_TimeProvider();
 
-	bool getSyncTime(uint32* pTime); 
-	int32 getMRT() const;
+    bool getSyncTime(uint32* pTime);
+    int32 getMRT() const;
 
 #ifdef POLYTEMPO_NETWORK
-	void toggleMaster(bool master);
-	uint32 getDelaySafeTimestamp();
-	bool isMaster() const;
-	void setRemoteMasterPeer(String ip, Uuid id);
-	void handleMessage(XmlElement message, Ipc* sender);
-	void registerUserInterface(Polytempo_TimeSyncControl* pControl);
+    void toggleMaster(bool master);
+    uint32 getDelaySafeTimestamp();
+    bool isMaster() const;
+    void setRemoteMasterPeer(String ip, Uuid id);
+    void handleMessage(XmlElement message, Ipc* sender);
+    void registerUserInterface(Polytempo_TimeSyncControl* pControl);
 #endif
-	enum MessageType { MessageType_Info, MessageType_Warning, MessageType_Error };
+    enum MessageType
+    {
+        MessageType_Info,
+        MessageType_Warning,
+        MessageType_Error
+    };
 
 private:
-	void handleTimeSyncMessage(Uuid senderId, uint32 masterTime, int timeIndex, int32 roundTrip);
-	void createTimeIndex(int* pIndex, uint32* pTimestamp);
-	void timerCallback() override;
-	void displayMessage(String message, MessageType messageType) const;
-	void resetTimeSync();
+    void handleTimeSyncMessage(Uuid senderId, uint32 masterTime, int timeIndex, int32 roundTrip);
+    void createTimeIndex(int* pIndex, uint32* pTimestamp);
+    void timerCallback() override;
+    void displayMessage(String message, MessageType messageType) const;
+    void resetTimeSync();
 
 private:
 #ifdef POLYTEMPO_NETWORK
-	Polytempo_TimeSyncControl* pTimeSyncControl;
+    Polytempo_TimeSyncControl* pTimeSyncControl;
 #endif
-	
-	int32 relativeMsToMaster;
-	int32 maxRoundTrip;
 
-	int32 timeDiffHistory[TIME_DIFF_HISTORY_SIZE];
-	int32 roundTripTime[ROUND_TRIP_HISTORY_SIZE];
-	int timeDiffHistorySize;
-	int timeDiffHistoryWritePosition;
-	int roundTripHistorySize;
-	int roundTripHistoryWritePosition;
-	
-	bool masterFlag;
-	bool sync;
-	
-	int lastSentTimeIndex;
-	uint32 lastSentTimestamp;
-	uint32 lastReceivedTimestamp;
-	int32 lastRoundTrip;
+    int32 relativeMsToMaster;
+    int32 maxRoundTrip;
 
-	Uuid lastMasterID;
+    int32 timeDiffHistory[TIME_DIFF_HISTORY_SIZE];
+    int32 roundTripTime[ROUND_TRIP_HISTORY_SIZE];
+    int timeDiffHistorySize;
+    int timeDiffHistoryWritePosition;
+    int roundTripHistorySize;
+    int roundTripHistoryWritePosition;
+
+    bool masterFlag;
+    bool sync;
+
+    int lastSentTimeIndex;
+    uint32 lastSentTimestamp;
+    uint32 lastReceivedTimestamp;
+    int32 lastRoundTrip;
+
+    Uuid lastMasterID;
 };

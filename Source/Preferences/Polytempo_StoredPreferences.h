@@ -21,6 +21,6 @@ public:
     RecentlyOpenedFilesList recentFiles;
 
 private:
-	std::unique_ptr<PropertiesFile> props;
-	std::unique_ptr<PropertiesFile> defaults;
+    std::unique_ptr<PropertiesFile> props;
+    std::unique_ptr<PropertiesFile> defaults;
 };

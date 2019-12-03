@@ -5,7 +5,7 @@
 Polytempo_ScoreEditorView::Polytempo_ScoreEditorView()
 {
     setOpaque(true);
-    
+
     // Create the editor..
     editor.reset(new CodeEditorComponent(codeDocument, nullptr));
     addAndMakeVisible(editor.get());
@@ -17,7 +17,8 @@ Polytempo_ScoreEditorView::~Polytempo_ScoreEditorView()
 }
 
 void Polytempo_ScoreEditorView::paint(Graphics&)
-{}
+{
+}
 
 void Polytempo_ScoreEditorView::resized()
 {
@@ -28,24 +29,24 @@ void Polytempo_ScoreEditorView::refresh()
 {
     Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
     score = app->getScore();
-    
-    if(score == nullptr) return;
-    
+
+    if (score == nullptr) return;
+
     editor->loadContent(score->getJsonString());
 }
 
 static void discardChangesCallback(int result, Polytempo_ScoreEditorView* parent)
 {
-    if(result) parent->refresh();
+    if (result) parent->refresh();
 }
 
 bool Polytempo_ScoreEditorView::applyChanges()
 {
-    if(!editor->getDocument().hasChangedSinceSavePoint()) return true;
-    
+    if (!editor->getDocument().hasChangedSinceSavePoint()) return true;
+
     bool result = score->setJsonString(editor->getDocument().getAllContent());
-    
-    if(!result)
+
+    if (!result)
     {
         Polytempo_OkCancelAlert::show("Error",
                                       "JSON code is not well-formed. Do you want to discard the changes?",
@@ -55,14 +56,14 @@ bool Polytempo_ScoreEditorView::applyChanges()
     {
         editor->getDocument().setSavePoint();
     }
-    
+
     return result;
 }
 
-void Polytempo_ScoreEditorView::eventNotification(Polytempo_Event *event)
+void Polytempo_ScoreEditorView::eventNotification(Polytempo_Event* event)
 {
-    if(event->getType() == eventType_DeleteAll && isVisible())
+    if (event->getType() == eventType_DeleteAll && isVisible())
         refresh();
-    if(event->getType() == eventType_Ready && isVisible())
+    if (event->getType() == eventType_Ready && isVisible())
         refresh();
 }

@@ -7,11 +7,11 @@ class Polytempo_MidiClick : public Polytempo_EventObserver
 public:
     Polytempo_MidiClick();
     ~Polytempo_MidiClick();
-    
+
     juce_DeclareSingleton (Polytempo_MidiClick, false);
-    
-    void eventNotification(Polytempo_Event *event) override;
-    
+
+    void eventNotification(Polytempo_Event* event) override;
+
     void setDownbeatPitch(int value);
     void setDownbeatVelocity(int value);
     void setBeatPitch(int value);
@@ -26,7 +26,7 @@ private:
     int downbeatVelocity, beatVelocity, cueVelocity;
     int channel, outputDeviceIndex;
 
-	std::unique_ptr<MidiOutput> midiOutput;
+    std::unique_ptr<MidiOutput> midiOutput;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_MidiClick)
 };

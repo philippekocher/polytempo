@@ -7,27 +7,27 @@
 #define TIMER_ID_DELAY		1
 #define TIMER_ID_DURATION	2
 
-class Polytempo_TimeSyncControl    : public Component, Button::Listener, MultiTimer
+class Polytempo_TimeSyncControl : public Component, Button::Listener, MultiTimer
 {
 public:
     Polytempo_TimeSyncControl();
     ~Polytempo_TimeSyncControl();
 
-    void paint (Graphics&) override;
+    void paint(Graphics&) override;
     void resized() override;
 
-	void showInfoMessage(String message, Colour color);
-	void timerCallback(int timerID) override;
-	
-private:
-	void buttonClicked(Button* button) override;
-	void resetInfoField();
+    void showInfoMessage(String message, Colour color);
+    void timerCallback(int timerID) override;
 
 private:
-	ToggleButton	*syncMasterToggle;
-	Label			*infoField;
-	String			newString;
-	Colour			newColor;
-	
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_TimeSyncControl)
+    void buttonClicked(Button* button) override;
+    void resetInfoField();
+
+private:
+    ToggleButton* syncMasterToggle;
+    Label* infoField;
+    String newString;
+    Colour newColor;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_TimeSyncControl)
 };

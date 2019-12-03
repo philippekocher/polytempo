@@ -9,18 +9,18 @@ class Polytempo_ScoreEditorView : public Component, public Polytempo_EventObserv
 public:
     Polytempo_ScoreEditorView();
     ~Polytempo_ScoreEditorView();
-    
+
     void paint(Graphics&) override;
     void resized() override;
-    
+
     void refresh();
     bool applyChanges();
-    
+
     void eventNotification(Polytempo_Event*) override;
-    
+
 private:
     CodeDocument codeDocument;
-	std::unique_ptr<CodeEditorComponent> editor;
+    std::unique_ptr<CodeEditorComponent> editor;
 
-    Polytempo_Score *score;
+    Polytempo_Score* score;
 };

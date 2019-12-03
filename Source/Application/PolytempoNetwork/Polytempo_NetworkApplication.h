@@ -13,10 +13,10 @@ class Polytempo_NetworkApplication : public JUCEApplication
 {
 public:
     Polytempo_NetworkApplication();
-    
-    const String getApplicationName() override    { return ProjectInfo::projectName; }
+
+    const String getApplicationName() override { return ProjectInfo::projectName; }
     const String getApplicationVersion() override { return ProjectInfo::versionString; }
-    bool moreThanOneInstanceAllowed() override    { return true; }
+    bool moreThanOneInstanceAllowed() override { return true; }
 
     void initialise(const String& commandLine) override;
     void shutdown() override;
@@ -24,11 +24,11 @@ public:
     void applicationShouldQuit();
     bool quitApplication = false;
     void anotherInstanceStarted(const String& commandLine) override;
-    
+
     Polytempo_Score* getScore() { return score.get(); };
     bool scoreFileExists() { return scoreFile.exists(); }
     Polytempo_NetworkWindow* getMainWindow() { return mainWindow.get(); }
-    
+
     void unsavedChangesAlert(Polytempo_YesNoCancelAlert::callbackTag);
     void newScore();
     void openFileDialog();
@@ -36,19 +36,19 @@ public:
     void openScoreFile(File aFile = File());
     void saveScoreFile(bool showFileDialog);
     void commandStatusChanged();
-    
+
     static ApplicationCommandManager* getCommandManager();
 
 private:
-	void saveAs(File targetFile);
+    void saveAs(File targetFile);
 
 private:
-	std::unique_ptr<Polytempo_NetworkWindow> mainWindow;
-	std::unique_ptr<Polytempo_MenuBarModel> menuBarModel;
-	std::unique_ptr<Polytempo_OSCListener> oscListener;
-	std::unique_ptr<Polytempo_MidiInput> midiInput;
-	std::unique_ptr<Polytempo_Score> score;
-	std::unique_ptr<FileLogger> fileLogger;
+    std::unique_ptr<Polytempo_NetworkWindow> mainWindow;
+    std::unique_ptr<Polytempo_MenuBarModel> menuBarModel;
+    std::unique_ptr<Polytempo_OSCListener> oscListener;
+    std::unique_ptr<Polytempo_MidiInput> midiInput;
+    std::unique_ptr<Polytempo_Score> score;
+    std::unique_ptr<FileLogger> fileLogger;
 
 #ifdef JUCE_ANDROID
 	std::unique_ptr<FileChooser> fc;

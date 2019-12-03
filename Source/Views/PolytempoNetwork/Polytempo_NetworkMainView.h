@@ -18,14 +18,14 @@ public:
     Polytempo_NetworkMainView();
     ~Polytempo_NetworkMainView();
 
-    void paint (Graphics& g) override;
+    void paint(Graphics& g) override;
     void resized() override;
-    void changeListenerCallback (ChangeBroadcaster* source) override;
+    void changeListenerCallback(ChangeBroadcaster* source) override;
 
 private:
-    Polytempo_VisualMetro *visualMetro;
-    Polytempo_GraphicsView *graphicsView;
-    Polytempo_AuxiliaryView *auxiliaryView;
-    
+    Polytempo_VisualMetro* visualMetro;
+    Polytempo_GraphicsView* graphicsView;
+    Polytempo_AuxiliaryView* auxiliaryView;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_NetworkMainView)
 };

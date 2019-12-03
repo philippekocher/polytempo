@@ -7,5 +7,5 @@ class Polytempo_EventObserver
 public:
     Polytempo_EventObserver();
     virtual ~Polytempo_EventObserver();
-    virtual void eventNotification(Polytempo_Event *event) = 0;
+    virtual void eventNotification(Polytempo_Event* event) = 0;
 };

@@ -10,32 +10,31 @@ class Polytempo_GraphicsViewRegion;
 class Polytempo_GraphicsAnnotation
 {
 public:
-	Polytempo_GraphicsAnnotation();
+    Polytempo_GraphicsAnnotation();
 
-	Polytempo_GraphicsAnnotation(const Uuid& id, const String& image_id, const Point<float>& reference_point, const Colour& color, const Path& free_hand_path, const String& text, float fontSize, float lineWeight)
-		: id(id),
-		  imageId(image_id),
-		  referencePoint(reference_point),
-		  color(color),
-		  freeHandPath(free_hand_path),
-		  text(text),
-		  fontSize(fontSize),
-          lineWeight(lineWeight),
-		  pRegion(nullptr)
-	{
-	}
+    Polytempo_GraphicsAnnotation(const Uuid& id, const String& image_id, const Point<float>& reference_point, const Colour& color, const Path& free_hand_path, const String& text, float fontSize, float lineWeight) : id(id),
+                                                                                                                                                                                                                       imageId(image_id),
+                                                                                                                                                                                                                       referencePoint(reference_point),
+                                                                                                                                                                                                                       color(color),
+                                                                                                                                                                                                                       freeHandPath(free_hand_path),
+                                                                                                                                                                                                                       text(text),
+                                                                                                                                                                                                                       fontSize(fontSize),
+                                                                                                                                                                                                                       lineWeight(lineWeight),
+                                                                                                                                                                                                                       pRegion(nullptr)
+    {
+    }
 
-	~Polytempo_GraphicsAnnotation();
+    ~Polytempo_GraphicsAnnotation();
 
-	void clear();
+    void clear();
 
-	Uuid id;
-	String imageId;
-	Point<float> referencePoint;
-	Colour color;
-	Path freeHandPath;
-	String text;
-	float fontSize;
+    Uuid id;
+    String imageId;
+    Point<float> referencePoint;
+    Colour color;
+    Path freeHandPath;
+    String text;
+    float fontSize;
     float lineWeight;
-	Polytempo_GraphicsViewRegion* pRegion;	// temporary usage
+    Polytempo_GraphicsViewRegion* pRegion; // temporary usage
 };

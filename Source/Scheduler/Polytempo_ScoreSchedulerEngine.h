@@ -8,43 +8,55 @@ class Polytempo_ScoreScheduler;
 class Polytempo_ScoreSchedulerEngine : public Thread
 {
 public:
-    Polytempo_ScoreSchedulerEngine() : Thread("Polytempo_ScoreScheduler_Thread") {};
-    
+    Polytempo_ScoreSchedulerEngine() : Thread("Polytempo_ScoreScheduler_Thread")
+    {
+    };
+
     void run() override = 0;
+
     bool isRunning()
     {
         return !shouldStop;
     }
+
     void setScheduler(Polytempo_ScoreScheduler* theScheduler)
     {
         scoreScheduler = theScheduler;
     }
+
     void setScore(Polytempo_Score* theScore)
     {
         score = theScore;
     }
+
     void stop()
     {
         shouldStop = true;
     }
+
     void kill()
     {
         killed = true;
         stop();
     }
+
     void pause(bool shouldPause)
     {
         pausing = shouldPause;
     }
+
     bool isPausing()
     {
         return pausing;
     }
+
     virtual void setScoreTime(int time) = 0;
+
     int getScoreTime()
     {
         return scoreTime;
     }
+
     void setTempoFactor(float factor)
     {
         tempoFactor = factor;
@@ -58,14 +70,14 @@ protected:
         return increment;
     }
 
-    Polytempo_Score *score;
+    Polytempo_Score* score;
     Polytempo_ScoreScheduler* scoreScheduler;
     int scoreTime; // the current time in the score
     double tempoFactor = 1;
     bool killed;
     bool shouldStop;
     bool pausing;
-    
+
 private:
     int scoreTimeOffset;
 };
@@ -86,8 +98,8 @@ class Polytempo_NetworkEngine : public Polytempo_ScoreSchedulerEngine
 public:
     void setScoreTime(int time) override;
     void run() override;
-    
+
 private:
     float waitBeforeStart;
-    int   lastDownbeat;
+    int lastDownbeat;
 };

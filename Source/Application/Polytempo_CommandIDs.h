@@ -4,16 +4,19 @@ namespace Polytempo_CommandIDs
 {
     enum
     {
-        open               = 0x2000,
+        open = 0x2000,
         clearOpenRecent,
         newDocument,
         save,
         saveAs,
         close,
-        exportSelected, exportAll,
+        exportSelected,
+        exportAll,
         startStop,
-        markerFwd, markerBwd,
-        imageFwd, imageBwd,
+        markerFwd,
+        markerBwd,
+        imageFwd,
+        imageBwd,
         returnToLoc,
         returnToBeginning,
         gotoTime,
@@ -22,10 +25,11 @@ namespace Polytempo_CommandIDs
         fullScreen,
         help,
         visitWebsite,
-        
+
         // network
-        zoomIn, zoomOut,
- 
+        zoomIn,
+        zoomOut,
+
         showMainView,
         showPageEditor,
         showRegionEditor,
@@ -38,16 +42,18 @@ namespace Polytempo_CommandIDs
         deleteSelected,
 
         // composer
-        zoomInX, zoomOutX,
-        zoomInY, zoomOutY,
-        
+        zoomInX,
+        zoomOutX,
+        zoomInY,
+        zoomOutY,
+
         showTimeMap,
         showTempoMap,
         showPointList,
         showPatternList,
-        
+
         playbackSettingsWindow,
-  
+
         addSequence,
         removeSequence,
         insertControlPoint,
@@ -56,19 +62,19 @@ namespace Polytempo_CommandIDs
         adjustPosition,
         adjustTempo,
         alignWithCursor,
-        
+
         addBeatPattern,
         insertBeatPattern,
         removeBeatPattern,
-        
-		annotationAccept,
-		annotationCancel,
-		annotationDelete,
-		annotationLayerSettings,
-		annotationOff,
-		annotationReadOnly,
-		annotationStandard,
-		annotationEdit,
+
+        annotationAccept,
+        annotationCancel,
+        annotationDelete,
+        annotationLayerSettings,
+        annotationOff,
+        annotationReadOnly,
+        annotationStandard,
+        annotationEdit,
 
         openRecent // must be last!
     };

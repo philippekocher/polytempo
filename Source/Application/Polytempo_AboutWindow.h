@@ -10,14 +10,14 @@ public:
 
     static void show();
     void closeButtonPressed();
-    
+
 private:
     std::unique_ptr<Label> label1;
-	std::unique_ptr<Label> label2;
-	std::unique_ptr<Label> label3;
-	std::unique_ptr<Label> label4;
-	std::unique_ptr<ImageComponent> iconComponent;
-	std::unique_ptr<HyperlinkButton> link1;
-	std::unique_ptr<HyperlinkButton> link2;
-	std::unique_ptr<Component> aboutComponent;
+    std::unique_ptr<Label> label2;
+    std::unique_ptr<Label> label3;
+    std::unique_ptr<Label> label4;
+    std::unique_ptr<ImageComponent> iconComponent;
+    std::unique_ptr<HyperlinkButton> link1;
+    std::unique_ptr<HyperlinkButton> link2;
+    std::unique_ptr<Component> aboutComponent;
 };

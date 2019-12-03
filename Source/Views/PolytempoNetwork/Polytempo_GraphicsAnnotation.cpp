@@ -2,20 +2,20 @@
 
 Polytempo_GraphicsAnnotation::Polytempo_GraphicsAnnotation()
 {
-	clear();
+    clear();
 }
 
 Polytempo_GraphicsAnnotation::~Polytempo_GraphicsAnnotation()
 {
-	clear();
+    clear();
 }
 
 void Polytempo_GraphicsAnnotation::clear()
 {
-	color = Colours::black;
-	freeHandPath.clear();
-	imageId = String();
-	referencePoint = Point<float>();
-	text = String();
-	fontSize = STANDARD_FONT_SIZE;
+    color = Colours::black;
+    freeHandPath.clear();
+    imageId = String();
+    referencePoint = Point<float>();
+    text = String();
+    fontSize = STANDARD_FONT_SIZE;
 }

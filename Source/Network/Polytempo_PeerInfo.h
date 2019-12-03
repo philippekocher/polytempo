@@ -5,7 +5,7 @@
 class Polytempo_PeerInfo
 {
 public:
-	String	scoreName;
-	String	peerName;
-	bool	connectionOk;
+    String scoreName;
+    String peerName;
+    bool connectionOk;
 };

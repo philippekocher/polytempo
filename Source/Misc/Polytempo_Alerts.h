@@ -9,7 +9,7 @@ public:
     {
         AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, title, message, "OK", associatedComponent);
     };
-    
+
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_Alert)
 };
@@ -19,10 +19,10 @@ class Polytempo_OkCancelAlert
 public:
     static void show(const String& title,
                      const String& message,
-                     ModalComponentManager::Callback *callback)
+                     ModalComponentManager::Callback* callback)
     {
-        AlertWindow::showOkCancelBox (AlertWindow::QuestionIcon, title, message,
-        {}, {}, nullptr, callback);
+        AlertWindow::showOkCancelBox(AlertWindow::QuestionIcon, title, message,
+                                     {}, {}, nullptr, callback);
     }
 
 private:
@@ -34,7 +34,7 @@ class Polytempo_YesNoCancelAlert
 public:
     static void show(const String& title,
                      const String& message,
-                     ModalComponentManager::Callback *callback)
+                     ModalComponentManager::Callback* callback)
     {
         AlertWindow::showYesNoCancelBox(AlertWindow::InfoIcon,
                                         title, message,

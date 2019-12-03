@@ -2,13 +2,13 @@
 
 #include "JuceHeader.h"
 
-class Polytempo_NetworkInfoView    : public Component
+class Polytempo_NetworkInfoView : public Component
 {
 public:
     Polytempo_NetworkInfoView();
     ~Polytempo_NetworkInfoView();
 
-    void paint (Graphics&) override;
+    void paint(Graphics&) override;
     void resized() override;
 
 private:
