@@ -1,13 +1,15 @@
 #pragma once
 
-#include "JuceHeader.h"
+#include "JuceHeader.h"
 
-class Polytempo_DefaultPreferences : public PropertySet
-{
-public:
-    Polytempo_DefaultPreferences();
-    ~Polytempo_DefaultPreferences();
+class Polytempo_DefaultPreferences : public PropertySet
 
-    juce_DeclareSingleton (Polytempo_DefaultPreferences, false);
-};
-
+{
+public:
+
+    Polytempo_DefaultPreferences();
+
+    ~Polytempo_DefaultPreferences();
+
+    juce_DeclareSingleton (Polytempo_DefaultPreferences, false);
+};
