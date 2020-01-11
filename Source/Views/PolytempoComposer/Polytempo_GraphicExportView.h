@@ -15,6 +15,7 @@ public:
     void resized() override;
     
     void setTimeFactor(float);
+    int  getSystemHeight();
     void setSystemHeight(int);
     void setLandscape(bool);
 
@@ -31,7 +32,8 @@ private:
     OwnedArray <Polytempo_GraphicExportPage> pages;
     float timeFactor;
     int systemHeight;
-    bool landscape;
+    bool landscape = false;
+    int numberOfSequences = 0;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_GraphicExportView)
 };

@@ -135,7 +135,7 @@ private:
     friend class Polytempo_GraphicExportView;
     friend class Polytempo_SequenceGraphicalSettings;
     bool showName = true;
-    int staffOffset = 140;
+    int staffOffset = 100;
     int lineOffset = 8;
     int numberOfLines = 5;
 };

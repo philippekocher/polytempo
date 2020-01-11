@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
+class Polytempo_GraphicExportView;
 #include "../../Misc/Polytempo_Button.h"
 #include "../../Misc/Polytempo_Textbox.h"
 
@@ -13,7 +14,7 @@ public:
     Polytempo_GraphicExportSettingsComponent();
     ~Polytempo_GraphicExportSettingsComponent();
     
-    void setGraphicExportView(Component*);
+    void update(Polytempo_GraphicExportView*);
     
     void paint(Graphics&) override;
     void resized() override;
@@ -23,7 +24,7 @@ public:
     void labelTextChanged(Label*) override;
 
 private:
-    Component *graphicExportView;
+    Polytempo_GraphicExportView *graphicExportView;
     Polytempo_Button* exportPagesButton;
 
     Polytempo_Textbox *timeFactorTextbox;

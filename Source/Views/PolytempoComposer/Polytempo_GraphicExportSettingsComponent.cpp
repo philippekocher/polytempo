@@ -18,7 +18,6 @@ Polytempo_GraphicExportSettingsComponent::Polytempo_GraphicExportSettingsCompone
     addAndMakeVisible(systemHeightTextbox);
     systemHeightTextbox->setFont(Font (24.0f, Font::bold));
     systemHeightTextbox->setInputRestrictions(0, "0123456789");
-    systemHeightTextbox->setText("700", dontSendNotification);
     systemHeightTextbox->addListener(this);
 
     addAndMakeVisible(landscapeButton = new ToggleButton("Landscape"));
@@ -30,12 +29,13 @@ Polytempo_GraphicExportSettingsComponent::~Polytempo_GraphicExportSettingsCompon
     deleteAllChildren();
 }
 
-void Polytempo_GraphicExportSettingsComponent::setGraphicExportView(Component* view)
+void Polytempo_GraphicExportSettingsComponent::update(Polytempo_GraphicExportView* view)
 {
     graphicExportView = view;
 
+    systemHeightTextbox->setText(String(graphicExportView->getSystemHeight()), dontSendNotification);
+
     ((Polytempo_GraphicExportView *)graphicExportView)->setTimeFactor(timeFactorTextbox->getText().getFloatValue());
-    ((Polytempo_GraphicExportView *)graphicExportView)->setSystemHeight(systemHeightTextbox->getText().getIntValue());
 }
 
 void Polytempo_GraphicExportSettingsComponent::paint (Graphics& g)

@@ -15,8 +15,6 @@ Polytempo_GraphicExportView::Polytempo_GraphicExportView()
     addAndMakeVisible(graphicExportViewport);
     addAndMakeVisible(graphicExportSettingsComponent);
     addAndMakeVisible(sequencesViewport);
-    
-    graphicExportSettingsComponent.setGraphicExportView(this);
 }
 
 Polytempo_GraphicExportView::~Polytempo_GraphicExportView()
@@ -43,6 +41,11 @@ void Polytempo_GraphicExportView::setTimeFactor(float factor)
     update();
 }
 
+int Polytempo_GraphicExportView::getSystemHeight()
+{
+    return systemHeight;
+}
+
 void Polytempo_GraphicExportView::setSystemHeight(int height)
 {
     systemHeight = height;
@@ -63,32 +66,37 @@ void Polytempo_GraphicExportView::update()
     addPage();
     
     Polytempo_Composition* composition = Polytempo_Composition::getInstance();
-    int pageIndex, sequenceIndex, systemIndex;
-    int beatPatternIndex, beatPatternCounter;
-    Polytempo_BeatPattern *beatPattern;
-    int posX, posY;
-    int staffOffset = 0;
-    for(sequenceIndex=0;sequenceIndex<composition->getNumberOfSequences();sequenceIndex++)
+    if(numberOfSequences != composition->getNumberOfSequences())
     {
-        pageIndex = 0;
-        systemIndex = 0;
-        beatPatternIndex = 0;
-        beatPatternCounter = 0;
-        posX = 0;
-        
-        int marginLeft = 200;
-        int marginRight = 100;
-        int marginTop = 0;
-        int marginBottom = 200;
-        int systemWidth = landscape ?
-            PAGE_IMAGE_HEIGHT - marginLeft - marginRight :
-            PAGE_IMAGE_WIDTH - marginLeft - marginRight;
-        int systemsPerPage = 2;
-        
+        numberOfSequences = composition->getNumberOfSequences();
+        systemHeight = numberOfSequences * 150;
+        graphicExportSettingsComponent.update(this);
+    }
+ 
+    int staffOffset = 0;
+    int marginLeft = 200;
+    int marginRight = 100;
+    int marginTop = 0;
+    int systemWidth = landscape ?
+        PAGE_IMAGE_HEIGHT - marginLeft - marginRight :
+        PAGE_IMAGE_WIDTH - marginLeft - marginRight;
+    int systemsPerPage = landscape ?
+        int(PAGE_IMAGE_WIDTH / systemHeight) :
+        int(PAGE_IMAGE_HEIGHT / systemHeight);
+
+    for(int sequenceIndex=0; sequenceIndex < composition->getNumberOfSequences(); sequenceIndex++)
+    {
+        int pageIndex = 0;
+        int systemIndex = 0;
+        int beatPatternIndex = 0;
+        int beatPatternCounter = 0;
+        int posX, posY;
+
         Polytempo_Sequence *sequence = composition->getSequence(sequenceIndex);
         staffOffset += sequence->staffOffset;
         String sequenceName = sequence->showName ? sequence->getName() : String();
-        
+        Polytempo_BeatPattern *beatPattern;
+
         for(Polytempo_Event *event : sequence->getEvents())
         {
             if(!event->hasDefinedTime()) continue;
