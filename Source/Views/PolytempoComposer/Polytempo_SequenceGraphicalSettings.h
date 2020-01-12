@@ -26,7 +26,10 @@ public:
 private:
     Polytempo_Sequence* sequence;
     
-    Polytempo_Textbox *staffOffsetTextbox;
+    Polytempo_Textbox *numberOfStavesTextbox;
+    Polytempo_Textbox *secondaryStaveOffsetTextbox;
+
+    Polytempo_Textbox *staveOffsetTextbox;
     Polytempo_Textbox *numberOfLinesTextbox;
     Polytempo_Textbox *lineOffsetTextbox;
     

@@ -26,29 +26,48 @@ void Polytempo_GraphicExportPage::paint(Graphics& g)
     g.drawImageWithin(*image, r.getX(), r.getY(), r.getWidth(), r.getHeight(), RectanglePlacement::stretchToFit);
 }
 
-void Polytempo_GraphicExportPage::drawStaff(int x, int y, int width, int numberOfLines, int linesOffset, String name)
+void Polytempo_GraphicExportPage::drawStaves(int x, int y, int width, int numberOfStaves, int secondaryStaveOffset, int numberOfLines, int linesOffset)
 {
     Graphics g (*image);
     
     g.setColour(Colours::black);
-    g.setFont(20.0f);
-    g.drawText(name, x - 140, y, 100, (numberOfLines - 1) * linesOffset, Justification::verticallyCentred, true);
-    
-    g.setColour(Colours::grey);
-    for(int n=0; n<numberOfLines; n++)
-        g.drawHorizontalLine(y + (n * linesOffset), x - 40, x - 10);
-
-    g.setColour(Colours::black);
-    for(int n=0; n<numberOfLines; n++)
-        g.drawHorizontalLine(y + (n * linesOffset), x, x + width);
+    for(int i = 0; i < numberOfStaves; i++)
+    {
+        for(int n = 0; n < numberOfLines; n++)
+            g.drawHorizontalLine(y + i * secondaryStaveOffset + n * linesOffset, x, x + width);
+    }
 }
 
-void Polytempo_GraphicExportPage::drawBarline(int x, int y, int numberOfLines, int linesOffset, String timeSignature)
+void Polytempo_GraphicExportPage::drawStaveBeginning(int x, int y, int numberOfStaves, int secondaryStaveOffset, int numberOfLines, int linesOffset, String name)
+{
+
+    Graphics g (*image);
+
+    g.setColour(Colours::grey);
+    for(int i = 0; i < numberOfStaves; i++)
+    {
+        for(int n=0; n<numberOfLines; n++)
+            g.drawHorizontalLine(y + i * secondaryStaveOffset + n * linesOffset, x - 40, x - 10);
+    }
+
+    if(numberOfLines < 2)
+    {
+        y -= linesOffset * 0.5;
+        numberOfLines = 2;
+    }
+
+    g.setColour(Colours::black);
+    g.setFont(20.0f);
+    g.drawText(name, x - 140, y, 100, (numberOfStaves - 1) * secondaryStaveOffset + (numberOfLines - 1) * linesOffset, Justification::verticallyCentred, true);
+    
+}
+
+void Polytempo_GraphicExportPage::drawBarline(int x, int y, int numberOfStaves, int secondaryStaveOffset, int numberOfLines, int linesOffset, String timeSignature)
 {
     int y1 = y;
-    int y2 = y + (numberOfLines - 1) * linesOffset;
+    int y2 = y + (numberOfStaves - 1) * secondaryStaveOffset + (numberOfLines - 1) * linesOffset;
     
-    if(numberOfLines < 1)
+    if(numberOfLines < 2)
     {
         y1 -= linesOffset;
         y2 += linesOffset;
@@ -83,12 +102,12 @@ void Polytempo_GraphicExportPage::drawBarline(int x, int y, int numberOfLines, i
     }
 }
 
-void Polytempo_GraphicExportPage::drawAuxiliaryLine(int x, int y, int numberOfLines, int linesOffset)
+void Polytempo_GraphicExportPage::drawAuxiliaryLine(int x, int y, int numberOfStaves, int secondaryStaveOffset, int numberOfLines, int linesOffset)
 {
     int y1 = y;
-    int y2 = y + (numberOfLines - 1) * linesOffset;
+    int y2 = y + (numberOfStaves - 1) * secondaryStaveOffset + (numberOfLines - 1) * linesOffset;
 
-    if(numberOfLines < 1)
+    if(numberOfLines < 2)
     {
         y1 -= linesOffset;
         y2 += linesOffset;
@@ -100,8 +119,12 @@ void Polytempo_GraphicExportPage::drawAuxiliaryLine(int x, int y, int numberOfLi
     g.drawLine(x, y1, x, y2, 1);
 }
 
-void Polytempo_GraphicExportPage::drawMarker(String marker, int x, int y)
+void Polytempo_GraphicExportPage::drawMarker(String marker, int x, int y, int numberOfStaves, int secondaryStaveOffset, int numberOfLines, int linesOffset)
 {
+    if(numberOfLines < 2)
+        numberOfLines = 2;
+    y = y + (numberOfStaves - 1) * secondaryStaveOffset + (numberOfLines - 1) * linesOffset;
+
     Graphics g (*image);
 
     g.setColour(Colours::black);

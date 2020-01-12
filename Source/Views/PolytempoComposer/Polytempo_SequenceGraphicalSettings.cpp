@@ -10,11 +10,23 @@ Polytempo_SequenceGraphicalSettings::Polytempo_SequenceGraphicalSettings(Polytem
     showNameButton->setToggleState(sequence->showName, dontSendNotification);
     showNameButton->addListener(this);
     
-    addAndMakeVisible(staffOffsetTextbox = new Polytempo_Textbox("Staff Offset"));
-    staffOffsetTextbox->setText(String(sequence->staffOffset), dontSendNotification);
-    staffOffsetTextbox->setEnabled(true);
-    staffOffsetTextbox->setInputRestrictions(0, "0123456789");
-    staffOffsetTextbox->addListener(this);
+    addAndMakeVisible(staveOffsetTextbox = new Polytempo_Textbox("Stave Offset"));
+    staveOffsetTextbox->setText(String(sequence->staveOffset), dontSendNotification);
+    staveOffsetTextbox->setEnabled(true);
+    staveOffsetTextbox->setInputRestrictions(0, "0123456789");
+    staveOffsetTextbox->addListener(this);
+
+    addAndMakeVisible(numberOfStavesTextbox = new Polytempo_Textbox("Number of Staves"));
+    numberOfStavesTextbox->setText(String(sequence->numberOfStaves), dontSendNotification);
+    numberOfStavesTextbox->setEnabled(true);
+    numberOfStavesTextbox->setInputRestrictions(0, "0123456789", 1, 32);
+    numberOfStavesTextbox->addListener(this);
+
+    addAndMakeVisible(secondaryStaveOffsetTextbox = new Polytempo_Textbox("Secondary Stave Offset"));
+    secondaryStaveOffsetTextbox->setText(String(sequence->secondaryStaveOffset), dontSendNotification);
+    secondaryStaveOffsetTextbox->setEnabled(sequence->numberOfStaves > 1);
+    secondaryStaveOffsetTextbox->setInputRestrictions(0, "0123456789");
+    secondaryStaveOffsetTextbox->addListener(this);
 
     addAndMakeVisible(numberOfLinesTextbox = new Polytempo_Textbox("Number of Lines"));
     numberOfLinesTextbox->setText(String(sequence->numberOfLines), dontSendNotification);
@@ -37,9 +49,13 @@ Polytempo_SequenceGraphicalSettings::~Polytempo_SequenceGraphicalSettings()
 void Polytempo_SequenceGraphicalSettings::resized()
 {
     showNameButton->setBounds         (20, 20,  int(getWidth() *0.25) - 30, 20);
-    staffOffsetTextbox->setBounds     (20, 80,  int(getWidth() * 0.25) - 30, 20);
-    numberOfLinesTextbox->setBounds   (20, 160, int(getWidth() * 0.25) - 30, 20);
-    lineOffsetTextbox->setBounds      (20, 200, int(getWidth() * 0.25) - 30, 20);
+    staveOffsetTextbox->setBounds     (20, 80,  int(getWidth() * 0.25) - 30, 20);
+    
+    numberOfStavesTextbox->setBounds      (20, 140, int(getWidth() *0.25) - 30, 20);
+    secondaryStaveOffsetTextbox->setBounds(20, 180, int(getWidth() *0.25) - 30, 20);
+    
+    numberOfLinesTextbox->setBounds   (20, 240, int(getWidth() * 0.25) - 30, 20);
+    lineOffsetTextbox->setBounds      (20, 280, int(getWidth() * 0.25) - 30, 20);
 }
 
 void Polytempo_SequenceGraphicalSettings::paint (Graphics& g)
@@ -63,14 +79,19 @@ void Polytempo_SequenceGraphicalSettings::labelTextChanged(Label* textbox)
 {
     String labelText = textbox->getText();
     
-    if(textbox == staffOffsetTextbox)
-        sequence->staffOffset = labelText.getIntValue();
+    if(textbox == staveOffsetTextbox)
+        sequence->staveOffset = labelText.getIntValue();
+    else if(textbox == numberOfStavesTextbox)
+        sequence->numberOfStaves = labelText.getIntValue();
+    else if(textbox == secondaryStaveOffsetTextbox)
+        sequence->secondaryStaveOffset = labelText.getIntValue();
     else if(textbox == numberOfLinesTextbox)
         sequence->numberOfLines = labelText.getIntValue();
     else if(textbox == lineOffsetTextbox)
         sequence->lineOffset = labelText.getIntValue();
 
     // update window
+    secondaryStaveOffsetTextbox->setEnabled(sequence->numberOfStaves > 1);
     Polytempo_ComposerApplication* const app = dynamic_cast<Polytempo_ComposerApplication*>(JUCEApplication::getInstance());
     app->getDocumentWindow().getContentComponent()->resized();
 }

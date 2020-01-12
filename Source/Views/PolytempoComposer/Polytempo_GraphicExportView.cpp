@@ -73,7 +73,7 @@ void Polytempo_GraphicExportView::update()
         graphicExportSettingsComponent.update(this);
     }
  
-    int staffOffset = 0;
+    int staveOffset = 0;
     int marginLeft = 200;
     int marginRight = 100;
     int marginTop = 0;
@@ -83,44 +83,45 @@ void Polytempo_GraphicExportView::update()
     int systemsPerPage = landscape ?
         int(PAGE_IMAGE_WIDTH / systemHeight) :
         int(PAGE_IMAGE_HEIGHT / systemHeight);
+    int systemCount = 1;
 
-    for(int sequenceIndex=0; sequenceIndex < composition->getNumberOfSequences(); sequenceIndex++)
+    for(int sequenceIndex = 0; sequenceIndex < numberOfSequences; sequenceIndex++)
     {
         int pageIndex = 0;
         int systemIndex = 0;
         int beatPatternIndex = 0;
         int beatPatternCounter = 0;
-        int posX, posY;
+        int posX = 0;
+        int posY;
 
         Polytempo_Sequence *sequence = composition->getSequence(sequenceIndex);
-        staffOffset += sequence->staffOffset;
-        String sequenceName = sequence->showName ? sequence->getName() : String();
+        staveOffset += sequence->staveOffset;
         Polytempo_BeatPattern *beatPattern;
 
         for(Polytempo_Event *event : sequence->getEvents())
         {
             if(!event->hasDefinedTime()) continue;
             
-            posX = event->getTime() * timeFactor * 0.1 - (pageIndex * systemsPerPage + systemIndex) * systemWidth;
-            posY = marginTop + systemIndex * systemHeight + staffOffset;
+            posX = event->getTime() * timeFactor * 0.1 - (pageIndex * systemsPerPage + systemIndex%systemsPerPage) * systemWidth;
+            posY = marginTop + systemIndex%systemsPerPage * systemHeight + staveOffset;
             
             if(posX > systemWidth) // reach the end of a line
             {
-                // draw staff
-                pages[pageIndex]->drawStaff(marginLeft, posY, systemWidth, sequence->numberOfLines, sequence->lineOffset, sequenceName);
+                // draw staves
+                pages[pageIndex]->drawStaves(marginLeft, posY, systemWidth, sequence->numberOfStaves, sequence->secondaryStaveOffset, sequence->numberOfLines, sequence->lineOffset);
                 
                 systemIndex++;
                 
                 posX -= systemWidth;
                 posY += systemHeight;
                 
-                if(systemIndex == systemsPerPage)
+                if(systemIndex%systemsPerPage == 0 )
                 {
                     pageIndex++;
                     if(pageIndex == pages.size()) addPage();
                     
-                    systemIndex = 0;
-                    posY = marginTop + staffOffset;
+                    //systemIndex = 0;
+                    posY = marginTop + staveOffset;
                 }
             }
             
@@ -137,27 +138,49 @@ void Polytempo_GraphicExportView::update()
                         {
                             beatPatternCounter = beatPattern->getRepeats();
                             
-                            pages[pageIndex]->drawBarline(posX, posY, sequence->numberOfLines, sequence->lineOffset, beatPattern->getPattern());
+                            pages[pageIndex]->drawBarline(posX, posY, sequence->numberOfStaves, sequence->secondaryStaveOffset, sequence->numberOfLines, sequence->lineOffset, beatPattern->getPattern());
                         }
                     }
                     else
                     {
-                        pages[pageIndex]->drawBarline(posX, posY, sequence->numberOfLines, sequence->lineOffset, String());
+                        pages[pageIndex]->drawBarline(posX, posY, sequence->numberOfStaves, sequence->secondaryStaveOffset, sequence->numberOfLines, sequence->lineOffset, String());
                     }
                     beatPatternCounter--;
                     
                 }
                 else
-                    pages[pageIndex]->drawAuxiliaryLine(posX, posY, sequence->numberOfLines, sequence->lineOffset);
+                    pages[pageIndex]->drawAuxiliaryLine(posX, posY, sequence->numberOfStaves, sequence->secondaryStaveOffset, sequence->numberOfLines, sequence->lineOffset);
             }
             else if(event->getType() == eventType_Marker)
             {
-                pages[pageIndex]->drawMarker(event->getValue().toString(), posX, posY + (sequence->numberOfLines-1) * sequence->lineOffset);
+                pages[pageIndex]->drawMarker(event->getValue().toString(), posX, posY, sequence->numberOfStaves, sequence->secondaryStaveOffset, sequence->numberOfLines, sequence->lineOffset);
             }
         }
         
-        // draw staff up to the last event
-        pages[pageIndex]->drawStaff(marginLeft, marginTop + systemIndex * systemHeight + staffOffset, posX - marginLeft, sequence->numberOfLines, sequence->lineOffset, sequenceName);
+        // draw staves up to the last event
+        pages[pageIndex]->drawStaves(marginLeft, marginTop + systemIndex%systemsPerPage * systemHeight + staveOffset, posX - marginLeft, sequence->numberOfStaves, sequence->secondaryStaveOffset, sequence->numberOfLines, sequence->lineOffset);
+        systemIndex++;
+        
+        if(systemIndex > systemCount) systemCount = systemIndex;
+    }
+    
+    staveOffset = 0;
+    for(int sequenceIndex = 0; sequenceIndex < numberOfSequences; sequenceIndex++)
+    {
+        Polytempo_Sequence *sequence = composition->getSequence(sequenceIndex);
+        String sequenceName = sequence->showName ? sequence->getName() : String();
+        int pageIndex = -1;
+        staveOffset += sequence->staveOffset;
+        for(int systemIndex = 0; systemIndex < systemCount; systemIndex++)
+        {
+            int posY = marginTop + systemIndex%systemsPerPage * systemHeight + staveOffset;
+
+            if(systemIndex%systemsPerPage == 0)
+                pageIndex++;
+
+            pages[pageIndex]->drawStaveBeginning(marginLeft, posY, sequence->numberOfStaves, sequence->secondaryStaveOffset, sequence->numberOfLines, sequence->lineOffset, sequenceName);
+
+        }
     }
 }
 

@@ -635,7 +635,9 @@ DynamicObject* Polytempo_Sequence::getObject()
     object->setProperty("oscPort", oscPort);
     
     object->setProperty("showName", showName);
-    object->setProperty("staffOffset", staffOffset);
+    object->setProperty("staveOffset", staveOffset);
+    object->setProperty("numberOfStaves", numberOfStaves);
+    object->setProperty("secondaryStaveOffset", secondaryStaveOffset);
     object->setProperty("lineOffset", lineOffset);
     object->setProperty("numberOfLines", numberOfLines);
     
@@ -712,10 +714,14 @@ void Polytempo_Sequence::setObject(DynamicObject* object)
     
     if(object->hasProperty("showName"))
         showName = object->getProperty("showName");
-    if(object->hasProperty("staffOffset"))
-        staffOffset = object->getProperty("staffOffset");
+    if(object->hasProperty("staveOffset"))
+        staveOffset = object->getProperty("staveOffset");
     if(object->hasProperty("lineOffset"))
         lineOffset = object->getProperty("lineOffset");
     if(object->hasProperty("numberOfLines"))
         numberOfLines = object->getProperty("numberOfLines");
+    if(object->hasProperty("numberOfStaffs"))
+        numberOfStaves = object->getProperty("numberOfStaves");
+    if(object->hasProperty("secondaryStaveOffset"))
+        secondaryStaveOffset = object->getProperty("secondaryStaveOffset");
 }

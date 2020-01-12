@@ -11,10 +11,11 @@ public:
 
     void paint (Graphics&) override;
     
-    void drawStaff (int x1, int x2, int y, int numberOfLines, int linesOffset, String name);
-    void drawBarline(int x, int y, int numberOfLines, int linesOffset, String timeSignature);
-    void drawAuxiliaryLine(int x, int y, int numberOfLines, int linesOffset);
-    void drawMarker(String marker, int x, int y);
+    void drawStaves(int x, int y, int width, int numberOfStaves, int secondaryStaveOffset, int numberOfLines, int linesOffset);
+    void drawStaveBeginning(int x, int y, int numberOfStaves, int secondaryStaveOffset, int numberOfLines, int linesOffset, String name);
+    void drawBarline(int x, int y, int numberOfStaves, int secondaryStaveOffset, int numberOfLines, int linesOffset, String timeSignature);
+    void drawAuxiliaryLine(int x, int y, int numberOfStaves, int secondaryStaveOffset, int numberOfLines, int linesOffset);
+    void drawMarker(String marker, int x, int y, int numberOfStaves, int secondaryStaveOffset, int numberOfLines, int linesOffset);
 
     void exportImage(String);
 
