@@ -69,7 +69,8 @@ void Polytempo_GraphicExportView::update()
     if(numberOfSequences != composition->getNumberOfSequences())
     {
         numberOfSequences = composition->getNumberOfSequences();
-        systemHeight = numberOfSequences * 150;
+        if(numberOfSequences < 1) return;
+        systemHeight = numberOfSequences * 130;
         graphicExportSettingsComponent.update(this);
     }
  

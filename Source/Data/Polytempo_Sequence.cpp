@@ -720,7 +720,7 @@ void Polytempo_Sequence::setObject(DynamicObject* object)
         lineOffset = object->getProperty("lineOffset");
     if(object->hasProperty("numberOfLines"))
         numberOfLines = object->getProperty("numberOfLines");
-    if(object->hasProperty("numberOfStaffs"))
+    if(object->hasProperty("numberOfStaves"))
         numberOfStaves = object->getProperty("numberOfStaves");
     if(object->hasProperty("secondaryStaveOffset"))
         secondaryStaveOffset = object->getProperty("secondaryStaveOffset");
