@@ -457,7 +457,7 @@ String Polytempo_Score::getJsonString()
     jsonString = jsonString.replace("null","[]\n");       // empty section
     
     jsonString = jsonString.replace("[{","[\n\t{");       // new section
-    jsonString = jsonString.replace("}], ","}\n\t],\r");  // between sections
+    jsonString = jsonString.replace("}], ","}\n\t],\n");  // between sections
     
     jsonString = jsonString.replace("}, ","},\n\t");      // indent events
     
@@ -562,7 +562,7 @@ void Polytempo_Score::parseVar(var jsonVar)
 void Polytempo_Score::writeToFile(File& file)
 {
     FileOutputStream stream(file);
-    stream.writeString(getJsonString());
+    stream.writeText(getJsonString(), false, false, nullptr);
     
     dirty = false;
 }
