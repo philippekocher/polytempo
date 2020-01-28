@@ -64,21 +64,21 @@ public:
     void setRightComponent(componentType type);
     
 private:
-    ScopedPointer < Polytempo_ComposerToolbarComponent >  toolbarComponent;
-    ScopedPointer < Polytempo_TransportComponent >        transportComponent;
+    std::unique_ptr<Polytempo_ComposerToolbarComponent>  toolbarComponent;
+    std::unique_ptr<Polytempo_TransportComponent>        transportComponent;
     Polytempo_SequencesViewport        sequencesViewport;
     
     Component                           leftComponent;      // split view
     Component                           rightComponent;
     
-    ScopedPointer < Polytempo_TimeMapComponent >    timeMapComponent;
-    ScopedPointer < Polytempo_TempoMapComponent >   tempoMapComponent;
+    std::unique_ptr<Polytempo_TimeMapComponent>    timeMapComponent;
+    std::unique_ptr<Polytempo_TempoMapComponent>   tempoMapComponent;
     
     Polytempo_BeatPatternListComponent  beatPatternListComponent;
     Polytempo_PointListComponent        pointListComponent;
     
     StretchableLayoutManager    stretchableManager;
-    ScopedPointer < StretchableLayoutResizerBar > resizerBar;
+    std::unique_ptr<StretchableLayoutResizerBar>resizerBar;
     
     float resizerBarPosition;
     componentType leftComponentType = componentType_None;

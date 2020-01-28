@@ -46,13 +46,13 @@ Polytempo_ComposerMenuBarModel::Polytempo_ComposerMenuBarModel()
     
 #if JUCE_MAC
     // extra menu to be added to the mac osx app-menu
-    extraAppleMenuItems = new PopupMenu();
+    extraAppleMenuItems.reset(new PopupMenu());
     
     extraAppleMenuItems->addCommandItem(commandManager, Polytempo_CommandIDs::aboutWindow);
     extraAppleMenuItems->addSeparator();
     extraAppleMenuItems->addCommandItem(commandManager, Polytempo_CommandIDs::preferencesWindow);
     
-    MenuBarModel::setMacMainMenu (this, extraAppleMenuItems);
+    MenuBarModel::setMacMainMenu (this, extraAppleMenuItems.get());
 #endif
     
 }

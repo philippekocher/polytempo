@@ -50,9 +50,9 @@ public:
     void eventNotification(Polytempo_Event*);
     
 private:
-    ScopedPointer<Polytempo_Button> startButton;
-    ScopedPointer<Polytempo_Button> returnToLocatorButton;
-    ScopedPointer<Polytempo_Button> returnToZeroButton;
+    std::unique_ptr<Polytempo_Button> startButton;
+    std::unique_ptr<Polytempo_Button> returnToLocatorButton;
+    std::unique_ptr<Polytempo_Button> returnToZeroButton;
     
     Polytempo_Textbox *timeTextbox;
     String timeString;

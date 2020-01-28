@@ -32,8 +32,8 @@
 
 Polytempo_Composition::Polytempo_Composition()
 {
-    score = new Polytempo_Score();
-    Polytempo_ScoreScheduler::getInstance()->setScore(score);
+    score.reset(new Polytempo_Score());
+    Polytempo_ScoreScheduler::getInstance()->setScore(score.get());
 }
 
 Polytempo_Composition::~Polytempo_Composition()
@@ -557,7 +557,8 @@ void Polytempo_Composition::exportAsPolytempoScore()
     if(fileChooser.browseForFileToSave(true))
     {
         // build a score to export
-        ScopedPointer < Polytempo_Score > tempScore = new Polytempo_Score();
+        std::unique_ptr<Polytempo_Score> tempScore;
+        tempScore.reset(new Polytempo_Score());
         Polytempo_Event *tempEvent;
         
         if(exportAll)

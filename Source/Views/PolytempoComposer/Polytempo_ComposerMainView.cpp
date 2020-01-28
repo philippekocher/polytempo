@@ -31,17 +31,22 @@
 
 Polytempo_ComposerMainView::Polytempo_ComposerMainView()
 {
-    addAndMakeVisible(toolbarComponent = new Polytempo_ComposerToolbarComponent());
-    addAndMakeVisible(transportComponent = new Polytempo_TransportComponent());
+    toolbarComponent.reset(new Polytempo_ComposerToolbarComponent());
+    addAndMakeVisible(toolbarComponent.get());
+    
+    transportComponent.reset(new Polytempo_TransportComponent());
+    addAndMakeVisible(transportComponent.get());
+    
     addAndMakeVisible(sequencesViewport);
     
     addAndMakeVisible(leftComponent);
     addAndMakeVisible(rightComponent);
 
-    addAndMakeVisible(resizerBar = new StretchableLayoutResizerBar(&stretchableManager, 1, true));
+    resizerBar.reset(new StretchableLayoutResizerBar(&stretchableManager, 1, true));
+    addAndMakeVisible(resizerBar.get());
     
-    timeMapComponent  = new Polytempo_TimeMapComponent();
-    tempoMapComponent = new Polytempo_TempoMapComponent();
+    timeMapComponent.reset(new Polytempo_TimeMapComponent());
+    tempoMapComponent.reset(new Polytempo_TempoMapComponent());
     
     
     stretchableManager.setItemLayout (1,1,1,1);     // hard limit to 1 pixel
@@ -66,7 +71,7 @@ void Polytempo_ComposerMainView::resized()
     
     
     // this will position the components and the resizer bar
-    Component* comps[] = { &leftComponent, resizerBar, &rightComponent };
+    Component* comps[] = { &leftComponent, resizerBar.get(), &rightComponent };
     stretchableManager.layOutComponents(comps, 3,
                                          0, TOOLBAR_HEIGHT, r.getWidth(), r.getHeight() - TOOLBAR_HEIGHT - TRANSPORT_HEIGHT - SEQUENCES_HEIGHT,
                                          false, true);
@@ -138,8 +143,8 @@ void Polytempo_ComposerMainView::setLeftComponent(componentType type)
         stretchableManager.setItemLayout(2,250,400,resizerBarPosition-1.0);
     }
     
-    if(leftComponentType == componentType_TimeMap)       leftComponent.addAndMakeVisible(timeMapComponent);
-    else if(leftComponentType == componentType_TempoMap) leftComponent.addAndMakeVisible(tempoMapComponent);
+    if(leftComponentType == componentType_TimeMap)       leftComponent.addAndMakeVisible(timeMapComponent.get());
+    else if(leftComponentType == componentType_TempoMap) leftComponent.addAndMakeVisible(tempoMapComponent.get());
 
     resized();
 }

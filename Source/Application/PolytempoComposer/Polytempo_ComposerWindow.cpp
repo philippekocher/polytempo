@@ -28,7 +28,6 @@
 #include "Polytempo_ComposerApplication.h"
 #include "../../Preferences/Polytempo_StoredPreferences.h"
 
-//static ScopedPointer<ApplicationCommandManager> applicationCommandManager;
 
 Polytempo_ComposerWindow::Polytempo_ComposerWindow()
 : DocumentWindow (String(),
@@ -39,7 +38,8 @@ Polytempo_ComposerWindow::Polytempo_ComposerWindow()
     setResizable(true,true);
     setResizeLimits(500, 400, 5000, 5000);
 
-    setContentOwned(mainView = new Polytempo_ComposerMainView(), true);
+    mainView.reset(new Polytempo_ComposerMainView());
+    setContentOwned(mainView.get(), true);
     
     setBounds(50, 50, 800, 500);
     setVisible(true);    
@@ -53,7 +53,7 @@ Polytempo_ComposerWindow::Polytempo_ComposerWindow()
     restoreWindowContentStateFromString(Polytempo_StoredPreferences::getInstance()->getProps().getValue("mainWindowContent"));
 
     // create and manage a MenuBarComponent
-	menuBarModel = new Polytempo_ComposerMenuBarModel();
+	menuBarModel.reset(new Polytempo_ComposerMenuBarModel());
 #if !JUCE_MAC
     setMenuBar(menuBarModel);
 #endif
