@@ -673,7 +673,6 @@ void Polytempo_Sequence::setObject(DynamicObject* object)
         controlPoints.sort(sorter, true);
 
         controlPoints.getFirst()->position = 0;
-        controlPoints.getLast()->position = events.getLast()->getPosition();
     }
 
     updateEvents();
