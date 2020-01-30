@@ -520,3 +520,65 @@ void Polytempo_TempoMapCoordinateSystem::paintSequence(Graphics& g, Polytempo_Se
                                thickness);
     }
 }
+
+void Polytempo_TempoMapCoordinateSystem::mouseDown(const MouseEvent &event)
+{
+    float mouseTime      = (event.x - TIMEMAP_OFFSET) / zoomX;
+    float mousePosition  = (getHeight() - event.y - TIMEMAP_OFFSET) / zoomY;
+
+    Polytempo_Composition* composition = Polytempo_Composition::getInstance();
+    Polytempo_Sequence* sequence = composition->getSelectedSequence();
+    
+    
+    // cmd-click: add control point
+    if(event.mods.isCommandDown())
+    {
+        if(sequence->validateNewControlPointPosition(mouseTime, mousePosition))
+        {
+            sequence->addControlPoint(mouseTime, mousePosition);
+            composition->updateContent();
+            return;
+        }
+    }
+
+    draggingSession = false;
+    
+    // hit test
+    int hit = -1, i = -1;
+    Polytempo_ControlPoint *controlPoint;
+    while((controlPoint = sequence->getControlPoint(++i)) != nullptr)
+    {
+        // stop searching in this sequence if the point coordinates
+        // are beyond the mouse coordinates
+        if(controlPoint->time > mouseTime + CONTROL_POINT_SIZE / zoomX) break;
+
+        if(fabs(controlPoint->time - mouseTime) <= CONTROL_POINT_SIZE * 0.5 / zoomX &&
+           (fabs(controlPoint->tempoIn - mousePosition) <= CONTROL_POINT_SIZE * 0.5 / zoomY ||
+            fabs(controlPoint->tempoOut - mousePosition) <= CONTROL_POINT_SIZE * 0.5 / zoomY ||
+            controlPoint->tempoIn - controlPoint->tempoOut) >= mousePosition - controlPoint->tempoOut)
+        {
+            hit = i;
+            break;
+        }
+    }
+
+    if(event.mods.isPopupMenu())
+    {
+        if(hit != -1)
+        {
+            composition->setSelectedControlPointIndex(hit);
+            composition->updateContent(); // repaint to show selection
+            ((Polytempo_CoordinateSystem*)viewport)->showPopupMenu();
+        }
+        else
+            ((Polytempo_CoordinateSystem*)viewport)->showPopupMenu();
+    }
+    else
+    {
+        composition->setSelectedControlPointIndex(hit);
+    }
+    composition->updateContent(); // repaint everything
+}
+
+void Polytempo_TempoMapCoordinateSystem::mouseDrag(const MouseEvent &event)
+{}

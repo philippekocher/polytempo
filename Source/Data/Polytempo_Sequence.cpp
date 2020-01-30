@@ -421,7 +421,7 @@ void Polytempo_Sequence::buildBeatPattern()
     if(controlPoints.size() == 0)
     {
         addControlPoint(0,0);   // start point
-        addControlPoint(1,1);   // end point
+        addControlPoint(4,1);   // end point
     }
     
     Rational position = 0;

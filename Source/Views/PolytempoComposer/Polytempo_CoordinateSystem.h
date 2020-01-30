@@ -74,8 +74,8 @@ public:
 private:
     void paintSequence(Graphics&, Polytempo_Sequence*, bool selected);
 public:
-//    void mouseDown(const MouseEvent &);
-//    void mouseDrag(const MouseEvent &);
+    void mouseDown(const MouseEvent &);
+    void mouseDrag(const MouseEvent &);
 };
 
 class Polytempo_CoordinateSystem : public Viewport
