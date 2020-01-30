@@ -235,12 +235,11 @@ Polytempo_TempoRuler::Polytempo_TempoRuler()
 
 float Polytempo_TempoRuler::getIncrementForZoom(float zoom)
 {
-    if(zoom > 8000) return 0.0025f;
-    if(zoom > 4000) return 0.005f;
-    if(zoom > 2000) return 0.01f;
-    if(zoom > 1000) return 0.02f;
-    if(zoom >  500) return 0.04f;
-    return 0.08f;
+    if(zoom > 8000) return 0.25f / 120; // steps of 0.5
+    if(zoom > 4000) return 0.25f / 60;  // steps of 1
+    if(zoom > 2000) return 0.25f / 30;  // steps of 2
+    if(zoom > 1000) return 0.25f / 12;  // steps of 5
+    return 0.25f / 6;                   // steps of 10
 }
 
 
