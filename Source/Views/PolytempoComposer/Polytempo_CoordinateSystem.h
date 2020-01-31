@@ -33,13 +33,13 @@
 
 
 class Polytempo_CoordinateSystemComponent : public Component,
-                                            public ChangeListener,
                                             public Polytempo_EventObserver
 {
 public:
     Polytempo_CoordinateSystemComponent();
     ~Polytempo_CoordinateSystemComponent();
     
+    void setSizeAndZooms(int w, int h, float zX, float zY);
     void eventNotification(Polytempo_Event*);
     
 protected:
@@ -56,7 +56,6 @@ class Polytempo_TimeMapCoordinateSystem : public Polytempo_CoordinateSystemCompo
 {
 public:
     Polytempo_TimeMapCoordinateSystem(Viewport*);
-    void changeListenerCallback(ChangeBroadcaster*);
     void paint(Graphics&);
 private:
     void paintSequence(Graphics&, Polytempo_Sequence*, bool selected);
@@ -69,7 +68,6 @@ class Polytempo_TempoMapCoordinateSystem : public Polytempo_CoordinateSystemComp
 {
 public:
     Polytempo_TempoMapCoordinateSystem(Viewport*);
-    void changeListenerCallback(ChangeBroadcaster*);
     void paint(Graphics&);
 private:
     void paintSequence(Graphics&, Polytempo_Sequence*, bool selected);

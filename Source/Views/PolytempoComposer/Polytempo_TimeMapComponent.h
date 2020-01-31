@@ -30,7 +30,8 @@
 #include "Polytempo_Ruler.h"
 
 
-class Polytempo_TimeMapComponent : public Component
+class Polytempo_TimeMapComponent : public Component,
+                                   public ChangeListener
 {
 public:
     Polytempo_TimeMapComponent();
@@ -39,7 +40,10 @@ public:
     void paint (Graphics&);
     void resized();
 
+    void changeListenerCallback (ChangeBroadcaster*);
+
 private:
+    float zoomX, zoomY;
     std::unique_ptr<Polytempo_TimeMapCoordinateSystem> timeMapCoordinateSystem;
     std::unique_ptr<Polytempo_CoordinateSystem>  coordinateSystem;
     Polytempo_TimeRuler         timeRuler;

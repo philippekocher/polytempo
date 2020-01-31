@@ -25,7 +25,7 @@
 #include "Polytempo_CoordinateSystem.h"
 #include "../../Misc/Polytempo_Globals.h"
 #include "../../Preferences/Polytempo_StoredPreferences.h"
-#include "Polytempo_Ruler.h"
+//#include "Polytempo_Ruler.h"
 #include "../../Application/PolytempoComposer/Polytempo_ComposerApplication.h"
 #include "../../Application/Polytempo_CommandIDs.h"
 
@@ -86,6 +86,21 @@ Polytempo_CoordinateSystemComponent::~Polytempo_CoordinateSystemComponent()
     playhead = nullptr;
 }
 
+void Polytempo_CoordinateSystemComponent::setSizeAndZooms(int w, int h, float zX, float zY)
+{
+    int width, height;
+
+    if(w > 0) width  = w; else width  = getWidth();
+    if(h > 0) height = h; else height = getHeight();
+    
+    zoomX = zX;
+    zoomY = zY;
+
+    setSize(width, height);
+
+    playhead->setSize(playhead->getWidth(), height);
+}
+
 void Polytempo_CoordinateSystemComponent::eventNotification(Polytempo_Event *event)
 {
     if(event->getType() == eventType_Tick)
@@ -104,23 +119,6 @@ Polytempo_TimeMapCoordinateSystem::Polytempo_TimeMapCoordinateSystem(Viewport *v
     
     zoomX = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("zoomX"));
     zoomY = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("timeMapZoomY"));
-
-    Polytempo_StoredPreferences::getInstance()->getProps().addChangeListener(this);
-}
-
-void Polytempo_TimeMapCoordinateSystem::changeListenerCallback(ChangeBroadcaster*)
-{
-    // scroll friendly zoom
-    
-    float x = (viewport->getViewPositionX() - TIMEMAP_OFFSET) / zoomX;
-    float y = (getHeight() - viewport->getViewPositionY() - TIMEMAP_OFFSET - viewport->getMaximumVisibleHeight()) / zoomY;
-    
-    zoomX = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("zoomX"));
-    zoomY = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("timeMapZoomY"));
-    
-    repaint();
-    
-    viewport->setViewPosition(TIMEMAP_OFFSET + int(x*zoomX), getHeight() - int(y*zoomY) - TIMEMAP_OFFSET - viewport->getMaximumVisibleHeight());
 }
 
 void Polytempo_TimeMapCoordinateSystem::paint(Graphics& g)
@@ -370,26 +368,6 @@ Polytempo_TempoMapCoordinateSystem::Polytempo_TempoMapCoordinateSystem(Viewport 
 
     zoomX = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("zoomX"));
     zoomY = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("tempoMapZoomY"));
-
-    Polytempo_StoredPreferences::getInstance()->getProps().addChangeListener(this);
-}
-
-void Polytempo_TempoMapCoordinateSystem::changeListenerCallback(ChangeBroadcaster*)
-{
-    // scroll friendly zoom
-    
-    float x = (viewport->getViewPositionX() - TIMEMAP_OFFSET) / zoomX;
-    float y = (getHeight() - viewport->getViewPositionY() - TIMEMAP_OFFSET - viewport->getMaximumVisibleHeight()) / zoomY;
-
-    zoomX = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("zoomX"));
-    zoomY = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("tempoMapZoomY"));
-
-    setSize(getWidth(), int(zoomY * 2));
-    repaint();
-
-    viewport->setViewPosition(TIMEMAP_OFFSET + int(x*zoomX), getHeight() - int(y*zoomY) - TIMEMAP_OFFSET - viewport->getMaximumVisibleHeight());
-    
-    playhead->setSize(playhead->getWidth(), getHeight());
 }
 
 void Polytempo_TempoMapCoordinateSystem::paint(Graphics& g)

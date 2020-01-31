@@ -24,6 +24,8 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Polytempo_TimeMapComponent.h"
+#include "../../Misc/Polytempo_Globals.h"
+#include "../../Preferences/Polytempo_StoredPreferences.h"
 
 
 Polytempo_TimeMapComponent::Polytempo_TimeMapComponent()
@@ -45,6 +47,8 @@ Polytempo_TimeMapComponent::Polytempo_TimeMapComponent()
     positionRuler.setSynchronizedViewport(coordinateSystem.get(),1);
     
     coordinateSystem->setViewPositionProportionately(0.0, 1.0);
+
+    Polytempo_StoredPreferences::getInstance()->getProps().addChangeListener(this);
 }
 
 Polytempo_TimeMapComponent::~Polytempo_TimeMapComponent()
@@ -68,4 +72,25 @@ void Polytempo_TimeMapComponent::resized()
     coordinateSystem->setBounds(r.withTrimmedBottom(40).withTrimmedLeft(70).withTrimmedRight(1));
     timeRuler.setBounds(r.removeFromBottom(40).withTrimmedLeft(70).withTrimmedRight(1));
     positionRuler.setBounds(r.removeFromLeft(70).withTrimmedLeft(5));
+}
+
+void Polytempo_TimeMapComponent::changeListenerCallback (ChangeBroadcaster*)
+{
+    // scroll friendly zoom
+    int height = timeMapCoordinateSystem->getHeight();
+    float x = (coordinateSystem->getViewPositionX() - TIMEMAP_OFFSET) / zoomX;
+    float y = (coordinateSystem->getViewPositionY() + TIMEMAP_OFFSET + coordinateSystem->getMaximumVisibleHeight()) / zoomY;
+
+    zoomX = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("zoomX"));
+    zoomY = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("timeMapZoomY"));
+
+    height = int(zoomY * 300); // TODO: adapt to length of the composition
+    if(height < coordinateSystem->getMaximumVisibleHeight())
+        height = coordinateSystem->getMaximumVisibleHeight();
+
+    timeMapCoordinateSystem->setSizeAndZooms(0, height, zoomX, zoomY);
+    positionRuler.setSizeAndZooms(0, height, zoomX, zoomY);
+    timeRuler.setSizeAndZooms(0, 0, zoomX, zoomY);
+
+    coordinateSystem->setViewPosition(TIMEMAP_OFFSET + int(x*zoomX), int(y*zoomY) - TIMEMAP_OFFSET - coordinateSystem->getMaximumVisibleHeight());
 }
