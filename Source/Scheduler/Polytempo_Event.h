@@ -123,6 +123,7 @@ public:
 
     void setTime(int t);
     int getTime() const;
+    bool hasDefinedTime() const;
 
     void setSyncTime(uint32 t);
     uint32 getSyncTime() const;

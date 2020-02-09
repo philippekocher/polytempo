@@ -30,7 +30,6 @@
 #include "../../Data/Polytempo_Composition.h"
 #include "../../Misc/Polytempo_Button.h"
 
-
 class Polytempo_ColourButton : public Button, ChangeListener
 {
 public:
@@ -81,6 +80,8 @@ public:
     void paint (Graphics&);
     void resized();
     
+    void showGraphicalSettings(bool);
+
     void mouseDown(const MouseEvent &);
     
     void textEditorTextChanged(TextEditor&);
@@ -89,12 +90,14 @@ public:
 private:
     int sequenceIndex;
     TextEditor sequenceName;
+    bool graphicalSettingsShown;
     
-    ScopedPointer < Polytempo_Button > settingsButton;
-    ScopedPointer < Polytempo_Button > soloButton;
-    ScopedPointer < Polytempo_Button > muteButton;
+    std::unique_ptr<Polytempo_Button> playbackSettingsButton;
+    std::unique_ptr<Polytempo_Button> graphicalSettingsButton;
+    std::unique_ptr<Polytempo_Button> soloButton;
+    std::unique_ptr<Polytempo_Button> muteButton;
 
-    ScopedPointer<Polytempo_ColourButton> colourSelector;
+    std::unique_ptr<Polytempo_ColourButton> colourSelector;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_SequenceControlComponent)
 };
@@ -109,8 +112,11 @@ public:
     void paint (Graphics&);
     void resized();
 
+    void showGraphicalSettings(bool);
+
 private:
-    ScopedPointer <Component> viewedComponent;
+    bool graphicalSettingsShown;
+    std::unique_ptr<Component> viewedComponent;
     OwnedArray <Polytempo_SequenceControlComponent> sequenceControls;
 };
 

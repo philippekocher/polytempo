@@ -28,7 +28,6 @@
 #include "Polytempo_ComposerApplication.h"
 #include "../../Preferences/Polytempo_StoredPreferences.h"
 
-//static ScopedPointer<ApplicationCommandManager> applicationCommandManager;
 
 Polytempo_ComposerWindow::Polytempo_ComposerWindow()
 : DocumentWindow (String(),
@@ -39,7 +38,10 @@ Polytempo_ComposerWindow::Polytempo_ComposerWindow()
     setResizable(true,true);
     setResizeLimits(500, 400, 5000, 5000);
 
-    setContentOwned(mainView = new Polytempo_ComposerMainView(), true);
+    mainView.reset(new Polytempo_ComposerMainView());
+    graphicExportView.reset(new Polytempo_GraphicExportView());
+    
+    setContentNonOwned(mainView.get(), false);
     
     setBounds(50, 50, 800, 500);
     setVisible(true);    
@@ -53,9 +55,9 @@ Polytempo_ComposerWindow::Polytempo_ComposerWindow()
     restoreWindowContentStateFromString(Polytempo_StoredPreferences::getInstance()->getProps().getValue("mainWindowContent"));
 
     // create and manage a MenuBarComponent
-	menuBarModel = new Polytempo_ComposerMenuBarModel();
+	menuBarModel.reset(new Polytempo_ComposerMenuBarModel(this));
 #if !JUCE_MAC
-    setMenuBar(menuBarModel);
+    setMenuBar(menuBarModel.get());
 #endif
     
     // use keypresses that arrive in this window to send out commands
@@ -67,6 +69,7 @@ Polytempo_ComposerWindow::~Polytempo_ComposerWindow()
 {
 	setMenuBar(nullptr);
     mainView = nullptr;
+    graphicExportView = nullptr;
 }
 
 void Polytempo_ComposerWindow::closeButtonPressed()
@@ -76,6 +79,27 @@ void Polytempo_ComposerWindow::closeButtonPressed()
     // whatever you need.
     JUCEApplication::getInstance()->systemRequestedQuit();
 }
+
+void Polytempo_ComposerWindow::setContentID(contentID newContentID)
+{
+    if (newContentID == mainViewID)
+    {
+        setContentNonOwned(mainView.get(), false);
+    }
+    else if (newContentID == graphicExportViewID)
+    {
+        setContentNonOwned(graphicExportView.get(), false);
+    }
+    getContentComponent()->resized();
+}
+
+int Polytempo_ComposerWindow::getContentID()
+{
+    if(getContentComponent() == mainView.get()) return mainViewID;
+    if(getContentComponent() == graphicExportView.get()) return graphicExportViewID;
+    else return -1;
+}
+
 
 String Polytempo_ComposerWindow::getWindowContentStateAsString()
 {

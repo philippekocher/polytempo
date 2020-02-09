@@ -45,10 +45,10 @@ public:
     void setComponentTypes(int left, int right);
 
 private:
-    ScopedPointer<Polytempo_Button> showTimeMapButton;
-    ScopedPointer<Polytempo_Button> showTempoMapButton;
-    ScopedPointer<Polytempo_Button> showBeatPatternListButton;
-    ScopedPointer<Polytempo_Button> showPointEditorButton;
+    std::unique_ptr<Polytempo_Button> showTimeMapButton;
+    std::unique_ptr<Polytempo_Button> showTempoMapButton;
+    std::unique_ptr<Polytempo_Button> showBeatPatternListButton;
+    std::unique_ptr<Polytempo_Button> showPointEditorButton;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_ComposerToolbarComponent)
 };

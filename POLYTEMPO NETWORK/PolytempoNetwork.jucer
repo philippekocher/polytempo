@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="at55VB" name="PolytempoNetwork" projectType="guiapp" version="0.4.0"
+<JUCERPROJECT id="at55VB" name="PolytempoNetwork" projectType="guiapp" version="0.4.1"
               bundleIdentifier="net.icst.PolytempoNetwork" jucerVersion="5.4.5"
               companyName="ICST Institute for Computermusic and Sound Technology, Zurich"
               includeBinaryInAppConfig="1" companyWebsite="www.icst.net" defines="POLYTEMPO_NETWORK=1"
@@ -257,8 +257,8 @@
                customPList="&lt;plist&gt;&lt;dict&gt;&#10;    &lt;key&gt;NSAppTransportSecurity&lt;/key&gt;  &#10;    &lt;dict&gt;  &#10;        &lt;key&gt;NSAllowsArbitraryLoads&lt;/key&gt;&#10;        &lt;true/&gt;  &#10;    &lt;/dict&gt;&#10;&lt;/dict&gt;&lt;/plist&gt;"
                bigIcon="KOwPbh">
       <CONFIGURATIONS>
-        <CONFIGURATION name="Debug" osxCompatibility="10.9 SDK" isDebug="1" optimisation="1"
-                       targetName="PolytempoNetwork" enablePluginBinaryCopyStep="1"/>
+        <CONFIGURATION name="Debug" osxCompatibility="10.9 SDK" isDebug="1" targetName="PolytempoNetwork"
+                       enablePluginBinaryCopyStep="1"/>
         <CONFIGURATION name="Release" osxCompatibility="10.9 SDK" isDebug="0" optimisation="2"
                        targetName="PolytempoNetwork" defines="" customXcodeFlags="COPY_PHASE_STRIP = NO,  GCC_GENERATE_DEBUGGING_SYMBOLS = YES "
                        enablePluginBinaryCopyStep="1"/>

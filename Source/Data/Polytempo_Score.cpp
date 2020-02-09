@@ -532,7 +532,7 @@ void Polytempo_Score::parseVar(var jsonVar)
 void Polytempo_Score::writeToFile(File& file)
 {
     FileOutputStream stream(file);
-    stream.writeString(getJsonString());
+    stream.writeText(getJsonString(), false, false, nullptr);
 
     dirty = false;
 }

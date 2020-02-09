@@ -33,35 +33,39 @@ void Polytempo_ComposerEngine::run()
     {
         scoreTime += int(scoreTimeIncrement() * tempoFactor);
         
-        while(nextScoreEvent && nextScoreEvent->getTime() <= scoreTime + lookAhead)
+        while(nextScoreEvent &&
+              nextScoreEvent->getTime() <= scoreTime + lookAhead)
         {
-            // calculate syncTime
-            
-            syncTime = Time::getMillisecondCounter();
-            syncTime += int((nextScoreEvent->getTime() - scoreTime) / tempoFactor);
-            
-            if(nextScoreEvent->hasProperty(eventPropertyString_Defer))
-                syncTime += int(float(nextScoreEvent->getProperty(eventPropertyString_Defer)) * 1000.0f);
-            
-            nextScoreEvent->setSyncTime(syncTime);
-            
-            if(nextScoreEvent->getType() == eventType_Beat)
+            if(nextScoreEvent->hasDefinedTime())
             {
-                // add playback properties to next event
-                int sequenceIndex = nextScoreEvent->getProperty("~sequence");
-                Polytempo_Sequence* sequence = Polytempo_Composition::getInstance()->getSequence(sequenceIndex);
- 
-                nextScoreEvent = new Polytempo_Event(*nextScoreEvent); // we need a copy to add the playback properties
-                nextScoreEvent->setOwned(false); // this event can be deleted by the scheduler after its use
-                sequence->addPlaybackPropertiesToEvent(nextScoreEvent);
+                // calculate syncTime
+            
+                syncTime = Time::getMillisecondCounter();
+                syncTime += int((nextScoreEvent->getTime() - scoreTime) / tempoFactor);
+                
+                if(nextScoreEvent->hasProperty(eventPropertyString_Defer))
+                    syncTime += int(float(nextScoreEvent->getProperty(eventPropertyString_Defer)) * 1000.0f);
+                
+                nextScoreEvent->setSyncTime(syncTime);
+                
+                if(nextScoreEvent->getType() == eventType_Beat)
+                {
+                    // add playback properties to next event
+                    int sequenceIndex = nextScoreEvent->getProperty("~sequence");
+                    Polytempo_Sequence* sequence = Polytempo_Composition::getInstance()->getSequence(sequenceIndex);
+     
+                    nextScoreEvent = new Polytempo_Event(*nextScoreEvent); // we need a copy to add the playback properties
+                    nextScoreEvent->setOwned(false); // this event can be deleted by the scheduler after its use
+                    sequence->addPlaybackPropertiesToEvent(nextScoreEvent);
 
-                // next osc event
-                nextOscEvent = sequence->getOscEvent(nextScoreEvent);
-                Polytempo_EventScheduler::getInstance()->scheduleScoreEvent(nextOscEvent);
+                    // next osc event
+                    nextOscEvent = sequence->getOscEvent(nextScoreEvent);
+                    Polytempo_EventScheduler::getInstance()->scheduleScoreEvent(nextOscEvent);
+                }
+            
+                Polytempo_EventScheduler::getInstance()->scheduleScoreEvent(nextScoreEvent);
             }
             
-            Polytempo_EventScheduler::getInstance()->scheduleScoreEvent(nextScoreEvent);
-
             // get next event
             nextScoreEvent = score->getNextEvent();
         }

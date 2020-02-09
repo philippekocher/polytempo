@@ -25,6 +25,7 @@
 #ifndef __Polytempo_ComposerMenuBarModel__
 #define __Polytempo_ComposerMenuBarModel__
 
+#include "Polytempo_ComposerWindow.h"
 #include "../JuceLibraryCode/JuceHeader.h"
 
 class Polytempo_ComposerMenuBarModel : public MenuBarModel,
@@ -32,7 +33,7 @@ class Polytempo_ComposerMenuBarModel : public MenuBarModel,
 
 {
 public:
-    Polytempo_ComposerMenuBarModel();
+    Polytempo_ComposerMenuBarModel(Polytempo_ComposerWindow*);
     ~Polytempo_ComposerMenuBarModel();
         
     StringArray getMenuBarNames();
@@ -46,8 +47,9 @@ public:
     
 
 private:
+    Polytempo_ComposerWindow *window;
 #if JUCE_MAC
-    ScopedPointer<PopupMenu> extraAppleMenuItems;
+    std::unique_ptr<PopupMenu> extraAppleMenuItems;
 #endif
 
 };

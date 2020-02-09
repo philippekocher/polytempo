@@ -28,20 +28,21 @@
 
 Polytempo_TimeMapComponent::Polytempo_TimeMapComponent()
 {
-    addAndMakeVisible(coordinateSystem = new Polytempo_CoordinateSystem());
+    coordinateSystem.reset(new Polytempo_CoordinateSystem());
+    addAndMakeVisible(coordinateSystem.get());
 
     coordinateSystem->setSynchronizedViewport(&timeRuler,0);
     coordinateSystem->setSynchronizedViewport(&positionRuler,1);
     
-    timeMapCoordinateSystem = new Polytempo_TimeMapCoordinateSystem(coordinateSystem);
+    timeMapCoordinateSystem.reset(new Polytempo_TimeMapCoordinateSystem(coordinateSystem.get()));
     timeMapCoordinateSystem->setBounds(Rectangle<int> (3800, 3800));
-    coordinateSystem->setViewedComponent(timeMapCoordinateSystem, false);
+    coordinateSystem->setViewedComponent(timeMapCoordinateSystem.get(), false);
     
     addAndMakeVisible(timeRuler);
     addAndMakeVisible(positionRuler);
   
-    timeRuler.setSynchronizedViewport(coordinateSystem,0);
-    positionRuler.setSynchronizedViewport(coordinateSystem,1);
+    timeRuler.setSynchronizedViewport(coordinateSystem.get(), 0);
+    positionRuler.setSynchronizedViewport(coordinateSystem.get(), 1);
     
     coordinateSystem->setViewPositionProportionately(0.0, 1.0);
 }
