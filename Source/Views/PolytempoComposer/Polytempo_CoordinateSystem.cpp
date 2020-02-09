@@ -74,11 +74,11 @@ void Polytempo_CoordinateSystem::showPopupMenu()
 
 Polytempo_CoordinateSystemComponent::Polytempo_CoordinateSystemComponent()
 {
-    playhead = new DrawableRectangle();
+    playhead.reset(new DrawableRectangle());
     playhead->setFill(Colours::black);
-    addAndMakeVisible(playhead);
+    addAndMakeVisible(playhead.get());
 
-    horizontalGrid = new Array < float >();
+    horizontalGrid.reset(new Array<float>());
 }
 
 Polytempo_CoordinateSystemComponent::~Polytempo_CoordinateSystemComponent()

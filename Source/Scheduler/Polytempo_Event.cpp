@@ -306,6 +306,11 @@ int Polytempo_Event::getTime() const
     return time;
 }
 
+bool Polytempo_Event::hasDefinedTime() const
+{
+    return getProperty(eventPropertyString_Time).toString() != "nan";
+}
+
 //int Polytempo_Event::getMilisecondTime()
 //{
 //    return (int)(time * 1000.0f + 0.5f);

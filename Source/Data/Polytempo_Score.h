@@ -79,9 +79,9 @@ private:
     //static void parseXML(File& XMLFile, Polytempo_Score** scoreFile);
     void parseVar(var);
     
-	std::unique_ptr < StringArray > sectionMap;
-    OwnedArray < Polytempo_Score_Section > sections;
-	std::unique_ptr < Polytempo_Score_Section > initSection;
+	std::unique_ptr<StringArray> sectionMap;
+    OwnedArray <Polytempo_Score_Section> sections;
+	std::unique_ptr<Polytempo_Score_Section> initSection;
     
     int    currentSectionIndex;
     uint32 nextEventIndex;

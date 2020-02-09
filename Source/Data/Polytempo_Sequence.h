@@ -131,6 +131,15 @@ private:
     
     friend class Polytempo_SequenceControlComponent;
     bool mute = false;
+    
+    friend class Polytempo_GraphicExportView;
+    friend class Polytempo_SequenceGraphicalSettings;
+    bool showName = true;
+    int staveOffset = 100;
+    int numberOfStaves = 1; // 2 for piano staff etc.
+    int secondaryStaveOffset = 60;
+    int lineOffset = 8;
+    int numberOfLines = 5;
 };
 
 

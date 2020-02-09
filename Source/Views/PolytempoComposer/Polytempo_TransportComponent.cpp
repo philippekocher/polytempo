@@ -31,15 +31,18 @@
 
 Polytempo_TransportComponent::Polytempo_TransportComponent()
 {
-    addAndMakeVisible(startButton = new Polytempo_Button(">", Polytempo_Button::buttonType_play));
+    startButton.reset(new Polytempo_Button(">", Polytempo_Button::buttonType_play));
+    addAndMakeVisible(startButton.get());
     startButton->setConnectedEdges(Button::ConnectedOnRight);
     startButton->addListener(this);
     
-    addAndMakeVisible(returnToLocatorButton = new Polytempo_Button("|<"));
+    returnToLocatorButton.reset(new Polytempo_Button("|<"));
+    addAndMakeVisible(returnToLocatorButton.get());
     returnToLocatorButton->setConnectedEdges(Button::ConnectedOnRight + Button::ConnectedOnLeft);
     returnToLocatorButton->setCommandToTrigger(&Polytempo_ComposerApplication::getCommandManager(), Polytempo_CommandIDs::returnToLoc, true);
     
-    addAndMakeVisible(returnToZeroButton = new Polytempo_Button("|<<"));
+    returnToZeroButton.reset(new Polytempo_Button("|<<"));
+    addAndMakeVisible(returnToZeroButton.get());
     returnToZeroButton->setConnectedEdges(Button::ConnectedOnLeft);
     returnToZeroButton->setCommandToTrigger(&Polytempo_ComposerApplication::getCommandManager(), Polytempo_CommandIDs::returnToBeginning , true);
     
@@ -86,7 +89,7 @@ void Polytempo_TransportComponent::resized()
 
 void Polytempo_TransportComponent::buttonClicked(Button* button)
 {
-    if(button == startButton) Polytempo_ScoreScheduler::getInstance()->startStop();
+    if(button == startButton.get()) Polytempo_ScoreScheduler::getInstance()->startStop();
 }
 
 void Polytempo_TransportComponent::editorShown (Label* label, TextEditor&)

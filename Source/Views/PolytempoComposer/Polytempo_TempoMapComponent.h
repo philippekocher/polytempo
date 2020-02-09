@@ -40,8 +40,8 @@ public:
     void resized();
 
 private:
-    ScopedPointer < Polytempo_TempoMapCoordinateSystem > tempoMapCoordinateSystem;
-    ScopedPointer < Polytempo_CoordinateSystem >  coordinateSystem;
+    std::unique_ptr<Polytempo_TempoMapCoordinateSystem> tempoMapCoordinateSystem;
+    std::unique_ptr<Polytempo_CoordinateSystem>  coordinateSystem;
     Polytempo_TimeRuler         timeRuler;
     Polytempo_TempoRuler        tempoRuler;
     

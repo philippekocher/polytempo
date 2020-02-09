@@ -49,8 +49,8 @@ public:
     static Polytempo_ComposerMainView& getMainView();
     
 private:
-    ScopedPointer<Polytempo_ComposerWindow> composerWindow;
-    ScopedPointer<ApplicationCommandManager> commandManager;
+    std::unique_ptr<Polytempo_ComposerWindow> composerWindow;
+    std::unique_ptr<ApplicationCommandManager> commandManager;
 };
 
 

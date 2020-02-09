@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="OXoF3n" name="PolytempoComposer" projectType="guiapp" version="0.3.0"
+<JUCERPROJECT id="OXoF3n" name="PolytempoComposer" projectType="guiapp" version="0.4.0"
               bundleIdentifier="net.icst.PolytempoComposer" includeBinaryInAppConfig="1"
-              jucerVersion="5.4.3" companyName="Zurich University of the Arts"
+              jucerVersion="5.4.5" companyName="Zurich University of the Arts"
               companyWebsite="www.icst.net" defines="POLYTEMPO_COMPOSER=1"
               displaySplashScreen="1" reportAppUsage="1" splashScreenColour="Dark"
-              cppLanguageStandard="11" companyCopyright="Zurich University of the Arts">
+              companyCopyright="Zurich University of the Arts">
   <MAINGROUP id="cYhNWq" name="PolytempoComposer">
     <GROUP id="{6A675542-C9E9-872F-C795-8AC67F3B5B9D}" name="Resources">
       <FILE id="AuXr1H" name="icon.png" compile="0" resource="1" file="../Resources/icon.png"/>
@@ -83,6 +83,10 @@
                 file="../Source/Views/PolytempoComposer/Polytempo_Ruler.cpp"/>
           <FILE id="IoPcfG" name="Polytempo_Ruler.h" compile="0" resource="0"
                 file="../Source/Views/PolytempoComposer/Polytempo_Ruler.h"/>
+          <FILE id="AzykKf" name="Polytempo_SequenceGraphicalSettings.cpp" compile="1"
+                resource="0" file="../Source/Views/PolytempoComposer/Polytempo_SequenceGraphicalSettings.cpp"/>
+          <FILE id="Zc54Uc" name="Polytempo_SequenceGraphicalSettings.h" compile="0"
+                resource="0" file="../Source/Views/PolytempoComposer/Polytempo_SequenceGraphicalSettings.h"/>
           <FILE id="zZwq62" name="Polytempo_SequencePlaybackSettings.cpp" compile="1"
                 resource="0" file="../Source/Views/PolytempoComposer/Polytempo_SequencePlaybackSettings.cpp"/>
           <FILE id="BU79PK" name="Polytempo_SequencePlaybackSettings.h" compile="0"
@@ -103,6 +107,18 @@
                 resource="0" file="../Source/Views/PolytempoComposer/Polytempo_TransportComponent.cpp"/>
           <FILE id="IZn7s6" name="Polytempo_TransportComponent.h" compile="0"
                 resource="0" file="../Source/Views/PolytempoComposer/Polytempo_TransportComponent.h"/>
+          <FILE id="BQUbRK" name="Polytempo_GraphicExportView.cpp" compile="1"
+                resource="0" file="../Source/Views/PolytempoComposer/Polytempo_GraphicExportView.cpp"/>
+          <FILE id="lQnDf6" name="Polytempo_GraphicExportView.h" compile="0"
+                resource="0" file="../Source/Views/PolytempoComposer/Polytempo_GraphicExportView.h"/>
+          <FILE id="IiIOYP" name="Polytempo_GraphicExportPage.cpp" compile="1"
+                resource="0" file="../Source/Views/PolytempoComposer/Polytempo_GraphicExportPage.cpp"/>
+          <FILE id="I1gKsK" name="Polytempo_GraphicExportPage.h" compile="0"
+                resource="0" file="../Source/Views/PolytempoComposer/Polytempo_GraphicExportPage.h"/>
+          <FILE id="C0DIij" name="Polytempo_GraphicExportSettingsComponent.cpp"
+                compile="1" resource="0" file="../Source/Views/PolytempoComposer/Polytempo_GraphicExportSettingsComponent.cpp"/>
+          <FILE id="rbL8QW" name="Polytempo_GraphicExportSettingsComponent.h"
+                compile="0" resource="0" file="../Source/Views/PolytempoComposer/Polytempo_GraphicExportSettingsComponent.h"/>
         </GROUP>
       </GROUP>
       <GROUP id="{073AE8D7-C8B3-A3FD-E751-5B5FA385BCB9}" name="Data">
@@ -250,20 +266,20 @@
     </VS2017>
   </EXPORTFORMATS>
   <MODULES>
-    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="1"/>
-    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="1"/>
-    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="1"/>
-    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="1"/>
-    <MODULE id="juce_core" showAllCode="1" useLocalCopy="1"/>
-    <MODULE id="juce_cryptography" showAllCode="1" useLocalCopy="1"/>
-    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="1"/>
-    <MODULE id="juce_events" showAllCode="1" useLocalCopy="1"/>
-    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="1"/>
-    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="1"/>
-    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="1"/>
-    <MODULE id="juce_opengl" showAllCode="1" useLocalCopy="1"/>
-    <MODULE id="juce_osc" showAllCode="1" useLocalCopy="1"/>
-    <MODULE id="juce_video" showAllCode="1" useLocalCopy="1"/>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_cryptography" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_opengl" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_osc" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_video" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
   </MODULES>
   <JUCEOPTIONS/>
   <LIVE_SETTINGS>

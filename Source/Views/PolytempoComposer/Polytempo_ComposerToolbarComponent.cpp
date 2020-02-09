@@ -31,19 +31,23 @@
 
 Polytempo_ComposerToolbarComponent::Polytempo_ComposerToolbarComponent()
 {
-    addAndMakeVisible(showTimeMapButton = new Polytempo_Button("Time Map", Polytempo_Button::buttonType_toggle));
+    showTimeMapButton.reset(new Polytempo_Button("Time Map", Polytempo_Button::buttonType_toggle));
+    addAndMakeVisible(showTimeMapButton.get());
     showTimeMapButton->setConnectedEdges(Button::ConnectedOnRight);
     showTimeMapButton->addListener(this);
     
-    addAndMakeVisible(showTempoMapButton = new Polytempo_Button("Tempo Map", Polytempo_Button::buttonType_toggle));
+    showTempoMapButton.reset(new Polytempo_Button("Tempo Map", Polytempo_Button::buttonType_toggle));
+    addAndMakeVisible(showTempoMapButton.get());
     showTempoMapButton->setConnectedEdges(Button::ConnectedOnLeft);
     showTempoMapButton->addListener(this);
     
-    addAndMakeVisible(showBeatPatternListButton = new Polytempo_Button("Beat Patterns", Polytempo_Button::buttonType_toggle));
+    showBeatPatternListButton.reset(new Polytempo_Button("Beat Patterns", Polytempo_Button::buttonType_toggle));
+    addAndMakeVisible(showBeatPatternListButton.get());
     showBeatPatternListButton->setConnectedEdges(Button::ConnectedOnRight);
     showBeatPatternListButton->addListener(this);
     
-    addAndMakeVisible(showPointEditorButton = new Polytempo_Button("Control Points", Polytempo_Button::buttonType_toggle));
+    showPointEditorButton.reset(new Polytempo_Button("Control Points", Polytempo_Button::buttonType_toggle));
+    addAndMakeVisible(showPointEditorButton.get());
     showPointEditorButton->setConnectedEdges(Button::ConnectedOnLeft);
     showPointEditorButton->addListener(this);
 }
@@ -77,22 +81,22 @@ void Polytempo_ComposerToolbarComponent::resized()
 
 void Polytempo_ComposerToolbarComponent::buttonClicked(Button* button)
 {
-    if(button == showTimeMapButton)
+    if(button == showTimeMapButton.get())
     {
         Polytempo_ComposerApplication::getCommandManager().invokeDirectly(Polytempo_CommandIDs::showTimeMap, true);
         showTempoMapButton->setToggleState(false, dontSendNotification);
     }
-    else if(button == showTempoMapButton)
+    else if(button == showTempoMapButton.get())
     {
         Polytempo_ComposerApplication::getCommandManager().invokeDirectly(Polytempo_CommandIDs::showTempoMap, true);
         showTimeMapButton->setToggleState(false, dontSendNotification);
     }
-    if(button == showBeatPatternListButton)
+    if(button == showBeatPatternListButton.get())
     {
         Polytempo_ComposerApplication::getCommandManager().invokeDirectly(Polytempo_CommandIDs::showPatternList, true);
         showPointEditorButton->setToggleState(false, dontSendNotification);
     }
-    else if(button == showPointEditorButton)
+    else if(button == showPointEditorButton.get())
     {
         Polytempo_ComposerApplication::getCommandManager().invokeDirectly(Polytempo_CommandIDs::showPointList, true);
         showBeatPatternListButton->setToggleState(false, dontSendNotification);

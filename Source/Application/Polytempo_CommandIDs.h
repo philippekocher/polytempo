@@ -49,11 +49,11 @@ namespace Polytempo_CommandIDs
         help,
         visitWebsite,
         
-        
+        showMainView,
+
         // network
         zoomIn, zoomOut,
  
-        showMainView,
         showPageEditor,
         showRegionEditor,
         showScoreEditor,
@@ -69,6 +69,7 @@ namespace Polytempo_CommandIDs
         zoomInX, zoomOutX,
         zoomInY, zoomOutY,
         
+        showGraphicExportView,
         showTimeMap,
         showTempoMap,
         showPointList,

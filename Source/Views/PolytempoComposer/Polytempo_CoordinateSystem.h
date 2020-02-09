@@ -48,8 +48,8 @@ protected:
     
     OwnedArray < Polytempo_Sequence > *sequences;
     
-    ScopedPointer < DrawableRectangle > playhead;
-    ScopedPointer < Array < float > > horizontalGrid;
+    std::unique_ptr<DrawableRectangle> playhead;
+    std::unique_ptr<Array<float>> horizontalGrid;
 };
 
 class Polytempo_TimeMapCoordinateSystem : public Polytempo_CoordinateSystemComponent
@@ -88,7 +88,7 @@ public:
     
     void showPopupMenu();
 private:
-    ScopedPointer <Polytempo_CoordinateSystemComponent> coordinateSystemComponent;
+    std::unique_ptr<Polytempo_CoordinateSystemComponent> coordinateSystemComponent;
     Viewport* synchronizedViewport[2] = {nullptr, nullptr};
 };
 
