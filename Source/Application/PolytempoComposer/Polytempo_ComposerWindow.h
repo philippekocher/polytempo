@@ -77,10 +77,7 @@ public:
 private:
     std::unique_ptr<Polytempo_ComposerMenuBarModel> menuBarModel;
     std::unique_ptr<Polytempo_ComposerMainView> mainView;
-<<<<<<< HEAD
-=======
     std::unique_ptr<Polytempo_GraphicExportView> graphicExportView;
->>>>>>> master
     Polytempo_LookAndFeel lookAndFeel;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_ComposerWindow)

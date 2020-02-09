@@ -131,11 +131,6 @@ Polytempo_SequenceControlComponent::Polytempo_SequenceControlComponent(int i) : 
     sequenceName.setColour(TextEditor::focusedOutlineColourId, Colours::white);
     sequenceName.setText(Polytempo_Composition::getInstance()->getSequence(sequenceIndex)->getName());
 
-<<<<<<< HEAD
-    settingsButton.reset(new Polytempo_Button("Playback Settings"));
-    addAndMakeVisible(settingsButton.get());
-    settingsButton->addListener(this);
-=======
     playbackSettingsButton.reset(new Polytempo_Button("Playback Settings"));
     addAndMakeVisible(playbackSettingsButton.get());
     playbackSettingsButton->addListener(this);
@@ -143,7 +138,6 @@ Polytempo_SequenceControlComponent::Polytempo_SequenceControlComponent(int i) : 
     graphicalSettingsButton.reset(new Polytempo_Button("Graphical Settings"));
     addAndMakeVisible(graphicalSettingsButton.get());
     graphicalSettingsButton->addListener(this);
->>>>>>> master
     
     soloButton.reset(new Polytempo_Button("Solo", Polytempo_Button::buttonType_toggleYellow));
     addAndMakeVisible(soloButton.get());
@@ -234,25 +228,18 @@ void Polytempo_SequenceControlComponent::buttonClicked(Button* button)
 {
     bool buttonState = button->getToggleState();
  
-<<<<<<< HEAD
-    if(button == settingsButton.get())
-=======
     if(button == playbackSettingsButton.get())
->>>>>>> master
     {
         button->setToggleState(true, dontSendNotification);
         Polytempo_SequencePlaybackSettings::show(Polytempo_Composition::getInstance()->getSequence(sequenceIndex));
         button->setToggleState(false, dontSendNotification);
     }
-<<<<<<< HEAD
-=======
     else if(button == graphicalSettingsButton.get())
     {
         button->setToggleState(true, dontSendNotification);
         Polytempo_SequenceGraphicalSettings::show(Polytempo_Composition::getInstance()->getSequence(sequenceIndex));
         button->setToggleState(false, dontSendNotification);
     }
->>>>>>> master
     else if(button == muteButton.get())
     {
         Polytempo_Composition::getInstance()->getSequence(sequenceIndex)->mute = buttonState;

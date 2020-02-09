@@ -43,10 +43,7 @@ public:
     void changeListenerCallback (ChangeBroadcaster*);
 
 private:
-<<<<<<< HEAD
     float zoomX, zoomY;
-=======
->>>>>>> master
     std::unique_ptr<Polytempo_TempoMapCoordinateSystem> tempoMapCoordinateSystem;
     std::unique_ptr<Polytempo_CoordinateSystem>  coordinateSystem;
     Polytempo_TimeRuler         timeRuler;

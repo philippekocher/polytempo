@@ -567,12 +567,7 @@ void Polytempo_Composition::exportAsPolytempoScore()
     if(fileChooser.browseForFileToSave(true))
     {
         // build a score to export
-<<<<<<< HEAD
-        std::unique_ptr<Polytempo_Score> tempScore;
-        tempScore.reset(new Polytempo_Score());
-=======
         std::unique_ptr<Polytempo_Score> tempScore(new Polytempo_Score());
->>>>>>> master
         Polytempo_Event *tempEvent;
         
         if(exportAll)

@@ -92,12 +92,8 @@ private:
     TextEditor sequenceName;
     bool graphicalSettingsShown;
     
-<<<<<<< HEAD
-    std::unique_ptr<Polytempo_Button> settingsButton;
-=======
     std::unique_ptr<Polytempo_Button> playbackSettingsButton;
     std::unique_ptr<Polytempo_Button> graphicalSettingsButton;
->>>>>>> master
     std::unique_ptr<Polytempo_Button> soloButton;
     std::unique_ptr<Polytempo_Button> muteButton;
 
@@ -119,10 +115,7 @@ public:
     void showGraphicalSettings(bool);
 
 private:
-<<<<<<< HEAD
-=======
     bool graphicalSettingsShown;
->>>>>>> master
     std::unique_ptr<Component> viewedComponent;
     OwnedArray <Polytempo_SequenceControlComponent> sequenceControls;
 };

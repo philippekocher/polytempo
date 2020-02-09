@@ -39,13 +39,9 @@ Polytempo_ComposerWindow::Polytempo_ComposerWindow()
     setResizeLimits(500, 400, 5000, 5000);
 
     mainView.reset(new Polytempo_ComposerMainView());
-<<<<<<< HEAD
-    setContentOwned(mainView.get(), true);
-=======
     graphicExportView.reset(new Polytempo_GraphicExportView());
     
     setContentNonOwned(mainView.get(), false);
->>>>>>> master
     
     setBounds(50, 50, 800, 500);
     setVisible(true);    
@@ -59,11 +55,8 @@ Polytempo_ComposerWindow::Polytempo_ComposerWindow()
     restoreWindowContentStateFromString(Polytempo_StoredPreferences::getInstance()->getProps().getValue("mainWindowContent"));
 
     // create and manage a MenuBarComponent
-<<<<<<< HEAD
-	menuBarModel.reset(new Polytempo_ComposerMenuBarModel());
-=======
 	menuBarModel.reset(new Polytempo_ComposerMenuBarModel(this));
->>>>>>> master
+
 #if !JUCE_MAC
     setMenuBar(menuBarModel.get());
 #endif

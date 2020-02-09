@@ -41,18 +41,9 @@ Polytempo_ComposerMainView::Polytempo_ComposerMainView()
     
     addAndMakeVisible(leftComponent);
     addAndMakeVisible(rightComponent);
-<<<<<<< HEAD
 
     resizerBar.reset(new StretchableLayoutResizerBar(&stretchableManager, 1, true));
     addAndMakeVisible(resizerBar.get());
-    
-    timeMapComponent.reset(new Polytempo_TimeMapComponent());
-    tempoMapComponent.reset(new Polytempo_TempoMapComponent());
-=======
-    
-    resizerBar.reset(new StretchableLayoutResizerBar(&stretchableManager, 1, true));
-    addAndMakeVisible(resizerBar.get());
->>>>>>> master
     
     timeMapComponent.reset(new Polytempo_TimeMapComponent());
     tempoMapComponent.reset(new Polytempo_TempoMapComponent());

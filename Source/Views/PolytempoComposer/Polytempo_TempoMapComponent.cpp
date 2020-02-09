@@ -42,13 +42,8 @@ Polytempo_TempoMapComponent::Polytempo_TempoMapComponent()
     addAndMakeVisible(timeRuler);
     addAndMakeVisible(tempoRuler);
     
-<<<<<<< HEAD
-    timeRuler.setSynchronizedViewport(coordinateSystem.get(),0);
-    tempoRuler.setSynchronizedViewport(coordinateSystem.get(),1);
-=======
     timeRuler.setSynchronizedViewport(coordinateSystem.get(), 0);
     tempoRuler.setSynchronizedViewport(coordinateSystem.get(), 1);
->>>>>>> master
     
     coordinateSystem->setViewPositionProportionately(0.0, 1.0);
 
@@ -97,4 +92,6 @@ void Polytempo_TempoMapComponent::changeListenerCallback (ChangeBroadcaster*)
     timeRuler.setSizeAndZooms(0, 0, zoomX, zoomY);
 
     coordinateSystem->setViewPosition(TIMEMAP_OFFSET + int(x*zoomX), int(y*zoomY) - TIMEMAP_OFFSET - coordinateSystem->getMaximumVisibleHeight());
+    
+    repaint();
 }

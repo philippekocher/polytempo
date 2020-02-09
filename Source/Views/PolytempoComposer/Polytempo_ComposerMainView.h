@@ -64,13 +64,8 @@ public:
     void setRightComponent(componentType type);
     
 private:
-<<<<<<< HEAD
     std::unique_ptr<Polytempo_ComposerToolbarComponent>  toolbarComponent;
     std::unique_ptr<Polytempo_TransportComponent>        transportComponent;
-=======
-    std::unique_ptr<Polytempo_ComposerToolbarComponent> toolbarComponent;
-    std::unique_ptr<Polytempo_TransportComponent>       transportComponent;
->>>>>>> master
     Polytempo_SequencesViewport        sequencesViewport;
     
     Component                           leftComponent;      // split view
@@ -83,11 +78,7 @@ private:
     Polytempo_PointListComponent        pointListComponent;
     
     StretchableLayoutManager    stretchableManager;
-<<<<<<< HEAD
-    std::unique_ptr<StretchableLayoutResizerBar>resizerBar;
-=======
     std::unique_ptr<StretchableLayoutResizerBar> resizerBar;
->>>>>>> master
     
     float resizerBarPosition;
     componentType leftComponentType = componentType_None;

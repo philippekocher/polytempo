@@ -86,11 +86,7 @@ private:
     Component *mainComponent;
     OwnedArray <Polytempo_Sequence> sequences;
 
-<<<<<<< HEAD
     std::unique_ptr<Polytempo_Score> score;
-=======
-    std::unique_ptr <Polytempo_Score> score;
->>>>>>> master
     
     File compositionFile = File();
     bool dirty = false;
