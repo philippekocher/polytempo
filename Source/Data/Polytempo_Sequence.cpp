@@ -466,7 +466,7 @@ void Polytempo_Sequence::updateEvents()
         Polytempo_ControlPoint *cp2 = controlPoints[cpIndex+1];
         
         event->setProperty(eventPropertyString_Time, Polytempo_TempoInterpolation::getTime(event->getPosition(), cp1, cp2));
-
+        
         event->setProperty("~sequence", sequenceIndex);
 
         if(event->getType() == eventType_Beat)
@@ -634,6 +634,13 @@ DynamicObject* Polytempo_Sequence::getObject()
     object->setProperty("oscReceiver", oscReceiver);
     object->setProperty("oscPort", oscPort);
     
+    object->setProperty("showName", showName);
+    object->setProperty("staveOffset", staveOffset);
+    object->setProperty("numberOfStaves", numberOfStaves);
+    object->setProperty("secondaryStaveOffset", secondaryStaveOffset);
+    object->setProperty("lineOffset", lineOffset);
+    object->setProperty("numberOfLines", numberOfLines);
+    
     return object;
 }
 
@@ -704,4 +711,16 @@ void Polytempo_Sequence::setObject(DynamicObject* object)
     
     mute = object->getProperty("mute");
     
+    if(object->hasProperty("showName"))
+        showName = object->getProperty("showName");
+    if(object->hasProperty("staveOffset"))
+        staveOffset = object->getProperty("staveOffset");
+    if(object->hasProperty("lineOffset"))
+        lineOffset = object->getProperty("lineOffset");
+    if(object->hasProperty("numberOfLines"))
+        numberOfLines = object->getProperty("numberOfLines");
+    if(object->hasProperty("numberOfStaves"))
+        numberOfStaves = object->getProperty("numberOfStaves");
+    if(object->hasProperty("secondaryStaveOffset"))
+        secondaryStaveOffset = object->getProperty("secondaryStaveOffset");
 }

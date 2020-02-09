@@ -55,7 +55,11 @@ void Polytempo_Composition::updateContent()
 {
     findCoincidingControlPoints();
     
-    if(mainWindow) mainWindow->repaint();
+    if(mainWindow)
+    {
+        mainWindow->repaint();
+        mainWindow->getContentComponent()->resized();
+    }
     
     Polytempo_ComposerApplication::getCommandManager().commandStatusChanged(); // update menubar
     Polytempo_AudioClick::getInstance()->setNumVoices(sequenceCounter);
@@ -398,7 +402,8 @@ void Polytempo_Composition::exportAsPlainText()
                 
                 for(Polytempo_Event *event : sequence->getEvents())
                 {
-                    if(event->getType() == eventType_Beat)
+                    if(event->getType() == eventType_Beat &&
+                       event->hasDefinedTime())
                     {
                         if(firstEvent) firstEvent = false;
                         else           file.appendText(" ");
@@ -416,7 +421,8 @@ void Polytempo_Composition::exportAsPlainText()
             
             for(Polytempo_Event *event : sequence->getEvents())
             {
-                if(event->getType() == eventType_Beat)
+                if(event->getType() == eventType_Beat &&
+                   event->hasDefinedTime())
                 {
                     if(firstEvent) firstEvent = false;
                     else           file.appendText(" ");
@@ -452,7 +458,8 @@ void Polytempo_Composition::exportAsLispList()
                 file.appendText("(");
                 for(Polytempo_Event *event : sequence->getEvents())
                 {
-                    if(event->getType() == eventType_Beat)
+                    if(event->getType() == eventType_Beat &&
+                       event->hasDefinedTime())
                     {
                         if(firstEvent) firstEvent = false;
                         else           file.appendText(" ");
@@ -472,7 +479,8 @@ void Polytempo_Composition::exportAsLispList()
             file.appendText("(");
             for(Polytempo_Event *event : sequence->getEvents())
             {
-                if(event->getType() == eventType_Beat)
+                if(event->getType() == eventType_Beat &&
+                   event->hasDefinedTime())
                 {
                     if(firstEvent) firstEvent = false;
                     else           file.appendText(" ");
@@ -514,7 +522,8 @@ void Polytempo_Composition::exportAsCArray()
                 file.appendText("[ ");
                 for(Polytempo_Event *event : sequence->getEvents())
                 {
-                    if(event->getType() == eventType_Beat)
+                    if(event->getType() == eventType_Beat &&
+                       event->hasDefinedTime())
                     {
                         if(firstEvent) firstEvent = false;
                         else           file.appendText(", ");
@@ -534,7 +543,8 @@ void Polytempo_Composition::exportAsCArray()
             file.appendText("[ ");
             for(Polytempo_Event *event : sequence->getEvents())
             {
-                if(event->getType() == eventType_Beat)
+                if(event->getType() == eventType_Beat &&
+                   event->hasDefinedTime())
                 {
                     if(firstEvent) firstEvent = false;
                     else           file.appendText(", ");
@@ -557,8 +567,12 @@ void Polytempo_Composition::exportAsPolytempoScore()
     if(fileChooser.browseForFileToSave(true))
     {
         // build a score to export
+<<<<<<< HEAD
         std::unique_ptr<Polytempo_Score> tempScore;
         tempScore.reset(new Polytempo_Score());
+=======
+        std::unique_ptr<Polytempo_Score> tempScore(new Polytempo_Score());
+>>>>>>> master
         Polytempo_Event *tempEvent;
         
         if(exportAll)
@@ -573,6 +587,8 @@ void Polytempo_Composition::exportAsPolytempoScore()
                     {
                         tempEvent = new Polytempo_Event(*event);
 
+                        if(!tempEvent->hasDefinedTime()) continue;
+                        
                         if(tempEvent->getType() == eventType_Beat)
                             tempEvent->removeProperty(eventPropertyString_Value);
 
@@ -593,7 +609,9 @@ void Polytempo_Composition::exportAsPolytempoScore()
                 if(event->hasProperty("~sequence") && (int)event->getProperty("~sequence") == selectedSequenceIndex)
                 {
                     tempEvent = new Polytempo_Event(*event);
-                    
+
+                    if(!tempEvent->hasDefinedTime()) continue;
+
                     if(tempEvent->getType() == eventType_Beat)
                         tempEvent->removeProperty(eventPropertyString_Value);
                     

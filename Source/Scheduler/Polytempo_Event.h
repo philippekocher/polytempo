@@ -154,6 +154,7 @@ public:
     
     void setTime(int t);
     int  getTime() const;
+    bool hasDefinedTime() const;
     
     void   setSyncTime(uint32 t);
     uint32 getSyncTime() const;
@@ -179,7 +180,7 @@ private:
     
     bool                owned;     // indicate if this event is owned by a another data structure (e.g. a score) 
 
-	std::unique_ptr < NamedValueSet > properties;
+	std::unique_ptr<NamedValueSet> properties;
 };
 
 

@@ -25,6 +25,7 @@
 //#include "../JuceLibraryCode/JuceHeader.h"
 #include "Polytempo_SequencesViewport.h"
 #include "Polytempo_SequencePlaybackSettings.h"
+#include "Polytempo_SequenceGraphicalSettings.h"
 #include "../../Data/Polytempo_Composition.h"
 #include "../../Application/PolytempoComposer/Polytempo_ComposerApplication.h"
 #include "../../Application/Polytempo_CommandIDs.h"
@@ -48,6 +49,8 @@ Polytempo_SequencesViewport::~Polytempo_SequencesViewport()
 
 void Polytempo_SequencesViewport::paint(Graphics& g)
 {
+    g.fillAll(Colour(245,245,245));
+
     g.setColour(Colour(170,170,170));
     g.drawHorizontalLine(0, 0.0f, float(getWidth()));
     
@@ -71,6 +74,7 @@ void Polytempo_SequencesViewport::resized()
         while((sequence = composition->getSequence(++i)) != nullptr)
         {
             sequenceControls.add(sequenceControl = new Polytempo_SequenceControlComponent(i));
+            sequenceControl->showGraphicalSettings(graphicalSettingsShown);
             viewedComponent->addAndMakeVisible(sequenceControl);
         }
     }
@@ -82,6 +86,16 @@ void Polytempo_SequencesViewport::resized()
     for(int i=0;i<sequenceControls.size();i++)
         sequenceControls[i]->setBounds(i*100, 0, 100, height);
 }
+
+void Polytempo_SequencesViewport::showGraphicalSettings(bool show)
+{
+   graphicalSettingsShown = show;
+   for(Polytempo_SequenceControlComponent *sequenceControl : sequenceControls)
+    {
+        sequenceControl->showGraphicalSettings(show);
+    }
+}
+
 
 void Polytempo_SequencesComponent::mouseDown(const MouseEvent &event)
 {
@@ -117,9 +131,19 @@ Polytempo_SequenceControlComponent::Polytempo_SequenceControlComponent(int i) : 
     sequenceName.setColour(TextEditor::focusedOutlineColourId, Colours::white);
     sequenceName.setText(Polytempo_Composition::getInstance()->getSequence(sequenceIndex)->getName());
 
+<<<<<<< HEAD
     settingsButton.reset(new Polytempo_Button("Playback Settings"));
     addAndMakeVisible(settingsButton.get());
     settingsButton->addListener(this);
+=======
+    playbackSettingsButton.reset(new Polytempo_Button("Playback Settings"));
+    addAndMakeVisible(playbackSettingsButton.get());
+    playbackSettingsButton->addListener(this);
+    
+    graphicalSettingsButton.reset(new Polytempo_Button("Graphical Settings"));
+    addAndMakeVisible(graphicalSettingsButton.get());
+    graphicalSettingsButton->addListener(this);
+>>>>>>> master
     
     soloButton.reset(new Polytempo_Button("Solo", Polytempo_Button::buttonType_toggleYellow));
     addAndMakeVisible(soloButton.get());
@@ -171,10 +195,19 @@ void Polytempo_SequenceControlComponent::resized()
     
     sequenceName.setBounds      (10, 25, 80, 16);
     
-    settingsButton->setBounds   (10, getHeight() -  52, 80, 16);
-
+    if(graphicalSettingsShown)
+        graphicalSettingsButton->setBounds(10, getHeight() -  52, 80, 16);
+    else
+       playbackSettingsButton->setBounds(10, getHeight() -  52, 80, 16);
+    
     soloButton->setBounds       (10, getHeight() -  32, 40, 16);
     muteButton->setBounds       (51, getHeight() -  32, 39, 16);
+}
+
+void Polytempo_SequenceControlComponent::showGraphicalSettings(bool show)
+{
+    graphicalSettingsShown = show;
+    resized();
 }
 
 void Polytempo_SequenceControlComponent::mouseDown(const MouseEvent &event)
@@ -201,12 +234,25 @@ void Polytempo_SequenceControlComponent::buttonClicked(Button* button)
 {
     bool buttonState = button->getToggleState();
  
+<<<<<<< HEAD
     if(button == settingsButton.get())
+=======
+    if(button == playbackSettingsButton.get())
+>>>>>>> master
     {
         button->setToggleState(true, dontSendNotification);
         Polytempo_SequencePlaybackSettings::show(Polytempo_Composition::getInstance()->getSequence(sequenceIndex));
         button->setToggleState(false, dontSendNotification);
     }
+<<<<<<< HEAD
+=======
+    else if(button == graphicalSettingsButton.get())
+    {
+        button->setToggleState(true, dontSendNotification);
+        Polytempo_SequenceGraphicalSettings::show(Polytempo_Composition::getInstance()->getSequence(sequenceIndex));
+        button->setToggleState(false, dontSendNotification);
+    }
+>>>>>>> master
     else if(button == muteButton.get())
     {
         Polytempo_Composition::getInstance()->getSequence(sequenceIndex)->mute = buttonState;

@@ -42,8 +42,13 @@ Polytempo_TempoMapComponent::Polytempo_TempoMapComponent()
     addAndMakeVisible(timeRuler);
     addAndMakeVisible(tempoRuler);
     
+<<<<<<< HEAD
     timeRuler.setSynchronizedViewport(coordinateSystem.get(),0);
     tempoRuler.setSynchronizedViewport(coordinateSystem.get(),1);
+=======
+    timeRuler.setSynchronizedViewport(coordinateSystem.get(), 0);
+    tempoRuler.setSynchronizedViewport(coordinateSystem.get(), 1);
+>>>>>>> master
     
     coordinateSystem->setViewPositionProportionately(0.0, 1.0);
 

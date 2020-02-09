@@ -33,9 +33,10 @@
 #include "../../Views/PolytempoComposer/Polytempo_DialogWindows.h"
 
 
-Polytempo_ComposerMenuBarModel::Polytempo_ComposerMenuBarModel()
+Polytempo_ComposerMenuBarModel::Polytempo_ComposerMenuBarModel(Polytempo_ComposerWindow* w)
 {
-	ApplicationCommandManager* commandManager = &Polytempo_ComposerApplication::getCommandManager();
+    window = w;
+    ApplicationCommandManager* commandManager = &Polytempo_ComposerApplication::getCommandManager();
 
     commandManager->registerAllCommandsForTarget(this);
     commandManager->setFirstCommandTarget(this);
@@ -75,7 +76,7 @@ StringArray Polytempo_ComposerMenuBarModel::getMenuBarNames()
 #if JUCE_MAC
     const char* const names[] = { "File", "Edit", "View", "Scheduler", /*"Window",*/ "Help", 0 };
 #else
-    const char* const names[] = { "File", "Edit", "View", "Scheduler", /*"Window",*/ "Help", 0 };
+    const char* const names[] = { "PolytempoComposer", "File", "Edit", "View", "Scheduler", /*"Window",*/ "Help", 0 };
 #endif
     
     return StringArray (names);
@@ -86,8 +87,8 @@ PopupMenu Polytempo_ComposerMenuBarModel::getMenuForIndex (int /*menuIndex*/, co
     ApplicationCommandManager* commandManager = &Polytempo_ComposerApplication::getCommandManager();
     PopupMenu menu;
     
-#ifdef WIN32
-    if (menuName == "PolytempoNetwork")
+#if !JUCE_MAC
+    if (menuName == "PolytempoComposer")
     {
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::aboutWindow);
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::preferencesWindow);
@@ -131,6 +132,9 @@ PopupMenu Polytempo_ComposerMenuBarModel::getMenuForIndex (int /*menuIndex*/, co
     }
     else if (menuName == "View")
     {
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::showMainView);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::showGraphicExportView);
+        menu.addSeparator();
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::showTimeMap);
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::showTempoMap);
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::showPatternList);
@@ -204,6 +208,9 @@ void Polytempo_ComposerMenuBarModel::getAllCommands (Array <CommandID>& commands
         Polytempo_CommandIDs::save,
         Polytempo_CommandIDs::exportSelected,
         Polytempo_CommandIDs::exportAll,
+
+        Polytempo_CommandIDs::showMainView,
+        Polytempo_CommandIDs::showGraphicExportView,
 
         Polytempo_CommandIDs::showTimeMap,
         Polytempo_CommandIDs::showTempoMap,
@@ -318,6 +325,7 @@ void Polytempo_ComposerMenuBarModel::getCommandInfo(CommandID commandID, Applica
         case Polytempo_CommandIDs::addBeatPattern:
             result.setInfo("Add Beat Pattern", String(), infoCategory, 0);
             result.addDefaultKeypress('b', ModifierKeys::commandModifier);
+            result.setActive(window->getContentID() == Polytempo_ComposerWindow::mainViewID);
             break;
             
         case Polytempo_CommandIDs::insertBeatPattern:
@@ -366,48 +374,68 @@ void Polytempo_ComposerMenuBarModel::getCommandInfo(CommandID commandID, Applica
         /* view menu
          ----------------------------------*/
 
-        case Polytempo_CommandIDs::showTimeMap:
-            result.setInfo ("Show Time Map", String(), infoCategory, 0);
-            result.addDefaultKeypress('1', ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
+        case Polytempo_CommandIDs::showMainView:
+            result.setInfo ("Show Main View", String(), infoCategory, 0);
+            result.addDefaultKeypress('1', ModifierKeys::ctrlModifier |ModifierKeys::commandModifier);
             result.addDefaultKeypress(KeyPress::numberPad1, ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
             break;
             
+        case Polytempo_CommandIDs::showGraphicExportView:
+            result.setInfo ("Show Graphic Export View", String(), infoCategory, 0);
+            result.addDefaultKeypress('2', ModifierKeys::ctrlModifier |ModifierKeys::commandModifier);
+            result.addDefaultKeypress(KeyPress::numberPad1, ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
+            break;
+            
+        case Polytempo_CommandIDs::showTimeMap:
+            result.setInfo ("Show/Hide Time Map", String(), infoCategory, 0);
+            result.addDefaultKeypress('1', ModifierKeys::commandModifier);
+            result.addDefaultKeypress(KeyPress::numberPad1, ModifierKeys::commandModifier);
+            result.setActive(window->getContentID() == Polytempo_ComposerWindow::mainViewID);
+            break;
+            
         case Polytempo_CommandIDs::showTempoMap:
-            result.setInfo ("Show Tempo Map", String(), infoCategory, 0);
-            result.addDefaultKeypress('2', ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
-            result.addDefaultKeypress(KeyPress::numberPad2, ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
+            result.setInfo ("Show/Hide Tempo Map", String(), infoCategory, 0);
+            result.addDefaultKeypress('2', ModifierKeys::commandModifier);
+            result.addDefaultKeypress(KeyPress::numberPad2, ModifierKeys::commandModifier);
+            result.setActive(window->getContentID() == Polytempo_ComposerWindow::mainViewID);
             break;
             
         case Polytempo_CommandIDs::showPatternList:
-            result.setInfo ("Show Pattern List", String(), infoCategory, 0);
-            result.addDefaultKeypress('3', ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
-            result.addDefaultKeypress(KeyPress::numberPad3, ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
+            result.setInfo ("Show/Hide Pattern List", String(), infoCategory, 0);
+            result.addDefaultKeypress('3', ModifierKeys::commandModifier);
+            result.addDefaultKeypress(KeyPress::numberPad3, ModifierKeys::commandModifier);
+            result.setActive(window->getContentID() == Polytempo_ComposerWindow::mainViewID);
             break;
             
         case Polytempo_CommandIDs::showPointList:
-            result.setInfo ("Show Point List", String(), infoCategory, 0);
-            result.addDefaultKeypress('4', ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
-            result.addDefaultKeypress(KeyPress::numberPad4, ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
+            result.setInfo ("Show/Hide Point List", String(), infoCategory, 0);
+            result.addDefaultKeypress('4', ModifierKeys::commandModifier);
+            result.addDefaultKeypress(KeyPress::numberPad4, ModifierKeys::commandModifier);
+            result.setActive(window->getContentID() == Polytempo_ComposerWindow::mainViewID);
             break;
             
         case Polytempo_CommandIDs::zoomInX:
             result.setInfo ("Horizontal Zoom In", String(), infoCategory, 0);
             result.addDefaultKeypress (KeyPress::rightKey, ModifierKeys::commandModifier);
+            result.setActive(window->getContentID() == Polytempo_ComposerWindow::mainViewID);
             break;
             
         case Polytempo_CommandIDs::zoomOutX:
             result.setInfo ("Horizontal Zoom Out", String(), infoCategory, 0);
             result.addDefaultKeypress (KeyPress::leftKey, ModifierKeys::commandModifier);
+            result.setActive(window->getContentID() == Polytempo_ComposerWindow::mainViewID);
             break;
             
         case Polytempo_CommandIDs::zoomInY:
             result.setInfo ("Vertical Zoom In", String(), infoCategory, 0);
             result.addDefaultKeypress (KeyPress::upKey, ModifierKeys::commandModifier);
+            result.setActive(window->getContentID() == Polytempo_ComposerWindow::mainViewID);
             break;
             
         case Polytempo_CommandIDs::zoomOutY:
             result.setInfo ("Vertical Zoom Out", String(), infoCategory, 0);
             result.addDefaultKeypress (KeyPress::downKey, ModifierKeys::commandModifier);
+            result.setActive(window->getContentID() == Polytempo_ComposerWindow::mainViewID);
             break;
             
 #if ! JUCE_LINUX
@@ -424,16 +452,19 @@ void Polytempo_ComposerMenuBarModel::getCommandInfo(CommandID commandID, Applica
         case Polytempo_CommandIDs::startStop:
             result.setInfo ("Start / Stop", "Start the playback", infoCategory, 0);
             result.addDefaultKeypress (' ', 0);
+            result.setActive(window->getContentID() == Polytempo_ComposerWindow::mainViewID);
             break;
             
         case Polytempo_CommandIDs::returnToLoc:
             result.setInfo ("Return to Locator", "Return to locator", infoCategory, 0);
             result.addDefaultKeypress ('\r', 0);
+            result.setActive(window->getContentID() == Polytempo_ComposerWindow::mainViewID);
             break;
             
         case Polytempo_CommandIDs::returnToBeginning:
             result.setInfo ("Return to beginning", "Return to beginning", infoCategory, 0);
             result.addDefaultKeypress ('\r', ModifierKeys::commandModifier);
+            result.setActive(window->getContentID() == Polytempo_ComposerWindow::mainViewID);
             break;
 
             /*
@@ -564,6 +595,13 @@ bool Polytempo_ComposerMenuBarModel::perform (const InvocationInfo& info)
             
         /* view menu
          ----------------------------------*/
+        case Polytempo_CommandIDs::showMainView:
+            window->setContentID(Polytempo_ComposerWindow::mainViewID);
+            break;
+        case Polytempo_CommandIDs::showGraphicExportView:
+            window->setContentID(Polytempo_ComposerWindow::graphicExportViewID);
+            Polytempo_ScoreScheduler::getInstance()->stop();
+            break;
         case Polytempo_CommandIDs::showTimeMap:
             Polytempo_ComposerApplication::getMainView().setLeftComponent(Polytempo_ComposerMainView::componentType_TimeMap);
             break;

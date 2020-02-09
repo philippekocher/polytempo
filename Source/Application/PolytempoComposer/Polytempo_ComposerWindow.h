@@ -27,6 +27,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "../../Views/PolytempoComposer/Polytempo_ComposerMainView.h"
+#include "../../Views/PolytempoComposer/Polytempo_GraphicExportView.h"
 
 class Polytempo_ComposerMenuBarModel;
 
@@ -59,6 +60,15 @@ public:
 
     void closeButtonPressed();
 
+    enum contentID
+    {
+        mainViewID = 0,
+        graphicExportViewID,
+    };
+    
+    void setContentID(contentID);
+    int  getContentID();
+
     String getWindowContentStateAsString();
     void   restoreWindowContentStateFromString(const String&);
     
@@ -67,6 +77,10 @@ public:
 private:
     std::unique_ptr<Polytempo_ComposerMenuBarModel> menuBarModel;
     std::unique_ptr<Polytempo_ComposerMainView> mainView;
+<<<<<<< HEAD
+=======
+    std::unique_ptr<Polytempo_GraphicExportView> graphicExportView;
+>>>>>>> master
     Polytempo_LookAndFeel lookAndFeel;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_ComposerWindow)

@@ -86,7 +86,11 @@ public:
     
     void showPopupMenu();
 private:
+<<<<<<< HEAD
     std::unique_ptr <Polytempo_CoordinateSystemComponent> coordinateSystemComponent;
+=======
+    std::unique_ptr<Polytempo_CoordinateSystemComponent> coordinateSystemComponent;
+>>>>>>> master
     Viewport* synchronizedViewport[2] = {nullptr, nullptr};
 };
 
