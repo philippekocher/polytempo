@@ -41,6 +41,11 @@ public:
         //tree.addListener (this);
     }
     
+    void setTree(const ValueTree& theTree)
+    {
+        tree = theTree;
+    }
+    
     bool mightContainSubItems() override
     {
         return tree.getNumChildren() > 0;

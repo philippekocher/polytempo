@@ -166,10 +166,12 @@ void Polytempo_PageEditorView::refresh()
         }
     }
  
+    if(rootItem == nullptr)  rootItem.reset(new TreeItem(vt, this));
+    else                     rootItem->setTree(vt);
+
     tree->setDefaultOpenness(true);
     tree->setOpenCloseButtonsVisible(false);
     tree->setMultiSelectEnabled(false);
-	rootItem.reset(new TreeItem(vt, this));
     tree->setRootItem(rootItem.get());
     tree->setRootItemVisible(false);
     tree->setColour(TreeView::backgroundColourId, Colour(245,245,245));
