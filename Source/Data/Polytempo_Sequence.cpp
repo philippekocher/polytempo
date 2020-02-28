@@ -151,7 +151,7 @@ bool Polytempo_Sequence::validateNewControlPointPosition(float t, Rational pos)
 bool Polytempo_Sequence::validateControlPoint(int index, float t, Rational pos)
 {
     // check if time and position are valid for a specific point (before it is changed)
-    if(index > 0 && t   <  controlPoints[index - 1]->time)     return false;
+    if(index > 0 && t   <= controlPoints[index - 1]->time)     return false;
     if(index > 0 && pos <= controlPoints[index - 1]->position) return false;
     if(index < controlPoints.size() - 1 && t   >  controlPoints[index + 1]->time)     return false;
     if(index < controlPoints.size() - 1 && pos >= controlPoints[index + 1]->position) return false;
@@ -174,33 +174,13 @@ void Polytempo_Sequence::setControlPointValues(int index, float t, Rational pos,
     if(index == 0)
         pos = 0;
     
-    // validate time and position
-    Polytempo_ControlPoint* tempPoint = new Polytempo_ControlPoint();
-    tempPoint->time = t;
-    tempPoint->position = pos;
-    tempPoint->tempoIn = inTempo;
-    tempPoint->tempoOut = outTempo;
-    tempPoint->tempoInWeight = inTempoWeight;
-    tempPoint->tempoOutWeight = outTempoWeight;
-    
-    if((index > 0 &&
-        !Polytempo_TempoInterpolation::validateCurve(controlPoints[index-1], tempPoint)) ||
-       (index < controlPoints.size() - 1 &&
-        !Polytempo_TempoInterpolation::validateCurve(tempPoint, controlPoints[index+1])))
-    {
-        DBG("curve false");
-        return;
-    }
-    else
-    {
-        controlPoints[index]->time = t;
-        controlPoints[index]->position = pos;
-        controlPoints[index]->tempoIn = inTempo;
-        controlPoints[index]->tempoOut = outTempo;
-        controlPoints[index]->tempoInWeight = inTempoWeight;
-        controlPoints[index]->tempoOutWeight = outTempoWeight;
-        updateEvents();
-    }
+    controlPoints[index]->time = t;
+    controlPoints[index]->position = pos;
+    controlPoints[index]->tempoIn = inTempo;
+    controlPoints[index]->tempoOut = outTempo;
+    controlPoints[index]->tempoInWeight = inTempoWeight;
+    controlPoints[index]->tempoOutWeight = outTempoWeight;
+    updateEvents();
 
     Polytempo_Composition::getInstance()->setDirty(true);
 }
@@ -219,24 +199,9 @@ void Polytempo_Sequence::setControlPointPosition(int index, float t, Rational po
     // validate time and position
     if(!validateControlPoint(index, t, pos)) return;
 
-    // validate the resulting bézier curve
-    Polytempo_ControlPoint* tempPoint = new Polytempo_ControlPoint();
-    tempPoint->time = t;
-    tempPoint->position = pos;
-    
-    if((index > 0 &&
-        !Polytempo_TempoInterpolation::validateCurve(controlPoints[index-1], tempPoint)) ||
-       (index < controlPoints.size() - 1 &&
-        !Polytempo_TempoInterpolation::validateCurve(tempPoint, controlPoints[index+1])))
-    {
-        return;
-    }
-    else
-    {
-        controlPoints[index]->time = t;
-        controlPoints[index]->position = pos;
-        updateEvents();
-    }
+    controlPoints[index]->time = t;
+    controlPoints[index]->position = pos;
+    updateEvents();
 
     Polytempo_Composition::getInstance()->setDirty(true);
 }
@@ -465,8 +430,11 @@ void Polytempo_Sequence::updateEvents()
         Polytempo_ControlPoint *cp1 = controlPoints[cpIndex];
         Polytempo_ControlPoint *cp2 = controlPoints[cpIndex+1];
         
-        event->setProperty(eventPropertyString_Time, Polytempo_TempoInterpolation::getTime(event->getPosition(), cp1, cp2));
-        
+        if(Polytempo_TempoInterpolation::validateCurve(cp1,cp2))
+            event->setProperty(eventPropertyString_Time, Polytempo_TempoInterpolation::getTime(event->getPosition(), cp1, cp2));
+        else
+            event->setProperty(eventPropertyString_Time, NAN);
+
         event->setProperty("~sequence", sequenceIndex);
 
         if(event->getType() == eventType_Beat)

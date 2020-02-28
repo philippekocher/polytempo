@@ -198,24 +198,42 @@ void Polytempo_TimeMapCoordinateSystem::paintSequence(Graphics& g, Polytempo_Seq
         if((controlPoint1 = sequence->getControlPoint(i+1)) != nullptr)
         {
             float x1, x2, y1, y2;
-            float thickness = 1;
+            float thickness = 2;
             int num = 20; // number of segments to draw
             
-            Array < Point < float >* > points = Polytempo_TempoInterpolation::getPoints(num, controlPoint, controlPoint1);
-            
-            if(sequence->isTempoConstantAfterPoint(i))
-                thickness = 3;
-            
-            g.setColour(sequenceColour.withMultipliedBrightness(brightness).withAlpha(alpha));
-            
-            for(int n=0;n<points.size()-1;n++)
+            if(Polytempo_TempoInterpolation::validateCurve(controlPoint, controlPoint1))
             {
-                x1 = TIMEMAP_OFFSET + points[n]->x * zoomX;
-                y1 = getHeight() - TIMEMAP_OFFSET -points[n]->y * zoomY;
-                x2 = TIMEMAP_OFFSET + points[n+1]->x * zoomX;
-                y2 = getHeight() - TIMEMAP_OFFSET -points[n+1]->y * zoomY;
+                // the curve is valid
+                Array < Point < float >* > points = Polytempo_TempoInterpolation::getPoints(num, controlPoint, controlPoint1);
                 
-                g.drawLine(x1,y1,x2,y2,thickness);
+                if(sequence->isTempoConstantAfterPoint(i))
+                    thickness = 4;
+                
+                g.setColour(sequenceColour.withMultipliedBrightness(brightness).withAlpha(alpha));
+                
+                for(int n=0;n<points.size()-1;n++)
+                {
+                    x1 = TIMEMAP_OFFSET + points[n]->x * zoomX;
+                    y1 = getHeight() - TIMEMAP_OFFSET -points[n]->y * zoomY;
+                    x2 = TIMEMAP_OFFSET + points[n+1]->x * zoomX;
+                    y2 = getHeight() - TIMEMAP_OFFSET -points[n+1]->y * zoomY;
+                    
+                    g.drawLine(x1,y1,x2,y2,thickness);
+                }
+            }
+            else
+            {
+                // the curve is invalid
+                Array < Point < float >* > points = Polytempo_TempoInterpolation::getPoints(2, controlPoint, controlPoint1);
+                g.setColour(sequenceColour.withMultipliedBrightness(brightness).withAlpha(alpha));
+                thickness = 1;
+                x1 = TIMEMAP_OFFSET + controlPoint->time * zoomX;
+                y1 = getHeight() - TIMEMAP_OFFSET - controlPoint->position * zoomY;
+                x2 = TIMEMAP_OFFSET + controlPoint1->time * zoomX;
+                y2 = getHeight() - TIMEMAP_OFFSET - controlPoint1->position * zoomY;
+                g.drawLine(x1,y1,x2,y1,thickness+1);
+                g.drawLine(x2,y1,x2,y2,thickness);
+
             }
         }
         
@@ -439,22 +457,25 @@ void Polytempo_TempoMapCoordinateSystem::paintSequence(Graphics& g, Polytempo_Se
             float thickness = 1;
             int num = 20; // number of segments to draw
             
-            Array < float > tempos = Polytempo_TempoInterpolation::getTempos(num, controlPoint, controlPoint1);
-            Array < Point < float >* > points = Polytempo_TempoInterpolation::getPoints(num, controlPoint, controlPoint1);
-            
-            if(sequence->isTempoConstantAfterPoint(i))
-                thickness = 3;
-            
-            g.setColour(sequenceColour.withMultipliedBrightness(brightness).withAlpha(alpha));
-            
-            for(int n=0;n<points.size()-1;n++)
+            if(Polytempo_TempoInterpolation::validateCurve(controlPoint, controlPoint1))
             {
-                x1 = TIMEMAP_OFFSET + points[n]->x * zoomX;
-                y1 = getHeight() - TIMEMAP_OFFSET - tempos[n] * zoomY;
-                x2 = TIMEMAP_OFFSET + points[n+1]->x * zoomX;
-                y2 = getHeight() - TIMEMAP_OFFSET - tempos[n+1] * zoomY;
+                Array < float > tempos = Polytempo_TempoInterpolation::getTempos(num, controlPoint, controlPoint1);
+                Array < Point < float >* > points = Polytempo_TempoInterpolation::getPoints(num, controlPoint, controlPoint1);
                 
-                g.drawLine(x1,y1,x2,y2,thickness);
+                if(sequence->isTempoConstantAfterPoint(i))
+                    thickness = 3;
+                
+                g.setColour(sequenceColour.withMultipliedBrightness(brightness).withAlpha(alpha));
+                
+                for(int n=0;n<points.size()-1;n++)
+                {
+                    x1 = TIMEMAP_OFFSET + points[n]->x * zoomX;
+                    y1 = getHeight() - TIMEMAP_OFFSET - tempos[n] * zoomY;
+                    x2 = TIMEMAP_OFFSET + points[n+1]->x * zoomX;
+                    y2 = getHeight() - TIMEMAP_OFFSET - tempos[n+1] * zoomY;
+                    
+                    g.drawLine(x1,y1,x2,y2,thickness);
+                }
             }
         }
         
