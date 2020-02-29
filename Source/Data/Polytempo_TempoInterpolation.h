@@ -42,6 +42,8 @@ public:
         Polytempo_ControlPoint* temp = new Polytempo_ControlPoint();
         temp->time = time;
         temp->position = position;
+        temp->tempoIn = tempoIn;
+        temp->tempoOut = tempoOut;
         
         return temp;
     }

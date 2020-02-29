@@ -59,7 +59,6 @@ public:
     void removeSelectedControlPointIndex(int);
     Array<int>* getSelectedControlPointIndices();
     bool isSelectedControlPointIndex(int);
-//    bool areSelectedControlPointsRemovable();
 
     void updateScore();
     void findCoincidingControlPoints();

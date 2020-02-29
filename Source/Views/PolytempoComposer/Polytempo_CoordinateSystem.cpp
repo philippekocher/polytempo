@@ -57,7 +57,7 @@ void Polytempo_CoordinateSystem::showPopupMenu()
     PopupMenu m;
     
     m.addCommandItem(commandManager, Polytempo_CommandIDs::insertControlPoint);
-    m.addCommandItem(commandManager, Polytempo_CommandIDs::removeControlPoint);
+    m.addCommandItem(commandManager, Polytempo_CommandIDs::removeControlPoints);
 
     m.addSeparator();
     
@@ -296,6 +296,13 @@ void Polytempo_TimeMapCoordinateSystem::mouseDown(const MouseEvent &event)
     bool canDrag = false;
     draggedPoint.release();
 
+    // show pop-up menu
+    if(event.mods.isPopupMenu())
+    {
+        ((Polytempo_CoordinateSystem*)viewport)->showPopupMenu();
+        return;
+    }
+
     // cmd-click: add control point
     if(event.mods.isCommandDown())
     {
@@ -352,12 +359,6 @@ void Polytempo_TimeMapCoordinateSystem::mouseDown(const MouseEvent &event)
     }
     // no hit detected
     if(!hit && !event.mods.isShiftDown()) composition->clearSelectedControlPointIndices();
-
-    // show pop-up menu
-    if(event.mods.isPopupMenu())
-    {
-        ((Polytempo_CoordinateSystem*)viewport)->showPopupMenu();
-    }
     
     // prepare for dragging
     if(canDrag)
@@ -609,7 +610,13 @@ void Polytempo_TempoMapCoordinateSystem::mouseDown(const MouseEvent &event)
     Polytempo_Composition* composition = Polytempo_Composition::getInstance();
     Polytempo_Sequence* sequence = composition->getSelectedSequence();
     
-    
+    // show pop-up menu
+    if(event.mods.isPopupMenu())
+    {
+       ((Polytempo_CoordinateSystem*)viewport)->showPopupMenu();
+        return;
+    }
+
     // cmd-click: add control point
     if(event.mods.isCommandDown())
     {
@@ -655,11 +662,6 @@ void Polytempo_TempoMapCoordinateSystem::mouseDown(const MouseEvent &event)
     }
     // no hit detected
     if(!hit && !event.mods.isShiftDown()) composition->clearSelectedControlPointIndices();
-
-    if(event.mods.isPopupMenu())
-    {
-       ((Polytempo_CoordinateSystem*)viewport)->showPopupMenu();
-    }
 
     composition->updateContent(); // repaint everything
 }

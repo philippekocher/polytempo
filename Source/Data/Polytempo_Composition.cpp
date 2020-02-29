@@ -170,15 +170,6 @@ bool Polytempo_Composition::isSelectedControlPointIndex(int i)
     return selectedControlPointIndices->contains(i);
 }
 
-//bool Polytempo_Composition::areSelectedControlPointsRemovable()
-//{
-//    if(selectedControlPointIndex < 1 ||
-//       getSelectedSequence()->getControlPoints()->size() == 2)
-//        return false;
-//    else
-//        return true;
-//}
-
 void Polytempo_Composition::updateScore()
 {
     if(!scoreNeedsUpdate) return;

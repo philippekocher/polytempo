@@ -212,7 +212,7 @@ void Polytempo_PointListComponent::showPopupMenu()
     PopupMenu m;
     
     m.addCommandItem(commandManager, Polytempo_CommandIDs::insertControlPoint);
-    m.addCommandItem(commandManager, Polytempo_CommandIDs::removeControlPoint);
+    m.addCommandItem(commandManager, Polytempo_CommandIDs::removeControlPoints);
     
     m.addSeparator();
     
