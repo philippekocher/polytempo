@@ -34,6 +34,8 @@ Polytempo_PointListComponent::Polytempo_PointListComponent()
 {
     addAndMakeVisible(table);
     table.setModel(this);
+    table.setMultipleSelectionEnabled(true);
+    
                                         // id, width, min, max, flags
     table.getHeader().addColumn("Time",      1, 10, -1, -1, TableHeaderComponent::visible);
     table.getHeader().addColumn("Position",  2, 10, -1, -1, TableHeaderComponent::visible);
@@ -58,7 +60,14 @@ void Polytempo_PointListComponent::paint(Graphics& g)
     g.fillAll(sequence->getColour());
     
     table.updateContent();
-    table.selectRow(Polytempo_Composition::getInstance()->getSelectedControlPointIndex());
+
+    Polytempo_Composition* composition = Polytempo_Composition::getInstance();
+    SparseSet<int>* indices = new SparseSet<int>();
+    for(int index : *composition->getSelectedControlPointIndices())
+    {
+        indices->addRange(Range<int>(index,index+1));
+    }
+    table.setSelectedRows(*indices, dontSendNotification);
 }
 
 
@@ -133,7 +142,12 @@ void Polytempo_PointListComponent::selectedRowsChanged(int lastRowSelected)
 {
     Polytempo_Composition* composition = Polytempo_Composition::getInstance();
     
-    composition->setSelectedControlPointIndex(lastRowSelected);
+    composition->clearSelectedControlPointIndices();
+    SparseSet<int> indices = table.getSelectedRows();
+    for(int i=0;i<indices.size();i++)
+    {
+        composition->addSelectedControlPointIndex(indices[i]);
+    }
     composition->updateContent();
 }
 

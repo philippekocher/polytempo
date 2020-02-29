@@ -61,12 +61,13 @@ public:
     bool validateControlPoint(int index, float t, Rational pos);
     void setControlPointValues(int index, float t, Rational pos, float inTempo, float outTempo, float inTempoWeight, float outTempoWeight);
     void setControlPointPosition(int index, float t, Rational pos);
+    void changeControlPointPosition(int index, float deltaT, Rational deltaPos);
     void setControlPointTempo(int index, float inTempo, float outTempo);
     bool allowAdjustTime(int index);
-    void adjustTime(int index);
-    void adjustPosition(int index);
-    void adjustTempo(int index);
-    void removeControlPoint(int index);
+    void adjustTime(Array<int>* indices);
+    void adjustPosition(Array<int>* indices);
+    void adjustTempo(Array<int>* indices);
+    void removeControlPoints(Array<int>* indices);
     
     bool isTempoConstantAfterPoint(int);
     

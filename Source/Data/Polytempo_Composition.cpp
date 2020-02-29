@@ -34,6 +34,8 @@ Polytempo_Composition::Polytempo_Composition()
 {
     score.reset(new Polytempo_Score());
     Polytempo_ScoreScheduler::getInstance()->setScore(score.get());
+    
+    selectedControlPointIndices = new Array<int>();
 }
 
 Polytempo_Composition::~Polytempo_Composition()
@@ -134,7 +136,7 @@ Polytempo_Sequence* Polytempo_Composition::getSelectedSequence()
 void Polytempo_Composition::setSelectedSequenceIndex(int i)
 {
     selectedSequenceIndex = i;
-    selectedControlPointIndex = -1;
+    clearSelectedControlPointIndices();
 }
 
 int Polytempo_Composition::getSelectedSequenceIndex()
@@ -142,24 +144,40 @@ int Polytempo_Composition::getSelectedSequenceIndex()
     return selectedSequenceIndex;
 }
 
-void Polytempo_Composition::setSelectedControlPointIndex(int i)
+void Polytempo_Composition::clearSelectedControlPointIndices()
 {
-    selectedControlPointIndex = i;
+    selectedControlPointIndices->clearQuick();
 }
 
-int Polytempo_Composition::getSelectedControlPointIndex()
+void Polytempo_Composition::addSelectedControlPointIndex(int i)
 {
-    return selectedControlPointIndex;
+    selectedControlPointIndices->add(i);
 }
 
-bool Polytempo_Composition::isSelectedControlPointRemovable()
+void Polytempo_Composition::removeSelectedControlPointIndex(int i)
 {
-    if(selectedControlPointIndex < 1 ||
-       getSelectedSequence()->getControlPoints()->size() == 2)
-        return false;
-    else
-        return true;
+    int indexToRemove = selectedControlPointIndices->indexOf(i);
+    selectedControlPointIndices->remove(indexToRemove);
 }
+
+Array<int>* Polytempo_Composition::getSelectedControlPointIndices()
+{
+    return selectedControlPointIndices;
+}
+
+bool Polytempo_Composition::isSelectedControlPointIndex(int i)
+{
+    return selectedControlPointIndices->contains(i);
+}
+
+//bool Polytempo_Composition::areSelectedControlPointsRemovable()
+//{
+//    if(selectedControlPointIndex < 1 ||
+//       getSelectedSequence()->getControlPoints()->size() == 2)
+//        return false;
+//    else
+//        return true;
+//}
 
 void Polytempo_Composition::updateScore()
 {

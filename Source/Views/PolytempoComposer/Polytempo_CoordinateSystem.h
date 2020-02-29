@@ -41,13 +41,18 @@ public:
     
     void setSizeAndZooms(int w, int h, float zX, float zY);
     void eventNotification(Polytempo_Event*);
+
+    void mouseUp(const MouseEvent &);
     
 protected:
     float zoomX, zoomY;
     Viewport *viewport;
     
-    OwnedArray < Polytempo_Sequence > *sequences;
-    
+    Rectangle<float> selectionRectangle;
+    OwnedArray<Polytempo_ControlPoint> draggedControlPointsOrigin;
+    std::unique_ptr<Polytempo_ControlPoint> draggedPoint;
+    bool hit;
+        
     std::unique_ptr<DrawableRectangle> playhead;
     std::unique_ptr<Array<float>> horizontalGrid;
 };

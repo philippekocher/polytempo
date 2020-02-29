@@ -37,6 +37,15 @@ public:
     ~Polytempo_ControlPoint()
     {}
     
+    Polytempo_ControlPoint* copy()
+    {
+        Polytempo_ControlPoint* temp = new Polytempo_ControlPoint();
+        temp->time = time;
+        temp->position = position;
+        
+        return temp;
+    }
+    
     float    time; // in seconds
     Rational position = 0;
     float    tempoIn = 0.25f; // 0.25 is crotchet = MM 60, better choice?

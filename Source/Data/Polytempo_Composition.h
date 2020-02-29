@@ -54,9 +54,12 @@ public:
     void setSelectedSequenceIndex(int);
     int getSelectedSequenceIndex();
     
-    void setSelectedControlPointIndex(int);
-    int getSelectedControlPointIndex();
-    bool isSelectedControlPointRemovable();
+    void clearSelectedControlPointIndices();
+    void addSelectedControlPointIndex(int);
+    void removeSelectedControlPointIndex(int);
+    Array<int>* getSelectedControlPointIndices();
+    bool isSelectedControlPointIndex(int);
+//    bool areSelectedControlPointsRemovable();
 
     void updateScore();
     void findCoincidingControlPoints();
@@ -79,7 +82,7 @@ public:
 private:
     bool scoreNeedsUpdate = false;
     int selectedSequenceIndex = -1;
-    int selectedControlPointIndex = -1;
+    Array<int> *selectedControlPointIndices;
     bool exportAll;
     
     DocumentWindow *mainWindow;
