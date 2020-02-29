@@ -529,13 +529,14 @@ void Polytempo_TempoMapCoordinateSystem::paintSequence(Graphics& g, Polytempo_Se
     while((controlPoint = sequence->getControlPoint(++i)) != nullptr)
     {
         int x = TIMEMAP_OFFSET + int(controlPoint->time * zoomX);
-        int y = i == 0 ? getHeight() - TIMEMAP_OFFSET - int(controlPoint->tempoOut * zoomY)
+        int y = controlPoint->start ? getHeight() - TIMEMAP_OFFSET - int(controlPoint->tempoOut * zoomY)
                       :  getHeight() - TIMEMAP_OFFSET - int(controlPoint->tempoIn * zoomY);
         
         
         // line segment between control points
         
-        if((controlPoint1 = sequence->getControlPoint(i+1)) != nullptr)
+        if((controlPoint1 = sequence->getControlPoint(i+1)) != nullptr &&
+           !controlPoint1->start)
         {
             float x1, x2, y1, y2;
             float thickness = 1;
@@ -571,8 +572,10 @@ void Polytempo_TempoMapCoordinateSystem::paintSequence(Graphics& g, Polytempo_Se
         
         // control points
         
-        int y1 = i < sequence->getControlPoints()->size() - 1 ?
-                getHeight() - TIMEMAP_OFFSET - int(controlPoint->tempoOut * zoomY) : y;
+        int y1 = y;
+        if((controlPoint1 = sequence->getControlPoint(i+1)) != nullptr &&
+           !controlPoint1->start)
+            y1 = getHeight() - TIMEMAP_OFFSET - int(controlPoint->tempoOut * zoomY);
         int height = abs(y-y1);
         y = y < y1 ? y : y1;
         
@@ -695,7 +698,7 @@ void Polytempo_TempoMapCoordinateSystem::mouseDrag(const MouseEvent &event)
             
             // stop searching in this sequence if the point coordinates
             // are beyond the mouse coordinates
-            if(x > selectionRectangle.getRight() || y1 < selectionRectangle.getY()) break;
+            if(x > selectionRectangle.getRight() && y1 < selectionRectangle.getY()) break;
 
             if(selectionRectangle.intersects(Line<float>(x, y1, x, y2)))
                 composition->addSelectedControlPointIndex(i);

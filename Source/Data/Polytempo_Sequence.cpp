@@ -495,7 +495,7 @@ void Polytempo_Sequence::updateEvents()
         Polytempo_ControlPoint *cp1 = controlPoints[cpIndex];
         Polytempo_ControlPoint *cp2 = controlPoints[cpIndex+1];
         
-        if(cp1 == nullptr || cp2 == nullptr)
+        if(cp1 == nullptr || cp2 == nullptr || cp2->start)
             event->setProperty(eventPropertyString_Time, NAN);
         else if(Polytempo_TempoInterpolation::validateCurve(cp1,cp2))
             event->setProperty(eventPropertyString_Time, Polytempo_TempoInterpolation::getTime(event->getPosition(), cp1, cp2));
