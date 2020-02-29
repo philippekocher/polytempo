@@ -89,7 +89,7 @@ public:
     
     void mouseDoubleClick(const MouseEvent& /*event*/)
     {
-        showEditor();
+        if(isEditable()) showEditor();
     }
     
     void textWasEdited()
@@ -113,5 +113,43 @@ public:
     
 private:
     Polytempo_ListComponent* owner;
+    int rowNumber, columnId;
+};
+
+class CheckboxTableCell : public Component,  public Button::Listener
+{
+public:
+    CheckboxTableCell (Polytempo_ListComponent* td)  : owner (td)
+    {
+        addAndMakeVisible (toggle);
+        toggle.addListener(this);
+        //toggle.setWantsKeyboardFocus(false);
+    }
+
+    void resized() override
+    {
+        Rectangle<int> r = getParentComponent()->getBounds();
+        toggle.setBounds(10,0,20,r.getHeight());
+    }
+
+    void buttonClicked (Button* button) override
+    {
+        owner->setText(String((int)button->getToggleState()), rowNumber, columnId);
+    }
+    
+    void setRowAndColumn (int newRow, int newColumn)
+    {
+        rowNumber = newRow;
+        columnId  = newColumn;
+    }
+    
+    void setState(bool state)
+    {
+        toggle.setToggleState(state, dontSendNotification);
+    }
+
+private:
+    Polytempo_ListComponent* owner;
+    ToggleButton toggle;
     int rowNumber, columnId;
 };

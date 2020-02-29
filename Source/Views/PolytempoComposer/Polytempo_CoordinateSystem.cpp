@@ -210,7 +210,8 @@ void Polytempo_TimeMapCoordinateSystem::paintSequence(Graphics& g, Polytempo_Seq
         
         // line segment between control points
         
-        if((controlPoint1 = sequence->getControlPoint(i+1)) != nullptr)
+        if((controlPoint1 = sequence->getControlPoint(i+1)) != nullptr &&
+           !controlPoint1->start)
         {
             float x1, x2, y1, y2;
             float thickness = 2;

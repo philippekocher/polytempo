@@ -37,14 +37,16 @@ Polytempo_PointListComponent::Polytempo_PointListComponent()
     table.setMultipleSelectionEnabled(true);
     
                                         // id, width, min, max, flags
-    table.getHeader().addColumn("Time",      1, 10, -1, -1, TableHeaderComponent::visible);
-    table.getHeader().addColumn("Position",  2, 10, -1, -1, TableHeaderComponent::visible);
-    table.getHeader().addColumn("Tempo In",  3, 10, -1, -1, TableHeaderComponent::visible);
-    table.getHeader().addColumn("Tempo Out", 4, 10, -1, -1, TableHeaderComponent::visible);
-//    table.getHeader().addColumn("In Weight",  5, 70, 50, 120, TableHeaderComponent::visible);
-//    table.getHeader().addColumn("Out Weight", 6, 70, 50, 120, TableHeaderComponent::visible);
+    table.getHeader().addColumn("Time",       1, 50, 50, -1, TableHeaderComponent::visible);
+    table.getHeader().addColumn("Position",   2, 50, 50, -1, TableHeaderComponent::visible);
+    table.getHeader().addColumn("Tempo In",   3, 50, 50, -1, TableHeaderComponent::visible);
+    table.getHeader().addColumn("Tempo Out",  4, 50, 50, -1, TableHeaderComponent::visible);
+    table.getHeader().addColumn("Start",      5, 50, 40, 40, TableHeaderComponent::visible);
+    table.getHeader().addColumn("Cue",        6, 50, 30, 30, TableHeaderComponent::visible);
+    
     table.getHeader().setPopupMenuActive(false);
-
+    table.getHeader().setStretchToFitActive(true);
+    
     table.setColour(ListBox::backgroundColourId, Colour(245,245,245));
 }
 
@@ -91,10 +93,10 @@ String Polytempo_PointListComponent::getText(int rowNumber, int columnId)
             text = String(Polytempo_TempoMeasurement::decodeTempoForUI(controlPoint->tempoOut));
             break;
         case 5:
-            text = String(controlPoint->tempoInWeight);
+            text = String((int)controlPoint->start);
             break;
         case 6:
-            text = String(controlPoint->tempoOutWeight);
+            text = String(controlPoint->cueIn);
             break;
         default:
             text = "--";
@@ -110,22 +112,22 @@ void Polytempo_PointListComponent::setText(String text, int rowNumber, int colum
     switch(columnId)
     {
         case 1:
-            sequence->setControlPointValues(rowNumber, text.getFloatValue(), -1, -1, -1, -1, -1);
+            sequence->setControlPointPosition(rowNumber, text.getFloatValue(), -1);
             break;
         case 2:
-            sequence->setControlPointValues(rowNumber, -1, Rational(text), -1, -1, -1, -1);
+            sequence->setControlPointPosition(rowNumber, -1, Rational(text));
             break;
         case 3:
-            sequence->setControlPointValues(rowNumber, -1, -1, Polytempo_TempoMeasurement::encodeTempoFromUI(text.getFloatValue()), -1, -1, -1);
+            sequence->setControlPointTempos(rowNumber, Polytempo_TempoMeasurement::encodeTempoFromUI(text.getFloatValue()), -1);
             break;
         case 4:
-            sequence->setControlPointValues(rowNumber, -1, -1, -1, Polytempo_TempoMeasurement::encodeTempoFromUI(text.getFloatValue()), -1, -1);
+            sequence->setControlPointTempos(rowNumber, -1, Polytempo_TempoMeasurement::encodeTempoFromUI(text.getFloatValue()));
             break;
         case 5:
-            sequence->setControlPointValues(rowNumber, -1, -1, -1, -1, text.getFloatValue(), -1);
+            sequence->setControlPointStartAndCue(rowNumber, text.getIntValue(), -1);
             break;
         case 6:
-            sequence->setControlPointValues(rowNumber, -1, -1, -1, -1, -1, text.getFloatValue());
+            sequence->setControlPointStartAndCue(rowNumber, -1, text.getIntValue());
             break;
     }
 
@@ -156,41 +158,40 @@ void Polytempo_PointListComponent::paintCell(Graphics& /*g*/, int /*rowNumber*/,
 
 Component* Polytempo_PointListComponent::refreshComponentForCell(int rowNumber, int columnId, bool rowIsSelected, Component* existingComponentToUpdate)
 {
-    EditableTextCustomComponent* textLabel = static_cast<EditableTextCustomComponent*> (existingComponentToUpdate);
-    
+    if(columnId == 5)
+    {
+        auto* checkbox = static_cast<CheckboxTableCell*> (existingComponentToUpdate);
+        // If an existing component is being passed-in for updating, we'll re-use it, but
+        // if not, we'll have to create one.
+        if (checkbox == nullptr)
+            checkbox = new CheckboxTableCell(this);
+
+        checkbox->setState(getText(rowNumber, columnId) == "1");
+        checkbox->setRowAndColumn (rowNumber, columnId);
+        return checkbox;
+    }
+
+    auto* textLabel = static_cast<EditableTextCustomComponent*> (existingComponentToUpdate);
     // If an existing component is being passed-in for updating, we'll re-use it,
     // but if not, we'll have to create one.
     if (textLabel == nullptr)
         textLabel = new EditableTextCustomComponent(this);
     
-    // first point: position unchangeable
-    if(rowNumber == 0  && columnId == 2)
-    {
-        textLabel->setEditable(false);
-        textLabel->setFont(Font(13, Font::italic));
-        textLabel->setColour(Label::textColourId, Colour(0xffaaaaaa));
-        textLabel->setText(getText(rowNumber, columnId), dontSendNotification);
-    }
-    // first point: no tempo in
-    else if(rowNumber == 0 && (columnId == 3 || columnId == 5))
+    // start points: no tempo in
+    else if(columnId == 3 && getText(rowNumber, 5) == "1")
     {
         textLabel->setEditable(false);
         textLabel->setColour(Label::textColourId, Colour(0xffaaaaaa));
         textLabel->setText("--", dontSendNotification);
     }
-    // last point: no tempo out
-    else if(rowNumber == getNumRows()-1 && (columnId == 4 || columnId == 6))
+    // last point or point before start point: no tempo out
+    else if(columnId == 4 &&
+            (rowNumber == getNumRows()-1 ||
+             (rowNumber < getNumRows()-1 && getText(rowNumber+1, 5) == "1")))
     {
         textLabel->setEditable(false);
         textLabel->setColour(Label::textColourId, Colour(0xffaaaaaa));
         textLabel->setText("--", dontSendNotification);
-    }
-    // tempo in or tempo out
-    else if(columnId == 3 || columnId == 4)
-    {
-        textLabel->setFont(Font (13.0f, rowIsSelected ? Font::bold : Font::plain));
-        textLabel->setColour(Label::textColourId, rowIsSelected ? Colour(0,0,0) : Colour(90,90,90));
-        textLabel->setText(getText(rowNumber, columnId), dontSendNotification);
     }
     else
     {

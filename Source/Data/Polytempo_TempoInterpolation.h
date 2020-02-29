@@ -50,11 +50,13 @@ public:
     
     float    time; // in seconds
     Rational position = 0;
-    float    tempoIn = 0.25f; // 0.25 is crotchet = MM 60, better choice?
+    float    tempoIn = 0.25f; // 0.25 is crotchet = 60 bpm, better choice?
     float    tempoOut = 0.25f;
     float    tempoInWeight = 0.33f;
     float    tempoOutWeight = 0.33f;
+    int      cueIn = 0;
     
+    bool start = false;
     bool locked = false;
     bool isCoinciding = false;
         
@@ -67,6 +69,8 @@ public:
         object->setProperty("tempoOut", tempoOut);
         object->setProperty("tempoInWeight", tempoInWeight);
         object->setProperty("tempoOutWeight", tempoOutWeight);
+        object->setProperty("cueIn", cueIn);
+        object->setProperty("start", start);
         object->setProperty("locked", locked);
 
         return object;
@@ -80,6 +84,8 @@ public:
         tempoOut = object->getProperty("tempoOut");
         tempoInWeight = object->getProperty("tempoInWeight");
         tempoOutWeight = object->getProperty("tempoOutWeight");
+        cueIn = object->getProperty("cueIn");
+        start = object->getProperty("start");
         locked = object->getProperty("locked");
     }
 };

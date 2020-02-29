@@ -170,28 +170,6 @@ bool Polytempo_Sequence::validateControlPoints(OwnedArray<Polytempo_ControlPoint
     return true;
 }
 
-void Polytempo_Sequence::setControlPointValues(int index, float t, Rational pos, float inTempo, float outTempo, float inTempoWeight, float outTempoWeight)
-{
-    // negative values are ignored
-    if(t   < 0)             t   = controlPoints[index]->time;
-    if(pos < 0)             pos = controlPoints[index]->position;
-    if(inTempo <= 0)        inTempo = controlPoints[index]->tempoIn;
-    if(outTempo <= 0)       outTempo = controlPoints[index]->tempoOut;
-    if(inTempoWeight < 0)   inTempoWeight = controlPoints[index]->tempoInWeight;
-    if(outTempoWeight < 0)  outTempoWeight = controlPoints[index]->tempoOutWeight;
-    
-    controlPoints[index]->time = t;
-    controlPoints[index]->position = pos;
-    controlPoints[index]->tempoIn = inTempo;
-    controlPoints[index]->tempoOut = outTempo;
-    controlPoints[index]->tempoInWeight = inTempoWeight;
-    controlPoints[index]->tempoOutWeight = outTempoWeight;
-    updateEvents();
-
-    Polytempo_Composition::getInstance()->setDirty(true);
-}
-
-
 void Polytempo_Sequence::setControlPointPosition(int index, float t, Rational pos)
 {
     // negative values are ignored
@@ -202,14 +180,21 @@ void Polytempo_Sequence::setControlPointPosition(int index, float t, Rational po
     if((index > 0 && t   <= controlPoints[index-1]->time) ||
        (index > 0 && pos <= controlPoints[index-1]->position) ||
        (index < controlPoints.size()-1 && t   >  controlPoints[index+1]->time) ||
-       (index < controlPoints.size()-1 && pos >= controlPoints[index+1]->position))
-    {
-        Polytempo_Alert::show("Error", "Invalid operation");
-        return;
-    }
+       (index < controlPoints.size()-1 && pos >= controlPoints[index+1]->position)) return;
 
     controlPoints[index]->time = t;
     controlPoints[index]->position = pos;
+    updateEvents();
+
+    Polytempo_Composition::getInstance()->updateContent();
+    Polytempo_Composition::getInstance()->setDirty(true);
+}
+
+void Polytempo_Sequence::setControlPointStartAndCue(int index, int start, int cue)
+{
+    if(start >= 0) controlPoints[index]->start = start != 0;
+    if(cue >= 0)   controlPoints[index]->cueIn = cue;
+    
     updateEvents();
 
     Polytempo_Composition::getInstance()->updateContent();
@@ -243,10 +228,12 @@ void Polytempo_Sequence::shiftControlPoints(Array<int>* indices, float deltaTime
 }
 
 
-void Polytempo_Sequence::setControlPointTempo(int index, float inTempo, float outTempo)
+void Polytempo_Sequence::setControlPointTempos(int index, float inTempo, float outTempo, float inTempoWeight, float outTempoWeight)
 {
     if(inTempo > 0)  controlPoints[index]->tempoIn  = inTempo;
     if(outTempo > 0) controlPoints[index]->tempoOut = outTempo;
+    if(inTempoWeight >= 0)   controlPoints[index]->tempoInWeight = inTempoWeight;
+    if(outTempoWeight >= 0)  controlPoints[index]->tempoOutWeight = outTempoWeight;
 
     updateEvents();
 
@@ -365,7 +352,6 @@ void Polytempo_Sequence::removeControlPoints(Array<int>* indices)
     Polytempo_Composition::getInstance()->updateContent();
     Polytempo_Composition::getInstance()->setDirty(true);
 }
-
 
 void Polytempo_Sequence::addControlPoint(float t, Rational pos, float tin, float tout)
 {
@@ -491,7 +477,9 @@ void Polytempo_Sequence::buildBeatPattern()
 
 void Polytempo_Sequence::updateEvents()
 {
-//    DBG("sequence: update events");
+    // verify that the first control point is always a start point
+    if(controlPoints.size() > 1) controlPoints[0]->start = true;
+    
     int cpIndex = -1;
     Polytempo_Event *lastBeatEvent = nullptr;
     
@@ -503,7 +491,7 @@ void Polytempo_Sequence::updateEvents()
           event->getPosition() >= controlPoints[cpIndex+1]->position &&
           controlPoints.size() > cpIndex + 2)
           cpIndex++;
-        
+                
         Polytempo_ControlPoint *cp1 = controlPoints[cpIndex];
         Polytempo_ControlPoint *cp2 = controlPoints[cpIndex+1];
         

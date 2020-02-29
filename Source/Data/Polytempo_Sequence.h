@@ -59,10 +59,10 @@ public:
     
     bool validateNewControlPointPosition(float t, Rational pos);
     bool validateControlPoints(OwnedArray<Polytempo_ControlPoint> &);
-    void setControlPointValues(int index, float t, Rational pos, float inTempo, float outTempo, float inTempoWeight, float outTempoWeight);
     void setControlPointPosition(int index, float t, Rational pos);
+    void setControlPointStartAndCue(int index, int start, int cue);
     void shiftControlPoints(Array<int>* indices, float deltaTime);
-    void setControlPointTempo(int index, float inTempo, float outTempo);
+    void setControlPointTempos(int index, float inTempo, float outTempo, float inTempoWeight = -1, float outTempoWeight = -1);
     void adjustTime(Array<int>* indices);
     void adjustPosition(Array<int>* indices);
     void adjustTempo(Array<int>* indices);
