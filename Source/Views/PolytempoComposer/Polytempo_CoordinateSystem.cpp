@@ -58,6 +58,7 @@ void Polytempo_CoordinateSystem::showPopupMenu()
     
     m.addCommandItem(commandManager, Polytempo_CommandIDs::insertControlPoint);
     m.addCommandItem(commandManager, Polytempo_CommandIDs::removeControlPoints);
+    m.addCommandItem(commandManager, Polytempo_CommandIDs::shiftControlPoints);
 
     m.addSeparator();
     

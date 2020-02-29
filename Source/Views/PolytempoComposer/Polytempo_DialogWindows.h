@@ -206,89 +206,67 @@ namespace Polytempo_DialogWindows
     };
     
     
-//    class AddEventPattern : public Basic
-//    {
-//    public:
-//        AddEventPattern()
-//        {
-//            setName("Add Event Pattern");
-//            setOkString("Add");
-//            enableOkButton(true);
-//            
-//            label1.setText("Pattern", dontSendNotification);
-//            label1.setEditable(false);
-//            label1.setBounds(20,20,150,15);
-//            contentComponent->addAndMakeVisible(label1);
-//            
-//            editor1.setBounds(20,35,150,15);
-//            editor1.setText("4/4", dontSendNotification);
-//            editor1.setEscapeAndReturnKeysConsumed(false);
-//            editor1.setSelectAllWhenFocused(true);
-//            editor1.setCaretVisible(false);
-//            editor1.setInputRestrictions(0,"0123456789/+");
-//            editor1.addListener(this);
-//            contentComponent->addAndMakeVisible(editor1);
-//            
-//            label2.setText("Repeats", dontSendNotification);
-//            label2.setEditable(false);
-//            label2.setBounds(170,20,50,15);
-//            contentComponent->addAndMakeVisible(label2);
-//            
-//            editor2.setBounds(170,35,50,15);
-//            editor2.setText("1", dontSendNotification);
-//            editor2.setEscapeAndReturnKeysConsumed(false);
-//            editor2.setSelectAllWhenFocused(true);
-//            editor2.setCaretVisible(false);
-//            editor2.setInputRestrictions(0,"0123456789");
-//            editor2.addListener(this);
-//            contentComponent->addAndMakeVisible(editor2);
-//
-//            label3.setText("Counter", dontSendNotification);
-//            label3.setEditable(false);
-//            label3.setBounds(230,20,50,15);
-//            contentComponent->addAndMakeVisible(label3);
-//            
-//            Polytempo_Sequence* sequence = Polytempo_Composition::getInstance()->getSelectedSequence();
-//            editor3.setBounds(230,35,50,15);
-//            editor3.setText(String(sequence->getCurrentCounter()), dontSendNotification);
-//            editor3.setEscapeAndReturnKeysConsumed(false);
-//            editor3.setSelectAllWhenFocused(true);
-//            editor3.setCaretVisible(false);
-//            editor3.setInputRestrictions(0,"0123456789 ");
-//            editor3.addListener(this);
-//            contentComponent->addAndMakeVisible(editor3);
-//
-//            label4.setText("Marker", dontSendNotification);
-//            label4.setEditable(false);
-//            label4.setBounds(290,20,50,15);
-//            contentComponent->addAndMakeVisible(label4);
-//            
-//            editor4.setBounds(290,35,50,15);
-//            editor4.setEscapeAndReturnKeysConsumed(false);
-//            editor4.setSelectAllWhenFocused(true);
-//            editor4.setCaretVisible(false);
-//            editor4.addListener(this);
-//            contentComponent->addAndMakeVisible(editor4);
-//        }
-//        
-//        void textEditorTextChanged(TextEditor &)
-//        {}
-//        
-//        void labelTextChanged (Label* label)
-//        {}
-//        
-//        void perform()
-//        {
-//            Polytempo_Sequence* sequence = Polytempo_Composition::getInstance()->getSelectedSequence();
-//            sequence->addEventPattern(editor1.getText(), editor2.getText().getIntValue(), editor3.getText(), editor4.getText());
-//            Polytempo_Composition::getInstance()->updateContent(); // repaint everything
-//        }
-//        
-//    private:
-//        Label label1, label2, label3, label4;
-//        TextEditor editor1, editor2, editor3, editor4;
-//    };
-//    
+    class ShiftControlPoints : public Basic
+    {
+    public:
+        ShiftControlPoints()
+        {
+            setName("Shift Selected Control Points");
+            setOkString("Ok");
+
+            Polytempo_Composition* composition = Polytempo_Composition::getInstance();
+            Array<int> *indices = composition->getSelectedControlPointIndices();
+            firstTime = composition->getSelectedSequence()->getControlPoints()->getUnchecked(indices->getFirst())->time;
+            lastTime  = composition->getSelectedSequence()->getControlPoints()->getUnchecked(indices->getLast())->time;
+            deltaTime = 0;
+
+            contentComponent->addAndMakeVisible(deltaTextbox = new Polytempo_Textbox("shift points by"));
+            deltaTextbox->setBounds(20,25,90,18);
+            deltaTextbox->setText(String(deltaTime), dontSendNotification);
+            deltaTextbox->setInputRestrictions(0,"0123456789.-");
+            deltaTextbox->addListener(this);
+            
+            contentComponent->addAndMakeVisible(firstTimeTextbox = new Polytempo_Textbox("align first point with"));
+            firstTimeTextbox->setBounds(135,25,90,18);
+            firstTimeTextbox->setText(String(firstTime), dontSendNotification);
+            firstTimeTextbox->setInputRestrictions(0,"0123456789.-");
+            firstTimeTextbox->addListener(this);
+
+            contentComponent->addAndMakeVisible(lastTimeTextbox = new Polytempo_Textbox("align last point with"));
+            lastTimeTextbox->setBounds(250,25,90,18);
+            lastTimeTextbox->setText(String(lastTime), dontSendNotification);
+            lastTimeTextbox->setInputRestrictions(0,"0123456789.-");
+            lastTimeTextbox->addListener(this);
+        }
+        
+        void labelTextChanged (Label* label)
+        {
+            if(label == deltaTextbox)          deltaTime = label->getText().getFloatValue();
+            else if(label == firstTimeTextbox) deltaTime = label->getText().getFloatValue() - firstTime;
+            else if(label == lastTimeTextbox)  deltaTime = label->getText().getFloatValue() - lastTime;
+
+            deltaTextbox->setText(String(deltaTime), dontSendNotification);
+            firstTimeTextbox->setText(String(firstTime + deltaTime), dontSendNotification);
+            lastTimeTextbox->setText(String(lastTime + deltaTime), dontSendNotification);
+        }
+ 
+        void perform()
+        {
+            Polytempo_Composition* composition = Polytempo_Composition::getInstance();
+            Polytempo_Sequence* sequence = composition->getSelectedSequence();
+            
+            sequence->shiftControlPoints(composition->getSelectedControlPointIndices(), deltaTime);            
+        }
+        
+    private:
+        Polytempo_Textbox *deltaTextbox;
+        Polytempo_Textbox *firstTimeTextbox;
+        Polytempo_Textbox *lastTimeTextbox;
+
+        float firstTime;
+        float lastTime;
+        float deltaTime;
+    };
     
     class ExportSequences : public Basic
     {

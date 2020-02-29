@@ -216,12 +216,29 @@ void Polytempo_Sequence::setControlPointPosition(int index, float t, Rational po
     Polytempo_Composition::getInstance()->setDirty(true);
 }
 
-void Polytempo_Sequence::changeControlPointPosition(int index, float deltaT, Rational deltaPos)
+void Polytempo_Sequence::shiftControlPoints(Array<int>* indices, float deltaTime)
 {
-    controlPoints[index]->time += deltaT;
-    controlPoints[index]->position = controlPoints[index]->position + deltaPos;
-    updateEvents();
+    // tentative
+    OwnedArray<Polytempo_ControlPoint> tempControlPoints;
+    for(Polytempo_ControlPoint* point : controlPoints) tempControlPoints.add(point->copy());
+    
+    for(int index : *indices)
+    {
+        tempControlPoints[index]->time += deltaTime;
+    }
+    
+    if(!validateControlPoints(tempControlPoints))
+    {
+        Polytempo_Alert::show("Error", "Invalid operation");
+        return;
+    }
 
+    for(int index : *indices)
+    {
+        controlPoints[index]->time += deltaTime;
+    }
+    updateEvents();
+    Polytempo_Composition::getInstance()->updateContent();
     Polytempo_Composition::getInstance()->setDirty(true);
 }
 
