@@ -365,6 +365,7 @@ void Polytempo_Sequence::addControlPoint(float t, Rational pos, float tin, float
     controlPoints.sort(sorter, true);
     
     int index = controlPoints.indexOf(point);
+    if(index == 0) point->start = true;
     if(index > 0 && index < controlPoints.size() - 1)
     {
         point->tempoIn  = tin == 0 ? controlPoints[index-1]->tempoOut : tin;

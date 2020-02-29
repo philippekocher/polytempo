@@ -267,10 +267,13 @@ void Polytempo_TimeMapCoordinateSystem::paintSequence(Graphics& g, Polytempo_Seq
         else
             g.setColour(Colour(0xffdddddd));
         
-        g.fillEllipse(x - CONTROL_POINT_SIZE * 0.5f,
-                      y - CONTROL_POINT_SIZE * 0.5f,
-                      CONTROL_POINT_SIZE,
-                      CONTROL_POINT_SIZE);
+        float cornerFactor = controlPoint->start ? 0.1f : 0.5f;
+
+        g.fillRoundedRectangle(x - CONTROL_POINT_SIZE * 0.5f,
+                               y - CONTROL_POINT_SIZE * 0.5f,
+                               CONTROL_POINT_SIZE,
+                               CONTROL_POINT_SIZE,
+                               CONTROL_POINT_SIZE * cornerFactor);
         
         if(!selected && controlPoint->isCoinciding)
             g.setColour(Colours::black);
@@ -278,11 +281,30 @@ void Polytempo_TimeMapCoordinateSystem::paintSequence(Graphics& g, Polytempo_Seq
             g.setColour(sequenceColour.withMultipliedBrightness(brightness).withAlpha(alpha));
         
         float thickness = selected ? 2.0f : 1.0f;
-        g.drawEllipse(x - CONTROL_POINT_SIZE * 0.5f,
-                      y - CONTROL_POINT_SIZE * 0.5f,
-                      CONTROL_POINT_SIZE,
-                      CONTROL_POINT_SIZE,
-                      thickness);
+
+        g.drawRoundedRectangle(x - CONTROL_POINT_SIZE * 0.5f,
+                               y - CONTROL_POINT_SIZE * 0.5f,
+                               CONTROL_POINT_SIZE,
+                               CONTROL_POINT_SIZE,
+                               CONTROL_POINT_SIZE * cornerFactor,
+                               thickness);
+        
+        if(controlPoint->cueIn > 0)
+        {
+            if(selected)
+            {
+                g.setColour(Colours::white);
+                g.fillRect(x - CONTROL_POINT_SIZE * 2.0f, y - CONTROL_POINT_SIZE * 0.6f, CONTROL_POINT_SIZE * 1.3f, CONTROL_POINT_SIZE * 1.3f);
+                g.setColour(sequenceColour.withMultipliedBrightness(brightness).withAlpha(alpha * 0.4f));
+                g.fillRect(x - CONTROL_POINT_SIZE * 2.0f, y - CONTROL_POINT_SIZE * 0.6f, CONTROL_POINT_SIZE * 1.3f, CONTROL_POINT_SIZE * 1.3f);
+                g.setColour(sequenceColour.withMultipliedBrightness(0.5f));
+            }
+            else
+            {
+                g.setColour(sequenceColour.withMultipliedBrightness(brightness).withAlpha(alpha));
+            }
+            g.drawSingleLineText("C", x - CONTROL_POINT_SIZE * 1.8f, y + CONTROL_POINT_SIZE * 0.5f);
+        }
     }
 }
 
@@ -585,11 +607,13 @@ void Polytempo_TempoMapCoordinateSystem::paintSequence(Graphics& g, Polytempo_Se
         else
             g.setColour(Colour(0xffdddddd));
         
+        float cornerFactor = controlPoint->start ? 0.1f : 0.5f;
+
         g.fillRoundedRectangle(x - CONTROL_POINT_SIZE * 0.5f,
                                y - CONTROL_POINT_SIZE * 0.5f,
                                CONTROL_POINT_SIZE,
                                CONTROL_POINT_SIZE + float(height),
-                               CONTROL_POINT_SIZE * 0.5f);
+                               CONTROL_POINT_SIZE * cornerFactor);
         
         if(!selected && controlPoint->isCoinciding)
             g.setColour(Colours::black);
@@ -601,8 +625,26 @@ void Polytempo_TempoMapCoordinateSystem::paintSequence(Graphics& g, Polytempo_Se
                                y - CONTROL_POINT_SIZE * 0.5f,
                                CONTROL_POINT_SIZE,
                                CONTROL_POINT_SIZE + float(height),
-                               CONTROL_POINT_SIZE * 0.5f,
+                               CONTROL_POINT_SIZE * cornerFactor,
                                thickness);
+        
+        if(controlPoint->cueIn > 0)
+        {
+            y = getHeight() - TIMEMAP_OFFSET - int(controlPoint->tempoOut * zoomY);
+            if(selected)
+            {
+                g.setColour(Colours::white);
+                g.fillRect(x - CONTROL_POINT_SIZE * 2.0f, y - CONTROL_POINT_SIZE * 0.6f, CONTROL_POINT_SIZE * 1.3f, CONTROL_POINT_SIZE * 1.3f);
+                g.setColour(sequenceColour.withMultipliedBrightness(brightness).withAlpha(alpha * 0.4f));
+                g.fillRect(x - CONTROL_POINT_SIZE * 2.0f, y - CONTROL_POINT_SIZE * 0.6f, CONTROL_POINT_SIZE * 1.3f, CONTROL_POINT_SIZE * 1.3f);
+                g.setColour(sequenceColour.withMultipliedBrightness(0.5f));
+            }
+            else
+            {
+                g.setColour(sequenceColour.withMultipliedBrightness(brightness).withAlpha(alpha));
+            }
+            g.drawSingleLineText("C", x - CONTROL_POINT_SIZE * 1.8f, y + CONTROL_POINT_SIZE * 0.5f);
+        }
     }
 }
 
