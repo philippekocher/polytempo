@@ -220,7 +220,6 @@ void Polytempo_PointListComponent::showPopupMenu()
     m.addCommandItem(commandManager, Polytempo_CommandIDs::adjustTime);
     m.addCommandItem(commandManager, Polytempo_CommandIDs::adjustPosition);
     m.addCommandItem(commandManager, Polytempo_CommandIDs::adjustTempo);
-    m.addCommandItem(commandManager, Polytempo_CommandIDs::alignWithCursor);
 
     m.show();
 }

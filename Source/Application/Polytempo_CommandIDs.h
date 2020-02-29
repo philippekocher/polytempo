@@ -85,7 +85,6 @@ namespace Polytempo_CommandIDs
         adjustTime,
         adjustPosition,
         adjustTempo,
-        alignWithCursor,
         
         addBeatPattern,
         insertBeatPattern,

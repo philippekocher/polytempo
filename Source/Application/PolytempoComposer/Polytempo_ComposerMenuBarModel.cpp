@@ -129,7 +129,6 @@ PopupMenu Polytempo_ComposerMenuBarModel::getMenuForIndex (int /*menuIndex*/, co
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::adjustTime);
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::adjustPosition);
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::adjustTempo);
-        menu.addCommandItem(commandManager, Polytempo_CommandIDs::alignWithCursor);
     }
     else if (menuName == "View")
     {
@@ -235,7 +234,6 @@ void Polytempo_ComposerMenuBarModel::getAllCommands (Array <CommandID>& commands
         Polytempo_CommandIDs::adjustTime,
         Polytempo_CommandIDs::adjustPosition,
         Polytempo_CommandIDs::adjustTempo,
-        Polytempo_CommandIDs::alignWithCursor,
         
         Polytempo_CommandIDs::aboutWindow,
         Polytempo_CommandIDs::preferencesWindow,
@@ -375,12 +373,6 @@ void Polytempo_ComposerMenuBarModel::getCommandInfo(CommandID commandID, Applica
             result.setActive(composition->getSelectedControlPointIndices()->size() > 0 &&
                              !(composition->getSelectedControlPointIndices()->size() == 1 &&
                                composition->getSelectedControlPointIndices()->getUnchecked(0) == 0));
-            break;
-            
-        case Polytempo_CommandIDs::alignWithCursor:
-            result.setInfo ("Align With Cursor", String(), infoCategory, 0);
-            result.setActive(composition->getSelectedControlPointIndices()->size() == 1 &&
-                             !Polytempo_ScoreScheduler::getInstance()->isRunning());
             break;
 
             
@@ -605,10 +597,6 @@ bool Polytempo_ComposerMenuBarModel::perform (const InvocationInfo& info)
             composition->getSelectedSequence()->adjustTempo(composition->getSelectedControlPointIndices());
             break;
             
-        case Polytempo_CommandIDs::alignWithCursor:
-            composition->getSelectedSequence()->setControlPointPosition(composition->getSelectedControlPointIndices()->getUnchecked(0), Polytempo_ScoreScheduler::getInstance()->getScoreTime() * 0.001f, -1);
-            break;
-
             
         /* view menu
          ----------------------------------*/
