@@ -203,16 +203,19 @@ private:
     void reduce()
     {
         int a, b, rem;
-        
-        if(numerator > denominator)
+        int num = abs(numerator);
+        int den = abs(denominator);
+        int sign = numerator * denominator < 0 ? -1 : 1;
+
+        if(num > den)
         {
-            a = numerator;
-            b = denominator;
+            a = num;
+            b = den;
         }
         else
         {
-            a = denominator;
-            b = numerator;
+            a = den;
+            b = num;
         }
         
         while (b != 0)
@@ -222,8 +225,8 @@ private:
             b = rem;
         }
         
-        numerator /= a;
-        denominator /= a;
+        numerator = sign * num / a;
+        denominator = den / a;
     }
 };
 
