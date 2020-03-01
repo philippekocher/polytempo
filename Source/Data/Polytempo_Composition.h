@@ -26,6 +26,7 @@
 #define __Polytempo_Composition__
 
 #include "../../JuceLibraryCode/JuceHeader.h"
+#include "Polytempo_Score.h"
 #include "Polytempo_Sequence.h"
 #include "../Misc/Polytempo_Alerts.h"
 

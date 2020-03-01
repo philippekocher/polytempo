@@ -576,16 +576,17 @@ void Polytempo_Composition::exportAsPolytempoScore()
     if(fileChooser.browseForFileToSave(true))
     {
         // build a score to export
-        std::unique_ptr<Polytempo_Score> tempScore(new Polytempo_Score());
+        Polytempo_Score tempScore;
         Polytempo_Event *tempEvent;
         
         if(exportAll)
         {
-            for(int i=0;i<sequences.size();i++)
+            int i=-1;
+            for(Polytempo_Sequence *sequence : sequences)
             {
-                tempScore->addSection("sequence"+String(i));
+                tempScore.addSection("sequence"+String(++i));
                 
-                for(Polytempo_Event *event : *score->getEvents())
+                for(Polytempo_Event *event : sequence->getEvents())
                 {
                     if(event->hasProperty("~sequence") && (int)event->getProperty("~sequence") == i)
                     {
@@ -598,7 +599,7 @@ void Polytempo_Composition::exportAsPolytempoScore()
 
                         tempEvent->removeProperty("~sequence");
                         
-                        tempScore->addEvent(tempEvent);
+                        tempScore.addEvent(tempEvent);
                     }
                 }
 
@@ -606,9 +607,10 @@ void Polytempo_Composition::exportAsPolytempoScore()
         }
         else
         {
-            tempScore->addSection("sequence"+String(selectedSequenceIndex));
+            tempScore.addSection("sequence"+String(selectedSequenceIndex));
+            Polytempo_Sequence *sequence = getSelectedSequence();
             
-            for(Polytempo_Event *event : *score->getEvents())
+            for(Polytempo_Event *event : sequence->getEvents())
             {
                 if(event->hasProperty("~sequence") && (int)event->getProperty("~sequence") == selectedSequenceIndex)
                 {
@@ -621,7 +623,7 @@ void Polytempo_Composition::exportAsPolytempoScore()
                     
                     tempEvent->removeProperty("~sequence");
                     
-                    tempScore->addEvent(tempEvent);
+                    tempScore.addEvent(tempEvent);
                 }
             }
         }
@@ -630,9 +632,8 @@ void Polytempo_Composition::exportAsPolytempoScore()
         File scoreFile = fileChooser.getResult();
         String tempurl(scoreFile.getParentDirectory().getFullPathName());
         File tempFile(tempurl<<"/~temp.ptsco");
-        tempScore->writeToFile(tempFile);
+        tempScore.writeToFile(tempFile);
         tempFile.copyFileTo(scoreFile);
         tempFile.deleteFile();
-        tempScore = nullptr;
     }
 }

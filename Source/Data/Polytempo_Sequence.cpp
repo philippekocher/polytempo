@@ -76,12 +76,11 @@ Polytempo_BeatPattern* Polytempo_Sequence::getBeatPattern(int index)
         return beatPatterns[index];
 }
 
-Array <Polytempo_Event*>& Polytempo_Sequence::getEvents()
+OwnedArray <Polytempo_Event>& Polytempo_Sequence::getEvents()
 {
-    allEvents.clear();
-    allEvents.addArray(events);
-    allEvents.addArray(cueInEvents);
-    return allEvents;
+    Polytempo_EventComparator sorter;
+    timedEvents.sort(sorter, true); // true = retain order of equal elements
+    return timedEvents;
 }
 
 Polytempo_Event* Polytempo_Sequence::getEvent(int index)
@@ -493,7 +492,6 @@ void Polytempo_Sequence::updateEvents()
     
     // set the time for all events
     int cpIndex = -1;
-    Polytempo_Event *lastBeatEvent = nullptr;
     
     for(int i=0;i<events.size();i++)
     {
@@ -516,43 +514,62 @@ void Polytempo_Sequence::updateEvents()
         
         if(cp1 != nullptr && cp2 != nullptr && cp2->start && cp1->time != (float)event->getProperty(eventPropertyString_Time))
             event->setProperty(eventPropertyString_Time, NAN);
-
-        event->setProperty("~sequence", sequenceIndex);
+    }
+    
+    // set the beat durations and store them in the array timedEvents
+    timedEvents.clearQuick(true);
+    //std::unique_ptr<Polytempo_Event> event;
+    float time = NAN;
+    for(int i=events.size()-1;i>=0;i--)
+    {
+        Polytempo_Event *event = new Polytempo_Event(*events[i]);
 
         if(event->getType() == eventType_Beat)
         {
-            if(lastBeatEvent != nullptr)
+            if(event->hasDefinedTime())
             {
-                lastBeatEvent->setProperty(eventPropertyString_Duration,
-                                           float(event->getProperty(eventPropertyString_Time)) -
-                                           float(lastBeatEvent->getProperty(eventPropertyString_Time)));
+                if(time != time) // time is NaN
+                {
+                    event->setProperty(eventPropertyString_Duration, 1.0f);
+                    event->setProperty(eventPropertyString_Pattern, int(float(event->getProperty(eventPropertyString_Pattern)) * 0.1f) * 10);
+                }
+                else
+                {
+                    event->setProperty(eventPropertyString_Duration, time - float(event->getProperty(eventPropertyString_Time)));
+                }
+                event->setProperty("~sequence", sequenceIndex);
+                timedEvents.add(event);
             }
-            lastBeatEvent = event;
+            time = float(event->getProperty(eventPropertyString_Time));
         }
     }
-    if(lastBeatEvent != nullptr)
-        lastBeatEvent->setProperty(eventPropertyString_Duration, 1.0f);
+
     
     // add cue-in events for start control points
-    cueInEvents.clearQuick(true);
     for(Polytempo_ControlPoint* cp : controlPoints)
     {
         if(cp->start && !cp->cueIn.getPattern().isEmpty())
         {
-            float time = cp->time - cp->cueIn.getLength().toFloat() / cp->tempoOut;
+            float cueInStartTime = cp->time - cp->cueIn.getLength().toFloat() / cp->tempoOut;
+            float time, nextTime = cp->time;
             Array<Polytempo_Event*> tempEvents = cp->cueIn.getEvents(0);
             
-            for(Polytempo_Event* cueInEvent : tempEvents)
+            for(int i=tempEvents.size()-1;i>=0;i--)
             {
-                cueInEvent->setOwned(true);
-                cueInEvent->setProperty(eventPropertyString_Time, time + cueInEvent->getPosition().toFloat() / cp->tempoOut);
-                cueInEvent->setProperty(eventPropertyString_Cue, 1);
-            
-                cueInEvents.add(cueInEvent);
+                Polytempo_Event* cueInEvent = tempEvents[i];
+                if(cueInEvent->getType() == eventType_Beat)
+                {
+                    cueInEvent->setProperty("~sequence", sequenceIndex);
+                    time = cueInStartTime + cueInEvent->getPosition().toFloat() / cp->tempoOut;
+                    cueInEvent->setProperty(eventPropertyString_Time, time);
+                    cueInEvent->setProperty(eventPropertyString_Cue, 1);
+                    cueInEvent->setProperty(eventPropertyString_Duration, nextTime - time);
+                    nextTime = time;
+                }
+                timedEvents.add(cueInEvent);
             }
         }
     }
-
 }
 
 void Polytempo_Sequence::addPlaybackPropertiesToEvent(Polytempo_Event* event)
