@@ -46,7 +46,7 @@ public:
     OwnedArray <Polytempo_BeatPattern>* getBeatPatterns();
     Polytempo_BeatPattern* getBeatPattern(int);
     
-    OwnedArray <Polytempo_Event>& getEvents();
+    Array <Polytempo_Event*>& getEvents();
     Polytempo_Event* getEvent(int);
     
     bool isVisible();
@@ -100,7 +100,9 @@ private:
     OwnedArray <Polytempo_BeatPattern> beatPatterns;
     int selectedBeatPattern = -1;
     OwnedArray <Polytempo_Event> events;
-    
+    OwnedArray <Polytempo_Event> cueInEvents;
+    Array <Polytempo_Event*> allEvents;
+
     Polytempo_ListComponent* beatPatternListComponent = nullptr;
     
     friend class Polytempo_SequencePlaybackSettings;

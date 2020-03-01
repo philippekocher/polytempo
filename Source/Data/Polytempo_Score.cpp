@@ -117,7 +117,7 @@ void Polytempo_Score::addEvent(Polytempo_Event *event, bool addToInit)
     }
 }
 
-void Polytempo_Score::addEvents(OwnedArray < Polytempo_Event >& events)
+void Polytempo_Score::addEvents(Array <Polytempo_Event*>& events)
 {
     if(currentSectionIndex == -1)
     {

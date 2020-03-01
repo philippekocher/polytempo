@@ -76,9 +76,12 @@ Polytempo_BeatPattern* Polytempo_Sequence::getBeatPattern(int index)
         return beatPatterns[index];
 }
 
-OwnedArray <Polytempo_Event>& Polytempo_Sequence::getEvents()
+Array <Polytempo_Event*>& Polytempo_Sequence::getEvents()
 {
-    return events;
+    allEvents.clear();
+    allEvents.addArray(events);
+    allEvents.addArray(cueInEvents);
+    return allEvents;
 }
 
 Polytempo_Event* Polytempo_Sequence::getEvent(int index)
@@ -449,14 +452,14 @@ void Polytempo_Sequence::buildBeatPattern()
     
     if(beatPatterns.size() == 0)
     {
-        controlPoints.clear();
         Polytempo_Composition::getInstance()->updateContent();
         return;
     }
-    if(controlPoints.size() == 0)
+    if(controlPoints.size() == 0 && beatPatterns.size() == 1)
     {
-        addControlPoint(0,0);   // start point
-        addControlPoint(4,1);   // end point
+        // add two control points with the very first beat pattern
+        addControlPoint(0,0);
+        addControlPoint(4,1);
     }
     
     Rational position = 0;
@@ -488,6 +491,7 @@ void Polytempo_Sequence::updateEvents()
     // verify that the first control point is always a start point
     if(controlPoints.size() > 1) controlPoints[0]->start = true;
     
+    // set the time for all events
     int cpIndex = -1;
     Polytempo_Event *lastBeatEvent = nullptr;
     
@@ -503,11 +507,14 @@ void Polytempo_Sequence::updateEvents()
         Polytempo_ControlPoint *cp1 = controlPoints[cpIndex];
         Polytempo_ControlPoint *cp2 = controlPoints[cpIndex+1];
         
-        if(cp1 == nullptr || cp2 == nullptr || cp2->start)
+        if(cp1 == nullptr || cp2 == nullptr)
             event->setProperty(eventPropertyString_Time, NAN);
         else if(Polytempo_TempoInterpolation::validateCurve(cp1,cp2))
             event->setProperty(eventPropertyString_Time, Polytempo_TempoInterpolation::getTime(event->getPosition(), cp1, cp2));
         else
+            event->setProperty(eventPropertyString_Time, NAN);
+        
+        if(cp1 != nullptr && cp2 != nullptr && cp2->start && cp1->time != (float)event->getProperty(eventPropertyString_Time))
             event->setProperty(eventPropertyString_Time, NAN);
 
         event->setProperty("~sequence", sequenceIndex);
@@ -525,6 +532,26 @@ void Polytempo_Sequence::updateEvents()
     }
     if(lastBeatEvent != nullptr)
         lastBeatEvent->setProperty(eventPropertyString_Duration, 1.0f);
+    
+    // add cue-in events for start control points
+    cueInEvents.clearQuick(true);
+    for(Polytempo_ControlPoint* cp : controlPoints)
+    {
+        if(cp->start && !cp->cueIn.getPattern().isEmpty())
+        {
+            float time = cp->time - cp->cueIn.getLength().toFloat() / cp->tempoOut;
+            Array<Polytempo_Event*> tempEvents = cp->cueIn.getEvents(0);
+            
+            for(Polytempo_Event* cueInEvent : tempEvents)
+            {
+                cueInEvent->setOwned(true);
+                cueInEvent->setProperty(eventPropertyString_Time, time + cueInEvent->getPosition().toFloat() / cp->tempoOut);
+                cueInEvent->setProperty(eventPropertyString_Cue, 1);
+            
+                cueInEvents.add(cueInEvent);
+            }
+        }
+    }
 
 }
 
