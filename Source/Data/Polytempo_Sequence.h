@@ -60,7 +60,8 @@ public:
     bool validateNewControlPointPosition(float t, Rational pos);
     bool validateControlPoints(OwnedArray<Polytempo_ControlPoint> &);
     void setControlPointPosition(int index, float t, Rational pos);
-    void setControlPointStartAndCue(int index, int start, int cue);
+    void setControlPointStart(int index, int start);
+    void setControlPointCue(int index, String cue);
     void shiftControlPoints(Array<int>* indices, float deltaTime);
     void setControlPointTempos(int index, float inTempo, float outTempo, float inTempoWeight = -1, float outTempoWeight = -1);
     void adjustTime(Array<int>* indices);

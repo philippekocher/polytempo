@@ -190,13 +190,20 @@ void Polytempo_Sequence::setControlPointPosition(int index, float t, Rational po
     Polytempo_Composition::getInstance()->setDirty(true);
 }
 
-void Polytempo_Sequence::setControlPointStartAndCue(int index, int start, int cue)
+void Polytempo_Sequence::setControlPointStart(int index, int start)
 {
-    if(start >= 0) controlPoints[index]->start = start != 0;
-    if(cue >= 0)   controlPoints[index]->cueIn = cue;
+    controlPoints[index]->start = start != 0;
     
     updateEvents();
+    Polytempo_Composition::getInstance()->updateContent();
+    Polytempo_Composition::getInstance()->setDirty(true);
+}
 
+void Polytempo_Sequence::setControlPointCue(int index, String cue)
+{
+    controlPoints[index]->cueIn.setPattern(cue, true);
+    
+    updateEvents();
     Polytempo_Composition::getInstance()->updateContent();
     Polytempo_Composition::getInstance()->setDirty(true);
 }

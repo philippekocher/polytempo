@@ -49,13 +49,12 @@ Rational Polytempo_BeatPattern::getLength()
     return Rational(length * float(repeats));
 }
 
-void Polytempo_BeatPattern::setPattern(String string)
+void Polytempo_BeatPattern::setPattern(String string, bool allowEmptyPattern)
 {
-    pattern.clear();
-    patternString = string;
+    Array<Rational *> tempPattern;
     
     StringArray tokens1,tokens2;
-    tokens1.addTokens(patternString, "+", "");
+    tokens1.addTokens(string, "+", "");
     tokens1.removeEmptyStrings();
     tokens1.trim();
     
@@ -64,7 +63,7 @@ void Polytempo_BeatPattern::setPattern(String string)
         Rational ratio(tokens1[0]);
         for(int i=0;i<ratio.getNumerator();i++)
         {
-            pattern.add(new Rational(1,ratio.getDenominator()));
+            tempPattern.add(new Rational(1,ratio.getDenominator()));
         }
     }
     else
@@ -82,8 +81,21 @@ void Polytempo_BeatPattern::setPattern(String string)
             {
                 denominator = tokens2[1].getIntValue();
             }
-            pattern.insert(0, new Rational(tokens2[0].getIntValue(), denominator));
+            if(tokens2[0].getIntValue() > 0)
+                tempPattern.insert(0, new Rational(tokens2[0].getIntValue(), denominator));
         }
+    }
+    
+    if(tempPattern.size() > 0)
+    {
+        pattern.clear();
+        pattern.addArray(tempPattern);
+        patternString = string;
+    }
+    else if(allowEmptyPattern)
+    {
+        pattern.clear();
+        patternString = "";
     }
 }
 

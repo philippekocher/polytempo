@@ -289,7 +289,7 @@ void Polytempo_TimeMapCoordinateSystem::paintSequence(Graphics& g, Polytempo_Seq
                                CONTROL_POINT_SIZE * cornerFactor,
                                thickness);
         
-        if(controlPoint->cueIn > 0)
+        if(!controlPoint->cueIn.getPattern().isEmpty())
         {
             if(selected)
             {
@@ -628,7 +628,7 @@ void Polytempo_TempoMapCoordinateSystem::paintSequence(Graphics& g, Polytempo_Se
                                CONTROL_POINT_SIZE * cornerFactor,
                                thickness);
         
-        if(controlPoint->cueIn > 0)
+        if(!controlPoint->cueIn.getPattern().isEmpty())
         {
             y = getHeight() - TIMEMAP_OFFSET - int(controlPoint->tempoOut * zoomY);
             if(selected)

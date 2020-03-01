@@ -42,7 +42,7 @@ Polytempo_PointListComponent::Polytempo_PointListComponent()
     table.getHeader().addColumn("Tempo In",   3, 50, 50, -1, TableHeaderComponent::visible);
     table.getHeader().addColumn("Tempo Out",  4, 50, 50, -1, TableHeaderComponent::visible);
     table.getHeader().addColumn("Start",      5, 50, 40, 40, TableHeaderComponent::visible);
-    table.getHeader().addColumn("Cue",        6, 50, 30, 30, TableHeaderComponent::visible);
+    table.getHeader().addColumn("Cue In",     6, 50, 50, -1, TableHeaderComponent::visible);
     
     table.getHeader().setPopupMenuActive(false);
     table.getHeader().setStretchToFitActive(true);
@@ -96,7 +96,7 @@ String Polytempo_PointListComponent::getText(int rowNumber, int columnId)
             text = String((int)controlPoint->start);
             break;
         case 6:
-            text = String(controlPoint->cueIn);
+            text = controlPoint->cueIn.getPattern();
             break;
         default:
             text = "--";
@@ -124,10 +124,10 @@ void Polytempo_PointListComponent::setText(String text, int rowNumber, int colum
             sequence->setControlPointTempos(rowNumber, -1, Polytempo_TempoMeasurement::encodeTempoFromUI(text.getFloatValue()));
             break;
         case 5:
-            sequence->setControlPointStartAndCue(rowNumber, text.getIntValue(), -1);
+            sequence->setControlPointStart(rowNumber, text.getIntValue());
             break;
         case 6:
-            sequence->setControlPointStartAndCue(rowNumber, -1, text.getIntValue());
+            sequence->setControlPointCue(rowNumber, text);
             break;
     }
 
