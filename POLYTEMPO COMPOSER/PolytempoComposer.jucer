@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="OXoF3n" name="PolytempoComposer" projectType="guiapp" version="0.4.1"
+<JUCERPROJECT id="OXoF3n" name="PolytempoComposer" projectType="guiapp" version="0.4.2"
               bundleIdentifier="net.icst.PolytempoComposer" includeBinaryInAppConfig="1"
               jucerVersion="5.4.7" companyName="Zurich University of the Arts"
               companyWebsite="www.icst.net" defines="POLYTEMPO_COMPOSER=1"

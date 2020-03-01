@@ -51,6 +51,9 @@ Rational Polytempo_BeatPattern::getLength()
 
 void Polytempo_BeatPattern::setPattern(String string, bool allowEmptyPattern)
 {
+    string = string.removeCharacters(" ");
+    if(!string.containsOnly("0123456789/+")) return;
+    
     Array<Rational *> tempPattern;
     
     StringArray tokens1,tokens2;

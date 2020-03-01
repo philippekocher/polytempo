@@ -113,6 +113,8 @@ void Polytempo_CoordinateSystemComponent::mouseUp(const MouseEvent &event)
 {
     selectionRectangle.setWidth(0);
     draggedControlPointsOrigin.clearQuick(true);
+
+    Polytempo_ComposerApplication::getCommandManager().commandStatusChanged(); // update menubar
     repaint();
 }
 
