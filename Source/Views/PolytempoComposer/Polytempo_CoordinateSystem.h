@@ -50,7 +50,7 @@ protected:
     
     Rectangle<float> selectionRectangle;
     OwnedArray<Polytempo_ControlPoint> draggedControlPointsOrigin;
-    std::unique_ptr<Polytempo_ControlPoint> draggedPoint;
+    Polytempo_ControlPoint *draggedPoint;
     bool hit;
         
     std::unique_ptr<DrawableRectangle> playhead;

@@ -317,7 +317,6 @@ void Polytempo_TimeMapCoordinateSystem::mouseDown(const MouseEvent &event)
     Polytempo_Sequence* sequence = composition->getSelectedSequence();
     
     bool canDrag = false;
-    draggedPoint.release();
 
     // show pop-up menu
     if(event.mods.isPopupMenu())
@@ -363,7 +362,7 @@ void Polytempo_TimeMapCoordinateSystem::mouseDown(const MouseEvent &event)
                 {
                     composition->addSelectedControlPointIndex(i);
                     canDrag = true;
-                    draggedPoint.reset(controlPoint->copy());
+                    draggedPoint = controlPoint;
                 }
             }
             else
@@ -375,7 +374,7 @@ void Polytempo_TimeMapCoordinateSystem::mouseDown(const MouseEvent &event)
                     composition->addSelectedControlPointIndex(i);
                 }
                 canDrag = true;
-                draggedPoint.reset(controlPoint->copy());
+                draggedPoint = controlPoint;
             }
             break;
         }
@@ -388,8 +387,9 @@ void Polytempo_TimeMapCoordinateSystem::mouseDown(const MouseEvent &event)
     {
         for(int index : *composition->getSelectedControlPointIndices())
         {
-            draggedControlPointsOrigin.add(sequence->getControlPoint(index)->copy());
-            if(draggedPoint == nullptr) draggedPoint.reset(sequence->getControlPoint(index)->copy());
+            Polytempo_ControlPoint *temp = sequence->getControlPoint(index)->copy();
+            draggedControlPointsOrigin.add(temp);
+            if(draggedPoint == sequence->getControlPoint(index)) draggedPoint = temp;
         }
     }
 
