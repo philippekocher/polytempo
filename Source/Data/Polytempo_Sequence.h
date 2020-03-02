@@ -46,6 +46,7 @@ public:
     OwnedArray <Polytempo_BeatPattern>* getBeatPatterns();
     Polytempo_BeatPattern* getBeatPattern(int);
     
+    OwnedArray <Polytempo_Event>& getTimedEvents();
     OwnedArray <Polytempo_Event>& getEvents();
     Polytempo_Event* getEvent(int);
     
@@ -99,8 +100,8 @@ private:
     OwnedArray <Polytempo_ControlPoint> controlPoints;
     OwnedArray <Polytempo_BeatPattern> beatPatterns;
     int selectedBeatPattern = -1;
-    OwnedArray <Polytempo_Event> events;
-    OwnedArray <Polytempo_Event> timedEvents;
+    OwnedArray <Polytempo_Event> events;        // events given by the beat patterns
+    OwnedArray <Polytempo_Event> timedEvents;   // timed events used for playback and export
 
     Polytempo_ListComponent* beatPatternListComponent = nullptr;
     

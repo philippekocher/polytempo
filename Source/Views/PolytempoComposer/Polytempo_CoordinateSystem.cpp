@@ -76,8 +76,6 @@ Polytempo_CoordinateSystemComponent::Polytempo_CoordinateSystemComponent()
     playhead.reset(new DrawableRectangle());
     playhead->setFill(Colours::black);
     addAndMakeVisible(playhead.get());
-
-    horizontalGrid.reset(new Array<float>());
 }
 
 Polytempo_CoordinateSystemComponent::~Polytempo_CoordinateSystemComponent()
@@ -149,19 +147,14 @@ void Polytempo_TimeMapCoordinateSystem::paint(Graphics& g)
     
     // horizontal grid lines (position)
     
-    horizontalGrid->clearQuick();
-    
     Polytempo_Event* event;
-    Rational pos;
     float thickness, y;
     int i = -1;
     while((event = sequence->getEvent(++i)) != nullptr)
     {
-        pos = event->getPosition();
         if(event->getType() == eventType_Beat)
         {
-            y = getHeight() - TIMEMAP_OFFSET - pos * zoomY;
-            horizontalGrid->add(pos.toFloat());
+            y = getHeight() - TIMEMAP_OFFSET - event->getPosition() * zoomY;
             if(int(event->getProperty(eventPropertyString_Pattern)) == 10)
                 thickness = 2.0;
             else if(int(event->getProperty(eventPropertyString_Pattern)) < 20)
@@ -310,10 +303,11 @@ void Polytempo_TimeMapCoordinateSystem::paintSequence(Graphics& g, Polytempo_Seq
     }
 }
 
-void Polytempo_TimeMapCoordinateSystem::mouseDown(const MouseEvent &event)
+void Polytempo_TimeMapCoordinateSystem::mouseDown(const MouseEvent &mouseEvent)
 {
-    float mouseTime      = (event.x - TIMEMAP_OFFSET) / zoomX;
-    float mousePosition  = (getHeight() - event.y - TIMEMAP_OFFSET) / zoomY;
+    float mouseTime           = (mouseEvent.x - TIMEMAP_OFFSET) / zoomX;
+    float mouseFloatPos       = (getHeight() - mouseEvent.y - TIMEMAP_OFFSET) / zoomY;
+    Rational mouseRationalPos = Rational(mouseFloatPos);
 
     Polytempo_Composition* composition = Polytempo_Composition::getInstance();
     Polytempo_Sequence* sequence = composition->getSelectedSequence();
@@ -321,18 +315,33 @@ void Polytempo_TimeMapCoordinateSystem::mouseDown(const MouseEvent &event)
     bool canDrag = false;
 
     // show pop-up menu
-    if(event.mods.isPopupMenu())
+    if(mouseEvent.mods.isPopupMenu())
     {
         ((Polytempo_CoordinateSystem*)viewport)->showPopupMenu();
         return;
     }
 
     // cmd-click: add control point
-    if(event.mods.isCommandDown())
+    if(mouseEvent.mods.isCommandDown())
     {
-        if(sequence->validateNewControlPointPosition(mouseTime, mousePosition))
+        // quantize position
+        OwnedArray<Polytempo_Event> *events = &sequence->getEvents();
+        for(int i=0;i<events->size()-1;i++)
         {
-            sequence->addControlPoint(mouseTime, mousePosition);
+            if(mouseFloatPos >= events->getUnchecked(i)->getPosition().toFloat() &&
+               mouseFloatPos <  events->getUnchecked(i+1)->getPosition().toFloat())
+            {
+                if(fabs(mouseFloatPos - events->getUnchecked(i)->getPosition().toFloat()) <
+                   fabs(mouseFloatPos -  events->getUnchecked(i+1)->getPosition().toFloat()))
+                        mouseRationalPos = events->getUnchecked(i)->getPosition();
+                else
+                    mouseRationalPos = events->getUnchecked(i+1)->getPosition();
+                break;
+            }
+        }
+        if(sequence->validateNewControlPointPosition(mouseTime, mouseRationalPos))
+        {
+            sequence->addControlPoint(mouseTime, mouseRationalPos);
             composition->updateContent();
             canDrag = true;
             return;
@@ -348,13 +357,13 @@ void Polytempo_TimeMapCoordinateSystem::mouseDown(const MouseEvent &event)
         // stop searching in this sequence if the point coordinates
         // are beyond the mouse coordinates
         if(controlPoint->time > mouseTime + CONTROL_POINT_SIZE / zoomX ||
-           controlPoint->position.toFloat() > mousePosition + CONTROL_POINT_SIZE / zoomY) break;
+           controlPoint->position.toFloat() > mouseFloatPos + CONTROL_POINT_SIZE / zoomY) break;
 
         if(fabs(controlPoint->time - mouseTime) <= CONTROL_POINT_SIZE * 0.5 / zoomX &&
-           fabs(controlPoint->position.toFloat() - mousePosition) <= CONTROL_POINT_SIZE * 0.5 / zoomY)
+           fabs(controlPoint->position.toFloat() - mouseFloatPos) <= CONTROL_POINT_SIZE * 0.5 / zoomY)
         {
             hit = true;
-            if(event.mods.isShiftDown())
+            if(mouseEvent.mods.isShiftDown())
             {
                 if(composition->isSelectedControlPointIndex(i))
                 {
@@ -382,7 +391,7 @@ void Polytempo_TimeMapCoordinateSystem::mouseDown(const MouseEvent &event)
         }
     }
     // no hit detected
-    if(!hit && !event.mods.isShiftDown()) composition->clearSelectedControlPointIndices();
+    if(!hit && !mouseEvent.mods.isShiftDown()) composition->clearSelectedControlPointIndices();
     
     // prepare for dragging
     if(canDrag)
@@ -398,47 +407,45 @@ void Polytempo_TimeMapCoordinateSystem::mouseDown(const MouseEvent &event)
     composition->updateContent(); // repaint everything
 }
 
-void Polytempo_TimeMapCoordinateSystem::mouseDrag(const MouseEvent &event)
+void Polytempo_TimeMapCoordinateSystem::mouseDrag(const MouseEvent &mouseEvent)
 {
-    if(event.mods.isPopupMenu()) return;
-    if(event.getDistanceFromDragStart() < 1) return;
+    if(mouseEvent.mods.isPopupMenu()) return;
+    if(mouseEvent.getDistanceFromDragStart() < 1) return;
         
     Polytempo_Composition* composition = Polytempo_Composition::getInstance();
     Polytempo_Sequence* sequence = composition->getSelectedSequence();
 
     if(draggedControlPointsOrigin.size() > 0)
     {
-        float time, position;
         float deltaT;
         Rational deltaPos;
 
-        time = (event.position.x - TIMEMAP_OFFSET) / zoomX;
-        position = (getHeight() - event.y - TIMEMAP_OFFSET) / zoomY;
+        float mouseTime           = (mouseEvent.x - TIMEMAP_OFFSET) / zoomX;
+        float mouseFloatPos       = (getHeight() - mouseEvent.y - TIMEMAP_OFFSET) / zoomY;
+        Rational mouseRationalPos = Rational(mouseFloatPos);
 
-        if(!event.mods.isCommandDown())
+        // quantize time
+        mouseTime = int(mouseTime * 10) * 0.1f;
+
+        // quantize position
+        OwnedArray<Polytempo_Event> *events = &sequence->getEvents();
+        for(int i=0;i<events->size()-1;i++)
         {
-            // quantize time
-            time = int(time * 10) * 0.1f;
- 
-            // quantize score position
-            for(int i=0;i<horizontalGrid->size()-1;i++)
+            if(mouseFloatPos >= events->getUnchecked(i)->getPosition().toFloat() &&
+               mouseFloatPos <  events->getUnchecked(i+1)->getPosition().toFloat())
             {
-                if(horizontalGrid->getUnchecked(i)   < position &&
-                   horizontalGrid->getUnchecked(i+1) > position)
-                {
-                    if(fabs(horizontalGrid->getUnchecked(i) - position) <
-                       fabs(horizontalGrid->getUnchecked(i+1) - position))
-                        position = horizontalGrid->getUnchecked(i);
-                    else
-                        position = horizontalGrid->getUnchecked(i+1);
-                    break;
-                }
+                if(fabs(mouseFloatPos - events->getUnchecked(i)->getPosition().toFloat()) <
+                   fabs(mouseFloatPos -  events->getUnchecked(i+1)->getPosition().toFloat()))
+                        mouseRationalPos = events->getUnchecked(i)->getPosition();
+                else
+                    mouseRationalPos = events->getUnchecked(i+1)->getPosition();
+                break;
             }
         }
         
         // calculate delta
-        deltaT = time - draggedPoint->time ;
-        deltaPos = event.mods.isShiftDown() ? 0 : Rational(position) - draggedPoint->position;
+        deltaT = mouseTime - draggedPoint->time ;
+        deltaPos = mouseEvent.mods.isShiftDown() ? 0 : mouseRationalPos - draggedPoint->position;
 
         for(int i=0;i<draggedControlPointsOrigin.size();i++)
         {
@@ -451,10 +458,10 @@ void Polytempo_TimeMapCoordinateSystem::mouseDrag(const MouseEvent &event)
     }
     else
     {
-        selectionRectangle.setLeft  (event.position.x < event.mouseDownPosition.x ? event.position.x : event.mouseDownPosition.x);
-        selectionRectangle.setTop   (event.position.y < event.mouseDownPosition.y ? event.position.y : event.mouseDownPosition.y);
-        selectionRectangle.setRight (event.position.x > event.mouseDownPosition.x ? event.position.x : event.mouseDownPosition.x);
-        selectionRectangle.setBottom(event.position.y > event.mouseDownPosition.y ? event.position.y : event.mouseDownPosition.y);
+        selectionRectangle.setLeft  (mouseEvent.position.x < mouseEvent.mouseDownPosition.x ? mouseEvent.position.x : mouseEvent.mouseDownPosition.x);
+        selectionRectangle.setTop   (mouseEvent.position.y < mouseEvent.mouseDownPosition.y ? mouseEvent.position.y : mouseEvent.mouseDownPosition.y);
+        selectionRectangle.setRight (mouseEvent.position.x > mouseEvent.mouseDownPosition.x ? mouseEvent.position.x : mouseEvent.mouseDownPosition.x);
+        selectionRectangle.setBottom(mouseEvent.position.y > mouseEvent.mouseDownPosition.y ? mouseEvent.position.y : mouseEvent.mouseDownPosition.y);
         
         composition->clearSelectedControlPointIndices();
         int i = -1;
@@ -507,8 +514,6 @@ void Polytempo_TempoMapCoordinateSystem::paint(Graphics& g)
     
     // horizontal grid lines (tempo)
 
-    horizontalGrid->clearQuick();
-    
     float tempoIncrement = Polytempo_TempoRuler::getIncrementForZoom(zoomY);
     float tempo = 0;
     

@@ -76,11 +76,16 @@ Polytempo_BeatPattern* Polytempo_Sequence::getBeatPattern(int index)
         return beatPatterns[index];
 }
 
-OwnedArray <Polytempo_Event>& Polytempo_Sequence::getEvents()
+OwnedArray <Polytempo_Event>& Polytempo_Sequence::getTimedEvents()
 {
     Polytempo_EventComparator sorter;
     timedEvents.sort(sorter, true); // true = retain order of equal elements
     return timedEvents;
+}
+
+OwnedArray <Polytempo_Event>& Polytempo_Sequence::getEvents()
+{
+    return events;
 }
 
 Polytempo_Event* Polytempo_Sequence::getEvent(int index)
@@ -527,7 +532,7 @@ void Polytempo_Sequence::updateEvents()
     
     // set the beat durations and store them in the array timedEvents
     timedEvents.clearQuick(true);
-    //std::unique_ptr<Polytempo_Event> event;
+
     float time = NAN;
     for(int i=events.size()-1;i>=0;i--)
     {

@@ -54,7 +54,6 @@ protected:
     bool hit;
         
     std::unique_ptr<DrawableRectangle> playhead;
-    std::unique_ptr<Array<float>> horizontalGrid;
 };
 
 class Polytempo_TimeMapCoordinateSystem : public Polytempo_CoordinateSystemComponent
