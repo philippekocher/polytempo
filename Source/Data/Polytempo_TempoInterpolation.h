@@ -60,7 +60,8 @@ public:
         tempoOut = object->getProperty("tempoOut");
         tempoInWeight = object->getProperty("tempoInWeight");
         tempoOutWeight = object->getProperty("tempoOutWeight");
-        cueIn.setObject(object->getProperty("cueIn").getDynamicObject());
+        if(object->hasProperty("cueIn"))
+            cueIn.setObject(object->getProperty("cueIn").getDynamicObject());
         start = object->getProperty("start");
         locked = object->getProperty("locked");
     }
