@@ -387,8 +387,8 @@ void Polytempo_Sequence::addControlPoint(float t, Rational pos, float tin, float
     }
     else
     {
-        point->tempoIn = 0.25;
-        point->tempoOut = 0.25;
+        point->tempoIn = tin == 0 ? 0.25 : tin;
+        point->tempoOut = tout == 0 ? 0.25 : tout;
     }
     updateEvents();
     Polytempo_Composition::getInstance()->clearSelectedControlPointIndices();
