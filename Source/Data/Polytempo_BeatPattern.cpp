@@ -226,10 +226,14 @@ Array<Polytempo_Event *> Polytempo_BeatPattern::getEvents(Rational pos)
 DynamicObject* Polytempo_BeatPattern::getObject()
 {
     DynamicObject* object = new DynamicObject();
-    object->setProperty("patternString", patternString);
-    object->setProperty("repeats", repeats);
-    if(marker != String()) object->setProperty("marker", marker);
-    object->setProperty("counterString", counterString);
+    if(!patternString.isEmpty())
+        object->setProperty("patternString", patternString);
+    if(repeats > 1)
+        object->setProperty("repeats", repeats);
+    if(!marker.isEmpty())
+        object->setProperty("marker", marker);
+    if(!counterString.isEmpty())
+        object->setProperty("counterString", counterString);
 
     return object;
 }
@@ -238,6 +242,7 @@ void Polytempo_BeatPattern::setObject(DynamicObject* object)
 {
     setPattern(object->getProperty("patternString"));
     repeats = object->getProperty("repeats");
+    if(repeats < 1) repeats = 1;
     marker = object->getProperty("marker");
     counterString = object->getProperty("counterString");
 }
