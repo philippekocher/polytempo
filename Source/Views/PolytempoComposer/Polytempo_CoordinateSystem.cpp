@@ -449,10 +449,12 @@ void Polytempo_TimeMapCoordinateSystem::mouseDrag(const MouseEvent &mouseEvent)
 
         for(int i=0;i<draggedControlPointsOrigin.size();i++)
         {
-            composition->getSelectedSequence()->setControlPointPosition(composition->getSelectedControlPointIndices()->getUnchecked(i),
-                                                                        draggedControlPointsOrigin.getUnchecked(i)->time + deltaT,
-                                                                        draggedControlPointsOrigin.getUnchecked(i)->position + deltaPos);
+            sequence->setControlPointTime(composition->getSelectedControlPointIndices()->getUnchecked(i),
+                                          draggedControlPointsOrigin.getUnchecked(i)->time + deltaT);
+            sequence->setControlPointPosition(composition->getSelectedControlPointIndices()->getUnchecked(i),
+                                              draggedControlPointsOrigin.getUnchecked(i)->position + deltaPos);
         }
+        sequence->update();
         
         composition->updateContent(); // repaint everything
     }
@@ -479,7 +481,7 @@ void Polytempo_TimeMapCoordinateSystem::mouseDrag(const MouseEvent &mouseEvent)
             if(selectionRectangle.contains(x,y)) composition->addSelectedControlPointIndex(i);
         }
 
-        repaint();
+        composition->updateContent(); // repaint everything (also list view)
     }
 }
 

@@ -59,8 +59,8 @@ public:
     void setBeatPatternListComponent(Polytempo_ListComponent*);
     
     bool validateNewControlPointPosition(float t, Rational pos);
-    bool validateControlPoints(OwnedArray<Polytempo_ControlPoint> &);
-    void setControlPointPosition(int index, float t, Rational pos);
+    void setControlPointTime(int index, float t);
+    void setControlPointPosition(int index, Rational pos);
     void setControlPointStart(int index, int start);
     void setControlPointCue(int index, String cue);
     void shiftControlPoints(Array<int>* indices, float deltaTime);
@@ -82,7 +82,8 @@ public:
     void removeSelectedBeatPattern();
     
     void buildBeatPattern();
-    void updateEvents();
+    bool validateControlPoints();
+    bool update();
     
     void addPlaybackPropertiesToEvent(Polytempo_Event*);
     Polytempo_Event* getOscEvent(Polytempo_Event*);
@@ -98,6 +99,7 @@ private:
     bool visible = true;
 
     OwnedArray <Polytempo_ControlPoint> controlPoints;
+    OwnedArray <Polytempo_ControlPoint> controlPointsBackup;
     OwnedArray <Polytempo_BeatPattern> beatPatterns;
     int selectedBeatPattern = -1;
     OwnedArray <Polytempo_Event> events;        // events given by the beat patterns

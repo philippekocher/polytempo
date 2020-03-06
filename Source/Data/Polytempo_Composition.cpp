@@ -183,7 +183,6 @@ void Polytempo_Composition::updateScore()
     
     while((sequence = getSequence(++i)) != nullptr)
     {
-        sequence->updateEvents();
         score->addEvents(sequence->getTimedEvents());
     }
     

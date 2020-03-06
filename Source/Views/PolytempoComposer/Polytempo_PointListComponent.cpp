@@ -112,10 +112,12 @@ void Polytempo_PointListComponent::setText(String text, int rowNumber, int colum
     switch(columnId)
     {
         case 1:
-            sequence->setControlPointPosition(rowNumber, text.getFloatValue(), -1);
+            sequence->setControlPointTime(rowNumber, text.getFloatValue());
+            sequence->update();
             break;
         case 2:
-            sequence->setControlPointPosition(rowNumber, -1, Rational(text));
+            sequence->setControlPointPosition(rowNumber, Rational(text));
+            sequence->update();
             break;
         case 3:
             sequence->setControlPointTempos(rowNumber, Polytempo_TempoMeasurement::encodeTempoFromUI(text.getFloatValue()), -1);
@@ -125,9 +127,11 @@ void Polytempo_PointListComponent::setText(String text, int rowNumber, int colum
             break;
         case 5:
             sequence->setControlPointStart(rowNumber, text.getIntValue());
+            sequence->update();
             break;
         case 6:
             sequence->setControlPointCue(rowNumber, text);
+            sequence->update();
             break;
     }
 
