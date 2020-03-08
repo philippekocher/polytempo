@@ -206,10 +206,12 @@
               resource="0" file="../Source/Preferences/Polytempo_StoredPreferences.h"/>
       </GROUP>
       <GROUP id="{CEC55962-3D3D-C29E-A1E4-9BB1E8A1B025}" name="Misc">
-        <FILE id="t5z5E6" name="Polytempo_Button.h" compile="0" resource="0"
-              file="../Source/Misc/Polytempo_Button.h"/>
         <FILE id="rV6mQ9" name="Polytempo_Globals.h" compile="0" resource="0"
               file="../Source/Misc/Polytempo_Globals.h"/>
+        <FILE id="t5z5E6" name="Polytempo_Button.h" compile="0" resource="0"
+              file="../Source/Misc/Polytempo_Button.h"/>
+        <FILE id="xCIAdF" name="Polytempo_ImageButton.h" compile="0" resource="0"
+              file="../Source/Misc/Polytempo_ImageButton.h"/>
         <FILE id="oOvAFG" name="Polytempo_Textbox.h" compile="0" resource="0"
               file="../Source/Misc/Polytempo_Textbox.h"/>
         <FILE id="wc8iSI" name="Polytempo_TempoMeasurement.h" compile="0" resource="0"
