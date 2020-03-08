@@ -8,7 +8,6 @@ public:
     
     Rectangle<float> getImageBounds() const
     {
-        DBG("get bounds");
         auto r = getLocalBounds();
         r = r.reduced(3, 3);
         return r.toFloat();

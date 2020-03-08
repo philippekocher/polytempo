@@ -358,9 +358,7 @@ void Polytempo_ComposerMenuBarModel::getCommandInfo(CommandID commandID, Applica
             
         case Polytempo_CommandIDs::adjustTempo:
             result.setInfo ("Adjust Tempo", String(), infoCategory, 0);
-            result.setActive(composition->getSelectedControlPointIndices()->size() > 0 &&
-                             !(composition->getSelectedControlPointIndices()->size() == 1 &&
-                               composition->getSelectedControlPointIndices()->getUnchecked(0) == 0));
+            result.setActive(composition->getSelectedControlPointIndices()->size() > 1);
             break;
 
             

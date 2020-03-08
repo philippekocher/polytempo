@@ -286,12 +286,12 @@ void Polytempo_Sequence::adjustPosition(Array<int>* indices, bool relativeToPrev
 
 void Polytempo_Sequence::adjustTempo(Array<int>* indices)
 {
-    if(indices->getUnchecked(0) == 0) indices->remove(0); // first point can't be adjusted
-
-    for(int index : *indices)
+    for(int i=1;i<indices->size();i++)
     {
-        Polytempo_ControlPoint *c0 = controlPoints[index-1];
-        Polytempo_ControlPoint *c1 = controlPoints[index];
+        if(indices->getUnchecked(i) - indices->getUnchecked(i-1) != 1) continue; // only adjust the tempos of two adjacent points
+        
+        Polytempo_ControlPoint *c0 = controlPoints[indices->getUnchecked(i)-1];
+        Polytempo_ControlPoint *c1 = controlPoints[indices->getUnchecked(i)];
         float tempo = (c1->position - c0->position).toFloat() / (c1->time - c0->time);
     
         c0->tempoOut = tempo;
