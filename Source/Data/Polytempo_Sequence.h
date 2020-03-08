@@ -65,8 +65,8 @@ public:
     void setControlPointCue(int index, String cue);
     void shiftControlPoints(Array<int>* indices, float deltaTime);
     void setControlPointTempos(int index, float inTempo, float outTempo, float inTempoWeight = -1, float outTempoWeight = -1);
-    void adjustTime(Array<int>* indices);
-    void adjustPosition(Array<int>* indices);
+    void adjustTime(Array<int>* indices, bool relativeToPreviousPoint = true);
+    void adjustPosition(Array<int>* indices, bool relativeToPreviousPoint = true);
     void adjustTempo(Array<int>* indices);
     void removeControlPoints(Array<int>* indices);
     

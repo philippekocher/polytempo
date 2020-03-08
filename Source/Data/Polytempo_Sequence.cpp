@@ -218,37 +218,67 @@ bool Polytempo_Sequence::isTempoConstantAfterPoint(int i)
         return false;
 }
 
-void Polytempo_Sequence::adjustTime(Array<int>* indices)
+void Polytempo_Sequence::adjustTime(Array<int>* indices, bool relativeToPreviousPoint)
 {
     Polytempo_ControlPoint *c0, *c1;
     float meanTempo;
     
-    if(indices->getUnchecked(0) == 0) indices->remove(0); // first point can't be adjusted
-    
-    for(int index : *indices)
+    // a point can't be adjusted if there is no relative point
+    if(relativeToPreviousPoint && indices->getFirst() == 0) indices->remove(0);
+    if(!relativeToPreviousPoint && indices->getLast() == controlPoints.size()-1) indices->removeLast();
+
+    if(relativeToPreviousPoint)
     {
-        c0 = controlPoints[index-1];
-        c1 = controlPoints[index];
-        meanTempo = (c0->tempoOut + c1->tempoIn) * 0.5f;
-        c1->time = c0->time + (c1->position - c0->position).toFloat() / meanTempo;
+        for(int index : *indices)
+        {
+            c0 = controlPoints[index-1];
+            c1 = controlPoints[index];
+            meanTempo = (c0->tempoOut + c1->tempoIn) * 0.5f;
+            c1->time = c0->time + (c1->position - c0->position).toFloat() / meanTempo;
+        }
     }
-    
+    else
+    {
+        for(int i=indices->size()-1; i>=0; i--)
+        {
+            c0 = controlPoints[indices->getUnchecked(i)];
+            c1 = controlPoints[indices->getUnchecked(i)+1];
+            meanTempo = (c0->tempoOut + c1->tempoIn) * 0.5f;
+            c0->time = c1->time - (c1->position - c0->position).toFloat() / meanTempo;
+        }
+    }
+        
     if(!update()) Polytempo_Alert::show("Error", "Invalid operation");
 }
 
-void Polytempo_Sequence::adjustPosition(Array<int>* indices)
+void Polytempo_Sequence::adjustPosition(Array<int>* indices, bool relativeToPreviousPoint)
 {
     Polytempo_ControlPoint *c0, *c1;
     float meanTempo;
 
-    if(indices->getUnchecked(0) == 0) indices->remove(0); // first point can't be adjusted
+    // a point can't be adjusted if there is no relative point
+    if(relativeToPreviousPoint && indices->getFirst() == 0) indices->remove(0);
+    if(!relativeToPreviousPoint && indices->getLast() == controlPoints.size()-1) indices->removeLast();
 
-    for(int index : *indices)
+    if(relativeToPreviousPoint)
     {
-        c0 = controlPoints[index-1];
-        c1 = controlPoints[index];
-        meanTempo = (c0->tempoOut + c1->tempoIn) * 0.5f;
-        c1->position = Rational(c0->position.toFloat() + (c1->time - c0->time) * meanTempo);
+        for(int index : *indices)
+        {
+            c0 = controlPoints[index-1];
+            c1 = controlPoints[index];
+            meanTempo = (c0->tempoOut + c1->tempoIn) * 0.5f;
+            c1->position = Rational(c0->position.toFloat() + (c1->time - c0->time) * meanTempo);
+        }
+    }
+    else
+    {
+        for(int i=indices->size()-1; i>=0; i--)
+        {
+            c0 = controlPoints[indices->getUnchecked(i)];
+            c1 = controlPoints[indices->getUnchecked(i)+1];
+            meanTempo = (c0->tempoOut + c1->tempoIn) * 0.5f;
+            c0->position = Rational(c1->position.toFloat() - (c1->time - c0->time) * meanTempo);
+        }
     }
     
     if(!update()) Polytempo_Alert::show("Error", "Invalid operation");

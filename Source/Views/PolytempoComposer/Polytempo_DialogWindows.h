@@ -311,10 +311,10 @@ namespace Polytempo_DialogWindows
                Polytempo_Composition* composition = Polytempo_Composition::getInstance();
                Polytempo_Sequence* sequence = composition->getSelectedSequence();
 
-               if(button == adjustTimeFwdButton)          sequence->adjustTime(composition->getSelectedControlPointIndices());
-               else if(button == adjustTimeBwdButton)     sequence->adjustTime(composition->getSelectedControlPointIndices());
-               else if(button == adjustPositionFwdButton) sequence->adjustPosition(composition->getSelectedControlPointIndices());
-               else if(button == adjustPositionBwdButton) sequence->adjustPosition(composition->getSelectedControlPointIndices());
+               if(button == adjustTimeFwdButton)          sequence->adjustTime(composition->getSelectedControlPointIndices(), true);
+               else if(button == adjustTimeBwdButton)     sequence->adjustTime(composition->getSelectedControlPointIndices(), false);
+               else if(button == adjustPositionFwdButton) sequence->adjustPosition(composition->getSelectedControlPointIndices(), true);
+               else if(button == adjustPositionBwdButton) sequence->adjustPosition(composition->getSelectedControlPointIndices(), false);
            }
            
        private:
