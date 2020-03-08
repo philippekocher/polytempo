@@ -82,8 +82,6 @@ namespace Polytempo_CommandIDs
         insertControlPoint,
         removeControlPoints,
         shiftControlPoints,
-        adjustTime,
-        adjustPosition,
         adjustControlPoints,
         adjustTempo,
         

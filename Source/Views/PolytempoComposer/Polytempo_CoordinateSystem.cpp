@@ -60,8 +60,6 @@ void Polytempo_CoordinateSystem::showPopupMenu()
     m.addCommandItem(commandManager, Polytempo_CommandIDs::removeControlPoints);
     m.addCommandItem(commandManager, Polytempo_CommandIDs::shiftControlPoints);
     m.addCommandItem(commandManager, Polytempo_CommandIDs::adjustControlPoints);
-    m.addCommandItem(commandManager, Polytempo_CommandIDs::adjustTime);
-    m.addCommandItem(commandManager, Polytempo_CommandIDs::adjustPosition);
     m.addCommandItem(commandManager, Polytempo_CommandIDs::adjustTempo);
 
     m.show();
