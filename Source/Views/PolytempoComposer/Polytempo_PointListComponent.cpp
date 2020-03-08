@@ -199,7 +199,7 @@ Component* Polytempo_PointListComponent::refreshComponentForCell(int rowNumber, 
     }
     else
     {
-        textLabel->setEditable(true);
+        textLabel->setEditable(false, true, false);
         textLabel->setFont(Font (13.0f, rowIsSelected ? Font::bold : Font::plain));
         textLabel->setColour(Label::textColourId, rowIsSelected ? Colour(0,0,0) : Colour(90,90,90));
         textLabel->setText(getText(rowNumber, columnId), dontSendNotification);

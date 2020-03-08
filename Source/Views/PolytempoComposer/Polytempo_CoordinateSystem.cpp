@@ -751,6 +751,6 @@ void Polytempo_TempoMapCoordinateSystem::mouseDrag(const MouseEvent &event)
                 composition->addSelectedControlPointIndex(i);
         }
 
-        repaint();
+        composition->updateContent(); // repaint everything (also list view)
     }
 }
