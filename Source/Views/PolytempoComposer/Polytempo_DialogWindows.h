@@ -93,10 +93,7 @@ namespace Polytempo_DialogWindows
             okButton->setEnabled(enabled);
         }
         
-        virtual void perform()
-        {
-            DBG("do it!");
-        }
+        virtual void perform(Button *button) = 0;
         
         void buttonClicked(Button *button)
         {
@@ -104,9 +101,9 @@ namespace Polytempo_DialogWindows
             {
                 setVisible(false);
             }
-            if(button == okButton)
+            else
             {
-                perform();
+                perform(button);
                 setVisible(false);
             }
         }
@@ -120,10 +117,9 @@ namespace Polytempo_DialogWindows
             }
             if(kp == KeyPress::returnKey && okButton->isEnabled())
             {
-                perform();
+                perform(okButton);
                 setVisible(false);
-                //Polytempo_Composition::getInstance()->updateGUI(); // repaint everything
-               return true;
+                return true;
             }
             
             return false;
@@ -186,16 +182,17 @@ namespace Polytempo_DialogWindows
             enableOkButton(sequence->validateNewControlPointPosition(timeTextbox->getText().getFloatValue(), Rational(positionTextbox->getText())));
         }
  
-        void perform()
+        void perform(Button *button)
         {
-            Polytempo_Sequence* sequence = Polytempo_Composition::getInstance()->getSelectedSequence();
+            if(button == okButton)
+            {
+                Polytempo_Sequence* sequence = Polytempo_Composition::getInstance()->getSelectedSequence();
             
-            sequence->addControlPoint(timeTextbox->getText().getFloatValue(),
-                                      Rational(positionTextbox->getText()),
-                                      Polytempo_TempoMeasurement::encodeTempoFromUI((tempoInTextbox->getText().getFloatValue())),
-                                      Polytempo_TempoMeasurement::encodeTempoFromUI(tempoOutTextbox->getText().getFloatValue()));
-            
-            Polytempo_Composition::getInstance()->updateContent(); // repaint everything
+                sequence->addControlPoint(timeTextbox->getText().getFloatValue(),
+                                          Rational(positionTextbox->getText()),
+                                          Polytempo_TempoMeasurement::encodeTempoFromUI((tempoInTextbox->getText().getFloatValue())),
+                                          Polytempo_TempoMeasurement::encodeTempoFromUI(tempoOutTextbox->getText().getFloatValue()));
+            }
         }
         
     private:
@@ -250,12 +247,15 @@ namespace Polytempo_DialogWindows
             lastTimeTextbox->setText(String(lastTime + deltaTime), dontSendNotification);
         }
  
-        void perform()
+        void perform(Button *button)
         {
-            Polytempo_Composition* composition = Polytempo_Composition::getInstance();
-            Polytempo_Sequence* sequence = composition->getSelectedSequence();
+            if(button == okButton)
+            {
+                Polytempo_Composition* composition = Polytempo_Composition::getInstance();
+                Polytempo_Sequence* sequence = composition->getSelectedSequence();
             
-            sequence->shiftControlPoints(composition->getSelectedControlPointIndices(), deltaTime);            
+                sequence->shiftControlPoints(composition->getSelectedControlPointIndices(), deltaTime);
+            }
         }
         
     private:
@@ -268,6 +268,62 @@ namespace Polytempo_DialogWindows
         float deltaTime;
     };
     
+    class AdjustControlPoints : public Basic
+    {
+       public:
+           AdjustControlPoints()
+           {
+               setName("Adjust Selected Control Points");
+               contentComponent->removeChildComponent(okButton);
+               delete okButton;
+               cancelButton->setBounds(getBounds().getWidth()-80, getBounds().getHeight()-30, 60, 20);
+
+               Image adjustTimeBwdImage     = ImageCache::getFromMemory(BinaryData::adjustTimeBwd_png, BinaryData::adjustTimeBwd_pngSize);
+               Image adjustPositionFwdImage = ImageCache::getFromMemory(BinaryData::adjustPositionFwd_png, BinaryData::adjustPositionFwd_pngSize);
+               Image adjustPositionBwdImage = ImageCache::getFromMemory(BinaryData::adjustPositionBwd_png, BinaryData::adjustPositionBwd_pngSize);
+
+               contentComponent->addAndMakeVisible(adjustTimeFwdButton = new DrawableButton("Adjust Time Fwd", DrawableButton::ButtonStyle::ImageOnButtonBackground));
+               adjustTimeFwdButton->setBounds(20,10,50,50);
+               adjustTimeFwdButton->setImages(Drawable::createFromImageData(BinaryData::adjustTimeFwd_png, BinaryData::adjustTimeFwd_pngSize).get());
+               adjustTimeFwdButton->addListener(this);
+               
+               contentComponent->addAndMakeVisible(adjustTimeBwdButton = new DrawableButton("Adjust Time Bwd", DrawableButton::ButtonStyle::ImageOnButtonBackground));
+               adjustTimeBwdButton->setBounds(110,10,50,50);
+               adjustTimeBwdButton->setImages(Drawable::createFromImageData(BinaryData::adjustTimeBwd_png, BinaryData::adjustTimeBwd_pngSize).get());
+               adjustTimeBwdButton->addListener(this);
+               
+               contentComponent->addAndMakeVisible(adjustPositionFwdButton = new DrawableButton("Adjust Position Fwd", DrawableButton::ButtonStyle::ImageOnButtonBackground));
+               adjustPositionFwdButton->setBounds(200,10,50,50);
+               adjustPositionFwdButton->setImages(Drawable::createFromImageData(BinaryData::adjustPositionFwd_png, BinaryData::adjustPositionFwd_pngSize).get());
+               adjustPositionFwdButton->addListener(this);
+               
+               contentComponent->addAndMakeVisible(adjustPositionBwdButton = new DrawableButton("Adjust Position Bwd", DrawableButton::ButtonStyle::ImageOnButtonBackground));
+               adjustPositionBwdButton->setBounds(290,10,50,50);
+               adjustPositionBwdButton->setImages(Drawable::createFromImageData(BinaryData::adjustPositionBwd_png, BinaryData::adjustPositionBwd_pngSize).get());
+               adjustPositionBwdButton->addListener(this);
+           }
+           
+           void labelTextChanged (Label* label)
+           {}
+    
+           void perform(Button *button)
+           {
+               Polytempo_Composition* composition = Polytempo_Composition::getInstance();
+               Polytempo_Sequence* sequence = composition->getSelectedSequence();
+
+               if(button == adjustTimeFwdButton)          sequence->adjustTime(composition->getSelectedControlPointIndices());
+               else if(button == adjustTimeBwdButton)     sequence->adjustTime(composition->getSelectedControlPointIndices());
+               else if(button == adjustPositionFwdButton) sequence->adjustPosition(composition->getSelectedControlPointIndices());
+               else if(button == adjustPositionBwdButton) sequence->adjustPosition(composition->getSelectedControlPointIndices());
+           }
+           
+       private:
+           DrawableButton *adjustTimeFwdButton;
+           DrawableButton *adjustTimeBwdButton;
+           DrawableButton *adjustPositionFwdButton;
+           DrawableButton *adjustPositionBwdButton;
+       };
+       
     class ExportSequences : public Basic
     {
     public:
@@ -316,14 +372,16 @@ namespace Polytempo_DialogWindows
         void labelTextChanged (Label*)
         {}
         
-        void perform()
+        void perform(Button *button)
         {
-            Polytempo_Composition *composition = Polytempo_Composition::getInstance();
+            if(button == okButton)
+            {    Polytempo_Composition *composition = Polytempo_Composition::getInstance();
             
-            if     (tbPlain->getToggleState() == true)     composition->exportAsPlainText();
-            else if(tbLisp->getToggleState() == true)      composition->exportAsLispList();
-            else if(tbC->getToggleState() == true)         composition->exportAsCArray();
-            else if(tbPolytempo->getToggleState() == true) composition->exportAsPolytempoScore();
+                if     (tbPlain->getToggleState() == true)     composition->exportAsPlainText();
+                else if(tbLisp->getToggleState() == true)      composition->exportAsLispList();
+                else if(tbC->getToggleState() == true)         composition->exportAsCArray();
+                else if(tbPolytempo->getToggleState() == true) composition->exportAsPolytempoScore();
+            }
         }
         
     private:

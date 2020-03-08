@@ -125,7 +125,7 @@ PopupMenu Polytempo_ComposerMenuBarModel::getMenuForIndex (int /*menuIndex*/, co
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::insertControlPoint);
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::removeControlPoints);
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::shiftControlPoints);
-        menu.addSeparator();
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::adjustControlPoints);
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::adjustTime);
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::adjustPosition);
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::adjustTempo);
@@ -231,6 +231,7 @@ void Polytempo_ComposerMenuBarModel::getAllCommands (Array <CommandID>& commands
         Polytempo_CommandIDs::insertControlPoint,
         Polytempo_CommandIDs::removeControlPoints,
         Polytempo_CommandIDs::shiftControlPoints,
+        Polytempo_CommandIDs::adjustControlPoints,
         Polytempo_CommandIDs::adjustTime,
         Polytempo_CommandIDs::adjustPosition,
         Polytempo_CommandIDs::adjustTempo,
@@ -354,13 +355,18 @@ void Polytempo_ComposerMenuBarModel::getCommandInfo(CommandID commandID, Applica
             result.setActive(composition->getSelectedControlPointIndices()->size() > 0);
             break;
 
-        case Polytempo_CommandIDs::adjustTime:
-            result.setInfo ("Adjust Time", String(), infoCategory, 0);
-            result.setActive(composition->getSelectedControlPointIndices()->size() > 0 &&
-                             !(composition->getSelectedControlPointIndices()->size() == 1 &&
-                               composition->getSelectedControlPointIndices()->getUnchecked(0) == 0));
+        case Polytempo_CommandIDs::adjustControlPoints:
+            result.setInfo ("Adjust Selected Control Points...", String(), infoCategory, 0);
+            result.setActive(composition->getSelectedControlPointIndices()->size());
             break;
             
+        case Polytempo_CommandIDs::adjustTime:
+                result.setInfo ("Adjust Time", String(), infoCategory, 0);
+                result.setActive(composition->getSelectedControlPointIndices()->size() > 0 &&
+                                 !(composition->getSelectedControlPointIndices()->size() == 1 &&
+                                   composition->getSelectedControlPointIndices()->getUnchecked(0) == 0));
+                break;
+
         case Polytempo_CommandIDs::adjustPosition:
             result.setInfo ("Adjust Position", String(), infoCategory, 0);
             result.setActive(composition->getSelectedControlPointIndices()->size() > 0 &&
@@ -585,6 +591,10 @@ bool Polytempo_ComposerMenuBarModel::perform (const InvocationInfo& info)
             Polytempo_DialogWindows::ShiftControlPoints().show();
             break;
 
+        case Polytempo_CommandIDs::adjustControlPoints:
+            Polytempo_DialogWindows::AdjustControlPoints().show();
+            break;
+            
         case Polytempo_CommandIDs::adjustTime:
             composition->getSelectedSequence()->adjustTime(composition->getSelectedControlPointIndices());
             break;
