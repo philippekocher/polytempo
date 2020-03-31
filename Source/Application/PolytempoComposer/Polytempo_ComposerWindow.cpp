@@ -53,6 +53,9 @@ Polytempo_ComposerWindow::Polytempo_ComposerWindow()
     // restore the window's properties from the settings file
     restoreWindowStateFromString(Polytempo_StoredPreferences::getInstance()->getProps().getValue("mainWindow"));
     restoreWindowContentStateFromString(Polytempo_StoredPreferences::getInstance()->getProps().getValue("mainWindowContent"));
+    
+    openGLContext.attachTo(*getTopLevelComponent());
+    openGLContext.setContinuousRepainting(true);
 
     // create and manage a MenuBarComponent
 	menuBarModel.reset(new Polytempo_ComposerMenuBarModel(this));
@@ -71,6 +74,8 @@ Polytempo_ComposerWindow::~Polytempo_ComposerWindow()
 	setMenuBar(nullptr);
     mainView = nullptr;
     graphicExportView = nullptr;
+
+    openGLContext.detach();
 }
 
 void Polytempo_ComposerWindow::closeButtonPressed()
