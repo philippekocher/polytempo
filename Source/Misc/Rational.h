@@ -174,6 +174,23 @@ public:
         return toFloat() + number;
     }
     
+    Rational& operator* (const Rational& other)
+    {
+        int n = numerator * other.numerator;
+        int d = denominator * other.denominator;
+        
+        Rational *result = new Rational(n,d);
+        return *result;
+    }
+    
+    Rational& operator* (const int number)
+    {
+        int n = numerator * number;
+        
+        Rational *result = new Rational(n,denominator);
+        return *result;
+    }
+
     float operator* (float number)
     {
         return toFloat() * number;
