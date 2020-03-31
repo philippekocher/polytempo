@@ -20,6 +20,12 @@ public:
         temp->position = position;
         temp->tempoIn = tempoIn;
         temp->tempoOut = tempoOut;
+        temp->tempoInWeight = tempoInWeight;
+        temp->tempoOutWeight = tempoOutWeight;
+        temp->cueIn.setPattern(cueIn.getPattern());
+        temp->start = start;
+        temp->locked = locked;
+        temp->isCoinciding = isCoinciding;
         
         return temp;
     }
