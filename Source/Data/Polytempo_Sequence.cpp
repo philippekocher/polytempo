@@ -186,11 +186,12 @@ void Polytempo_Sequence::setControlPointCue(int index, String cue)
     controlPoints[index]->cueIn.setPattern(cue, true);
 }
 
-void Polytempo_Sequence::shiftControlPoints(Array<int>* indices, float deltaTime)
+void Polytempo_Sequence::shiftControlPoints(Array<int>* indices, float deltaTime, Rational deltaPosition)
 {
     for(int index : *indices)
     {
         controlPoints[index]->time += deltaTime;
+        controlPoints[index]->position += deltaPosition;
     }
     
     if(!update()) Polytempo_Alert::show("Error", "Invalid operation");

@@ -154,6 +154,12 @@ public:
         return toFloat() + number;
     }
     
+    Rational& operator+= (Rational& other)
+    {
+        *this = *this + other;
+        return *this;
+    }
+    
     Rational& operator- (const Rational& other)
     {
         int n = numerator   * other.denominator - denominator * other.numerator;

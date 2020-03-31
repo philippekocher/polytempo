@@ -180,6 +180,8 @@ namespace Polytempo_DialogWindows
     public:
         ShiftControlPoints()
         {
+            setSize(360, 190);
+
             setName("Shift Selected Control Points");
             addOkButton("Ok");
 
@@ -188,35 +190,74 @@ namespace Polytempo_DialogWindows
             firstTime = composition->getSelectedSequence()->getControlPoints()->getUnchecked(indices->getFirst())->time;
             lastTime  = composition->getSelectedSequence()->getControlPoints()->getUnchecked(indices->getLast())->time;
             deltaTime = 0;
+            firstPosition = composition->getSelectedSequence()->getControlPoints()->getUnchecked(indices->getFirst())->position;
+            lastPosition  = composition->getSelectedSequence()->getControlPoints()->getUnchecked(indices->getLast())->position;
+            deltaPosition = 0;
 
-            contentComponent->addAndMakeVisible(deltaTextbox = new Polytempo_Textbox("shift points by"));
-            deltaTextbox->setBounds(20,25,90,18);
-            deltaTextbox->setText(String(deltaTime), dontSendNotification);
-            deltaTextbox->setInputRestrictions(0,"0123456789.-");
-            deltaTextbox->addListener(this);
+            contentComponent->addAndMakeVisible(shiftInTimeLabel = new Label("ShiftInTimeLabel","Shift in Time"));
+            shiftInTimeLabel->setBounds(16, 15, 200, 20);
+            shiftInTimeLabel->setFont(Font(16));
+            shiftInTimeLabel->setMinimumHorizontalScale(1.0f);
+
+            contentComponent->addAndMakeVisible(deltaTimeTextbox = new Polytempo_Textbox("shift points by"));
+            deltaTimeTextbox->setBounds(20, 50, 90, 18);
+            deltaTimeTextbox->setText(String(deltaTime), dontSendNotification);
+            deltaTimeTextbox->setInputRestrictions(0,"0123456789.-");
+            deltaTimeTextbox->addListener(this);
             
             contentComponent->addAndMakeVisible(firstTimeTextbox = new Polytempo_Textbox("align first point with"));
-            firstTimeTextbox->setBounds(135,25,90,18);
+            firstTimeTextbox->setBounds(135, 50, 90, 18);
             firstTimeTextbox->setText(String(firstTime), dontSendNotification);
             firstTimeTextbox->setInputRestrictions(0,"0123456789.-");
             firstTimeTextbox->addListener(this);
 
             contentComponent->addAndMakeVisible(lastTimeTextbox = new Polytempo_Textbox("align last point with"));
-            lastTimeTextbox->setBounds(250,25,90,18);
+            lastTimeTextbox->setBounds(250, 50, 90, 18);
             lastTimeTextbox->setText(String(lastTime), dontSendNotification);
             lastTimeTextbox->setInputRestrictions(0,"0123456789.-");
             lastTimeTextbox->addListener(this);
+
+            contentComponent->addAndMakeVisible(shiftInPositionLabel = new Label("ShiftInPositionLabel","Shift in Position"));
+            shiftInPositionLabel->setBounds(16, 85, 200, 20);
+            shiftInPositionLabel->setFont(Font(16));
+            shiftInPositionLabel->setMinimumHorizontalScale(1.0f);
+
+            contentComponent->addAndMakeVisible(deltaPositionTextbox = new Polytempo_Textbox("shift points by"));
+            deltaPositionTextbox->setBounds(20, 120, 90, 18);
+            deltaPositionTextbox->setText(deltaPosition.toString(), dontSendNotification);
+            deltaPositionTextbox->setInputRestrictions(0,"0123456789-/");
+            deltaPositionTextbox->addListener(this);
+            
+            contentComponent->addAndMakeVisible(firstPositionTextbox = new Polytempo_Textbox("align first point with"));
+            firstPositionTextbox->setBounds(135, 120, 90, 18);
+            firstPositionTextbox->setText(firstPosition.toString(), dontSendNotification);
+            firstPositionTextbox->setInputRestrictions(0,"0123456789-/");
+            firstPositionTextbox->addListener(this);
+
+            contentComponent->addAndMakeVisible(lastPositionTextbox = new Polytempo_Textbox("align last point with"));
+            lastPositionTextbox->setBounds(250, 120, 90, 18);
+            lastPositionTextbox->setText(lastPosition.toString(), dontSendNotification);
+            lastPositionTextbox->setInputRestrictions(0,"0123456789-/");
+            lastPositionTextbox->addListener(this);
         }
         
         void labelTextChanged (Label* label)
         {
-            if(label == deltaTextbox)          deltaTime = label->getText().getFloatValue();
+            if(label == deltaTimeTextbox)      deltaTime = label->getText().getFloatValue();
             else if(label == firstTimeTextbox) deltaTime = label->getText().getFloatValue() - firstTime;
             else if(label == lastTimeTextbox)  deltaTime = label->getText().getFloatValue() - lastTime;
 
-            deltaTextbox->setText(String(deltaTime), dontSendNotification);
+            else if(label == deltaPositionTextbox) deltaPosition = Rational(label->getText());
+            else if(label == firstPositionTextbox) deltaPosition = Rational(label->getText()) - firstPosition;
+            else if(label == lastPositionTextbox)  deltaPosition = Rational(label->getText()) - lastPosition;
+
+            deltaTimeTextbox->setText(String(deltaTime), dontSendNotification);
             firstTimeTextbox->setText(String(firstTime + deltaTime), dontSendNotification);
             lastTimeTextbox->setText(String(lastTime + deltaTime), dontSendNotification);
+            
+            deltaPositionTextbox->setText(deltaPosition.toString(), dontSendNotification);
+            firstPositionTextbox->setText((firstPosition+deltaPosition).toString(), dontSendNotification);
+            lastPositionTextbox->setText((lastPosition+deltaPosition).toString(), dontSendNotification);
         }
  
         void perform(Button *button)
@@ -226,18 +267,29 @@ namespace Polytempo_DialogWindows
                 Polytempo_Composition* composition = Polytempo_Composition::getInstance();
                 Polytempo_Sequence* sequence = composition->getSelectedSequence();
             
-                sequence->shiftControlPoints(composition->getSelectedControlPointIndices(), deltaTime);
+                sequence->shiftControlPoints(composition->getSelectedControlPointIndices(), deltaTime, deltaPosition);
             }
         }
         
     private:
-        Polytempo_Textbox *deltaTextbox;
+        Label *shiftInTimeLabel;
+        Label *shiftInPositionLabel;
+
+        Polytempo_Textbox *deltaTimeTextbox;
         Polytempo_Textbox *firstTimeTextbox;
         Polytempo_Textbox *lastTimeTextbox;
+
+        Polytempo_Textbox *deltaPositionTextbox;
+        Polytempo_Textbox *firstPositionTextbox;
+        Polytempo_Textbox *lastPositionTextbox;
 
         float firstTime;
         float lastTime;
         float deltaTime;
+        
+        Rational firstPosition;
+        Rational lastPosition;
+        Rational deltaPosition;
     };
     
     class AdjustControlPoints : public Basic
