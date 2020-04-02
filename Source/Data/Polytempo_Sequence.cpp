@@ -101,6 +101,15 @@ bool Polytempo_Sequence::isVisible()
     return visible;
 }
 
+bool Polytempo_Sequence::isSoloed()
+{
+    return solo;
+}
+
+bool Polytempo_Sequence::isMuted()
+{
+    return mute;
+}
 
 void Polytempo_Sequence::setName(String s)
 {
@@ -115,6 +124,7 @@ void Polytempo_Sequence::setIndex(int index)
 {
     sequenceIndex = index;
     Polytempo_Composition::getInstance()->setDirty(true);
+    DBG("sequence set index: "<<sequenceIndex);
 }
 
 void Polytempo_Sequence::setColour(Colour c)
@@ -561,8 +571,8 @@ bool Polytempo_Sequence::update()
 void Polytempo_Sequence::addPlaybackPropertiesToEvent(Polytempo_Event* event)
 {
     int pattern = event->getProperty(eventPropertyString_Pattern);
-    
-    if(!mute && playAudioClick)
+        
+    if(playAudioClick)
     {
         if(int(event->getProperty("cue")) != 0)
         {
@@ -584,7 +594,7 @@ void Polytempo_Sequence::addPlaybackPropertiesToEvent(Polytempo_Event* event)
         }
         event->setProperty("audioChannel", audioChannel);
     }
-    if(!mute && playMidiClick)
+    if(playMidiClick)
     {
         if(int(event->getProperty("cue")) != 0)
         {
@@ -680,6 +690,7 @@ DynamicObject* Polytempo_Sequence::getObject()
     
     object->setProperty("name", name);
     object->setProperty("colour", colour.toString());
+    object->setProperty("solo", solo);
     object->setProperty("mute", mute);
 
     object->setProperty("playAudioClick", playAudioClick);

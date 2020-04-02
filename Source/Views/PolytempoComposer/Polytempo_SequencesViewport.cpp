@@ -240,8 +240,16 @@ void Polytempo_SequenceControlComponent::buttonClicked(Button* button)
         Polytempo_SequenceGraphicalSettings::show(Polytempo_Composition::getInstance()->getSequence(sequenceIndex));
         button->setToggleState(false, dontSendNotification);
     }
+    else if(button == soloButton.get())
+    {
+        Polytempo_Composition::getInstance()->getSequence(sequenceIndex)->solo = buttonState;
+        Polytempo_Composition::getInstance()->getSequence(sequenceIndex)->mute = false;
+        muteButton->setToggleState(false, dontSendNotification);
+    }
     else if(button == muteButton.get())
     {
         Polytempo_Composition::getInstance()->getSequence(sequenceIndex)->mute = buttonState;
+        Polytempo_Composition::getInstance()->getSequence(sequenceIndex)->solo = false;
+        soloButton->setToggleState(false, dontSendNotification);
     }
 }

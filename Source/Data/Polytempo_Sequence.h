@@ -52,6 +52,9 @@ public:
     
     bool isVisible();
     
+    bool isSoloed();
+    bool isMuted();
+    
     void setIndex(int);
     void setName(String);
     void setColour(Colour);
@@ -135,8 +138,9 @@ private:
     String oscPort            = "47522";
     
     friend class Polytempo_SequenceControlComponent;
+    bool solo = false;
     bool mute = false;
-    
+
     friend class Polytempo_GraphicExportView;
     friend class Polytempo_SequenceGraphicalSettings;
     bool showName = true;

@@ -134,6 +134,15 @@ Polytempo_Sequence* Polytempo_Composition::getSelectedSequence()
     return getSequence(selectedSequenceIndex);
 }
 
+bool Polytempo_Composition::isOneSequenceSoloed()
+{
+    for(Polytempo_Sequence* seq : sequences)
+    {
+        if(seq->isSoloed()) return true;
+    }
+    return false;
+}
+
 void Polytempo_Composition::setSelectedSequenceIndex(int i)
 {
     selectedSequenceIndex = i;
