@@ -34,9 +34,10 @@ class Polytempo_ListComponent;
 class Polytempo_Sequence
 {
 public:
-    Polytempo_Sequence();
+    Polytempo_Sequence(int);
     ~Polytempo_Sequence();
         
+    int getID();
     String getName();
     Colour getColour();
     
@@ -55,7 +56,6 @@ public:
     bool isSoloed();
     bool isMuted();
     
-    void setIndex(int);
     void setName(String);
     void setColour(Colour);
     void setVisibility(bool);
@@ -97,7 +97,7 @@ public:
 
 private:    
     String name;
-    int sequenceIndex = 0;
+    int sequenceID;
     Colour colour = Colours::white;
     bool visible = true;
 

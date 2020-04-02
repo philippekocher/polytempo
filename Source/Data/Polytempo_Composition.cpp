@@ -65,7 +65,7 @@ void Polytempo_Composition::updateContent()
     }
     
     Polytempo_ComposerApplication::getCommandManager().commandStatusChanged(); // update menubar
-    Polytempo_AudioClick::getInstance()->setNumVoices(sequenceCounter);
+    Polytempo_AudioClick::getInstance()->setNumVoices(sequences.size());
     
     scoreNeedsUpdate = true;
 
@@ -80,9 +80,7 @@ void Polytempo_Composition::addSequence()
 {
     Polytempo_Sequence *sequence;
     
-    sequence = new Polytempo_Sequence();
-    
-    sequence->setName("Sequence "+String(++sequenceCounter));
+    sequence = new Polytempo_Sequence(++sequenceCounter);
     
     switch(sequences.size() % 3)
     {
@@ -99,7 +97,6 @@ void Polytempo_Composition::addSequence()
     sequences.add(sequence);
 
     selectedSequenceIndex = sequences.indexOf(sequence);
-    sequence->setIndex(sequences.indexOf(sequence));
     
     updateContent();
     dirty = true;
@@ -133,6 +130,16 @@ Polytempo_Sequence* Polytempo_Composition::getSelectedSequence()
 {
     return getSequence(selectedSequenceIndex);
 }
+
+Polytempo_Sequence* Polytempo_Composition::getSequenceWithID(int id)
+{
+    for(Polytempo_Sequence* seq : sequences)
+    {
+        if(seq->getID() == id) return seq;
+    }
+    return nullptr;
+}
+
 
 bool Polytempo_Composition::isOneSequenceSoloed()
 {
@@ -257,13 +264,15 @@ void Polytempo_Composition::newComposition()
     }
 
     sequences.clear();
+    Polytempo_EventScheduler::getInstance()->scheduleEvent(Polytempo_Event::makeEvent(eventType_DeleteAll));
+    sequenceCounter = 0;
+
     addSequence(); // one sequence to start with
     setDirty(false);
     
     compositionFile = File();
     mainWindow->setName("Untitled");
 
-    Polytempo_EventScheduler::getInstance()->scheduleEvent(Polytempo_Event::makeEvent(eventType_Ready));
 }
 
 void Polytempo_Composition::openFile()
@@ -295,8 +304,6 @@ void Polytempo_Composition::openFile(File file)
         mainWindow->setName(compositionFile.getFileNameWithoutExtension());
         Polytempo_StoredPreferences::getInstance()->getProps().setValue("compositionFileDirectory", compositionFile.getParentDirectory().getFullPathName());
         Polytempo_StoredPreferences::getInstance()->recentFiles.addFile(compositionFile);
-
-        Polytempo_EventScheduler::getInstance()->scheduleEvent(Polytempo_Event::makeEvent(eventType_Ready));
     }
 }
 
@@ -366,14 +373,15 @@ bool Polytempo_Composition::readJSONfromFile(File file)
     }
 
     sequences.clear();
+    Polytempo_EventScheduler::getInstance()->scheduleEvent(Polytempo_Event::makeEvent(eventType_DeleteAll));
+    sequenceCounter = 0;
 
     // iterate and addSequence
     DynamicObject* jsonObject;
     for(int i=0; i < jsonSequences.size(); i++)
     {
-        Polytempo_Sequence *sequence = new Polytempo_Sequence();
+        Polytempo_Sequence *sequence = new Polytempo_Sequence(++sequenceCounter);
         sequence->setObject(jsonObject = jsonSequences.getValueAt(i).getDynamicObject());
-        sequence->setIndex(i);
         sequences.add(sequence);
     }
     

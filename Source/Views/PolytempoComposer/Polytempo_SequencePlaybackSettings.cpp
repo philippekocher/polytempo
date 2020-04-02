@@ -373,7 +373,7 @@ void Polytempo_SequencePlaybackSettings::labelTextChanged(Label* textbox)
 void Polytempo_SequencePlaybackSettings::updateOscReceiver()
 {
     Polytempo_Event *event = new Polytempo_Event(eventType_AddSender);
-    event->setProperty("senderID", "sequence"+String(sequence->sequenceIndex));
+    event->setProperty("senderID", "sequence"+String(sequence->sequenceID));
     event->setProperty("ip", sequence->oscReceiver);
     event->setProperty("port", sequence->oscPort);
     

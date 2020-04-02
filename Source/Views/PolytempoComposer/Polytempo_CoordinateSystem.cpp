@@ -101,7 +101,7 @@ void Polytempo_CoordinateSystemComponent::eventNotification(Polytempo_Event *eve
     {
         playhead->setRectangle(Rectangle<float> (TIMEMAP_OFFSET + (float)event->getValue() * zoomX, 0, 2.0f, (float) (getHeight())));
     }
-    else if(event->getType() == eventType_Ready)
+    else if(event->getType() == eventType_DeleteAll)
     {
         viewport->setViewPositionProportionately(0.0, 1.0);
     }

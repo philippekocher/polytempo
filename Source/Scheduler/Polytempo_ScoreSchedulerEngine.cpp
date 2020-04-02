@@ -76,9 +76,9 @@ void Polytempo_ComposerEngine::run()
                 if(nextScoreEvent->getType() == eventType_Beat)
                 {
                     // add playback properties to next event
-                    int sequenceIndex = nextScoreEvent->getProperty("~sequence");
+                    int sequenceID = nextScoreEvent->getProperty("~sequence");
                     Polytempo_Composition *composition = Polytempo_Composition::getInstance();
-                    Polytempo_Sequence* sequence = composition->getSequence(sequenceIndex);
+                    Polytempo_Sequence* sequence = composition->getSequenceWithID(sequenceID);
                     
                     if((!composition->isOneSequenceSoloed() && !sequence->isMuted())
                        || sequence->isSoloed())

@@ -134,4 +134,8 @@ void Polytempo_TransportComponent::eventNotification(Polytempo_Event *event)
     {
         tempoFactorTextbox->setText(event->getValue(), dontSendNotification);
     }
+    else if(event->getType() == eventType_DeleteAll)
+    {
+        Polytempo_ScoreScheduler::getInstance()->gotoTime(Polytempo_Event::makeEvent(eventType_GotoTime,0));
+    }
 }

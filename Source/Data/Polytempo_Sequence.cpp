@@ -28,8 +28,10 @@
 #include "../Preferences/Polytempo_StoredPreferences.h"
 
 
-Polytempo_Sequence::Polytempo_Sequence()
-{}
+Polytempo_Sequence::Polytempo_Sequence(int i) : sequenceID(i)
+{
+    setName("Sequence "+String(sequenceID));
+}
 
 Polytempo_Sequence::~Polytempo_Sequence()
 {}
@@ -38,6 +40,11 @@ Polytempo_Sequence::~Polytempo_Sequence()
 //------------------------------------------------------------------------------
 #pragma mark -
 #pragma mark accessors
+
+int Polytempo_Sequence::getID()
+{
+    return sequenceID;
+}
 
 String Polytempo_Sequence::getName()
 {
@@ -118,13 +125,6 @@ void Polytempo_Sequence::setName(String s)
         name = s;
         Polytempo_Composition::getInstance()->setDirty(true);
     }
-}
-
-void Polytempo_Sequence::setIndex(int index)
-{
-    sequenceIndex = index;
-    Polytempo_Composition::getInstance()->setDirty(true);
-    DBG("sequence set index: "<<sequenceIndex);
 }
 
 void Polytempo_Sequence::setColour(Colour c)
@@ -531,7 +531,7 @@ bool Polytempo_Sequence::update()
         }
         if(event->hasDefinedTime())
         {
-            event->setProperty("~sequence", sequenceIndex);
+            event->setProperty("~sequence", sequenceID);
             timedEvents.add(event);
         }
     }
@@ -550,7 +550,7 @@ bool Polytempo_Sequence::update()
                 Polytempo_Event* cueInEvent = tempEvents[i];
                 if(cueInEvent->getType() == eventType_Beat)
                 {
-                    cueInEvent->setProperty("~sequence", sequenceIndex);
+                    cueInEvent->setProperty("~sequence", sequenceID);
                     time = cueInStartTime + cueInEvent->getPosition().toFloat() / cp->tempoOut;
                     cueInEvent->setProperty(eventPropertyString_Time, time);
                     cueInEvent->setProperty(eventPropertyString_Cue, 1);
@@ -655,7 +655,7 @@ Polytempo_Event* Polytempo_Sequence::getOscEvent(Polytempo_Event* event)
         tokens.trim();
         
         oscEvent->setProperty("address", tokens[0]);
-        oscEvent->setProperty("senderID", "sequence"+String(sequenceIndex));
+        oscEvent->setProperty("senderID", "sequence"+String(sequenceID));
         
         var message;
         for(int i=1;i<tokens.size();i++) message.append(tokens[i]);

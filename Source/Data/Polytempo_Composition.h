@@ -51,6 +51,7 @@ public:
     
     Polytempo_Sequence* getSequence(int);
     Polytempo_Sequence* getSelectedSequence();
+    Polytempo_Sequence* getSequenceWithID(int);
 
     bool isOneSequenceSoloed();
 
