@@ -411,12 +411,6 @@ void Polytempo_Sequence::buildBeatPattern()
         Polytempo_Composition::getInstance()->updateContent();
         return;
     }
-    if(controlPoints.size() == 0 && beatPatterns.size() == 1)
-    {
-        // add two control points with the very first beat pattern
-        addControlPoint(0,0);
-        addControlPoint(4,1);
-    }
     
     Rational position = 0;
     int currentCounter = 1;
@@ -438,6 +432,13 @@ void Polytempo_Sequence::buildBeatPattern()
     event->setValue(events.getLast()->getValue());
     events.add(event);
     
+    if(controlPoints.size() == 0 && beatPatterns.size() == 1)
+    {
+        // add two control points with the very first beat pattern
+        addControlPoint(0,0);
+        addControlPoint(4,1);
+    }
+
     Polytempo_Composition::getInstance()->updateContent();
     Polytempo_Composition::getInstance()->setDirty(true);
 }
