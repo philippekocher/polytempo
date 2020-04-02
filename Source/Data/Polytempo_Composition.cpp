@@ -25,6 +25,7 @@
 #include "Polytempo_Composition.h"
 #include "../Application/PolytempoComposer/Polytempo_ComposerApplication.h"
 #include "../Scheduler/Polytempo_ScoreScheduler.h"
+#include "../Scheduler/Polytempo_EventScheduler.h"
 #include "../Preferences/Polytempo_StoredPreferences.h"
 #include "../Views/PolytempoComposer/Polytempo_DialogWindows.h"
 #include "../Audio+Midi/Polytempo_AudioClick.h"
@@ -247,11 +248,13 @@ void Polytempo_Composition::newComposition()
     }
 
     sequences.clear();
-    Polytempo_Composition::getInstance()->addSequence(); // one sequence to start with
+    addSequence(); // one sequence to start with
     setDirty(false);
     
     compositionFile = File();
     mainWindow->setName("Untitled");
+
+    Polytempo_EventScheduler::getInstance()->scheduleEvent(Polytempo_Event::makeEvent(eventType_Ready));
 }
 
 void Polytempo_Composition::openFile()
@@ -283,6 +286,8 @@ void Polytempo_Composition::openFile(File file)
         mainWindow->setName(compositionFile.getFileNameWithoutExtension());
         Polytempo_StoredPreferences::getInstance()->getProps().setValue("compositionFileDirectory", compositionFile.getParentDirectory().getFullPathName());
         Polytempo_StoredPreferences::getInstance()->recentFiles.addFile(compositionFile);
+
+        Polytempo_EventScheduler::getInstance()->scheduleEvent(Polytempo_Event::makeEvent(eventType_Ready));
     }
 }
 
