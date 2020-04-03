@@ -65,7 +65,7 @@ void Polytempo_GraphicExportPage::drawStaveBeginning(int x, int y, int numberOfS
 void Polytempo_GraphicExportPage::drawBarline(int x, int y, int numberOfStaves, int secondaryStaveOffset, int numberOfLines, int linesOffset, String timeSignature)
 {
     int y1 = y;
-    int y2 = y + (numberOfStaves - 1) * secondaryStaveOffset + (numberOfLines - 1) * linesOffset;
+    int y2 = y + (numberOfStaves - 1) * secondaryStaveOffset + (numberOfLines - 1) * linesOffset + 1;
     
     if(numberOfLines < 2)
     {

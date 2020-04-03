@@ -488,13 +488,19 @@ bool Polytempo_Sequence::update()
         
         if(cp1 == nullptr || cp2 == nullptr)
             event->setProperty(eventPropertyString_Time, NAN);
+        else if(cp2->start)
+        {
+            float temp = Polytempo_TempoInterpolation::getTime(event->getPosition(), cp1, cp2);
+            if(temp == cp1->time)
+                event->setProperty(eventPropertyString_Time, temp);
+            else
+                event->setProperty(eventPropertyString_Time, NAN);
+        }
         else if(Polytempo_TempoInterpolation::validateCurve(cp1,cp2))
             event->setProperty(eventPropertyString_Time, Polytempo_TempoInterpolation::getTime(event->getPosition(), cp1, cp2));
         else
             event->setProperty(eventPropertyString_Time, NAN);
         
-        if(cp1 != nullptr && cp2 != nullptr && cp2->start && cp1->time != (float)event->getProperty(eventPropertyString_Time))
-            event->setProperty(eventPropertyString_Time, NAN);
         
         if(event->getType() == eventType_Beat)
         {
