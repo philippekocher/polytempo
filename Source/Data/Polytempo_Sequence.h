@@ -51,6 +51,8 @@ public:
     OwnedArray <Polytempo_Event>& getEvents();
     Polytempo_Event* getEvent(int);
     
+    Rational getMaxPosition();
+    
     bool isVisible();
     
     bool isSoloed();

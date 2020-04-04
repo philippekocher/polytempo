@@ -89,7 +89,6 @@ private:
     bool exportAll;
     
     DocumentWindow *mainWindow;
-    Component *mainComponent;
     OwnedArray <Polytempo_Sequence> sequences;
 
     std::unique_ptr<Polytempo_Score> score;

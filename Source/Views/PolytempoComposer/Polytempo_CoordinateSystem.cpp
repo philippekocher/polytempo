@@ -29,6 +29,8 @@
 #include "../../Application/Polytempo_CommandIDs.h"
 
 
+#define PLAYHEAD_WIDTH 2.0f
+
 Polytempo_CoordinateSystem::Polytempo_CoordinateSystem()
 {
     setScrollBarsShown(true, false, true, true);
@@ -92,14 +94,14 @@ void Polytempo_CoordinateSystemComponent::setSizeAndZooms(int w, int h, float zX
 
     setSize(width, height);
 
-    playhead->setSize(playhead->getWidth(), height);
+    playhead->setRectangle(Rectangle<float>(playhead->getX(), 0, PLAYHEAD_WIDTH, (float)(getHeight())));
 }
 
 void Polytempo_CoordinateSystemComponent::eventNotification(Polytempo_Event *event)
 {
     if(event->getType() == eventType_Tick)
     {
-        playhead->setRectangle(Rectangle<float> (TIMEMAP_OFFSET + (float)event->getValue() * zoomX, 0, 2.0f, (float) (getHeight())));
+        playhead->setRectangle(Rectangle<float>(TIMEMAP_OFFSET + (float)event->getValue() * zoomX, 0, PLAYHEAD_WIDTH, (float)(getHeight())));
     }
     else if(event->getType() == eventType_DeleteAll)
     {
@@ -429,7 +431,8 @@ void Polytempo_TimeMapCoordinateSystem::mouseDrag(const MouseEvent &mouseEvent)
 
         // quantize position
         OwnedArray<Polytempo_Event> *events = &sequence->getEvents();
-        if(mouseRationalPos > events->getLast()->getPosition()) // mouse is outside of beat pattern structure
+        if(events->getLast() == nullptr ||
+           mouseRationalPos > events->getLast()->getPosition()) // mouse is outside of beat pattern structure
         {
             mouseRationalPos = Rational(1,4) * int((mouseRationalPos * Rational(4)).toFloat());
             // position is quantized to multiples of 1/4. (Is 1/4 the best solution?)

@@ -58,8 +58,16 @@ void Polytempo_Composition::updateContent()
 {
     findCoincidingControlPoints();
     
+    Rational maxPos = 0;
+    float    maxTime = 0;
+    for(Polytempo_Sequence *seq : sequences)
+    {
+        if(seq->getMaxPosition() > maxPos) maxPos = seq->getMaxPosition();
+    }
+    
     if(mainWindow)
     {
+        ((Polytempo_ComposerMainView*)mainWindow->getContentComponent())->setMapDimension(maxTime, maxPos);
         mainWindow->repaint();
         mainWindow->getContentComponent()->resized();
     }

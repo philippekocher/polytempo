@@ -46,6 +46,8 @@ public:
     void resized();
     void childBoundsChanged(Component* child);
     
+    void setMapDimension(float, Rational);
+    
     String getComponentStateAsString();
     void   restoreComponentStateFromString(const String&);
     

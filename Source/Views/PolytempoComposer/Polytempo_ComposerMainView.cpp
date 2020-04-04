@@ -92,6 +92,11 @@ void Polytempo_ComposerMainView::childBoundsChanged(Component* child)
         resized();
 }
 
+void Polytempo_ComposerMainView::setMapDimension(float maxTime, Rational maxPos)
+{
+    timeMapComponent->setRelativeSize(maxTime, maxPos);
+}
+
 String Polytempo_ComposerMainView::getComponentStateAsString()
 {
     resizerBarPosition = float(stretchableManager.getItemCurrentPosition(1)) / getWidth();

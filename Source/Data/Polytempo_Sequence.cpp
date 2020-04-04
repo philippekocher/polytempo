@@ -103,6 +103,14 @@ Polytempo_Event* Polytempo_Sequence::getEvent(int index)
         return events[index];
 }
 
+Rational Polytempo_Sequence::getMaxPosition()
+{
+    Rational beatPatternMax   = events.getLast() == nullptr ? 0 : events.getLast()->getPosition();
+    Rational controlPointsMax = controlPoints.getLast() == nullptr ? 0 : controlPoints.getLast()->position;
+    if(beatPatternMax > controlPointsMax) return beatPatternMax;
+    else return controlPointsMax;
+}
+
 bool Polytempo_Sequence::isVisible()
 {
     return visible;
