@@ -63,6 +63,7 @@ void Polytempo_Composition::updateContent()
     for(Polytempo_Sequence *seq : sequences)
     {
         if(seq->getMaxPosition() > maxPos) maxPos = seq->getMaxPosition();
+        if(seq->getMaxTime() > maxTime) maxTime = seq->getMaxTime();
     }
     
     if(mainWindow)

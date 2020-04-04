@@ -94,7 +94,8 @@ void Polytempo_ComposerMainView::childBoundsChanged(Component* child)
 
 void Polytempo_ComposerMainView::setMapDimension(float maxTime, Rational maxPos)
 {
-    timeMapComponent->setRelativeSize(maxTime, maxPos);
+    timeMapComponent->setRelativeSize(maxTime + 60, maxPos);
+    tempoMapComponent->setRelativeSize(maxTime + 60);
 }
 
 String Polytempo_ComposerMainView::getComponentStateAsString()

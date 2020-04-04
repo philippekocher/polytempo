@@ -40,10 +40,12 @@ public:
     void paint (Graphics&);
     void resized();
     
+    void setRelativeSize(float);
     void changeListenerCallback (ChangeBroadcaster*);
 
 private:
     float zoomX, zoomY;
+    float relativeWidth;
     std::unique_ptr<Polytempo_TempoMapCoordinateSystem> tempoMapCoordinateSystem;
     std::unique_ptr<Polytempo_CoordinateSystem>  coordinateSystem;
     Polytempo_TimeRuler         timeRuler;

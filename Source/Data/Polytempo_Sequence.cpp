@@ -103,6 +103,11 @@ Polytempo_Event* Polytempo_Sequence::getEvent(int index)
         return events[index];
 }
 
+float Polytempo_Sequence::getMaxTime()
+{
+    return controlPoints.getLast() == nullptr ? 0 : controlPoints.getLast()->time;
+}
+
 Rational Polytempo_Sequence::getMaxPosition()
 {
     Rational beatPatternMax   = events.getLast() == nullptr ? 0 : events.getLast()->getPosition();
