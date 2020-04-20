@@ -63,6 +63,7 @@ public:
     void paint(Graphics&);
 private:
     void paintSequence(Graphics&, Polytempo_Sequence*, bool selected);
+    Rational quantiseMousePosition(float);
 public:
     void mouseDown(const MouseEvent &);
     void mouseDrag(const MouseEvent &);

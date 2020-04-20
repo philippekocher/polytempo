@@ -305,11 +305,45 @@ void Polytempo_TimeMapCoordinateSystem::paintSequence(Graphics& g, Polytempo_Seq
     }
 }
 
+Rational Polytempo_TimeMapCoordinateSystem::quantiseMousePosition(float mouseFloatPos)
+{
+    Polytempo_Composition* composition = Polytempo_Composition::getInstance();
+    Polytempo_Sequence* sequence = composition->getSelectedSequence();
+
+    Rational mouseRationalPos = Rational(mouseFloatPos);
+    
+    OwnedArray<Polytempo_Event> *events = &sequence->getEvents();
+    if(events->getLast() == nullptr ||
+       mouseRationalPos > events->getLast()->getPosition()) // mouse is outside of beat pattern structure
+    {
+        mouseRationalPos = Rational(1,4) * int((mouseRationalPos * Rational(4)).toFloat());
+        // position is quantised to multiples of 1/4. (Is 1/4 the best solution?)
+    }
+    else
+    {
+        for(int i=0;i<events->size()-1;i++)
+        {
+            if(mouseFloatPos >= events->getUnchecked(i)->getPosition().toFloat() &&
+               mouseFloatPos <  events->getUnchecked(i+1)->getPosition().toFloat())
+            {
+                if(fabs(mouseFloatPos - events->getUnchecked(i)->getPosition().toFloat()) <
+                   fabs(mouseFloatPos -  events->getUnchecked(i+1)->getPosition().toFloat()))
+                        mouseRationalPos = events->getUnchecked(i)->getPosition();
+                else
+                    mouseRationalPos = events->getUnchecked(i+1)->getPosition();
+                break;
+            }
+        }
+    }
+    return mouseRationalPos;
+}
+
+
 void Polytempo_TimeMapCoordinateSystem::mouseDown(const MouseEvent &mouseEvent)
 {
     float mouseTime           = (mouseEvent.x - TIMEMAP_OFFSET) / zoomX;
     float mouseFloatPos       = (getHeight() - mouseEvent.y - TIMEMAP_OFFSET) / zoomY;
-    Rational mouseRationalPos = Rational(mouseFloatPos);
+    Rational mouseRationalPos;
 
     Polytempo_Composition* composition = Polytempo_Composition::getInstance();
     Polytempo_Sequence* sequence = composition->getSelectedSequence();
@@ -326,21 +360,9 @@ void Polytempo_TimeMapCoordinateSystem::mouseDown(const MouseEvent &mouseEvent)
     // cmd-click: add control point
     if(mouseEvent.mods.isCommandDown())
     {
-        // quantize position
-        OwnedArray<Polytempo_Event> *events = &sequence->getEvents();
-        for(int i=0;i<events->size()-1;i++)
-        {
-            if(mouseFloatPos >= events->getUnchecked(i)->getPosition().toFloat() &&
-               mouseFloatPos <  events->getUnchecked(i+1)->getPosition().toFloat())
-            {
-                if(fabs(mouseFloatPos - events->getUnchecked(i)->getPosition().toFloat()) <
-                   fabs(mouseFloatPos -  events->getUnchecked(i+1)->getPosition().toFloat()))
-                        mouseRationalPos = events->getUnchecked(i)->getPosition();
-                else
-                    mouseRationalPos = events->getUnchecked(i+1)->getPosition();
-                break;
-            }
-        }
+        // quantise position
+        mouseRationalPos = quantiseMousePosition(mouseFloatPos);
+
         if(sequence->validateNewControlPointPosition(mouseTime, mouseRationalPos))
         {
             sequence->addControlPoint(mouseTime, mouseRationalPos);
@@ -424,35 +446,13 @@ void Polytempo_TimeMapCoordinateSystem::mouseDrag(const MouseEvent &mouseEvent)
 
         float mouseTime           = (mouseEvent.x - TIMEMAP_OFFSET) / zoomX;
         float mouseFloatPos       = (getHeight() - mouseEvent.y - TIMEMAP_OFFSET) / zoomY;
-        Rational mouseRationalPos = Rational(mouseFloatPos);
+        Rational mouseRationalPos;
 
-        // quantize time
+        // quantise time
         mouseTime = int(mouseTime * 10) * 0.1f;
 
-        // quantize position
-        OwnedArray<Polytempo_Event> *events = &sequence->getEvents();
-        if(events->getLast() == nullptr ||
-           mouseRationalPos > events->getLast()->getPosition()) // mouse is outside of beat pattern structure
-        {
-            mouseRationalPos = Rational(1,4) * int((mouseRationalPos * Rational(4)).toFloat());
-            // position is quantized to multiples of 1/4. (Is 1/4 the best solution?)
-        }
-        else
-        {
-            for(int i=0;i<events->size()-1;i++)
-            {
-                if(mouseFloatPos >= events->getUnchecked(i)->getPosition().toFloat() &&
-                   mouseFloatPos <  events->getUnchecked(i+1)->getPosition().toFloat())
-                {
-                    if(fabs(mouseFloatPos - events->getUnchecked(i)->getPosition().toFloat()) <
-                       fabs(mouseFloatPos -  events->getUnchecked(i+1)->getPosition().toFloat()))
-                            mouseRationalPos = events->getUnchecked(i)->getPosition();
-                    else
-                        mouseRationalPos = events->getUnchecked(i+1)->getPosition();
-                    break;
-                }
-            }
-        }
+        // quantise position
+        mouseRationalPos = quantiseMousePosition(mouseFloatPos);
         
         // calculate delta
         deltaT = mouseTime - draggedPoint->time ;
