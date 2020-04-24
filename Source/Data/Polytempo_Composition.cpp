@@ -68,7 +68,8 @@ void Polytempo_Composition::updateContent()
     
     if(mainWindow)
     {
-        ((Polytempo_ComposerMainView*)mainWindow->getContentComponent())->setMapDimension(maxTime, maxPos);
+        if(((Polytempo_ComposerWindow*)mainWindow)->getContentID() == 0)
+            ((Polytempo_ComposerMainView*)mainWindow->getContentComponent())->setMapDimension(maxTime, maxPos);
         mainWindow->repaint();
         mainWindow->getContentComponent()->resized();
     }
