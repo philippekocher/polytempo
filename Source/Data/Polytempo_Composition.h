@@ -69,8 +69,7 @@ public:
     
     void unsavedChangesAlert(Polytempo_YesNoCancelAlert::callbackTag tag);
     void newComposition();
-    void openFile();
-    void openFile(File file);
+    void openFile(File file = File());
     void saveToFile();
     void writeJSONtoFile(File file);
     bool readJSONfromFile(File file);
@@ -94,6 +93,7 @@ private:
     std::unique_ptr<Polytempo_Score> score;
     
     File compositionFile = File();
+    File shouldOpenFile;
     bool dirty = false;
 };
 

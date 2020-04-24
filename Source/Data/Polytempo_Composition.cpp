@@ -285,27 +285,32 @@ void Polytempo_Composition::newComposition()
 
 }
 
-void Polytempo_Composition::openFile()
+void Polytempo_Composition::openFile(File file)
 {
     if(dirty)
     {
+        shouldOpenFile = file;
         unsavedChangesAlert(Polytempo_YesNoCancelAlert::openDocumentTag);
         return;
     }
-       
-    File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("compositionFileDirectory"));
-    FileChooser fileChooser("Open Score File", directory, "*.json;*.ptcom", true);
-    
-    if(fileChooser.browseForFileToOpen())
-    {
-        openFile(fileChooser.getResult());
-    }
-}
 
-void Polytempo_Composition::openFile(File file)
-{
-    if(!file.existsAsFile()) return;
+    if(!file.existsAsFile())
+    {
+        if(shouldOpenFile.existsAsFile())
+        {
+            file = shouldOpenFile;
+        }
+        else
+        {
+            File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("compositionFileDirectory"));
+            FileChooser fileChooser("Open Score File", directory, "*.json;*.ptcom", true);
     
+            if(!fileChooser.browseForFileToOpen()) return;
+
+            file = fileChooser.getResult();
+        }
+    }
+
     if(readJSONfromFile(file))
     {
         compositionFile = file;
