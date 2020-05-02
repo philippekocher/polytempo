@@ -73,7 +73,6 @@ namespace Polytempo_DialogWindows
             else
             {
                 perform(button);
-                setVisible(false);
             }
         }
 
@@ -164,6 +163,7 @@ namespace Polytempo_DialogWindows
                                           Rational(positionTextbox->getText()),
                                           Polytempo_TempoMeasurement::encodeTempoFromUI((tempoInTextbox->getText().getFloatValue())),
                                           Polytempo_TempoMeasurement::encodeTempoFromUI(tempoOutTextbox->getText().getFloatValue()));
+                setVisible(false);
             }
         }
         
@@ -268,6 +268,7 @@ namespace Polytempo_DialogWindows
                 Polytempo_Sequence* sequence = composition->getSelectedSequence();
             
                 sequence->shiftControlPoints(composition->getSelectedControlPointIndices(), deltaTime, deltaPosition);
+                setVisible(false);
             }
         }
         
@@ -416,6 +417,8 @@ namespace Polytempo_DialogWindows
                 else if(tbLisp->getToggleState() == true)      composition->exportAsLispList();
                 else if(tbC->getToggleState() == true)         composition->exportAsCArray();
                 else if(tbPolytempo->getToggleState() == true) composition->exportAsPolytempoScore();
+
+                setVisible(false);
             }
         }
         
