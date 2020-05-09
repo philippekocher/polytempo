@@ -707,7 +707,7 @@ void Polytempo_TempoMapCoordinateSystem::mouseDown(const MouseEvent &event)
         if(fabs(controlPoint->time - mouseTime) <= CONTROL_POINT_SIZE * 0.5 / zoomX &&
            (fabs(controlPoint->tempoIn - mousePosition) <= CONTROL_POINT_SIZE * 0.5 / zoomY ||
             fabs(controlPoint->tempoOut - mousePosition) <= CONTROL_POINT_SIZE * 0.5 / zoomY ||
-            controlPoint->tempoIn - controlPoint->tempoOut) >= mousePosition - controlPoint->tempoOut)
+            (controlPoint->tempoOut < mousePosition && controlPoint->tempoIn - controlPoint->tempoOut >= mousePosition - controlPoint->tempoOut)))
         {
             hit = true;
             if(event.mods.isShiftDown())
