@@ -28,32 +28,6 @@
 #include "../Scheduler/Polytempo_EventScheduler.h"
 
 
-class Polytempo_EventComparator
-{
-public:
-    static int compareElements(Polytempo_Event* e1, Polytempo_Event* e2) throw()
-    {
-        float t1 = float(e1->getTime());
-        float t2 = float(e2->getTime());
-        
-        int result = 0;
-        
-        if(t1>t2) result = 1;
-        if(t1<t2) result = -1;
-        
-        if(result == 0)
-        {
-            Polytempo_EventType type1 = e1->getType();
-            Polytempo_EventType type2 = e2->getType();
-            
-            if(type1 == eventType_Beat && type2 != eventType_Beat) result = 1;
-            if(type1 != eventType_Beat && type2 == eventType_Beat) result = -1;
-        }
-        
-        return result;
-    }
-};
-
 void Polytempo_Score_Section::sort()
 {
 	Polytempo_EventComparator sorter;
@@ -117,7 +91,7 @@ void Polytempo_Score::addEvent(Polytempo_Event *event, bool addToInit)
     }
 }
 
-void Polytempo_Score::addEvents(OwnedArray < Polytempo_Event >& events)
+void Polytempo_Score::addEvents(OwnedArray <Polytempo_Event>& events)
 {
     if(currentSectionIndex == -1)
     {

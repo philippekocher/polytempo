@@ -46,7 +46,7 @@ public:
     void clear(bool clearInit = false);
 
     void addEvent(Polytempo_Event*, bool addToInit = false);
-    void addEvents(OwnedArray < Polytempo_Event >&);
+    void addEvents(OwnedArray <Polytempo_Event>&);
     void removeEvent(Polytempo_Event*, bool removeFromInit = false);
     
     void addSection(String sectionName);

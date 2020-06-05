@@ -25,6 +25,7 @@
 #include "Polytempo_Composition.h"
 #include "../Application/PolytempoComposer/Polytempo_ComposerApplication.h"
 #include "../Scheduler/Polytempo_ScoreScheduler.h"
+#include "../Scheduler/Polytempo_EventScheduler.h"
 #include "../Preferences/Polytempo_StoredPreferences.h"
 #include "../Views/PolytempoComposer/Polytempo_DialogWindows.h"
 #include "../Audio+Midi/Polytempo_AudioClick.h"
@@ -34,6 +35,8 @@ Polytempo_Composition::Polytempo_Composition()
 {
     score.reset(new Polytempo_Score());
     Polytempo_ScoreScheduler::getInstance()->setScore(score.get());
+    
+    selectedControlPointIndices = new Array<int>();
 }
 
 Polytempo_Composition::~Polytempo_Composition()
@@ -55,14 +58,24 @@ void Polytempo_Composition::updateContent()
 {
     findCoincidingControlPoints();
     
+    Rational maxPos = 0;
+    float    maxTime = 0;
+    for(Polytempo_Sequence *seq : sequences)
+    {
+        if(seq->getMaxPosition() > maxPos) maxPos = seq->getMaxPosition();
+        if(seq->getMaxTime() > maxTime) maxTime = seq->getMaxTime();
+    }
+    
     if(mainWindow)
     {
+        if(((Polytempo_ComposerWindow*)mainWindow)->getContentID() == 0)
+            ((Polytempo_ComposerMainView*)mainWindow->getContentComponent())->setMapDimension(maxTime, maxPos);
         mainWindow->repaint();
         mainWindow->getContentComponent()->resized();
     }
     
     Polytempo_ComposerApplication::getCommandManager().commandStatusChanged(); // update menubar
-    Polytempo_AudioClick::getInstance()->setNumVoices(sequenceCounter);
+    Polytempo_AudioClick::getInstance()->setNumVoices(sequences.size());
     
     scoreNeedsUpdate = true;
 
@@ -77,9 +90,7 @@ void Polytempo_Composition::addSequence()
 {
     Polytempo_Sequence *sequence;
     
-    sequence = new Polytempo_Sequence();
-    
-    sequence->setName("Sequence "+String(++sequenceCounter));
+    sequence = new Polytempo_Sequence(++sequenceCounter);
     
     switch(sequences.size() % 3)
     {
@@ -96,7 +107,6 @@ void Polytempo_Composition::addSequence()
     sequences.add(sequence);
 
     selectedSequenceIndex = sequences.indexOf(sequence);
-    sequence->setIndex(sequences.indexOf(sequence));
     
     updateContent();
     dirty = true;
@@ -131,10 +141,29 @@ Polytempo_Sequence* Polytempo_Composition::getSelectedSequence()
     return getSequence(selectedSequenceIndex);
 }
 
+Polytempo_Sequence* Polytempo_Composition::getSequenceWithID(int id)
+{
+    for(Polytempo_Sequence* seq : sequences)
+    {
+        if(seq->getID() == id) return seq;
+    }
+    return nullptr;
+}
+
+
+bool Polytempo_Composition::isOneSequenceSoloed()
+{
+    for(Polytempo_Sequence* seq : sequences)
+    {
+        if(seq->isSoloed()) return true;
+    }
+    return false;
+}
+
 void Polytempo_Composition::setSelectedSequenceIndex(int i)
 {
     selectedSequenceIndex = i;
-    selectedControlPointIndex = -1;
+    clearSelectedControlPointIndices();
 }
 
 int Polytempo_Composition::getSelectedSequenceIndex()
@@ -142,23 +171,30 @@ int Polytempo_Composition::getSelectedSequenceIndex()
     return selectedSequenceIndex;
 }
 
-void Polytempo_Composition::setSelectedControlPointIndex(int i)
+void Polytempo_Composition::clearSelectedControlPointIndices()
 {
-    selectedControlPointIndex = i;
+    selectedControlPointIndices->clearQuick();
 }
 
-int Polytempo_Composition::getSelectedControlPointIndex()
+void Polytempo_Composition::addSelectedControlPointIndex(int i)
 {
-    return selectedControlPointIndex;
+    selectedControlPointIndices->add(i);
 }
 
-bool Polytempo_Composition::isSelectedControlPointRemovable()
+void Polytempo_Composition::removeSelectedControlPointIndex(int i)
 {
-    if(selectedControlPointIndex < 1 ||
-       getSelectedSequence()->getControlPoints()->size() == 2)
-        return false;
-    else
-        return true;
+    int indexToRemove = selectedControlPointIndices->indexOf(i);
+    selectedControlPointIndices->remove(indexToRemove);
+}
+
+Array<int>* Polytempo_Composition::getSelectedControlPointIndices()
+{
+    return selectedControlPointIndices;
+}
+
+bool Polytempo_Composition::isSelectedControlPointIndex(int i)
+{
+    return selectedControlPointIndices->contains(i);
 }
 
 void Polytempo_Composition::updateScore()
@@ -174,8 +210,7 @@ void Polytempo_Composition::updateScore()
     
     while((sequence = getSequence(++i)) != nullptr)
     {
-        sequence->updateEvents();
-        score->addEvents(sequence->getEvents());
+        score->addEvents(sequence->getTimedEvents());
     }
     
     scoreNeedsUpdate = false;
@@ -239,34 +274,43 @@ void Polytempo_Composition::newComposition()
     }
 
     sequences.clear();
-    Polytempo_Composition::getInstance()->addSequence(); // one sequence to start with
+    Polytempo_EventScheduler::getInstance()->scheduleEvent(Polytempo_Event::makeEvent(eventType_DeleteAll));
+    sequenceCounter = 0;
+
+    addSequence(); // one sequence to start with
     setDirty(false);
     
     compositionFile = File();
     mainWindow->setName("Untitled");
-}
 
-void Polytempo_Composition::openFile()
-{
-    if(dirty)
-    {
-        unsavedChangesAlert(Polytempo_YesNoCancelAlert::openDocumentTag);
-        return;
-    }
-       
-    File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("compositionFileDirectory"));
-    FileChooser fileChooser("Open Score File", directory, "*.json;*.ptcom", true);
-    
-    if(fileChooser.browseForFileToOpen())
-    {
-        openFile(fileChooser.getResult());
-    }
 }
 
 void Polytempo_Composition::openFile(File file)
 {
-    if(!file.existsAsFile()) return;
+    if(dirty)
+    {
+        shouldOpenFile = file;
+        unsavedChangesAlert(Polytempo_YesNoCancelAlert::openDocumentTag);
+        return;
+    }
+
+    if(!file.existsAsFile())
+    {
+        if(shouldOpenFile.existsAsFile())
+        {
+            file = shouldOpenFile;
+        }
+        else
+        {
+            File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("compositionFileDirectory"));
+            FileChooser fileChooser("Open Score File", directory, "*.json;*.ptcom", true);
     
+            if(!fileChooser.browseForFileToOpen()) return;
+
+            file = fileChooser.getResult();
+        }
+    }
+
     if(readJSONfromFile(file))
     {
         compositionFile = file;
@@ -344,14 +388,15 @@ bool Polytempo_Composition::readJSONfromFile(File file)
     }
 
     sequences.clear();
+    Polytempo_EventScheduler::getInstance()->scheduleEvent(Polytempo_Event::makeEvent(eventType_DeleteAll));
+    sequenceCounter = 0;
 
     // iterate and addSequence
     DynamicObject* jsonObject;
     for(int i=0; i < jsonSequences.size(); i++)
     {
-        Polytempo_Sequence *sequence = new Polytempo_Sequence();
+        Polytempo_Sequence *sequence = new Polytempo_Sequence(++sequenceCounter);
         sequence->setObject(jsonObject = jsonSequences.getValueAt(i).getDynamicObject());
-        sequence->setIndex(i);
         sequences.add(sequence);
     }
     
@@ -400,7 +445,7 @@ void Polytempo_Composition::exportAsPlainText()
             {
                 firstEvent = true;
                 
-                for(Polytempo_Event *event : sequence->getEvents())
+                for(Polytempo_Event *event : sequence->getTimedEvents())
                 {
                     if(event->getType() == eventType_Beat &&
                        event->hasDefinedTime())
@@ -419,7 +464,7 @@ void Polytempo_Composition::exportAsPlainText()
             Polytempo_Sequence *sequence = getSelectedSequence();
             firstEvent = true;
             
-            for(Polytempo_Event *event : sequence->getEvents())
+            for(Polytempo_Event *event : sequence->getTimedEvents())
             {
                 if(event->getType() == eventType_Beat &&
                    event->hasDefinedTime())
@@ -456,7 +501,7 @@ void Polytempo_Composition::exportAsLispList()
                 firstEvent = true;
                 
                 file.appendText("(");
-                for(Polytempo_Event *event : sequence->getEvents())
+                for(Polytempo_Event *event : sequence->getTimedEvents())
                 {
                     if(event->getType() == eventType_Beat &&
                        event->hasDefinedTime())
@@ -477,7 +522,7 @@ void Polytempo_Composition::exportAsLispList()
             firstEvent = true;
             
             file.appendText("(");
-            for(Polytempo_Event *event : sequence->getEvents())
+            for(Polytempo_Event *event : sequence->getTimedEvents())
             {
                 if(event->getType() == eventType_Beat &&
                    event->hasDefinedTime())
@@ -520,7 +565,7 @@ void Polytempo_Composition::exportAsCArray()
                 else                file.appendText(", ");
 
                 file.appendText("[ ");
-                for(Polytempo_Event *event : sequence->getEvents())
+                for(Polytempo_Event *event : sequence->getTimedEvents())
                 {
                     if(event->getType() == eventType_Beat &&
                        event->hasDefinedTime())
@@ -541,7 +586,7 @@ void Polytempo_Composition::exportAsCArray()
             firstEvent = true;
             
             file.appendText("[ ");
-            for(Polytempo_Event *event : sequence->getEvents())
+            for(Polytempo_Event *event : sequence->getTimedEvents())
             {
                 if(event->getType() == eventType_Beat &&
                    event->hasDefinedTime())
@@ -567,16 +612,17 @@ void Polytempo_Composition::exportAsPolytempoScore()
     if(fileChooser.browseForFileToSave(true))
     {
         // build a score to export
-        std::unique_ptr<Polytempo_Score> tempScore(new Polytempo_Score());
+        Polytempo_Score tempScore;
         Polytempo_Event *tempEvent;
         
         if(exportAll)
         {
-            for(int i=0;i<sequences.size();i++)
+            int i=-1;
+            for(Polytempo_Sequence *sequence : sequences)
             {
-                tempScore->addSection("sequence"+String(i));
+                tempScore.addSection("sequence"+String(++i));
                 
-                for(Polytempo_Event *event : *score->getEvents())
+                for(Polytempo_Event *event : sequence->getTimedEvents())
                 {
                     if(event->hasProperty("~sequence") && (int)event->getProperty("~sequence") == i)
                     {
@@ -589,7 +635,7 @@ void Polytempo_Composition::exportAsPolytempoScore()
 
                         tempEvent->removeProperty("~sequence");
                         
-                        tempScore->addEvent(tempEvent);
+                        tempScore.addEvent(tempEvent);
                     }
                 }
 
@@ -597,9 +643,10 @@ void Polytempo_Composition::exportAsPolytempoScore()
         }
         else
         {
-            tempScore->addSection("sequence"+String(selectedSequenceIndex));
+            tempScore.addSection("sequence"+String(selectedSequenceIndex));
+            Polytempo_Sequence *sequence = getSelectedSequence();
             
-            for(Polytempo_Event *event : *score->getEvents())
+            for(Polytempo_Event *event : sequence->getTimedEvents())
             {
                 if(event->hasProperty("~sequence") && (int)event->getProperty("~sequence") == selectedSequenceIndex)
                 {
@@ -612,7 +659,7 @@ void Polytempo_Composition::exportAsPolytempoScore()
                     
                     tempEvent->removeProperty("~sequence");
                     
-                    tempScore->addEvent(tempEvent);
+                    tempScore.addEvent(tempEvent);
                 }
             }
         }
@@ -621,9 +668,8 @@ void Polytempo_Composition::exportAsPolytempoScore()
         File scoreFile = fileChooser.getResult();
         String tempurl(scoreFile.getParentDirectory().getFullPathName());
         File tempFile(tempurl<<"/~temp.ptsco");
-        tempScore->writeToFile(tempFile);
+        tempScore.writeToFile(tempFile);
         tempFile.copyFileTo(scoreFile);
         tempFile.deleteFile();
-        tempScore = nullptr;
     }
 }

@@ -33,33 +33,37 @@
 
 
 class Polytempo_CoordinateSystemComponent : public Component,
-                                            public ChangeListener,
                                             public Polytempo_EventObserver
 {
 public:
     Polytempo_CoordinateSystemComponent();
     ~Polytempo_CoordinateSystemComponent();
     
+    void setSizeAndZooms(int w, int h, float zX, float zY);
     void eventNotification(Polytempo_Event*);
+
+    void mouseUp(const MouseEvent &);
     
 protected:
     float zoomX, zoomY;
     Viewport *viewport;
     
-    OwnedArray < Polytempo_Sequence > *sequences;
-    
+    Rectangle<float> selectionRectangle;
+    OwnedArray<Polytempo_ControlPoint> draggedControlPointsOrigin;
+    Polytempo_ControlPoint *draggedPoint;
+    bool hit;
+        
     std::unique_ptr<DrawableRectangle> playhead;
-    std::unique_ptr<Array<float>> horizontalGrid;
 };
 
 class Polytempo_TimeMapCoordinateSystem : public Polytempo_CoordinateSystemComponent
 {
 public:
     Polytempo_TimeMapCoordinateSystem(Viewport*);
-    void changeListenerCallback(ChangeBroadcaster*);
     void paint(Graphics&);
 private:
     void paintSequence(Graphics&, Polytempo_Sequence*, bool selected);
+    Rational quantiseMousePosition(float);
 public:
     void mouseDown(const MouseEvent &);
     void mouseDrag(const MouseEvent &);
@@ -69,13 +73,12 @@ class Polytempo_TempoMapCoordinateSystem : public Polytempo_CoordinateSystemComp
 {
 public:
     Polytempo_TempoMapCoordinateSystem(Viewport*);
-    void changeListenerCallback(ChangeBroadcaster*);
     void paint(Graphics&);
 private:
     void paintSequence(Graphics&, Polytempo_Sequence*, bool selected);
 public:
-//    void mouseDown(const MouseEvent &);
-//    void mouseDrag(const MouseEvent &);
+    void mouseDown(const MouseEvent &);
+    void mouseDrag(const MouseEvent &);
 };
 
 class Polytempo_CoordinateSystem : public Viewport
@@ -88,7 +91,7 @@ public:
     
     void showPopupMenu();
 private:
-    std::unique_ptr<Polytempo_CoordinateSystemComponent> coordinateSystemComponent;
+    std::unique_ptr <Polytempo_CoordinateSystemComponent> coordinateSystemComponent;
     Viewport* synchronizedViewport[2] = {nullptr, nullptr};
 };
 

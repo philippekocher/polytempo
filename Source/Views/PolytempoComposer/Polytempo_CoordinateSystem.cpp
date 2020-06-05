@@ -25,10 +25,11 @@
 #include "Polytempo_CoordinateSystem.h"
 #include "../../Misc/Polytempo_Globals.h"
 #include "../../Preferences/Polytempo_StoredPreferences.h"
-#include "Polytempo_Ruler.h"
 #include "../../Application/PolytempoComposer/Polytempo_ComposerApplication.h"
 #include "../../Application/Polytempo_CommandIDs.h"
 
+
+#define PLAYHEAD_WIDTH 2.0f
 
 Polytempo_CoordinateSystem::Polytempo_CoordinateSystem()
 {
@@ -58,14 +59,10 @@ void Polytempo_CoordinateSystem::showPopupMenu()
     PopupMenu m;
     
     m.addCommandItem(commandManager, Polytempo_CommandIDs::insertControlPoint);
-    m.addCommandItem(commandManager, Polytempo_CommandIDs::removeControlPoint);
-
-    m.addSeparator();
-    
-    m.addCommandItem(commandManager, Polytempo_CommandIDs::adjustTime);
-    m.addCommandItem(commandManager, Polytempo_CommandIDs::adjustPosition);
+    m.addCommandItem(commandManager, Polytempo_CommandIDs::removeControlPoints);
+    m.addCommandItem(commandManager, Polytempo_CommandIDs::shiftControlPoints);
+    m.addCommandItem(commandManager, Polytempo_CommandIDs::adjustControlPoints);
     m.addCommandItem(commandManager, Polytempo_CommandIDs::adjustTempo);
-    m.addCommandItem(commandManager, Polytempo_CommandIDs::alignWithCursor);
 
     m.show();
 }
@@ -77,21 +74,48 @@ Polytempo_CoordinateSystemComponent::Polytempo_CoordinateSystemComponent()
     playhead.reset(new DrawableRectangle());
     playhead->setFill(Colours::black);
     addAndMakeVisible(playhead.get());
-
-    horizontalGrid.reset(new Array<float>());
 }
 
 Polytempo_CoordinateSystemComponent::~Polytempo_CoordinateSystemComponent()
 {
     playhead = nullptr;
+    draggedControlPointsOrigin.clear();
+}
+
+void Polytempo_CoordinateSystemComponent::setSizeAndZooms(int w, int h, float zX, float zY)
+{
+    int width, height;
+
+    if(w > 0) width  = w; else width  = getWidth();
+    if(h > 0) height = h; else height = getHeight();
+    
+    zoomX = zX;
+    zoomY = zY;
+
+    setSize(width, height);
+
+    playhead->setRectangle(Rectangle<float>(playhead->getX(), 0, PLAYHEAD_WIDTH, (float)(getHeight())));
 }
 
 void Polytempo_CoordinateSystemComponent::eventNotification(Polytempo_Event *event)
 {
     if(event->getType() == eventType_Tick)
     {
-        playhead->setRectangle(Rectangle<float> (TIMEMAP_OFFSET + (float)event->getValue() * zoomX, 0, 2.0f, (float) (getHeight())));
+        playhead->setRectangle(Rectangle<float>(TIMEMAP_OFFSET + (float)event->getValue() * zoomX, 0, PLAYHEAD_WIDTH, (float)(getHeight())));
     }
+    else if(event->getType() == eventType_DeleteAll)
+    {
+        viewport->setViewPositionProportionately(0.0, 1.0);
+    }
+}
+
+void Polytempo_CoordinateSystemComponent::mouseUp(const MouseEvent &event)
+{
+    selectionRectangle.setWidth(0);
+    draggedControlPointsOrigin.clearQuick(true);
+
+    Polytempo_ComposerApplication::getCommandManager().commandStatusChanged(); // update menubar
+    repaint();
 }
 
 //------------------------------------------------------------------------------
@@ -104,23 +128,6 @@ Polytempo_TimeMapCoordinateSystem::Polytempo_TimeMapCoordinateSystem(Viewport *v
     
     zoomX = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("zoomX"));
     zoomY = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("timeMapZoomY"));
-
-    Polytempo_StoredPreferences::getInstance()->getProps().addChangeListener(this);
-}
-
-void Polytempo_TimeMapCoordinateSystem::changeListenerCallback(ChangeBroadcaster*)
-{
-    // scroll friendly zoom
-    
-    float x = (viewport->getViewPositionX() - TIMEMAP_OFFSET) / zoomX;
-    float y = (getHeight() - viewport->getViewPositionY() - TIMEMAP_OFFSET - viewport->getMaximumVisibleHeight()) / zoomY;
-    
-    zoomX = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("zoomX"));
-    zoomY = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("timeMapZoomY"));
-    
-    repaint();
-    
-    viewport->setViewPosition(TIMEMAP_OFFSET + int(x*zoomX), getHeight() - int(y*zoomY) - TIMEMAP_OFFSET - viewport->getMaximumVisibleHeight());
 }
 
 void Polytempo_TimeMapCoordinateSystem::paint(Graphics& g)
@@ -142,19 +149,14 @@ void Polytempo_TimeMapCoordinateSystem::paint(Graphics& g)
     
     // horizontal grid lines (position)
     
-    horizontalGrid->clearQuick();
-    
     Polytempo_Event* event;
-    Rational pos;
     float thickness, y;
     int i = -1;
     while((event = sequence->getEvent(++i)) != nullptr)
     {
-        pos = event->getPosition();
         if(event->getType() == eventType_Beat)
         {
-            y = getHeight() - TIMEMAP_OFFSET - pos * zoomY;
-            horizontalGrid->add(pos.toFloat());
+            y = getHeight() - TIMEMAP_OFFSET - event->getPosition() * zoomY;
             if(int(event->getProperty(eventPropertyString_Pattern)) == 10)
                 thickness = 2.0;
             else if(int(event->getProperty(eventPropertyString_Pattern)) < 20)
@@ -179,6 +181,13 @@ void Polytempo_TimeMapCoordinateSystem::paint(Graphics& g)
     
     // draw the selected sequence last
     paintSequence(g, composition->getSelectedSequence(), true);
+    
+    // draw the selection rectangle
+    if(selectionRectangle.getWidth() > 0 && selectionRectangle.getHeight() > 0)
+    {
+        g.setColour(Colours::grey.withAlpha(0.15f));
+        g.fillRect(selectionRectangle);
+    }
 }
 
 void Polytempo_TimeMapCoordinateSystem::paintSequence(Graphics& g, Polytempo_Sequence* sequence, bool selected)
@@ -198,27 +207,46 @@ void Polytempo_TimeMapCoordinateSystem::paintSequence(Graphics& g, Polytempo_Seq
         
         // line segment between control points
         
-        if((controlPoint1 = sequence->getControlPoint(i+1)) != nullptr)
+        if((controlPoint1 = sequence->getControlPoint(i+1)) != nullptr &&
+           !controlPoint1->start)
         {
             float x1, x2, y1, y2;
-            float thickness = 1;
+            float thickness = 2;
             int num = 20; // number of segments to draw
             
-            Array < Point < float >* > points = Polytempo_TempoInterpolation::getPoints(num, controlPoint, controlPoint1);
-            
-            if(sequence->isTempoConstantAfterPoint(i))
-                thickness = 3;
-            
-            g.setColour(sequenceColour.withMultipliedBrightness(brightness).withAlpha(alpha));
-            
-            for(int n=0;n<points.size()-1;n++)
+            if(Polytempo_TempoInterpolation::validateCurve(controlPoint, controlPoint1))
             {
-                x1 = TIMEMAP_OFFSET + points[n]->x * zoomX;
-                y1 = getHeight() - TIMEMAP_OFFSET -points[n]->y * zoomY;
-                x2 = TIMEMAP_OFFSET + points[n+1]->x * zoomX;
-                y2 = getHeight() - TIMEMAP_OFFSET -points[n+1]->y * zoomY;
+                // the curve is valid
+                Array < Point < float >* > points = Polytempo_TempoInterpolation::getPoints(num, controlPoint, controlPoint1);
                 
-                g.drawLine(x1,y1,x2,y2,thickness);
+                if(sequence->isTempoConstantAfterPoint(i))
+                    thickness = 4;
+                
+                g.setColour(sequenceColour.withMultipliedBrightness(brightness).withAlpha(alpha));
+                
+                for(int n=0;n<points.size()-1;n++)
+                {
+                    x1 = TIMEMAP_OFFSET + points[n]->x * zoomX;
+                    y1 = getHeight() - TIMEMAP_OFFSET -points[n]->y * zoomY;
+                    x2 = TIMEMAP_OFFSET + points[n+1]->x * zoomX;
+                    y2 = getHeight() - TIMEMAP_OFFSET -points[n+1]->y * zoomY;
+                    
+                    g.drawLine(x1,y1,x2,y2,thickness);
+                }
+            }
+            else
+            {
+                // the curve is invalid
+                Array < Point < float >* > points = Polytempo_TempoInterpolation::getPoints(2, controlPoint, controlPoint1);
+                g.setColour(sequenceColour.withMultipliedBrightness(brightness).withAlpha(alpha));
+                thickness = 1;
+                x1 = TIMEMAP_OFFSET + controlPoint->time * zoomX;
+                y1 = getHeight() - TIMEMAP_OFFSET - controlPoint->position * zoomY;
+                x2 = TIMEMAP_OFFSET + controlPoint1->time * zoomX;
+                y2 = getHeight() - TIMEMAP_OFFSET - controlPoint1->position * zoomY;
+                g.drawLine(x1,y1,x2,y1,thickness+1);
+                g.drawLine(x2,y1,x2,y2,thickness);
+
             }
         }
         
@@ -231,15 +259,18 @@ void Polytempo_TimeMapCoordinateSystem::paintSequence(Graphics& g, Polytempo_Seq
         // control points
 
         if(selected &&
-           composition->getSelectedControlPointIndex() == i)
+           composition->isSelectedControlPointIndex(i))
             g.setColour(sequenceColour);
         else
             g.setColour(Colour(0xffdddddd));
         
-        g.fillEllipse(x - CONTROL_POINT_SIZE * 0.5f,
-                      y - CONTROL_POINT_SIZE * 0.5f,
-                      CONTROL_POINT_SIZE,
-                      CONTROL_POINT_SIZE);
+        float cornerFactor = controlPoint->start ? 0.1f : 0.5f;
+
+        g.fillRoundedRectangle(x - CONTROL_POINT_SIZE * 0.5f,
+                               y - CONTROL_POINT_SIZE * 0.5f,
+                               CONTROL_POINT_SIZE,
+                               CONTROL_POINT_SIZE,
+                               CONTROL_POINT_SIZE * cornerFactor);
         
         if(!selected && controlPoint->isCoinciding)
             g.setColour(Colours::black);
@@ -247,116 +278,221 @@ void Polytempo_TimeMapCoordinateSystem::paintSequence(Graphics& g, Polytempo_Seq
             g.setColour(sequenceColour.withMultipliedBrightness(brightness).withAlpha(alpha));
         
         float thickness = selected ? 2.0f : 1.0f;
-        g.drawEllipse(x - CONTROL_POINT_SIZE * 0.5f,
-                      y - CONTROL_POINT_SIZE * 0.5f,
-                      CONTROL_POINT_SIZE,
-                      CONTROL_POINT_SIZE,
-                      thickness);
+
+        g.drawRoundedRectangle(x - CONTROL_POINT_SIZE * 0.5f,
+                               y - CONTROL_POINT_SIZE * 0.5f,
+                               CONTROL_POINT_SIZE,
+                               CONTROL_POINT_SIZE,
+                               CONTROL_POINT_SIZE * cornerFactor,
+                               thickness);
+        
+        if(!controlPoint->cueIn.getPattern().isEmpty())
+        {
+            if(selected)
+            {
+                g.setColour(Colours::white);
+                g.fillRect(x - CONTROL_POINT_SIZE * 2.0f, y - CONTROL_POINT_SIZE * 0.6f, CONTROL_POINT_SIZE * 1.3f, CONTROL_POINT_SIZE * 1.3f);
+                g.setColour(sequenceColour.withMultipliedBrightness(brightness).withAlpha(alpha * 0.4f));
+                g.fillRect(x - CONTROL_POINT_SIZE * 2.0f, y - CONTROL_POINT_SIZE * 0.6f, CONTROL_POINT_SIZE * 1.3f, CONTROL_POINT_SIZE * 1.3f);
+                g.setColour(sequenceColour.withMultipliedBrightness(0.5f));
+            }
+            else
+            {
+                g.setColour(sequenceColour.withMultipliedBrightness(brightness).withAlpha(alpha));
+            }
+            g.drawSingleLineText("C", x - CONTROL_POINT_SIZE * 1.8f, y + CONTROL_POINT_SIZE * 0.5f);
+        }
     }
 }
 
-
-bool draggingSession = false;
-
-void Polytempo_TimeMapCoordinateSystem::mouseDown(const MouseEvent &event)
+Rational Polytempo_TimeMapCoordinateSystem::quantiseMousePosition(float mouseFloatPos)
 {
-    float mouseTime      = (event.x - TIMEMAP_OFFSET) / zoomX;
-    float mousePosition  = (getHeight() - event.y - TIMEMAP_OFFSET) / zoomY;
+    Polytempo_Composition* composition = Polytempo_Composition::getInstance();
+    Polytempo_Sequence* sequence = composition->getSelectedSequence();
+
+    Rational mouseRationalPos = Rational(mouseFloatPos);
+    
+    OwnedArray<Polytempo_Event> *events = &sequence->getEvents();
+    if(events->getLast() == nullptr ||
+       mouseRationalPos > events->getLast()->getPosition()) // mouse is outside of beat pattern structure
+    {
+        mouseRationalPos = Rational(1,4) * int((mouseRationalPos * Rational(4)).toFloat());
+        // position is quantised to multiples of 1/4. (Is 1/4 the best solution?)
+    }
+    else
+    {
+        for(int i=0;i<events->size()-1;i++)
+        {
+            if(mouseFloatPos >= events->getUnchecked(i)->getPosition().toFloat() &&
+               mouseFloatPos <  events->getUnchecked(i+1)->getPosition().toFloat())
+            {
+                if(fabs(mouseFloatPos - events->getUnchecked(i)->getPosition().toFloat()) <
+                   fabs(mouseFloatPos -  events->getUnchecked(i+1)->getPosition().toFloat()))
+                        mouseRationalPos = events->getUnchecked(i)->getPosition();
+                else
+                    mouseRationalPos = events->getUnchecked(i+1)->getPosition();
+                break;
+            }
+        }
+    }
+    return mouseRationalPos;
+}
+
+
+void Polytempo_TimeMapCoordinateSystem::mouseDown(const MouseEvent &mouseEvent)
+{
+    float mouseTime           = (mouseEvent.x - TIMEMAP_OFFSET) / zoomX;
+    float mouseFloatPos       = (getHeight() - mouseEvent.y - TIMEMAP_OFFSET) / zoomY;
+    Rational mouseRationalPos;
 
     Polytempo_Composition* composition = Polytempo_Composition::getInstance();
     Polytempo_Sequence* sequence = composition->getSelectedSequence();
     
-    
-    // cmd-click: add control point
-    if(event.mods.isCommandDown())
+    bool canDrag = false;
+
+    // show pop-up menu
+    if(mouseEvent.mods.isPopupMenu())
     {
-        if(sequence->validateNewControlPointPosition(mouseTime, mousePosition))
+        ((Polytempo_CoordinateSystem*)viewport)->showPopupMenu();
+        return;
+    }
+
+    // cmd-click: add control point
+    if(mouseEvent.mods.isCommandDown())
+    {
+        // quantise position
+        mouseRationalPos = quantiseMousePosition(mouseFloatPos);
+
+        if(sequence->validateNewControlPointPosition(mouseTime, mouseRationalPos))
         {
-            sequence->addControlPoint(mouseTime, mousePosition);
+            sequence->addControlPoint(mouseTime, mouseRationalPos);
             composition->updateContent();
+            canDrag = true;
             return;
         }
     }
     
-    draggingSession = false;
-    
-    // hit test
-    int hit = -1, i = -1;
+    // hit detection
+    hit = false;
+    int i = -1;
     Polytempo_ControlPoint *controlPoint;
     while((controlPoint = sequence->getControlPoint(++i)) != nullptr)
     {
         // stop searching in this sequence if the point coordinates
         // are beyond the mouse coordinates
         if(controlPoint->time > mouseTime + CONTROL_POINT_SIZE / zoomX ||
-           controlPoint->position.toFloat() > mousePosition + CONTROL_POINT_SIZE / zoomY) break;
+           controlPoint->position.toFloat() > mouseFloatPos + CONTROL_POINT_SIZE / zoomY) break;
 
         if(fabs(controlPoint->time - mouseTime) <= CONTROL_POINT_SIZE * 0.5 / zoomX &&
-           fabs(controlPoint->position.toFloat() - mousePosition) <= CONTROL_POINT_SIZE * 0.5 / zoomY)
+           fabs(controlPoint->position.toFloat() - mouseFloatPos) <= CONTROL_POINT_SIZE * 0.5 / zoomY)
         {
-            hit = i;
+            hit = true;
+            if(mouseEvent.mods.isShiftDown())
+            {
+                if(composition->isSelectedControlPointIndex(i))
+                {
+                    composition->removeSelectedControlPointIndex(i);
+                }
+                else
+                {
+                    composition->addSelectedControlPointIndex(i);
+                    canDrag = true;
+                    draggedPoint = controlPoint;
+                }
+            }
+            else
+            {
+                if(!composition->isSelectedControlPointIndex(i))
+                {
+                    
+                    composition->clearSelectedControlPointIndices();
+                    composition->addSelectedControlPointIndex(i);
+                }
+                canDrag = true;
+                draggedPoint = controlPoint;
+            }
             break;
         }
     }
-
-    if(event.mods.isPopupMenu())
+    // no hit detected
+    if(!hit && !mouseEvent.mods.isShiftDown()) composition->clearSelectedControlPointIndices();
+    
+    // prepare for dragging
+    if(canDrag)
     {
-        if(hit != -1)
+        for(int index : *composition->getSelectedControlPointIndices())
         {
-            composition->setSelectedControlPointIndex(hit);
-            composition->updateContent(); // repaint to show selection
-            ((Polytempo_CoordinateSystem*)viewport)->showPopupMenu();
+            Polytempo_ControlPoint *temp = sequence->getControlPoint(index)->copy();
+            draggedControlPointsOrigin.add(temp);
+            if(draggedPoint == sequence->getControlPoint(index)) draggedPoint = temp;
         }
-        else
-            ((Polytempo_CoordinateSystem*)viewport)->showPopupMenu();
     }
-    else
-    {
-        composition->setSelectedControlPointIndex(hit);
-    }
+
     composition->updateContent(); // repaint everything
 }
 
-
-void Polytempo_TimeMapCoordinateSystem::mouseDrag(const MouseEvent &event)
+void Polytempo_TimeMapCoordinateSystem::mouseDrag(const MouseEvent &mouseEvent)
 {
-    if(event.mods.isPopupMenu()) return;
-    if(event.getDistanceFromDragStart() > 1) draggingSession = true;
-    
-    if(draggingSession)
+    if(mouseEvent.mods.isPopupMenu()) return;
+    if(mouseEvent.getDistanceFromDragStart() < 1) return;
+        
+    Polytempo_Composition* composition = Polytempo_Composition::getInstance();
+    Polytempo_Sequence* sequence = composition->getSelectedSequence();
+
+    if(draggedControlPointsOrigin.size() > 0)
     {
-        Polytempo_Composition* composition = Polytempo_Composition::getInstance();
+        float deltaT;
+        Rational deltaPos;
 
-        if(-1 == composition->getSelectedControlPointIndex()) return;
+        float mouseTime           = (mouseEvent.x - TIMEMAP_OFFSET) / zoomX;
+        float mouseFloatPos       = (getHeight() - mouseEvent.y - TIMEMAP_OFFSET) / zoomY;
+        Rational mouseRationalPos;
+
+        // quantise time
+        mouseTime = int(mouseTime * 10) * 0.1f;
+
+        // quantise position
+        mouseRationalPos = quantiseMousePosition(mouseFloatPos);
         
-        float time, scorePosition;
-        
-        time = (event.x - TIMEMAP_OFFSET) / zoomX;
-        scorePosition = event.mods.isShiftDown() ? -1 : (getHeight() - event.y - TIMEMAP_OFFSET) / zoomY;
-        
-        if(!event.mods.isCommandDown())
+        // calculate delta
+        deltaT = mouseTime - draggedPoint->time ;
+        deltaPos = mouseEvent.mods.isShiftDown() ? 0 : mouseRationalPos - draggedPoint->position;
+
+        for(int i=0;i<draggedControlPointsOrigin.size();i++)
         {
-            // quantize time
-            time = int(time * 10) * 0.1f;
- 
-            // quantize score position
-            for(int i=0;i<horizontalGrid->size()-1;i++)
-            {
-                if(horizontalGrid->getUnchecked(i)   < scorePosition &&
-                   horizontalGrid->getUnchecked(i+1) > scorePosition)
-                {
-                    if(fabs(horizontalGrid->getUnchecked(i) - scorePosition) <
-                       fabs(horizontalGrid->getUnchecked(i+1) - scorePosition))
-                        scorePosition = horizontalGrid->getUnchecked(i);
-                    else
-                        scorePosition = horizontalGrid->getUnchecked(i+1);
-                    break;
-                }
-            }
+            sequence->setControlPointTime(composition->getSelectedControlPointIndices()->getUnchecked(i),
+                                          draggedControlPointsOrigin.getUnchecked(i)->time + deltaT);
+            sequence->setControlPointPosition(composition->getSelectedControlPointIndices()->getUnchecked(i),
+                                              draggedControlPointsOrigin.getUnchecked(i)->position + deltaPos);
         }
+        sequence->update();
         
-        composition->getSelectedSequence()->setControlPointPosition(composition->getSelectedControlPointIndex(), time, scorePosition);
-
         composition->updateContent(); // repaint everything
+    }
+    else
+    {
+        selectionRectangle.setLeft  (mouseEvent.position.x < mouseEvent.mouseDownPosition.x ? mouseEvent.position.x : mouseEvent.mouseDownPosition.x);
+        selectionRectangle.setTop   (mouseEvent.position.y < mouseEvent.mouseDownPosition.y ? mouseEvent.position.y : mouseEvent.mouseDownPosition.y);
+        selectionRectangle.setRight (mouseEvent.position.x > mouseEvent.mouseDownPosition.x ? mouseEvent.position.x : mouseEvent.mouseDownPosition.x);
+        selectionRectangle.setBottom(mouseEvent.position.y > mouseEvent.mouseDownPosition.y ? mouseEvent.position.y : mouseEvent.mouseDownPosition.y);
+        
+        composition->clearSelectedControlPointIndices();
+        int i = -1;
+        float x, y;
+        Polytempo_ControlPoint *controlPoint;
+        while((controlPoint = sequence->getControlPoint(++i)) != nullptr)
+        {
+            x = TIMEMAP_OFFSET + controlPoint->time * zoomX;
+            y = getHeight() - TIMEMAP_OFFSET - controlPoint->position * zoomY;
+
+            // stop searching in this sequence if the point coordinates
+            // are beyond the mouse coordinates
+            if(x > selectionRectangle.getRight() || y < selectionRectangle.getY()) break;
+
+            if(selectionRectangle.contains(x,y)) composition->addSelectedControlPointIndex(i);
+        }
+
+        composition->updateContent(); // repaint everything (also list view)
     }
 }
 
@@ -370,26 +506,6 @@ Polytempo_TempoMapCoordinateSystem::Polytempo_TempoMapCoordinateSystem(Viewport 
 
     zoomX = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("zoomX"));
     zoomY = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("tempoMapZoomY"));
-
-    Polytempo_StoredPreferences::getInstance()->getProps().addChangeListener(this);
-}
-
-void Polytempo_TempoMapCoordinateSystem::changeListenerCallback(ChangeBroadcaster*)
-{
-    // scroll friendly zoom
-    
-    float x = (viewport->getViewPositionX() - TIMEMAP_OFFSET) / zoomX;
-    float y = (getHeight() - viewport->getViewPositionY() - TIMEMAP_OFFSET - viewport->getMaximumVisibleHeight()) / zoomY;
-
-    zoomX = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("zoomX"));
-    zoomY = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("tempoMapZoomY"));
-
-    setSize(getWidth(), int(zoomY * 2));
-    repaint();
-
-    viewport->setViewPosition(TIMEMAP_OFFSET + int(x*zoomX), getHeight() - int(y*zoomY) - TIMEMAP_OFFSET - viewport->getMaximumVisibleHeight());
-    
-    playhead->setSize(playhead->getWidth(), getHeight());
 }
 
 void Polytempo_TempoMapCoordinateSystem::paint(Graphics& g)
@@ -411,8 +527,6 @@ void Polytempo_TempoMapCoordinateSystem::paint(Graphics& g)
     
     // horizontal grid lines (tempo)
 
-    horizontalGrid->clearQuick();
-    
     float tempoIncrement = Polytempo_TempoRuler::getIncrementForZoom(zoomY);
     float tempo = 0;
     
@@ -436,6 +550,13 @@ void Polytempo_TempoMapCoordinateSystem::paint(Graphics& g)
     
     // draw the selected sequence last
     paintSequence(g, composition->getSelectedSequence(), true);
+
+    // draw the selection rectangle
+    if(selectionRectangle.getWidth() > 0 && selectionRectangle.getHeight() > 0)
+    {
+        g.setColour(Colours::grey.withAlpha(0.15f));
+        g.fillRect(selectionRectangle);
+    }
 }
 
 void Polytempo_TempoMapCoordinateSystem::paintSequence(Graphics& g, Polytempo_Sequence* sequence, bool selected)
@@ -450,34 +571,38 @@ void Polytempo_TempoMapCoordinateSystem::paintSequence(Graphics& g, Polytempo_Se
     while((controlPoint = sequence->getControlPoint(++i)) != nullptr)
     {
         int x = TIMEMAP_OFFSET + int(controlPoint->time * zoomX);
-        int y = i == 0 ? getHeight() - TIMEMAP_OFFSET - int(controlPoint->tempoOut * zoomY)
+        int y = controlPoint->start ? getHeight() - TIMEMAP_OFFSET - int(controlPoint->tempoOut * zoomY)
                       :  getHeight() - TIMEMAP_OFFSET - int(controlPoint->tempoIn * zoomY);
         
         
         // line segment between control points
         
-        if((controlPoint1 = sequence->getControlPoint(i+1)) != nullptr)
+        if((controlPoint1 = sequence->getControlPoint(i+1)) != nullptr &&
+           !controlPoint1->start)
         {
             float x1, x2, y1, y2;
             float thickness = 1;
             int num = 20; // number of segments to draw
             
-            Array < float > tempos = Polytempo_TempoInterpolation::getTempos(num, controlPoint, controlPoint1);
-            Array < Point < float >* > points = Polytempo_TempoInterpolation::getPoints(num, controlPoint, controlPoint1);
-            
-            if(sequence->isTempoConstantAfterPoint(i))
-                thickness = 3;
-            
-            g.setColour(sequenceColour.withMultipliedBrightness(brightness).withAlpha(alpha));
-            
-            for(int n=0;n<points.size()-1;n++)
+            if(Polytempo_TempoInterpolation::validateCurve(controlPoint, controlPoint1))
             {
-                x1 = TIMEMAP_OFFSET + points[n]->x * zoomX;
-                y1 = getHeight() - TIMEMAP_OFFSET - tempos[n] * zoomY;
-                x2 = TIMEMAP_OFFSET + points[n+1]->x * zoomX;
-                y2 = getHeight() - TIMEMAP_OFFSET - tempos[n+1] * zoomY;
+                Array < float > tempos = Polytempo_TempoInterpolation::getTempos(num, controlPoint, controlPoint1);
+                Array < Point < float >* > points = Polytempo_TempoInterpolation::getPoints(num, controlPoint, controlPoint1);
                 
-                g.drawLine(x1,y1,x2,y2,thickness);
+                if(sequence->isTempoConstantAfterPoint(i))
+                    thickness = 3;
+                
+                g.setColour(sequenceColour.withMultipliedBrightness(brightness).withAlpha(alpha));
+                
+                for(int n=0;n<points.size()-1;n++)
+                {
+                    x1 = TIMEMAP_OFFSET + points[n]->x * zoomX;
+                    y1 = getHeight() - TIMEMAP_OFFSET - tempos[n] * zoomY;
+                    x2 = TIMEMAP_OFFSET + points[n+1]->x * zoomX;
+                    y2 = getHeight() - TIMEMAP_OFFSET - tempos[n+1] * zoomY;
+                    
+                    g.drawLine(x1,y1,x2,y2,thickness);
+                }
             }
         }
         
@@ -489,22 +614,26 @@ void Polytempo_TempoMapCoordinateSystem::paintSequence(Graphics& g, Polytempo_Se
         
         // control points
         
-        int y1 = i < sequence->getControlPoints()->size() - 1 ?
-                getHeight() - TIMEMAP_OFFSET - int(controlPoint->tempoOut * zoomY) : y;
+        int y1 = y;
+        if((controlPoint1 = sequence->getControlPoint(i+1)) != nullptr &&
+           !controlPoint1->start)
+            y1 = getHeight() - TIMEMAP_OFFSET - int(controlPoint->tempoOut * zoomY);
         int height = abs(y-y1);
         y = y < y1 ? y : y1;
         
         if(selected &&
-           composition->getSelectedControlPointIndex() == i)
+           composition->isSelectedControlPointIndex(i))
             g.setColour(sequenceColour);
         else
             g.setColour(Colour(0xffdddddd));
         
+        float cornerFactor = controlPoint->start ? 0.1f : 0.5f;
+
         g.fillRoundedRectangle(x - CONTROL_POINT_SIZE * 0.5f,
                                y - CONTROL_POINT_SIZE * 0.5f,
                                CONTROL_POINT_SIZE,
                                CONTROL_POINT_SIZE + float(height),
-                               CONTROL_POINT_SIZE * 0.5f);
+                               CONTROL_POINT_SIZE * cornerFactor);
         
         if(!selected && controlPoint->isCoinciding)
             g.setColour(Colours::black);
@@ -516,7 +645,127 @@ void Polytempo_TempoMapCoordinateSystem::paintSequence(Graphics& g, Polytempo_Se
                                y - CONTROL_POINT_SIZE * 0.5f,
                                CONTROL_POINT_SIZE,
                                CONTROL_POINT_SIZE + float(height),
-                               CONTROL_POINT_SIZE * 0.5f,
+                               CONTROL_POINT_SIZE * cornerFactor,
                                thickness);
+        
+        if(!controlPoint->cueIn.getPattern().isEmpty())
+        {
+            y = getHeight() - TIMEMAP_OFFSET - int(controlPoint->tempoOut * zoomY);
+            if(selected)
+            {
+                g.setColour(Colours::white);
+                g.fillRect(x - CONTROL_POINT_SIZE * 2.0f, y - CONTROL_POINT_SIZE * 0.6f, CONTROL_POINT_SIZE * 1.3f, CONTROL_POINT_SIZE * 1.3f);
+                g.setColour(sequenceColour.withMultipliedBrightness(brightness).withAlpha(alpha * 0.4f));
+                g.fillRect(x - CONTROL_POINT_SIZE * 2.0f, y - CONTROL_POINT_SIZE * 0.6f, CONTROL_POINT_SIZE * 1.3f, CONTROL_POINT_SIZE * 1.3f);
+                g.setColour(sequenceColour.withMultipliedBrightness(0.5f));
+            }
+            else
+            {
+                g.setColour(sequenceColour.withMultipliedBrightness(brightness).withAlpha(alpha));
+            }
+            g.drawSingleLineText("C", x - CONTROL_POINT_SIZE * 1.8f, y + CONTROL_POINT_SIZE * 0.5f);
+        }
+    }
+}
+
+void Polytempo_TempoMapCoordinateSystem::mouseDown(const MouseEvent &event)
+{
+    float mouseTime      = (event.x - TIMEMAP_OFFSET) / zoomX;
+    float mousePosition  = (getHeight() - event.y - TIMEMAP_OFFSET) / zoomY;
+
+    Polytempo_Composition* composition = Polytempo_Composition::getInstance();
+    Polytempo_Sequence* sequence = composition->getSelectedSequence();
+    
+    // show pop-up menu
+    if(event.mods.isPopupMenu())
+    {
+       ((Polytempo_CoordinateSystem*)viewport)->showPopupMenu();
+        return;
+    }
+
+    // cmd-click: add control point
+    if(event.mods.isCommandDown())
+    {
+        if(sequence->validateNewControlPointPosition(mouseTime, mousePosition))
+        {
+            sequence->addControlPoint(mouseTime, mousePosition);
+            composition->updateContent();
+            return;
+        }
+    }
+    
+    // hit detection
+    hit = false;
+    int i = -1;
+    Polytempo_ControlPoint *controlPoint;
+    while((controlPoint = sequence->getControlPoint(++i)) != nullptr)
+    {
+        // stop searching in this sequence if the point coordinates
+        // are beyond the mouse coordinates
+        if(controlPoint->time > mouseTime + CONTROL_POINT_SIZE / zoomX) break;
+
+        if(fabs(controlPoint->time - mouseTime) <= CONTROL_POINT_SIZE * 0.5 / zoomX &&
+           (fabs(controlPoint->tempoIn - mousePosition) <= CONTROL_POINT_SIZE * 0.5 / zoomY ||
+            fabs(controlPoint->tempoOut - mousePosition) <= CONTROL_POINT_SIZE * 0.5 / zoomY ||
+            (controlPoint->tempoOut < mousePosition && controlPoint->tempoIn - controlPoint->tempoOut >= mousePosition - controlPoint->tempoOut)))
+        {
+            hit = true;
+            if(event.mods.isShiftDown())
+            {
+                if(composition->isSelectedControlPointIndex(i)) composition->removeSelectedControlPointIndex(i);
+                else                                            composition->addSelectedControlPointIndex(i);
+            }
+            else
+            {
+                if(!composition->isSelectedControlPointIndex(i))
+                {
+                    composition->clearSelectedControlPointIndices();
+                    composition->addSelectedControlPointIndex(i);
+                }
+            }
+            break;
+        }
+    }
+    // no hit detected
+    if(!hit && !event.mods.isShiftDown()) composition->clearSelectedControlPointIndices();
+
+    composition->updateContent(); // repaint everything
+}
+
+void Polytempo_TempoMapCoordinateSystem::mouseDrag(const MouseEvent &event)
+{
+    if(!hit)
+    {
+        Polytempo_Composition* composition = Polytempo_Composition::getInstance();
+        Polytempo_Sequence* sequence = composition->getSelectedSequence();
+
+        selectionRectangle.setLeft  (event.position.x < event.mouseDownPosition.x ? event.position.x : event.mouseDownPosition.x);
+        selectionRectangle.setTop   (event.position.y < event.mouseDownPosition.y ? event.position.y : event.mouseDownPosition.y);
+        selectionRectangle.setRight (event.position.x > event.mouseDownPosition.x ? event.position.x : event.mouseDownPosition.x);
+        selectionRectangle.setBottom(event.position.y > event.mouseDownPosition.y ? event.position.y : event.mouseDownPosition.y);
+
+        composition->clearSelectedControlPointIndices();
+        int i = -1;
+        float x, y, y1, y2;
+        Polytempo_ControlPoint *controlPoint;
+        while((controlPoint = sequence->getControlPoint(++i)) != nullptr)
+        {
+            x = TIMEMAP_OFFSET + controlPoint->time * zoomX;
+            y1 = getHeight() - TIMEMAP_OFFSET - (controlPoint->tempoIn * zoomY);
+            y2 = getHeight() - TIMEMAP_OFFSET - (controlPoint->tempoOut * zoomY);
+            if(y1 > y2)
+            {
+                y = y1; y1 = y2; y2 = y;
+            }
+            
+            // stop searching in this sequence if the point coordinates
+            // are beyond the mouse coordinates
+            if(x > selectionRectangle.getRight() && y1 < selectionRectangle.getY()) break;
+
+            if(selectionRectangle.intersects(Line<float>(x, y1, x, y2)))
+                composition->addSelectedControlPointIndex(i);
+        }
+
+        composition->updateContent(); // repaint everything (also list view)
     }
 }

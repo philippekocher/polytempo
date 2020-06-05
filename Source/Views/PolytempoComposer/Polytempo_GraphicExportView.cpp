@@ -104,9 +104,9 @@ void Polytempo_GraphicExportView::update()
             if(!event->hasDefinedTime()) continue;
             
             posX = event->getTime() * timeFactor * 0.1 - (pageIndex * systemsPerPage + systemIndex%systemsPerPage) * systemWidth;
-            posY = marginTop + systemIndex%systemsPerPage * systemHeight + staveOffset;
+            posY = marginTop + systemIndex % systemsPerPage * systemHeight + staveOffset;
             
-            if(posX > systemWidth) // reach the end of a line
+            while(posX > systemWidth) // reach the end of a line
             {
                 // draw staves
                 pages[pageIndex]->drawStaves(marginLeft, posY, systemWidth, sequence->numberOfStaves, sequence->secondaryStaveOffset, sequence->numberOfLines, sequence->lineOffset);
@@ -116,7 +116,7 @@ void Polytempo_GraphicExportView::update()
                 posX -= systemWidth;
                 posY += systemHeight;
                 
-                if(systemIndex%systemsPerPage == 0 )
+                if(systemIndex % systemsPerPage == 0 )
                 {
                     pageIndex++;
                     if(pageIndex == pages.size()) addPage();
@@ -140,6 +140,12 @@ void Polytempo_GraphicExportView::update()
                             beatPatternCounter = beatPattern->getRepeats();
                             
                             pages[pageIndex]->drawBarline(posX, posY, sequence->numberOfStaves, sequence->secondaryStaveOffset, sequence->numberOfLines, sequence->lineOffset, beatPattern->getPattern());
+                        }
+                        else
+                        {
+                            // end of beat pattern: draw a double barline
+                            pages[pageIndex]->drawBarline(posX - 5, posY, sequence->numberOfStaves, sequence->secondaryStaveOffset, sequence->numberOfLines, sequence->lineOffset, String());
+                            pages[pageIndex]->drawBarline(posX + 1, posY, sequence->numberOfStaves, sequence->secondaryStaveOffset, sequence->numberOfLines, sequence->lineOffset, String());
                         }
                     }
                     else

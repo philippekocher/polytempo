@@ -37,8 +37,10 @@ Polytempo_BeatPatternListComponent::Polytempo_BeatPatternListComponent()
     table.getHeader().addColumn("Repeats", 2, 10, -1, -1, TableHeaderComponent::visible);
     table.getHeader().addColumn("Counter", 3, 10, -1, -1, TableHeaderComponent::visible);
     table.getHeader().addColumn("Marker",  4, 10, -1, -1, TableHeaderComponent::visible);
+
     table.getHeader().setPopupMenuActive(false);
-       
+    table.getHeader().setStretchToFitActive(true);
+    
     table.setColour(ListBox::backgroundColourId, Colour(245,245,245));
 }
 

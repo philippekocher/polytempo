@@ -76,16 +76,22 @@ void Polytempo_ComposerEngine::run()
                 if(nextScoreEvent->getType() == eventType_Beat)
                 {
                     // add playback properties to next event
-                    int sequenceIndex = nextScoreEvent->getProperty("~sequence");
-                    Polytempo_Sequence* sequence = Polytempo_Composition::getInstance()->getSequence(sequenceIndex);
-     
-                    nextScoreEvent = new Polytempo_Event(*nextScoreEvent); // we need a copy to add the playback properties
-                    nextScoreEvent->setOwned(false); // this event can be deleted by the scheduler after its use
-                    sequence->addPlaybackPropertiesToEvent(nextScoreEvent);
+                    int sequenceID = nextScoreEvent->getProperty("~sequence");
+                    Polytempo_Composition *composition = Polytempo_Composition::getInstance();
+                    Polytempo_Sequence* sequence = composition->getSequenceWithID(sequenceID);
+                    
+                    if((!composition->isOneSequenceSoloed() && !sequence->isMuted())
+                       || sequence->isSoloed())
+                    {
+                        nextScoreEvent = new Polytempo_Event(*nextScoreEvent); // we need a copy to add the playback properties
+                        nextScoreEvent->setOwned(false); // this event can be deleted by the scheduler after its use
+                        
+                        sequence->addPlaybackPropertiesToEvent(nextScoreEvent);
 
-                    // next osc event
-                    nextOscEvent = sequence->getOscEvent(nextScoreEvent);
-                    Polytempo_EventScheduler::getInstance()->scheduleScoreEvent(nextOscEvent);
+                        // next osc event
+                        nextOscEvent = sequence->getOscEvent(nextScoreEvent);
+                        Polytempo_EventScheduler::getInstance()->scheduleScoreEvent(nextOscEvent);
+                    }
                 }
             
                 Polytempo_EventScheduler::getInstance()->scheduleScoreEvent(nextScoreEvent);

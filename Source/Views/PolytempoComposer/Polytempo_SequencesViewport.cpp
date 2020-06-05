@@ -172,15 +172,8 @@ void Polytempo_SequenceControlComponent::paint (Graphics& g)
         g.setColour(Colour(235,235,235));
 
     g.fillRoundedRectangle(5.0f, 10.0f, 92.0f, float(getHeight() - 20), 4.0f);
-    
-    if(composition->getSelectedSequenceIndex() == sequenceIndex)
-    {
-//        sequenceName.setColour(TextEditor::textColourId, Colours::black);
-    }
-    else
-    {
-//        sequenceName.setColour(TextEditor::textColourId, Colour(200,200,200));
-    }
+
+    sequenceName.setText(composition->getSequence(sequenceIndex)->getName());
 }
 
 void Polytempo_SequenceControlComponent::resized()
@@ -240,8 +233,16 @@ void Polytempo_SequenceControlComponent::buttonClicked(Button* button)
         Polytempo_SequenceGraphicalSettings::show(Polytempo_Composition::getInstance()->getSequence(sequenceIndex));
         button->setToggleState(false, dontSendNotification);
     }
+    else if(button == soloButton.get())
+    {
+        Polytempo_Composition::getInstance()->getSequence(sequenceIndex)->solo = buttonState;
+        Polytempo_Composition::getInstance()->getSequence(sequenceIndex)->mute = false;
+        muteButton->setToggleState(false, dontSendNotification);
+    }
     else if(button == muteButton.get())
     {
         Polytempo_Composition::getInstance()->getSequence(sequenceIndex)->mute = buttonState;
+        Polytempo_Composition::getInstance()->getSequence(sequenceIndex)->solo = false;
+        soloButton->setToggleState(false, dontSendNotification);
     }
 }

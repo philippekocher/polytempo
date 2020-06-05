@@ -26,6 +26,7 @@
 #define __Polytempo_Composition__
 
 #include "../../JuceLibraryCode/JuceHeader.h"
+#include "Polytempo_Score.h"
 #include "Polytempo_Sequence.h"
 #include "../Misc/Polytempo_Alerts.h"
 
@@ -50,21 +51,25 @@ public:
     
     Polytempo_Sequence* getSequence(int);
     Polytempo_Sequence* getSelectedSequence();
-    
+    Polytempo_Sequence* getSequenceWithID(int);
+
+    bool isOneSequenceSoloed();
+
     void setSelectedSequenceIndex(int);
     int getSelectedSequenceIndex();
     
-    void setSelectedControlPointIndex(int);
-    int getSelectedControlPointIndex();
-    bool isSelectedControlPointRemovable();
+    void clearSelectedControlPointIndices();
+    void addSelectedControlPointIndex(int);
+    void removeSelectedControlPointIndex(int);
+    Array<int>* getSelectedControlPointIndices();
+    bool isSelectedControlPointIndex(int);
 
     void updateScore();
     void findCoincidingControlPoints();
     
     void unsavedChangesAlert(Polytempo_YesNoCancelAlert::callbackTag tag);
     void newComposition();
-    void openFile();
-    void openFile(File file);
+    void openFile(File file = File());
     void saveToFile();
     void writeJSONtoFile(File file);
     bool readJSONfromFile(File file);
@@ -79,16 +84,16 @@ public:
 private:
     bool scoreNeedsUpdate = false;
     int selectedSequenceIndex = -1;
-    int selectedControlPointIndex = -1;
+    Array<int> *selectedControlPointIndices;
     bool exportAll;
     
     DocumentWindow *mainWindow;
-    Component *mainComponent;
     OwnedArray <Polytempo_Sequence> sequences;
 
-    std::unique_ptr <Polytempo_Score> score;
+    std::unique_ptr<Polytempo_Score> score;
     
     File compositionFile = File();
+    File shouldOpenFile;
     bool dirty = false;
 };
 

@@ -30,7 +30,6 @@
 
 /*
  BeatPattern (a kind of "pattern factory" for beat events)
- — score position (= starting point, if repeated)
  — pattern (a metre or a single value to be repeated)
  — repeats
  — marker (a rehearsal letter at the beginning of the pattern)
@@ -45,7 +44,7 @@ public:
     
     // accessors
     Rational getLength();
-    void   setPattern(String);
+    void   setPattern(String, bool allowEmptyPattern = false);
     String getPattern();
     void   setRepeats(int);
     int    getRepeats();

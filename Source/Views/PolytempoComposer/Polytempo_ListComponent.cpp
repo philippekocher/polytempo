@@ -29,8 +29,7 @@ void Polytempo_ListComponent::resized()
 {
     Rectangle<int> r = getBounds();
     table.setBounds(r.getX(),r.getY()+10,r.getWidth(),r.getHeight()-10);
-    
-    table.autoSizeAllColumns();
+    table.getHeader().resizeAllColumnsToFit(r.getWidth());
 }
 
 int Polytempo_ListComponent::getColumnAutoSizeWidth(int /*columnId*/)

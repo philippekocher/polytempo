@@ -68,11 +68,13 @@ public:
     Rational(float x)
     {
         const double epsilon = 1.e-6;
+        const int sign = x < 0 ? -1 : 1;
+        x = fabs(x);
         const int integerPart = int(x);
         x -= integerPart;                 // x enthält jetzt den Nachkommaanteil
         if(x <= epsilon)                  // x == Ganzzahl abfangen
         {
-            numerator   = integerPart;
+            numerator   = sign * integerPart;
             denominator = 1;
         }
         else
@@ -89,7 +91,7 @@ public:
                 const double r = double(med.numerator) / med.denominator;
                 if(std::abs(r - x) < epsilon)
                 {
-                    numerator = med.numerator + integerPart * med.denominator;
+                    numerator = sign * (med.numerator + integerPart * med.denominator);
                     denominator = med.denominator;
                     done = true;
                 }
@@ -105,13 +107,6 @@ public:
     String toString()
     {
         if(denominator == 1) return String(numerator);
-//        if(denominator < numerator)
-//        {
-//            const int i = int(numerator/denominator);
-//            const int n = numerator - i*denominator;
-//            
-//            return String(i)+" + "+String(n)+"/"+String(denominator);
-//        }
         return String(numerator)+"/"+String(denominator);
     }
     
@@ -154,6 +149,17 @@ public:
         return *result;
     }
     
+    float operator+ (const float number)
+    {
+        return toFloat() + number;
+    }
+    
+    Rational& operator+= (Rational& other)
+    {
+        *this = *this + other;
+        return *this;
+    }
+    
     Rational& operator- (const Rational& other)
     {
         int n = numerator   * other.denominator - denominator * other.numerator;
@@ -163,6 +169,28 @@ public:
         return *result;
     }
     
+    float operator- (const float number)
+    {
+        return toFloat() + number;
+    }
+    
+    Rational& operator* (const Rational& other)
+    {
+        int n = numerator * other.numerator;
+        int d = denominator * other.denominator;
+        
+        Rational *result = new Rational(n,d);
+        return *result;
+    }
+    
+    Rational& operator* (const int number)
+    {
+        int n = numerator * number;
+        
+        Rational *result = new Rational(n,denominator);
+        return *result;
+    }
+
     float operator* (float number)
     {
         return toFloat() * number;
@@ -198,16 +226,19 @@ private:
     void reduce()
     {
         int a, b, rem;
-        
-        if(numerator > denominator)
+        int num = abs(numerator);
+        int den = abs(denominator);
+        int sign = numerator * denominator < 0 ? -1 : 1;
+
+        if(num > den)
         {
-            a = numerator;
-            b = denominator;
+            a = num;
+            b = den;
         }
         else
         {
-            a = denominator;
-            b = numerator;
+            a = den;
+            b = num;
         }
         
         while (b != 0)
@@ -217,8 +248,8 @@ private:
             b = rem;
         }
         
-        numerator /= a;
-        denominator /= a;
+        numerator = sign * num / a;
+        denominator = den / a;
     }
 };
 

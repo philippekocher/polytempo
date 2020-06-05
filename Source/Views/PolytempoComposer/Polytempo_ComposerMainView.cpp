@@ -41,7 +41,7 @@ Polytempo_ComposerMainView::Polytempo_ComposerMainView()
     
     addAndMakeVisible(leftComponent);
     addAndMakeVisible(rightComponent);
-    
+
     resizerBar.reset(new StretchableLayoutResizerBar(&stretchableManager, 1, true));
     addAndMakeVisible(resizerBar.get());
     
@@ -90,6 +90,12 @@ void Polytempo_ComposerMainView::childBoundsChanged(Component* child)
 {
     if (child == &leftComponent)
         resized();
+}
+
+void Polytempo_ComposerMainView::setMapDimension(float maxTime, Rational maxPos)
+{
+    timeMapComponent->setRelativeSize(maxTime + 60, maxPos);
+    tempoMapComponent->setRelativeSize(maxTime + 60);
 }
 
 String Polytempo_ComposerMainView::getComponentStateAsString()
