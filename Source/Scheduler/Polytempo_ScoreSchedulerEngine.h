@@ -8,7 +8,12 @@ class Polytempo_ScoreScheduler;
 class Polytempo_ScoreSchedulerEngine : public Thread
 {
 public:
-    Polytempo_ScoreSchedulerEngine() : Thread("Polytempo_ScoreScheduler_Thread")
+    Polytempo_ScoreSchedulerEngine() : Thread("Polytempo_ScoreScheduler_Thread"), score(nullptr),
+                                       scoreScheduler(nullptr), scoreTime(0),
+                                       killed(false),
+                                       shouldStop(false),
+                                       pausing(false),
+                                       scoreTimeOffset(0)
     {
     };
 
@@ -96,6 +101,10 @@ public:
 class Polytempo_NetworkEngine : public Polytempo_ScoreSchedulerEngine
 {
 public:
+    Polytempo_NetworkEngine(): waitBeforeStart(0), lastDownbeat(0)
+    {
+    }
+
     void setScoreTime(int time) override;
     void run() override;
 

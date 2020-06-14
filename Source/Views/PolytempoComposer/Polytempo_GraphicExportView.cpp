@@ -20,7 +20,7 @@ Polytempo_GraphicExportView::Polytempo_GraphicExportView()
 Polytempo_GraphicExportView::~Polytempo_GraphicExportView()
 {}
 
-void Polytempo_GraphicExportView::paint(Graphics& g)
+void Polytempo_GraphicExportView::paint(Graphics& /*g*/)
 {}
 
 void Polytempo_GraphicExportView::resized()
@@ -103,7 +103,7 @@ void Polytempo_GraphicExportView::update()
         {
             if(!event->hasDefinedTime()) continue;
             
-            posX = event->getTime() * timeFactor * 0.1 - (pageIndex * systemsPerPage + systemIndex%systemsPerPage) * systemWidth;
+            posX = int(event->getTime() * timeFactor * 0.1 - (pageIndex * systemsPerPage + systemIndex%systemsPerPage) * systemWidth);
             posY = marginTop + systemIndex % systemsPerPage * systemHeight + staveOffset;
             
             while(posX > systemWidth) // reach the end of a line
@@ -194,7 +194,7 @@ void Polytempo_GraphicExportView::update()
 void Polytempo_GraphicExportView::addPage()
 {
     int pageHeight = graphicExportViewport.getLocalBounds().getHeight();
-    int pageWidth = landscape ? pageHeight * 1.414516129032258 : pageHeight * 0.706955530216648;
+    int pageWidth = landscape ? int(pageHeight * 1.414516129032258) : int(pageHeight * 0.706955530216648);
     
     Polytempo_GraphicExportPage *page = landscape ?
     new Polytempo_GraphicExportPage(pages.size() + 1, PAGE_IMAGE_HEIGHT, PAGE_IMAGE_WIDTH) :

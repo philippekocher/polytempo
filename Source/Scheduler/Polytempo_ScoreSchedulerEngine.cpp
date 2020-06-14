@@ -1,7 +1,6 @@
 #include "Polytempo_ScoreSchedulerEngine.h"
 #include "Polytempo_Event.h"
 #include "../Data/Polytempo_Composition.h"
-#include "Polytempo_EventDispatcher.h"
 #include "Polytempo_EventScheduler.h"
 #include "../Network/Polytempo_TimeProvider.h"
 

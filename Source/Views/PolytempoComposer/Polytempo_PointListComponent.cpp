@@ -144,7 +144,7 @@ int Polytempo_PointListComponent::getNumRows()
     return Polytempo_Composition::getInstance()->getSelectedSequence()->getControlPoints()->size();
 }
 
-void Polytempo_PointListComponent::selectedRowsChanged(int lastRowSelected)
+void Polytempo_PointListComponent::selectedRowsChanged(int /*lastRowSelected*/)
 {
     Polytempo_Composition* composition = Polytempo_Composition::getInstance();
     

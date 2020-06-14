@@ -353,8 +353,8 @@ void Polytempo_Sequence::addControlPoint(float t, Rational pos, float tin, float
     }
     else
     {
-        point->tempoIn = tin == 0 ? 0.25 : tin;
-        point->tempoOut = tout == 0 ? 0.25 : tout;
+        point->tempoIn = tin == 0 ? 0.25f : tin;
+        point->tempoOut = tout == 0 ? 0.25f : tout;
     }
     
     update();
@@ -467,9 +467,9 @@ bool Polytempo_Sequence::update()
            (i < controlPoints.size()-1 && controlPoints[i]->position >= controlPoints[i+1]->position))
         {
             controlPoints.clearQuick(true);
-            for(int i=0;i<controlPointsBackup.size();i++)
+            for(int iBackup=0;iBackup<controlPointsBackup.size();iBackup++)
             {
-                controlPoints.add(controlPointsBackup[i]->copy());
+                controlPoints.add(controlPointsBackup[iBackup]->copy());
             }
             return false;
         }
@@ -528,7 +528,7 @@ bool Polytempo_Sequence::update()
     // set the beat durations and store them in the array timedEvents
     timedEvents.clearQuick(true);
 
-    float time = NAN;
+    float eventTime = NAN;
     for(int i=events.size()-1;i>=0;i--)
     {
         Polytempo_Event *event = new Polytempo_Event(*events[i]);
@@ -537,17 +537,17 @@ bool Polytempo_Sequence::update()
         {
             if(event->hasDefinedTime())
             {
-                if(time != time) // time is NaN
+                if(eventTime != eventTime) // time is NaN
                 {
                     event->setProperty(eventPropertyString_Duration, 1.0f);
                     event->setProperty(eventPropertyString_Pattern, int(float(event->getProperty(eventPropertyString_Pattern)) * 0.1f) * 10);
                 }
                 else
                 {
-                    event->setProperty(eventPropertyString_Duration, time - float(event->getProperty(eventPropertyString_Time)));
+                    event->setProperty(eventPropertyString_Duration, eventTime - float(event->getProperty(eventPropertyString_Time)));
                 }
             }
-            time = float(event->getProperty(eventPropertyString_Time));
+            eventTime = float(event->getProperty(eventPropertyString_Time));
         }
         if(event->hasDefinedTime())
         {

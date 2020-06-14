@@ -58,7 +58,7 @@ Polytempo_ComposerMainView::~Polytempo_ComposerMainView()
     tempoMapComponent = nullptr;
 }
 
-void Polytempo_ComposerMainView::paint (Graphics& g)
+void Polytempo_ComposerMainView::paint (Graphics& /*g*/)
 {}
 
 

@@ -94,7 +94,7 @@ void Polytempo_CoordinateSystemComponent::setSizeAndZooms(int w, int h, float zX
 
     setSize(width, height);
 
-    playhead->setRectangle(Rectangle<float>(playhead->getX(), 0, PLAYHEAD_WIDTH, (float)(getHeight())));
+    playhead->setRectangle(Rectangle<float>(float(playhead->getX()), 0, PLAYHEAD_WIDTH, (float)(getHeight())));
 }
 
 void Polytempo_CoordinateSystemComponent::eventNotification(Polytempo_Event *event)
@@ -109,7 +109,7 @@ void Polytempo_CoordinateSystemComponent::eventNotification(Polytempo_Event *eve
     }
 }
 
-void Polytempo_CoordinateSystemComponent::mouseUp(const MouseEvent &event)
+void Polytempo_CoordinateSystemComponent::mouseUp(const MouseEvent& /*event*/)
 {
     selectionRectangle.setWidth(0);
     draggedControlPointsOrigin.clearQuick(true);
@@ -300,7 +300,7 @@ void Polytempo_TimeMapCoordinateSystem::paintSequence(Graphics& g, Polytempo_Seq
             {
                 g.setColour(sequenceColour.withMultipliedBrightness(brightness).withAlpha(alpha));
             }
-            g.drawSingleLineText("C", x - CONTROL_POINT_SIZE * 1.8f, y + CONTROL_POINT_SIZE * 0.5f);
+            g.drawSingleLineText("C", int(x - CONTROL_POINT_SIZE * 1.8f), int(y + CONTROL_POINT_SIZE * 0.5f));
         }
     }
 }
@@ -663,7 +663,7 @@ void Polytempo_TempoMapCoordinateSystem::paintSequence(Graphics& g, Polytempo_Se
             {
                 g.setColour(sequenceColour.withMultipliedBrightness(brightness).withAlpha(alpha));
             }
-            g.drawSingleLineText("C", x - CONTROL_POINT_SIZE * 1.8f, y + CONTROL_POINT_SIZE * 0.5f);
+            g.drawSingleLineText("C", int(x - CONTROL_POINT_SIZE * 1.8f), int(y + CONTROL_POINT_SIZE * 0.5f));
         }
     }
 }

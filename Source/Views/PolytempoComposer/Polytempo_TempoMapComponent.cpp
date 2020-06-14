@@ -81,7 +81,7 @@ void Polytempo_TempoMapComponent::resized()
     zoomX = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("zoomX"));
     zoomY = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("tempoMapZoomY"));
 
-    int width = relativeWidth * zoomX;
+    int width = int(relativeWidth * zoomX);
     if(width < coordinateSystem->getMaximumVisibleWidth())
         width = coordinateSystem->getMaximumVisibleWidth();
 

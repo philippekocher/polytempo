@@ -280,7 +280,7 @@ void Polytempo_TempoRulerComponent::paint(Graphics& g)
             g.drawLine(55.0f, y, float(getWidth()), y, 0.5f);
             float num = Polytempo_TempoMeasurement::decodeTempoForUI(tempo);
             int decimalPlaces = num < 10 ? 4 : num < 100 ? 3 : num < 1000 ? 2 : 1;
-            g.drawFittedText(String(num, decimalPlaces), 18, y - 6, 30, 10, Justification::left, 1);
+            g.drawFittedText(String(num, decimalPlaces), 18, int(y - 6), 30, 10, Justification::left, 1);
         }
         else
         {
