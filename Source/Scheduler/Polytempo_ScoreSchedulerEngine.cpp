@@ -14,7 +14,6 @@ void Polytempo_ComposerEngine::setScoreTime(int time)
 
 void Polytempo_ComposerEngine::run()
 {
-    //DBG("run");
     int interval = 100;
     int lookAhead = 2000;
     int syncTime;
@@ -115,7 +114,6 @@ void Polytempo_NetworkEngine::setScoreTime(int time)
 
 void Polytempo_NetworkEngine::run()
 {
-    //DBG("run");
     int interval = 200;
     int lookAhead = 200;
 

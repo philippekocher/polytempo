@@ -13,8 +13,5 @@ public:
     {
     }
 
-    void handleIncomingMidiMessage(MidiInput*, const MidiMessage& message) override
-    {
-        DBG(message.getDescription());
-    }
+    void handleIncomingMidiMessage(MidiInput*, const MidiMessage& message) override;
 };
