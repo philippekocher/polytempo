@@ -1,27 +1,3 @@
-/* ==============================================================================
- 
- This file is part of the POLYTEMPO software package.
- Copyright (c) 2016 - Zurich University of the Arts,
- ICST Institute for Computer Music and Sound Technology
- http://www.icst.net
- 
- Author: Philippe Kocher
- 
- POLYTEMPO is free software: you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
- 
- POLYTEMPO is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
- 
- You should have received a copy of the GNU General Public License
- along with this software. If not, see <http://www.gnu.org/licenses/>.
- 
- ============================================================================== */
-
 #include "Polytempo_ComposerMenuBarModel.h"
 #include "Polytempo_ComposerApplication.h"
 #include "../Polytempo_AboutWindow.h"
@@ -153,7 +129,6 @@ PopupMenu Polytempo_ComposerMenuBarModel::getMenuForIndex (int /*menuIndex*/, co
         menu.addCommandItem (commandManager, Polytempo_CommandIDs::returnToLoc);
         menu.addCommandItem (commandManager, Polytempo_CommandIDs::returnToBeginning);
         menu.addSeparator();
-        //menu.addCommandItem (commandManager, gotoCmd);
     }
 
     else if (menuName == "Help")
@@ -161,7 +136,6 @@ PopupMenu Polytempo_ComposerMenuBarModel::getMenuForIndex (int /*menuIndex*/, co
 #if ! JUCE_MAC
         menu.addCommandItem (commandManager, Polytempo_CommandIDs::aboutWindow);
 #endif
-        //menu.addCommandItem (commandManager, helpCmd);
         menu.addSeparator();
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::visitWebsite);
     }
@@ -234,7 +208,6 @@ void Polytempo_ComposerMenuBarModel::getAllCommands (Array <CommandID>& commands
         
         Polytempo_CommandIDs::aboutWindow,
         Polytempo_CommandIDs::preferencesWindow,
-        //Polytempo_CommandIDs::help,
         Polytempo_CommandIDs::visitWebsite,
 
 #if ! JUCE_LINUX
@@ -289,8 +262,6 @@ void Polytempo_ComposerMenuBarModel::getCommandInfo(CommandID commandID, Applica
             result.setInfo("Save", String(), infoCategory, 0);
             result.addDefaultKeypress('s', ModifierKeys::commandModifier);
             break;
-
-//        case Polytempo_CommandIDs::saveAs:
 
         case Polytempo_CommandIDs::exportSelected:
             result.setInfo("Export Selected Sequence...", String(), infoCategory, 0);
@@ -457,14 +428,6 @@ void Polytempo_ComposerMenuBarModel::getCommandInfo(CommandID commandID, Applica
             result.addDefaultKeypress ('\r', ModifierKeys::commandModifier);
             result.setActive(window->getContentID() == Polytempo_ComposerWindow::mainViewID);
             break;
-
-            /*
-             case gotoCmd:
-             result.setInfo ("Goto...", "Set a locator", infoCategory, 0);
-             result.addDefaultKeypress ('j', ModifierKeys::commandModifier);
-             break;
-             */
-            
             
         /* help menu
          ----------------------------------*/
@@ -520,9 +483,7 @@ bool Polytempo_ComposerMenuBarModel::perform (const InvocationInfo& info)
         case Polytempo_CommandIDs::save:
             composition->saveToFile();
             break;
-            
-//        case Polytempo_CommandIDs::saveAs:
-            
+
         case Polytempo_CommandIDs::exportSelected:
             Polytempo_Composition::getInstance()->exportSelectedSequence();
             break;

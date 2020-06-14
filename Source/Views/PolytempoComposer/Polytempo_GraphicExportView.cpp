@@ -121,7 +121,6 @@ void Polytempo_GraphicExportView::update()
                     pageIndex++;
                     if(pageIndex == pages.size()) addPage();
                     
-                    //systemIndex = 0;
                     posY = marginTop + staveOffset;
                 }
             }

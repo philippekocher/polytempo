@@ -7,9 +7,10 @@
 class Polytempo_ControlPoint
 {
 public:
-    Polytempo_ControlPoint()
-    {}
-    
+    Polytempo_ControlPoint(): time(0)
+    {
+    }
+
     ~Polytempo_ControlPoint()
     {}
     
