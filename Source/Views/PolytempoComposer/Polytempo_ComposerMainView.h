@@ -46,6 +46,8 @@ public:
     void resized();
     void childBoundsChanged(Component* child);
     
+    void setMapDimension(float, Rational);
+    
     String getComponentStateAsString();
     void   restoreComponentStateFromString(const String&);
     
@@ -64,8 +66,8 @@ public:
     void setRightComponent(componentType type);
     
 private:
-    std::unique_ptr<Polytempo_ComposerToolbarComponent> toolbarComponent;
-    std::unique_ptr<Polytempo_TransportComponent>       transportComponent;
+    std::unique_ptr<Polytempo_ComposerToolbarComponent>  toolbarComponent;
+    std::unique_ptr<Polytempo_TransportComponent>        transportComponent;
     Polytempo_SequencesViewport        sequencesViewport;
     
     Component                           leftComponent;      // split view

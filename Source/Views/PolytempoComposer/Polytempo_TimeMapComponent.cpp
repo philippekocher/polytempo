@@ -24,18 +24,18 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "Polytempo_TimeMapComponent.h"
+#include "../../Misc/Polytempo_Globals.h"
+#include "../../Preferences/Polytempo_StoredPreferences.h"
 
 
 Polytempo_TimeMapComponent::Polytempo_TimeMapComponent()
 {
     coordinateSystem.reset(new Polytempo_CoordinateSystem());
     addAndMakeVisible(coordinateSystem.get());
-
     coordinateSystem->setSynchronizedViewport(&timeRuler,0);
     coordinateSystem->setSynchronizedViewport(&positionRuler,1);
     
     timeMapCoordinateSystem.reset(new Polytempo_TimeMapCoordinateSystem(coordinateSystem.get()));
-    timeMapCoordinateSystem->setBounds(Rectangle<int> (3800, 3800));
     coordinateSystem->setViewedComponent(timeMapCoordinateSystem.get(), false);
     
     addAndMakeVisible(timeRuler);
@@ -45,6 +45,10 @@ Polytempo_TimeMapComponent::Polytempo_TimeMapComponent()
     positionRuler.setSynchronizedViewport(coordinateSystem.get(), 1);
     
     coordinateSystem->setViewPositionProportionately(0.0, 1.0);
+
+    Polytempo_StoredPreferences::getInstance()->getProps().addChangeListener(this);
+    zoomX = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("zoomX"));
+    zoomY = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("timeMapZoomY"));
 }
 
 Polytempo_TimeMapComponent::~Polytempo_TimeMapComponent()
@@ -68,4 +72,39 @@ void Polytempo_TimeMapComponent::resized()
     coordinateSystem->setBounds(r.withTrimmedBottom(40).withTrimmedLeft(70).withTrimmedRight(1));
     timeRuler.setBounds(r.removeFromBottom(40).withTrimmedLeft(70).withTrimmedRight(1));
     positionRuler.setBounds(r.removeFromLeft(70).withTrimmedLeft(5));
+    
+    // resize content while retaining scroll position
+    float x = (coordinateSystem->getViewPositionX() - TIMEMAP_OFFSET) / zoomX;
+    float y = (timeMapCoordinateSystem->getHeight() - coordinateSystem->getViewPositionY() - TIMEMAP_OFFSET - coordinateSystem->getMaximumVisibleHeight()) / zoomY;
+
+    zoomX = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("zoomX"));
+    zoomY = float(Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("timeMapZoomY"));
+    
+    int width = relativeWidth * zoomX;
+    if(width < coordinateSystem->getMaximumVisibleWidth())
+        width = coordinateSystem->getMaximumVisibleWidth();
+
+    int height = relativeHeight * zoomY + 50;
+    if(height < coordinateSystem->getMaximumVisibleHeight())
+        height = coordinateSystem->getMaximumVisibleHeight();
+
+    timeMapCoordinateSystem->setSizeAndZooms(width, height, zoomX, zoomY);
+    positionRuler.setSizeAndZooms(0, height, zoomX, zoomY);
+    timeRuler.setSizeAndZooms(width, 0, zoomX, zoomY);
+
+    coordinateSystem->setViewPosition(TIMEMAP_OFFSET + x * zoomX, height - y * zoomY - TIMEMAP_OFFSET - coordinateSystem->getMaximumVisibleHeight());
+}
+
+void Polytempo_TimeMapComponent::setRelativeSize(float maxTime, Rational maxPos)
+{
+    relativeWidth = maxTime;
+    relativeHeight = maxPos;
+    
+    resized();
+}
+
+void Polytempo_TimeMapComponent::changeListenerCallback (ChangeBroadcaster*)
+{
+    resized();
+    repaint();
 }

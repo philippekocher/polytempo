@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="OXoF3n" name="PolytempoComposer" projectType="guiapp" version="0.4.0"
+<JUCERPROJECT id="OXoF3n" name="PolytempoComposer" projectType="guiapp" version="0.4.2"
               bundleIdentifier="net.icst.PolytempoComposer" includeBinaryInAppConfig="1"
-              jucerVersion="5.4.5" companyName="Zurich University of the Arts"
+              jucerVersion="5.4.7" companyName="Zurich University of the Arts"
               companyWebsite="www.icst.net" defines="POLYTEMPO_COMPOSER=1"
               displaySplashScreen="1" reportAppUsage="1" splashScreenColour="Dark"
               companyCopyright="Zurich University of the Arts">
   <MAINGROUP id="cYhNWq" name="PolytempoComposer">
     <GROUP id="{6A675542-C9E9-872F-C795-8AC67F3B5B9D}" name="Resources">
+      <FILE id="ttnIyq" name="adjustPositionBwd.png" compile="0" resource="1"
+            file="../Resources/adjustPositionBwd.png"/>
+      <FILE id="AoXswF" name="adjustPositionFwd.png" compile="0" resource="1"
+            file="../Resources/adjustPositionFwd.png"/>
+      <FILE id="gWhSbv" name="adjustTimeBwd.png" compile="0" resource="1"
+            file="../Resources/adjustTimeBwd.png"/>
+      <FILE id="uxukLH" name="adjustTimeFwd.png" compile="0" resource="1"
+            file="../Resources/adjustTimeFwd.png"/>
       <FILE id="AuXr1H" name="icon.png" compile="0" resource="1" file="../Resources/icon.png"/>
     </GROUP>
     <GROUP id="{3ED74506-B10E-F656-6CD7-5C24346558D8}" name="Source">
@@ -198,10 +206,12 @@
               resource="0" file="../Source/Preferences/Polytempo_StoredPreferences.h"/>
       </GROUP>
       <GROUP id="{CEC55962-3D3D-C29E-A1E4-9BB1E8A1B025}" name="Misc">
-        <FILE id="t5z5E6" name="Polytempo_Button.h" compile="0" resource="0"
-              file="../Source/Misc/Polytempo_Button.h"/>
         <FILE id="rV6mQ9" name="Polytempo_Globals.h" compile="0" resource="0"
               file="../Source/Misc/Polytempo_Globals.h"/>
+        <FILE id="t5z5E6" name="Polytempo_Button.h" compile="0" resource="0"
+              file="../Source/Misc/Polytempo_Button.h"/>
+        <FILE id="xCIAdF" name="Polytempo_ImageButton.h" compile="0" resource="0"
+              file="../Source/Misc/Polytempo_ImageButton.h"/>
         <FILE id="oOvAFG" name="Polytempo_Textbox.h" compile="0" resource="0"
               file="../Source/Misc/Polytempo_Textbox.h"/>
         <FILE id="wc8iSI" name="Polytempo_TempoMeasurement.h" compile="0" resource="0"

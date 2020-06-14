@@ -1,31 +1,7 @@
-/* ==============================================================================
- 
- This file is part of the POLYTEMPO software package.
- Copyright (c) 2016 - Zurich University of the Arts,
- ICST Institute for Computer Music and Sound Technology
- http://www.icst.net
- 
- Author: Philippe Kocher
- 
- POLYTEMPO is free software: you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
- 
- POLYTEMPO is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
- 
- You should have received a copy of the GNU General Public License
- along with this software. If not, see <http://www.gnu.org/licenses/>.
- 
- ============================================================================== */
-
-#ifndef __Polytempo_TempoInterpolation__
-#define __Polytempo_TempoInterpolation__
+#pragma once
 
 #include "../Misc/Rational.h"
+#include "Polytempo_BeatPattern.h"
 
 
 class Polytempo_ControlPoint
@@ -37,13 +13,32 @@ public:
     ~Polytempo_ControlPoint()
     {}
     
+    Polytempo_ControlPoint* copy()
+    {
+        Polytempo_ControlPoint* temp = new Polytempo_ControlPoint();
+        temp->time = time;
+        temp->position = position;
+        temp->tempoIn = tempoIn;
+        temp->tempoOut = tempoOut;
+        temp->tempoInWeight = tempoInWeight;
+        temp->tempoOutWeight = tempoOutWeight;
+        temp->cueIn.setPattern(cueIn.getPattern());
+        temp->start = start;
+        temp->locked = locked;
+        temp->isCoinciding = isCoinciding;
+        
+        return temp;
+    }
+    
     float    time; // in seconds
     Rational position = 0;
-    float    tempoIn = 0.25f; // 0.25 is crotchet = MM 60, better choice?
+    float    tempoIn = 0.25f; // 0.25 is crotchet = 60 bpm, better choice?
     float    tempoOut = 0.25f;
     float    tempoInWeight = 0.33f;
     float    tempoOutWeight = 0.33f;
-    
+    Polytempo_BeatPattern cueIn;
+
+    bool start = false;
     bool locked = false;
     bool isCoinciding = false;
         
@@ -56,6 +51,8 @@ public:
         object->setProperty("tempoOut", tempoOut);
         object->setProperty("tempoInWeight", tempoInWeight);
         object->setProperty("tempoOutWeight", tempoOutWeight);
+        object->setProperty("cueIn", cueIn.getObject());
+        object->setProperty("start", start);
         object->setProperty("locked", locked);
 
         return object;
@@ -69,6 +66,9 @@ public:
         tempoOut = object->getProperty("tempoOut");
         tempoInWeight = object->getProperty("tempoInWeight");
         tempoOutWeight = object->getProperty("tempoOutWeight");
+        if(object->hasProperty("cueIn"))
+            cueIn.setObject(object->getProperty("cueIn").getDynamicObject());
+        start = object->getProperty("start");
         locked = object->getProperty("locked");
     }
 };
@@ -100,7 +100,3 @@ public:
     static float getTempo(Rational pos, Polytempo_ControlPoint* cp1, Polytempo_ControlPoint* cp2);
     static bool validateCurve(Polytempo_ControlPoint* cp1, Polytempo_ControlPoint* cp2);
 };
-
-
-
-#endif  // __Polytempo_TempoInterpolation__

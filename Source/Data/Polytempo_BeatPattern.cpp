@@ -49,13 +49,15 @@ Rational Polytempo_BeatPattern::getLength()
     return Rational(length * float(repeats));
 }
 
-void Polytempo_BeatPattern::setPattern(String string)
+void Polytempo_BeatPattern::setPattern(String string, bool allowEmptyPattern)
 {
-    pattern.clear();
-    patternString = string;
+    string = string.removeCharacters(" ");
+    if(!string.containsOnly("0123456789/+")) return;
+    
+    Array<Rational *> tempPattern;
     
     StringArray tokens1,tokens2;
-    tokens1.addTokens(patternString, "+", "");
+    tokens1.addTokens(string, "+", "");
     tokens1.removeEmptyStrings();
     tokens1.trim();
     
@@ -64,7 +66,7 @@ void Polytempo_BeatPattern::setPattern(String string)
         Rational ratio(tokens1[0]);
         for(int i=0;i<ratio.getNumerator();i++)
         {
-            pattern.add(new Rational(1,ratio.getDenominator()));
+            tempPattern.add(new Rational(1,ratio.getDenominator()));
         }
     }
     else
@@ -82,8 +84,21 @@ void Polytempo_BeatPattern::setPattern(String string)
             {
                 denominator = tokens2[1].getIntValue();
             }
-            pattern.insert(0, new Rational(tokens2[0].getIntValue(), denominator));
+            if(tokens2[0].getIntValue() > 0)
+                tempPattern.insert(0, new Rational(tokens2[0].getIntValue(), denominator));
         }
+    }
+    
+    if(tempPattern.size() > 0)
+    {
+        pattern.clear();
+        pattern.addArray(tempPattern);
+        patternString = string;
+    }
+    else if(allowEmptyPattern)
+    {
+        pattern.clear();
+        patternString = "";
     }
 }
 
@@ -211,10 +226,14 @@ Array<Polytempo_Event *> Polytempo_BeatPattern::getEvents(Rational pos)
 DynamicObject* Polytempo_BeatPattern::getObject()
 {
     DynamicObject* object = new DynamicObject();
-    object->setProperty("patternString", patternString);
-    object->setProperty("repeats", repeats);
-    if(marker != String()) object->setProperty("marker", marker);
-    object->setProperty("counterString", counterString);
+    if(!patternString.isEmpty())
+        object->setProperty("patternString", patternString);
+    if(repeats > 1)
+        object->setProperty("repeats", repeats);
+    if(!marker.isEmpty())
+        object->setProperty("marker", marker);
+    if(!counterString.isEmpty())
+        object->setProperty("counterString", counterString);
 
     return object;
 }
@@ -223,6 +242,7 @@ void Polytempo_BeatPattern::setObject(DynamicObject* object)
 {
     setPattern(object->getProperty("patternString"));
     repeats = object->getProperty("repeats");
+    if(repeats < 1) repeats = 1;
     marker = object->getProperty("marker");
     counterString = object->getProperty("counterString");
 }

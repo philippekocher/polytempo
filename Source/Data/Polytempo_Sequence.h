@@ -27,16 +27,17 @@
 
 #include "Polytempo_TempoInterpolation.h"
 #include "Polytempo_BeatPattern.h"
-#include "Polytempo_Score.h"
+
 
 class Polytempo_ListComponent;
 
 class Polytempo_Sequence
 {
 public:
-    Polytempo_Sequence();
+    Polytempo_Sequence(int);
     ~Polytempo_Sequence();
         
+    int getID();
     String getName();
     Colour getColour();
     
@@ -46,27 +47,34 @@ public:
     OwnedArray <Polytempo_BeatPattern>* getBeatPatterns();
     Polytempo_BeatPattern* getBeatPattern(int);
     
+    OwnedArray <Polytempo_Event>& getTimedEvents();
     OwnedArray <Polytempo_Event>& getEvents();
     Polytempo_Event* getEvent(int);
     
+    float getMaxTime();
+    Rational getMaxPosition();
+    
     bool isVisible();
     
-    void setIndex(int);
+    bool isSoloed();
+    bool isMuted();
+    
     void setName(String);
     void setColour(Colour);
     void setVisibility(bool);
     void setBeatPatternListComponent(Polytempo_ListComponent*);
     
     bool validateNewControlPointPosition(float t, Rational pos);
-    bool validateControlPoint(int index, float t, Rational pos);
-    void setControlPointValues(int index, float t, Rational pos, float inTempo, float outTempo, float inTempoWeight, float outTempoWeight);
-    void setControlPointPosition(int index, float t, Rational pos);
-    void setControlPointTempo(int index, float inTempo, float outTempo);
-    bool allowAdjustTime(int index);
-    void adjustTime(int index);
-    void adjustPosition(int index);
-    void adjustTempo(int index);
-    void removeControlPoint(int index);
+    void setControlPointTime(int index, float t);
+    void setControlPointPosition(int index, Rational pos);
+    void setControlPointStart(int index, int start);
+    void setControlPointCue(int index, String cue);
+    void shiftControlPoints(Array<int>* indices, float deltaTime, Rational deltaPosition);
+    void setControlPointTempos(int index, float inTempo, float outTempo, float inTempoWeight = -1, float outTempoWeight = -1);
+    void adjustTime(Array<int>* indices, bool relativeToPreviousPoint = true);
+    void adjustPosition(Array<int>* indices, bool relativeToPreviousPoint = true);
+    void adjustTempo(Array<int>* indices);
+    void removeControlPoints(Array<int>* indices);
     
     bool isTempoConstantAfterPoint(int);
     
@@ -80,7 +88,8 @@ public:
     void removeSelectedBeatPattern();
     
     void buildBeatPattern();
-    void updateEvents();
+    bool validateControlPoints();
+    bool update();
     
     void addPlaybackPropertiesToEvent(Polytempo_Event*);
     Polytempo_Event* getOscEvent(Polytempo_Event*);
@@ -91,15 +100,17 @@ public:
 
 private:    
     String name;
-    int sequenceIndex = 0;
+    int sequenceID;
     Colour colour = Colours::white;
     bool visible = true;
 
     OwnedArray <Polytempo_ControlPoint> controlPoints;
+    OwnedArray <Polytempo_ControlPoint> controlPointsBackup;
     OwnedArray <Polytempo_BeatPattern> beatPatterns;
     int selectedBeatPattern = -1;
-    OwnedArray <Polytempo_Event> events;
-    
+    OwnedArray <Polytempo_Event> events;        // events given by the beat patterns
+    OwnedArray <Polytempo_Event> timedEvents;   // timed events used for playback and export
+
     Polytempo_ListComponent* beatPatternListComponent = nullptr;
     
     friend class Polytempo_SequencePlaybackSettings;
@@ -130,8 +141,9 @@ private:
     String oscPort            = "47522";
     
     friend class Polytempo_SequenceControlComponent;
+    bool solo = false;
     bool mute = false;
-    
+
     friend class Polytempo_GraphicExportView;
     friend class Polytempo_SequenceGraphicalSettings;
     bool showName = true;

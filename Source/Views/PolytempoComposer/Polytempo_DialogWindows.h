@@ -1,32 +1,8 @@
-/* ==============================================================================
- 
- This file is part of the POLYTEMPO software package.
- Copyright (c) 2016 - Zurich University of the Arts,
- ICST Institute for Computer Music and Sound Technology
- http://www.icst.net
- 
- Author: Philippe Kocher
- 
- POLYTEMPO is free software: you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
- 
- POLYTEMPO is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
- 
- You should have received a copy of the GNU General Public License
- along with this software. If not, see <http://www.gnu.org/licenses/>.
- 
- ============================================================================== */
-
-#ifndef __Polytempo_DialogWindows__
-#define __Polytempo_DialogWindows__
+#pragma once
 
 #include "../../Application/PolytempoComposer/Polytempo_ComposerApplication.h"
 #include "../../Misc/Polytempo_TempoMeasurement.h"
+#include "../../Misc/Polytempo_ImageButton.h"
 
 namespace Polytempo_DialogWindows
 {
@@ -38,36 +14,16 @@ namespace Polytempo_DialogWindows
     public:
         Basic() : DocumentWindow("Basic", Colours::white, 0)
         {
-            int height = 100;
-            int width  = 360;
-
-            Polytempo_ComposerApplication* const app = dynamic_cast<Polytempo_ComposerApplication*>(JUCEApplication::getInstance());
-            
-            centreAroundComponent(&app->getMainView(), width, height);
-            
-            Rectangle<int> rect = getBounds();
-            
-            String okString = "Ok";
-            String cancelString = "Cancel";
-  
             contentComponent = new Component();
-            contentComponent->setBounds(rect);
 
-            okButton = new TextButton(okString);
-            okButton->setBounds(rect.getWidth()-80, rect.getHeight()-30, 60, 20);
-            okButton->addListener(this);
-            okButton->setWantsKeyboardFocus(false);
-            contentComponent->addAndMakeVisible(okButton);
-
-            cancelButton = new TextButton(cancelString);
-            cancelButton->setBounds(rect.getWidth()-150, rect.getHeight()-30, 60, 20);
+            cancelButton = new TextButton("Cancel");
             cancelButton->addListener(this);
             cancelButton->setWantsKeyboardFocus(false);
             contentComponent->addAndMakeVisible(cancelButton);
 
             setContentOwned(contentComponent, false);
-            setBounds(rect);
             setUsingNativeTitleBar(true);
+            setSize(360, 100);
         }
         
         ~Basic()
@@ -75,28 +31,38 @@ namespace Polytempo_DialogWindows
             contentComponent->deleteAllChildren();
         }
         
+        void setSize(int w, int h)
+        {
+            width = w;
+            height = h;
+
+            Polytempo_ComposerApplication* const app = dynamic_cast<Polytempo_ComposerApplication*>(JUCEApplication::getInstance());
+            centreAroundComponent(&app->getMainView(), width, height);
+
+            Rectangle<int> rect = getLocalBounds();
+            contentComponent->setBounds(rect);
+
+            cancelButton->setBounds(width-80, height-30, 60, 20);
+        }
+        
         void show()
         {
             setWantsKeyboardFocus(false);
-            //contentComponent->grabKeyboardFocus();
             runModalLoop();
         }
         
-        void setOkString(const String string)
+        void addOkButton(const String buttonText)
         {
-            okButton->setButtonText(string);
-            // TODO: recalculate width and stuff
-        }
+            okButton = new TextButton(buttonText);
+            okButton->addListener(this);
+            okButton->setWantsKeyboardFocus(false);
+            contentComponent->addAndMakeVisible(okButton);
+
+            okButton->setBounds(width-80, height-30, 60, 20);
+            cancelButton->setBounds(width-150, height-30, 60, 20);
+       }
         
-        void enableOkButton(bool enabled)
-        {
-            okButton->setEnabled(enabled);
-        }
-        
-        virtual void perform()
-        {
-            DBG("do it!");
-        }
+        virtual void perform(Button *button) = 0;
         
         void buttonClicked(Button *button)
         {
@@ -104,10 +70,9 @@ namespace Polytempo_DialogWindows
             {
                 setVisible(false);
             }
-            if(button == okButton)
+            else
             {
-                perform();
-                setVisible(false);
+                perform(button);
             }
         }
 
@@ -120,18 +85,18 @@ namespace Polytempo_DialogWindows
             }
             if(kp == KeyPress::returnKey && okButton->isEnabled())
             {
-                perform();
+                perform(okButton);
                 setVisible(false);
-                //Polytempo_Composition::getInstance()->updateGUI(); // repaint everything
-               return true;
+                return true;
             }
             
             return false;
         }
         
     protected:
+        int height, width;
         Component *contentComponent;
-        TextButton *okButton;
+        TextButton *okButton = nullptr;
         TextButton *cancelButton;
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Basic)
@@ -144,20 +109,18 @@ namespace Polytempo_DialogWindows
         InsertControlPoint()
         {
             setName("Insert Control Point");
-            setOkString("Add");
-            enableOkButton(false);
+            addOkButton("Add");
+            okButton->setEnabled(false);
             
             contentComponent->addAndMakeVisible(timeTextbox = new Polytempo_Textbox("Time [s]"));
             timeTextbox->setBounds(20,25,80,18);
             timeTextbox->setText("0", dontSendNotification);
-//            timeTextbox->setEscapeAndReturnKeysConsumed(false);
             timeTextbox->setInputRestrictions(0,"0123456789.");
             timeTextbox->addListener(this);
             
             contentComponent->addAndMakeVisible(positionTextbox = new Polytempo_Textbox("Position"));
             positionTextbox->setBounds(120,25,80,18);
             positionTextbox->setText("0", dontSendNotification);
-//            positionTextbox->setEscapeAndReturnKeysConsumed(false);
             positionTextbox->setInputRestrictions(0,"0123456789/");
             positionTextbox->addListener(this);
             
@@ -170,32 +133,38 @@ namespace Polytempo_DialogWindows
             tempoOutTextbox->setBounds(290,25,50,18);
             tempoOutTextbox->setText(String(Polytempo_TempoMeasurement::decodeTempoForUI(0.25)), dontSendNotification);
             tempoOutTextbox->addListener(this);
+            
+            validate();
+        }
+        
+        void validate()
+        {
+            Polytempo_Sequence* sequence = Polytempo_Composition::getInstance()->getSelectedSequence();
+            okButton->setEnabled(sequence->validateNewControlPointPosition(timeTextbox->getText().getFloatValue(), Rational(positionTextbox->getText())));
         }
         
         void textEditorTextChanged(TextEditor &)
         {
-            Polytempo_Sequence* sequence = Polytempo_Composition::getInstance()->getSelectedSequence();
-            
-            enableOkButton(sequence->validateNewControlPointPosition(timeTextbox->getText().getFloatValue(), Rational(positionTextbox->getText())));
+            validate();
         }
         
         void labelTextChanged (Label* /*label*/)
         {
-            Polytempo_Sequence* sequence = Polytempo_Composition::getInstance()->getSelectedSequence();
-            
-            enableOkButton(sequence->validateNewControlPointPosition(timeTextbox->getText().getFloatValue(), Rational(positionTextbox->getText())));
+            validate();
         }
  
-        void perform()
+        void perform(Button *button)
         {
-            Polytempo_Sequence* sequence = Polytempo_Composition::getInstance()->getSelectedSequence();
+            if(button == okButton)
+            {
+                Polytempo_Sequence* sequence = Polytempo_Composition::getInstance()->getSelectedSequence();
             
-            sequence->addControlPoint(timeTextbox->getText().getFloatValue(),
-                                      Rational(positionTextbox->getText()),
-                                      Polytempo_TempoMeasurement::encodeTempoFromUI((tempoInTextbox->getText().getFloatValue())),
-                                      Polytempo_TempoMeasurement::encodeTempoFromUI(tempoOutTextbox->getText().getFloatValue()));
-            
-            Polytempo_Composition::getInstance()->updateContent(); // repaint everything
+                sequence->addControlPoint(timeTextbox->getText().getFloatValue(),
+                                          Rational(positionTextbox->getText()),
+                                          Polytempo_TempoMeasurement::encodeTempoFromUI((tempoInTextbox->getText().getFloatValue())),
+                                          Polytempo_TempoMeasurement::encodeTempoFromUI(tempoOutTextbox->getText().getFloatValue()));
+                setVisible(false);
+            }
         }
         
     private:
@@ -206,99 +175,209 @@ namespace Polytempo_DialogWindows
     };
     
     
-//    class AddEventPattern : public Basic
-//    {
-//    public:
-//        AddEventPattern()
-//        {
-//            setName("Add Event Pattern");
-//            setOkString("Add");
-//            enableOkButton(true);
-//            
-//            label1.setText("Pattern", dontSendNotification);
-//            label1.setEditable(false);
-//            label1.setBounds(20,20,150,15);
-//            contentComponent->addAndMakeVisible(label1);
-//            
-//            editor1.setBounds(20,35,150,15);
-//            editor1.setText("4/4", dontSendNotification);
-//            editor1.setEscapeAndReturnKeysConsumed(false);
-//            editor1.setSelectAllWhenFocused(true);
-//            editor1.setCaretVisible(false);
-//            editor1.setInputRestrictions(0,"0123456789/+");
-//            editor1.addListener(this);
-//            contentComponent->addAndMakeVisible(editor1);
-//            
-//            label2.setText("Repeats", dontSendNotification);
-//            label2.setEditable(false);
-//            label2.setBounds(170,20,50,15);
-//            contentComponent->addAndMakeVisible(label2);
-//            
-//            editor2.setBounds(170,35,50,15);
-//            editor2.setText("1", dontSendNotification);
-//            editor2.setEscapeAndReturnKeysConsumed(false);
-//            editor2.setSelectAllWhenFocused(true);
-//            editor2.setCaretVisible(false);
-//            editor2.setInputRestrictions(0,"0123456789");
-//            editor2.addListener(this);
-//            contentComponent->addAndMakeVisible(editor2);
-//
-//            label3.setText("Counter", dontSendNotification);
-//            label3.setEditable(false);
-//            label3.setBounds(230,20,50,15);
-//            contentComponent->addAndMakeVisible(label3);
-//            
-//            Polytempo_Sequence* sequence = Polytempo_Composition::getInstance()->getSelectedSequence();
-//            editor3.setBounds(230,35,50,15);
-//            editor3.setText(String(sequence->getCurrentCounter()), dontSendNotification);
-//            editor3.setEscapeAndReturnKeysConsumed(false);
-//            editor3.setSelectAllWhenFocused(true);
-//            editor3.setCaretVisible(false);
-//            editor3.setInputRestrictions(0,"0123456789 ");
-//            editor3.addListener(this);
-//            contentComponent->addAndMakeVisible(editor3);
-//
-//            label4.setText("Marker", dontSendNotification);
-//            label4.setEditable(false);
-//            label4.setBounds(290,20,50,15);
-//            contentComponent->addAndMakeVisible(label4);
-//            
-//            editor4.setBounds(290,35,50,15);
-//            editor4.setEscapeAndReturnKeysConsumed(false);
-//            editor4.setSelectAllWhenFocused(true);
-//            editor4.setCaretVisible(false);
-//            editor4.addListener(this);
-//            contentComponent->addAndMakeVisible(editor4);
-//        }
-//        
-//        void textEditorTextChanged(TextEditor &)
-//        {}
-//        
-//        void labelTextChanged (Label* label)
-//        {}
-//        
-//        void perform()
-//        {
-//            Polytempo_Sequence* sequence = Polytempo_Composition::getInstance()->getSelectedSequence();
-//            sequence->addEventPattern(editor1.getText(), editor2.getText().getIntValue(), editor3.getText(), editor4.getText());
-//            Polytempo_Composition::getInstance()->updateContent(); // repaint everything
-//        }
-//        
-//    private:
-//        Label label1, label2, label3, label4;
-//        TextEditor editor1, editor2, editor3, editor4;
-//    };
-//    
+    class ShiftControlPoints : public Basic
+    {
+    public:
+        ShiftControlPoints()
+        {
+            setSize(360, 190);
+
+            setName("Shift Selected Control Points");
+            addOkButton("Ok");
+
+            Polytempo_Composition* composition = Polytempo_Composition::getInstance();
+            Array<int> *indices = composition->getSelectedControlPointIndices();
+            firstTime = composition->getSelectedSequence()->getControlPoints()->getUnchecked(indices->getFirst())->time;
+            lastTime  = composition->getSelectedSequence()->getControlPoints()->getUnchecked(indices->getLast())->time;
+            deltaTime = 0;
+            firstPosition = composition->getSelectedSequence()->getControlPoints()->getUnchecked(indices->getFirst())->position;
+            lastPosition  = composition->getSelectedSequence()->getControlPoints()->getUnchecked(indices->getLast())->position;
+            deltaPosition = 0;
+
+            contentComponent->addAndMakeVisible(shiftInTimeLabel = new Label("ShiftInTimeLabel","Shift in Time"));
+            shiftInTimeLabel->setBounds(16, 15, 200, 20);
+            shiftInTimeLabel->setFont(Font(16));
+            shiftInTimeLabel->setMinimumHorizontalScale(1.0f);
+
+            contentComponent->addAndMakeVisible(deltaTimeTextbox = new Polytempo_Textbox("shift points by"));
+            deltaTimeTextbox->setBounds(20, 50, 90, 18);
+            deltaTimeTextbox->setText(String(deltaTime), dontSendNotification);
+            deltaTimeTextbox->setInputRestrictions(0,"0123456789.-");
+            deltaTimeTextbox->addListener(this);
+            
+            contentComponent->addAndMakeVisible(firstTimeTextbox = new Polytempo_Textbox("align first point with"));
+            firstTimeTextbox->setBounds(135, 50, 90, 18);
+            firstTimeTextbox->setText(String(firstTime), dontSendNotification);
+            firstTimeTextbox->setInputRestrictions(0,"0123456789.-");
+            firstTimeTextbox->addListener(this);
+
+            contentComponent->addAndMakeVisible(lastTimeTextbox = new Polytempo_Textbox("align last point with"));
+            lastTimeTextbox->setBounds(250, 50, 90, 18);
+            lastTimeTextbox->setText(String(lastTime), dontSendNotification);
+            lastTimeTextbox->setInputRestrictions(0,"0123456789.-");
+            lastTimeTextbox->addListener(this);
+
+            contentComponent->addAndMakeVisible(shiftInPositionLabel = new Label("ShiftInPositionLabel","Shift in Position"));
+            shiftInPositionLabel->setBounds(16, 85, 200, 20);
+            shiftInPositionLabel->setFont(Font(16));
+            shiftInPositionLabel->setMinimumHorizontalScale(1.0f);
+
+            contentComponent->addAndMakeVisible(deltaPositionTextbox = new Polytempo_Textbox("shift points by"));
+            deltaPositionTextbox->setBounds(20, 120, 90, 18);
+            deltaPositionTextbox->setText(deltaPosition.toString(), dontSendNotification);
+            deltaPositionTextbox->setInputRestrictions(0,"0123456789-/");
+            deltaPositionTextbox->addListener(this);
+            
+            contentComponent->addAndMakeVisible(firstPositionTextbox = new Polytempo_Textbox("align first point with"));
+            firstPositionTextbox->setBounds(135, 120, 90, 18);
+            firstPositionTextbox->setText(firstPosition.toString(), dontSendNotification);
+            firstPositionTextbox->setInputRestrictions(0,"0123456789-/");
+            firstPositionTextbox->addListener(this);
+
+            contentComponent->addAndMakeVisible(lastPositionTextbox = new Polytempo_Textbox("align last point with"));
+            lastPositionTextbox->setBounds(250, 120, 90, 18);
+            lastPositionTextbox->setText(lastPosition.toString(), dontSendNotification);
+            lastPositionTextbox->setInputRestrictions(0,"0123456789-/");
+            lastPositionTextbox->addListener(this);
+        }
+        
+        void labelTextChanged (Label* label)
+        {
+            if(label == deltaTimeTextbox)      deltaTime = label->getText().getFloatValue();
+            else if(label == firstTimeTextbox) deltaTime = label->getText().getFloatValue() - firstTime;
+            else if(label == lastTimeTextbox)  deltaTime = label->getText().getFloatValue() - lastTime;
+
+            else if(label == deltaPositionTextbox) deltaPosition = Rational(label->getText());
+            else if(label == firstPositionTextbox) deltaPosition = Rational(label->getText()) - firstPosition;
+            else if(label == lastPositionTextbox)  deltaPosition = Rational(label->getText()) - lastPosition;
+
+            deltaTimeTextbox->setText(String(deltaTime), dontSendNotification);
+            firstTimeTextbox->setText(String(firstTime + deltaTime), dontSendNotification);
+            lastTimeTextbox->setText(String(lastTime + deltaTime), dontSendNotification);
+            
+            deltaPositionTextbox->setText(deltaPosition.toString(), dontSendNotification);
+            firstPositionTextbox->setText((firstPosition+deltaPosition).toString(), dontSendNotification);
+            lastPositionTextbox->setText((lastPosition+deltaPosition).toString(), dontSendNotification);
+        }
+ 
+        void perform(Button *button)
+        {
+            if(button == okButton)
+            {
+                Polytempo_Composition* composition = Polytempo_Composition::getInstance();
+                Polytempo_Sequence* sequence = composition->getSelectedSequence();
+            
+                sequence->shiftControlPoints(composition->getSelectedControlPointIndices(), deltaTime, deltaPosition);
+                setVisible(false);
+            }
+        }
+        
+    private:
+        Label *shiftInTimeLabel;
+        Label *shiftInPositionLabel;
+
+        Polytempo_Textbox *deltaTimeTextbox;
+        Polytempo_Textbox *firstTimeTextbox;
+        Polytempo_Textbox *lastTimeTextbox;
+
+        Polytempo_Textbox *deltaPositionTextbox;
+        Polytempo_Textbox *firstPositionTextbox;
+        Polytempo_Textbox *lastPositionTextbox;
+
+        float firstTime;
+        float lastTime;
+        float deltaTime;
+        
+        Rational firstPosition;
+        Rational lastPosition;
+        Rational deltaPosition;
+    };
     
+    class AdjustControlPoints : public Basic
+    {
+       public:
+        AdjustControlPoints()
+       {
+           setSize(200, 330);
+           setName("Adjust Selected Control Points");
+           
+           contentComponent->addAndMakeVisible(adjustTimeFwdButton = new Polytempo_ImageButton());
+           adjustTimeFwdButton->setBounds(20, 20, 50, 50);
+           adjustTimeFwdButton->setImages(Drawable::createFromImageData(BinaryData::adjustTimeFwd_png, BinaryData::adjustTimeFwd_pngSize).get());
+           adjustTimeFwdButton->addListener(this);
+           
+           contentComponent->addAndMakeVisible(adjustTimeFwdLabel = new Label("AdjustTimeFwdLabel","Adjust time relative to previous control point"));
+           adjustTimeFwdLabel->setBounds(90, 20, 100, 50);
+           adjustTimeFwdLabel->setFont(Font(12));
+           adjustTimeFwdLabel->setMinimumHorizontalScale(1.0f);
+           
+           contentComponent->addAndMakeVisible(adjustTimeBwdButton = new Polytempo_ImageButton());
+           adjustTimeBwdButton->setBounds(20, 90, 50, 50);
+           adjustTimeBwdButton->setImages(Drawable::createFromImageData(BinaryData::adjustTimeBwd_png, BinaryData::adjustTimeBwd_pngSize).get());
+           adjustTimeBwdButton->addListener(this);
+           
+           contentComponent->addAndMakeVisible(adjustTimeBwdLabel = new Label("AdjustTimeBwdLabel", "Adjust time relative to next control point"));
+           adjustTimeBwdLabel->setBounds(90, 90, 100, 50);
+           adjustTimeBwdLabel->setFont(Font(12));
+           adjustTimeBwdLabel->setMinimumHorizontalScale(1.0f);
+
+           contentComponent->addAndMakeVisible(adjustPositionFwdButton = new Polytempo_ImageButton());
+           adjustPositionFwdButton->setBounds(20, 160, 50, 50);
+           adjustPositionFwdButton->setImages(Drawable::createFromImageData(BinaryData::adjustPositionFwd_png, BinaryData::adjustPositionFwd_pngSize).get());
+           adjustPositionFwdButton->addListener(this);
+           
+           contentComponent->addAndMakeVisible(adjustPositionFwdLabel = new Label("AdjustPositionFwdLabel","Adjust position relative to previous control point"));
+           adjustPositionFwdLabel->setBounds(90, 160, 100, 50);
+           adjustPositionFwdLabel->setFont(Font(12));
+           adjustPositionFwdLabel->setMinimumHorizontalScale(1.0f);
+           
+           contentComponent->addAndMakeVisible(adjustPositionBwdButton = new Polytempo_ImageButton());
+           adjustPositionBwdButton->setBounds(20, 230, 50, 50);
+           adjustPositionBwdButton->setImages(Drawable::createFromImageData(BinaryData::adjustPositionBwd_png, BinaryData::adjustPositionBwd_pngSize).get());
+           adjustPositionBwdButton->addListener(this);
+
+           contentComponent->addAndMakeVisible(adjustPositionBwdLabel = new Label("AdjustPositionBwdLabel","Adjust position relative to next control point"));
+           adjustPositionBwdLabel->setBounds(90, 230, 100, 50);
+           adjustPositionBwdLabel->setFont(Font(12));
+           adjustPositionBwdLabel->setMinimumHorizontalScale(1.0f);
+           
+       }
+    
+       void labelTextChanged (Label* label)
+       {}
+
+       void perform(Button *button)
+       {
+           Polytempo_Composition* composition = Polytempo_Composition::getInstance();
+           Polytempo_Sequence* sequence = composition->getSelectedSequence();
+
+           if(button == adjustTimeFwdButton)          sequence->adjustTime(composition->getSelectedControlPointIndices(), true);
+           else if(button == adjustTimeBwdButton)     sequence->adjustTime(composition->getSelectedControlPointIndices(), false);
+           else if(button == adjustPositionFwdButton) sequence->adjustPosition(composition->getSelectedControlPointIndices(), true);
+           else if(button == adjustPositionBwdButton) sequence->adjustPosition(composition->getSelectedControlPointIndices(), false);
+       }
+    private:
+        Polytempo_ImageButton *adjustTimeFwdButton;
+        Polytempo_ImageButton *adjustTimeBwdButton;
+        Polytempo_ImageButton *adjustPositionFwdButton;
+        Polytempo_ImageButton *adjustPositionBwdButton;
+        
+        Label *adjustTimeFwdLabel;
+        Label *adjustTimeBwdLabel;
+        Label *adjustPositionFwdLabel;
+        Label *adjustPositionBwdLabel;
+    };
+       
     class ExportSequences : public Basic
     {
     public:
         ExportSequences(int num)
         {
+            setSize(360, 200);
+
             if(num == 1) setName("Export Selected Sequence");
             else         setName("Export All Sequences");
-            setOkString("Export");
-            enableOkButton(true);
+            addOkButton("Export");
             
             tbPlain = new ToggleButton(" 1 2 3 ... - Plain (.txt)");
             tbPlain->setRadioGroupId(1234);
@@ -321,15 +400,6 @@ namespace Polytempo_DialogWindows
             tbPolytempo->setRadioGroupId(1234);
             tbPolytempo->setBounds(20, 20 + 100, getWidth() - 40, 22);
             contentComponent->addAndMakeVisible(tbPolytempo);
-            
-
-            Polytempo_ComposerApplication* const app = dynamic_cast<Polytempo_ComposerApplication*>(JUCEApplication::getInstance());
-            
-            centreAroundComponent(&app->getMainView(), getWidth(), 200);
-            
-            okButton->setBounds    (getWidth()-80,  getHeight()-30, 60, 20);
-            cancelButton->setBounds(getWidth()-150, getHeight()-30, 60, 20);
-
         }
         
         void textEditorTextChanged(TextEditor &)
@@ -338,20 +408,21 @@ namespace Polytempo_DialogWindows
         void labelTextChanged (Label*)
         {}
         
-        void perform()
+        void perform(Button *button)
         {
-            Polytempo_Composition *composition = Polytempo_Composition::getInstance();
+            if(button == okButton)
+            {    Polytempo_Composition *composition = Polytempo_Composition::getInstance();
             
-            if     (tbPlain->getToggleState() == true)     composition->exportAsPlainText();
-            else if(tbLisp->getToggleState() == true)      composition->exportAsLispList();
-            else if(tbC->getToggleState() == true)         composition->exportAsCArray();
-            else if(tbPolytempo->getToggleState() == true) composition->exportAsPolytempoScore();
+                if     (tbPlain->getToggleState() == true)     composition->exportAsPlainText();
+                else if(tbLisp->getToggleState() == true)      composition->exportAsLispList();
+                else if(tbC->getToggleState() == true)         composition->exportAsCArray();
+                else if(tbPolytempo->getToggleState() == true) composition->exportAsPolytempoScore();
+
+                setVisible(false);
+            }
         }
         
     private:
         ToggleButton *tbPlain, *tbLisp, *tbC, *tbPolytempo;
     };
 }
-
-
-#endif  // __Polytempo_DialogWindows__
