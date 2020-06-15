@@ -1,27 +1,3 @@
-/* ==============================================================================
- 
- This file is part of the POLYTEMPO software package.
- Copyright (c) 2016 - Zurich University of the Arts,
- ICST Institute for Computer Music and Sound Technology
- http://www.icst.net
- 
- Author: Philippe Kocher
- 
- POLYTEMPO is free software: you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
- 
- POLYTEMPO is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
- 
- You should have received a copy of the GNU General Public License
- along with this software. If not, see <http://www.gnu.org/licenses/>.
- 
- ============================================================================== */
-
 #pragma once
 
 #include "../../Views/PolytempoNetwork/Polytempo_PageEditorView.h"
@@ -29,15 +5,14 @@
 #include "../../Views/PolytempoNetwork/Polytempo_ScoreEditorView.h"
 #include "../../Views/PolytempoNetwork/Polytempo_NetworkMainView.h"
 
-
 class Polytempo_NetworkWindow : public DocumentWindow
 {
 public:
     Polytempo_NetworkWindow();
     ~Polytempo_NetworkWindow();
 
-    void closeButtonPressed();
-    
+    void closeButtonPressed() override;
+
     enum contentID
     {
         mainViewID = 0,
@@ -45,25 +20,25 @@ public:
         regionEditorViewID,
         scoreEditorViewID,
     };
-    
+
     void setContentID(contentID);
-    int  getContentID();
-    
+    int getContentID();
+
     Component* getContentComponent();
-	void performSetContentID();
-    
+    void performSetContentID();
+
     bool applyChanges();
 
 private:
-	std::unique_ptr <Polytempo_NetworkMainView> mainView;
-	std::unique_ptr <Polytempo_PageEditorView> pageEditorView;
-	std::unique_ptr <Polytempo_RegionEditorView> regionEditorView;
-	std::unique_ptr <Polytempo_ScoreEditorView> scoreEditorView;
+    std::unique_ptr<Polytempo_NetworkMainView> mainView;
+    std::unique_ptr<Polytempo_PageEditorView> pageEditorView;
+    std::unique_ptr<Polytempo_RegionEditorView> regionEditorView;
+    std::unique_ptr<Polytempo_ScoreEditorView> scoreEditorView;
 
     OpenGLContext openGLContext;
-    
+
     contentID currentContentID = mainViewID;
     contentID contentIdToBeSet = mainViewID;
-    
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_NetworkWindow)
 };

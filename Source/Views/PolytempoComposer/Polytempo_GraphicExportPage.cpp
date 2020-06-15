@@ -12,7 +12,7 @@ Polytempo_GraphicExportPage::Polytempo_GraphicExportPage(int pageNumber, int pag
     
     g.setColour(Colours::black);
     g.setFont(20.0f);
-    g.drawText(String(pageNumber), 0, pageHeight * 0.9, pageWidth, pageHeight * 0.1, Justification::horizontallyCentred, false);
+    g.drawText(String(pageNumber), 0, int(pageHeight * 0.9), pageWidth, int(pageHeight * 0.1), Justification::horizontallyCentred, false);
 }
 
 Polytempo_GraphicExportPage::~Polytempo_GraphicExportPage()
@@ -34,7 +34,7 @@ void Polytempo_GraphicExportPage::drawStaves(int x, int y, int width, int number
     for(int i = 0; i < numberOfStaves; i++)
     {
         for(int n = 0; n < numberOfLines; n++)
-            g.drawHorizontalLine(y + i * secondaryStaveOffset + n * linesOffset, x, x + width);
+            g.drawHorizontalLine(y + i * secondaryStaveOffset + n * linesOffset, float(x), float(x + width));
     }
 }
 
@@ -47,12 +47,12 @@ void Polytempo_GraphicExportPage::drawStaveBeginning(int x, int y, int numberOfS
     for(int i = 0; i < numberOfStaves; i++)
     {
         for(int n=0; n<numberOfLines; n++)
-            g.drawHorizontalLine(y + i * secondaryStaveOffset + n * linesOffset, x - 40, x - 10);
+            g.drawHorizontalLine(y + i * secondaryStaveOffset + n * linesOffset, float(x - 40), float(x - 10));
     }
 
     if(numberOfLines < 2)
     {
-        y -= linesOffset * 0.5;
+        y -= int(linesOffset * 0.5);
         numberOfLines = 2;
     }
 
@@ -76,7 +76,7 @@ void Polytempo_GraphicExportPage::drawBarline(int x, int y, int numberOfStaves, 
     Graphics g (*image);
     g.setColour(Colours::black);
 
-    g.drawLine(x, y1, x, y2, 3);
+    g.drawLine(float(x), float(y1), float(x), float(y2), 3.0f);
     
     if(timeSignature.isNotEmpty())
     {
@@ -86,10 +86,10 @@ void Polytempo_GraphicExportPage::drawBarline(int x, int y, int numberOfStaves, 
         tokens.removeEmptyStrings();
         tokens.trim();
         
-        g.setFont(timeSignatureFontHeight);
+        g.setFont(float(timeSignatureFontHeight));
         g.drawText(tokens[0],
                    x - 200,
-                   y1 - timeSignatureFontHeight * 1.75,
+                   int(y1 - timeSignatureFontHeight * 1.75),
                    400,
                    timeSignatureFontHeight,
                    Justification::horizontallyCentred, false);
@@ -116,7 +116,7 @@ void Polytempo_GraphicExportPage::drawAuxiliaryLine(int x, int y, int numberOfSt
     Graphics g (*image);
     g.setColour(Colours::grey);
     
-    g.drawLine(x, y1, x, y2, 1);
+    g.drawLine(float(x), float(y1), float(x), float(y2), 1.0f);
 }
 
 void Polytempo_GraphicExportPage::drawMarker(String marker, int x, int y, int numberOfStaves, int secondaryStaveOffset, int numberOfLines, int linesOffset)

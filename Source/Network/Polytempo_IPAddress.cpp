@@ -1,13 +1,3 @@
-/*
-  ==============================================================================
-
-    Polytempo_IPAddress.cpp
-    Created: 12 Feb 2017 10:05:45am
-    Author:  christian.schweizer
-
-  ==============================================================================
-*/
-
 #include "Polytempo_IPAddress.h"
 
 #if JUCE_WINDOWS
@@ -22,122 +12,120 @@
 
 Polytempo_IPAddress::Polytempo_IPAddress() noexcept
 {
-	ipAddress = IPAddress();
-	subnetMask = IPAddress();
-	adapterName = "";
+    ipAddress = IPAddress();
+    subnetMask = IPAddress();
+    adapterName = "";
 }
 
 Polytempo_IPAddress::Polytempo_IPAddress(IPAddress ipAdress, IPAddress subnetMask, String adapterName)
 {
-	this->ipAddress = ipAdress;
-	this->subnetMask = subnetMask;
-	this->adapterName = adapterName;
+    this->ipAddress = ipAdress;
+    this->subnetMask = subnetMask;
+    this->adapterName = adapterName;
 }
 
-bool Polytempo_IPAddress::operator== (const Polytempo_IPAddress& other) const noexcept
+bool Polytempo_IPAddress::operator==(const Polytempo_IPAddress& other) const noexcept
 {
-	return ipAddress == other.ipAddress && subnetMask == other.subnetMask;
+    return ipAddress == other.ipAddress && subnetMask == other.subnetMask;
 }
 
-bool Polytempo_IPAddress::operator!= (const Polytempo_IPAddress& other) const noexcept
+bool Polytempo_IPAddress::operator!=(const Polytempo_IPAddress& other) const noexcept
 {
-	return !operator== (other);
+    return !operator==(other);
 }
 
 Polytempo_IPAddress Polytempo_IPAddress::local() noexcept { return Polytempo_IPAddress(IPAddress::local(), IPAddress(255, 0, 0, 0), "Localhost"); }
 
 String Polytempo_IPAddress::addressDescription()
 {
-	if (ipAddress == IPAddress(127, 0, 0, 1))
-		return "Localhost";
-	if (ipAddress.address[0] == 192 && ipAddress.address[1] == 168)
-		return "Private local network";
-	if (ipAddress.address[0] == 172 && ipAddress.address[1] >= 16 && ipAddress.address[1] <= 31)
-		return "Private local network";
-	if (ipAddress.address[0] == 10)
-		return "Private local network";
-	if (ipAddress.address[0] == 169 && ipAddress.address[1] == 254)
-		return "Link-local network";
+    if (ipAddress == IPAddress(127, 0, 0, 1))
+        return "Localhost";
+    if (ipAddress.address[0] == 192 && ipAddress.address[1] == 168)
+        return "Private local network";
+    if (ipAddress.address[0] == 172 && ipAddress.address[1] >= 16 && ipAddress.address[1] <= 31)
+        return "Private local network";
+    if (ipAddress.address[0] == 10)
+        return "Private local network";
+    if (ipAddress.address[0] == 169 && ipAddress.address[1] == 254)
+        return "Link-local network";
 
-	return "Other network";
+    return "Other network";
 }
 
 IPAddress Polytempo_IPAddress::getBroadcastAddress()
 {
-	IPAddress networkAddress = getNetworkAddress();
-	int8 broadcastAddress[4];
-	for (int i = 0; i < 4; i++)
-	{
-		broadcastAddress[i] = networkAddress.address[i] | ~subnetMask.address[i];
-	}
-	return IPAddress(broadcastAddress[0], broadcastAddress[1], broadcastAddress[2], broadcastAddress[3]);
+    IPAddress networkAddress = getNetworkAddress();
+    int8 broadcastAddress[4];
+    for (int i = 0; i < 4; i++)
+    {
+        broadcastAddress[i] = networkAddress.address[i] | ~subnetMask.address[i];
+    }
+    return IPAddress(broadcastAddress[0], broadcastAddress[1], broadcastAddress[2], broadcastAddress[3]);
 }
 
 IPAddress Polytempo_IPAddress::getNetworkAddress()
 {
-	int8 networkAddress[4];
-	for (int i = 0; i < 4; i++)
-	{
-		networkAddress[i] = ipAddress.address[i] & subnetMask.address[i];
-	}
-	return IPAddress(networkAddress[0], networkAddress[1], networkAddress[2], networkAddress[3]);
+    int8 networkAddress[4];
+    for (int i = 0; i < 4; i++)
+    {
+        networkAddress[i] = ipAddress.address[i] & subnetMask.address[i];
+    }
+    return IPAddress(networkAddress[0], networkAddress[1], networkAddress[2], networkAddress[3]);
 }
 
 IPAddress Polytempo_IPAddress::getFirstNetworkAddress()
 {
-	IPAddress networkAddress = getNetworkAddress();
-	return IPAddress(networkAddress.address[0], networkAddress.address[1], networkAddress.address[2], networkAddress.address[3] + 1);
+    IPAddress networkAddress = getNetworkAddress();
+    return IPAddress(networkAddress.address[0], networkAddress.address[1], networkAddress.address[2], networkAddress.address[3] + 1);
 }
 
 IPAddress Polytempo_IPAddress::getLastNetworkAddress()
 {
-	IPAddress broadcastAddress = getBroadcastAddress();
-	return IPAddress(broadcastAddress.address[0], broadcastAddress.address[1], broadcastAddress.address[2], broadcastAddress.address[3] - 1);
+    IPAddress broadcastAddress = getBroadcastAddress();
+    return IPAddress(broadcastAddress.address[0], broadcastAddress.address[1], broadcastAddress.address[2], broadcastAddress.address[3] - 1);
 }
 
 #if JUCE_WINDOWS
 struct GetAdaptersInfoHelper
 {
-	bool callGetAdaptersInfo()
-	{
-		DynamicLibrary dll("iphlpapi.dll");
-		JUCE_LOAD_WINAPI_FUNCTION(dll, GetAdaptersInfo, getAdaptersInfo, DWORD, (PIP_ADAPTER_INFO, PULONG))
+    bool callGetAdaptersInfo()
+    {
+        DynamicLibrary dll("iphlpapi.dll");
+        JUCE_LOAD_WINAPI_FUNCTION(dll, GetAdaptersInfo, getAdaptersInfo, DWORD, (PIP_ADAPTER_INFO, PULONG))
 
-			if (getAdaptersInfo == nullptr)
-				return false;
+        if (getAdaptersInfo == nullptr)
+            return false;
 
-		adapterInfo.malloc(1);
-		ULONG len = sizeof(IP_ADAPTER_INFO);
+        adapterInfo.malloc(1);
+        ULONG len = sizeof(IP_ADAPTER_INFO);
 
-		if (getAdaptersInfo(adapterInfo, &len) == ERROR_BUFFER_OVERFLOW)
-			adapterInfo.malloc(len, 1);
+        if (getAdaptersInfo(adapterInfo, &len) == ERROR_BUFFER_OVERFLOW)
+            adapterInfo.malloc(len, 1);
 
-		return getAdaptersInfo(adapterInfo, &len) == NO_ERROR;
-	}
+        return getAdaptersInfo(adapterInfo, &len) == NO_ERROR;
+    }
 
-	HeapBlock<IP_ADAPTER_INFO> adapterInfo;
+    HeapBlock<IP_ADAPTER_INFO> adapterInfo;
 };
-
 
 void Polytempo_IPAddress::findAllAddresses(Array<Polytempo_IPAddress>& result)
 {
-	result.addIfNotAlreadyThere(Polytempo_IPAddress(Polytempo_IPAddress::local()));
+    result.addIfNotAlreadyThere(Polytempo_IPAddress(local()));
 
-	GetAdaptersInfoHelper gah;
+    GetAdaptersInfoHelper gah;
 
-	if (gah.callGetAdaptersInfo())
-	{
-		for (PIP_ADAPTER_INFO adapter = gah.adapterInfo; adapter != nullptr; adapter = adapter->Next)
-		{
-			String name(adapter->AdapterName);
-			Polytempo_IPAddress ip(IPAddress(String(adapter->IpAddressList.IpAddress.String)), IPAddress(String(adapter->IpAddressList.IpMask.String)), name);
+    if (gah.callGetAdaptersInfo())
+    {
+        for (PIP_ADAPTER_INFO adapter = gah.adapterInfo; adapter != nullptr; adapter = adapter->Next)
+        {
+            String name(adapter->AdapterName);
+            Polytempo_IPAddress ip(IPAddress(String(adapter->IpAddressList.IpAddress.String)), IPAddress(String(adapter->IpAddressList.IpMask.String)), name);
 
-			if (ip.ipAddress != IPAddress::any())
-				result.addIfNotAlreadyThere(ip);
-		}
-	}
+            if (ip.ipAddress != IPAddress::any())
+                result.addIfNotAlreadyThere(ip);
+        }
+    }
 }
-
 
 #else
 static void addAddress(const sockaddr_in* addr_in, const sockaddr_in* subnet_in, String ifName, Array<Polytempo_IPAddress>& result)

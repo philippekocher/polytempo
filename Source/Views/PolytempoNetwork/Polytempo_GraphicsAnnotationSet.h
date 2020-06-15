@@ -1,13 +1,3 @@
-/*
-  ==============================================================================
-
-    Polytempo_GraphicsAnnotationSet.h
-    Created: 29 Jul 2017 2:01:10am
-    Author:  christian.schweizer
-
-  ==============================================================================
-*/
-
 #pragma once
 
 #include "JuceHeader.h"
@@ -33,30 +23,30 @@
 class Polytempo_GraphicsAnnotationSet : ChangeBroadcaster
 {
 public:
-	Polytempo_GraphicsAnnotationSet(String filename, ChangeListener* pListener);
-	~Polytempo_GraphicsAnnotationSet();
+    Polytempo_GraphicsAnnotationSet(String filename, ChangeListener* pListener);
+    ~Polytempo_GraphicsAnnotationSet();
 
-	void getAnnotationsForImage(String imageId, OwnedArray<Polytempo_GraphicsAnnotation>* pAnnotations);
-	void addAnnotation(Polytempo_GraphicsAnnotation annotation);
-	bool getAnnotation(Uuid id, Polytempo_GraphicsAnnotation* pAnnotation) const;
-	bool removeAnnotation(Uuid id);
+    void getAnnotationsForImage(String imageId, OwnedArray<Polytempo_GraphicsAnnotation>* pAnnotations);
+    void addAnnotation(Polytempo_GraphicsAnnotation annotation);
+    bool getAnnotation(Uuid id, Polytempo_GraphicsAnnotation* pAnnotation) const;
+    bool removeAnnotation(Uuid id);
 
-	bool SaveToFile();
-	String getScoreName() const;
-	String getAnnotationLayerName() const;
-	bool getShow() const;
-	bool setAnnotationLayerName(String newLayerName);
-	bool setShow(bool state);
-	bool getEdit() const;
-	bool setEdit(bool state);
-	
+    bool SaveToFile();
+    String getScoreName() const;
+    String getAnnotationLayerName() const;
+    bool getShow() const;
+    bool setAnnotationLayerName(String newLayerName);
+    bool setShow(bool state);
+    bool getEdit() const;
+    bool setEdit(bool state);
+
 private:
-	void loadFromFile();
-	String getFileName(String newLayerName = String()) const;
-	OwnedArray<Polytempo_GraphicsAnnotation> annotations;
-	String filePath;
-	String scoreName;
-	String annotationLayerName;
-	bool show;
-	bool edit;
+    void loadFromFile();
+    String getFileName(String newLayerName = String()) const;
+    OwnedArray<Polytempo_GraphicsAnnotation> annotations;
+    String filePath;
+    String scoreName;
+    String annotationLayerName;
+    bool show;
+    bool edit;
 };

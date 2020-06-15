@@ -1,32 +1,7 @@
-/* ==============================================================================
- 
- This file is part of the POLYTEMPO software package.
- Copyright (c) 2016 - Zurich University of the Arts,
- ICST Institute for Computer Music and Sound Technology
- http://www.icst.net
- 
- Author: Philippe Kocher
- 
- POLYTEMPO is free software: you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
- 
- POLYTEMPO is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
- 
- You should have received a copy of the GNU General Public License
- along with this software. If not, see <http://www.gnu.org/licenses/>.
- 
- ============================================================================== */
-
 #include "Polytempo_DefaultPreferences.h"
 
-
 Polytempo_DefaultPreferences::Polytempo_DefaultPreferences()
-{    
+{
     // composer
     setValue("zoomX", 50);
     setValue("timeMapZoomY", 20);
@@ -41,10 +16,10 @@ Polytempo_DefaultPreferences::Polytempo_DefaultPreferences()
     setValue("stripNormalColour", "ff000000");
     setValue("stripCueColour", "ffff0000");
     setValue("stripBackgroundColour", "ffeeeeee");
-    setValue("stripFrameColour", "ff000000");    
+    setValue("stripFrameColour", "ff000000");
     setValue("showAuxiliaryView", 1);
     setValue("zoom", 0.4);
-    
+
     // common
     setValue("midiDownbeatPitch", 100);
     setValue("midiDownbeatVelocity", 127);
@@ -53,7 +28,7 @@ Polytempo_DefaultPreferences::Polytempo_DefaultPreferences()
     setValue("midiCuePitch", 90);
     setValue("midiCueVelocity", 127);
     setValue("midiChannel", 1);
-    
+
     setValue("audioDownbeatPitch", 100);
     setValue("audioDownbeatVolume", 1.0);
     setValue("audioBeatPitch", 95);
@@ -61,7 +36,7 @@ Polytempo_DefaultPreferences::Polytempo_DefaultPreferences()
     setValue("audioCuePitch", 90);
     setValue("audioCueVolume", 1.0);
 
-	setValue("annotationMode", 1);
+    setValue("annotationMode", 1);
 }
 
 Polytempo_DefaultPreferences::~Polytempo_DefaultPreferences()

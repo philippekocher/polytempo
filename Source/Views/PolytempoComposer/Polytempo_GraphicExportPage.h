@@ -1,7 +1,6 @@
 #pragma once
 
-#include "../JuceLibraryCode/JuceHeader.h"
-
+#include "JuceHeader.h"
 
 class Polytempo_GraphicExportPage : public Component
 {

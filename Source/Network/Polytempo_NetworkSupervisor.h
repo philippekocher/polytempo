@@ -1,29 +1,4 @@
-/* ==============================================================================
- 
- This file is part of the POLYTEMPO software package.
- Copyright (c) 2016 - Zurich University of the Arts,
- ICST Institute for Computer Music and Sound Technology
- http://www.icst.net
- 
- Author: Philippe Kocher
- 
- POLYTEMPO is free software: you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
- 
- POLYTEMPO is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
- 
- You should have received a copy of the GNU General Public License
- along with this software. If not, see <http://www.gnu.org/licenses/>.
- 
- ============================================================================== */
-
-#ifndef __Polytempo_NetworkSupervisor__
-#define __Polytempo_NetworkSupervisor__
+#pragma once
 
 #include "../Scheduler/Polytempo_EventObserver.h"
 #include "Polytempo_PeerInfo.h"
@@ -35,36 +10,33 @@ class Polytempo_NetworkSupervisor : public Timer,
                                     public Polytempo_EventObserver
 {
 public:
-	juce_DeclareSingleton(Polytempo_NetworkSupervisor, false);
+    juce_DeclareSingleton(Polytempo_NetworkSupervisor, false);
 
-	Polytempo_NetworkSupervisor();
+    Polytempo_NetworkSupervisor();
     ~Polytempo_NetworkSupervisor();
 
-	void timerCallback() override;
+    void timerCallback() override;
 
-	String getDescription() const;
-	String getScoreName() const; 
-	String getPeerName() const;
+    String getDescription() const;
+    String getScoreName() const;
+    String getPeerName() const;
 
     void createSender(int port);
-    void setComponent(Component *aComponent);
-	
-    void eventNotification(Polytempo_Event *event) override;
-	Uuid getUniqueId();
-	void unicastFlood(Polytempo_IPAddress ownIp);
+    void setComponent(Component* aComponent);
+
+    void eventNotification(Polytempo_Event* event) override;
+    Uuid getUniqueId();
+    void unicastFlood(Polytempo_IPAddress ownIp);
 
 private:
-	std::unique_ptr<OSCMessage> createAdvertiseMessage(String ownIp);
+    std::unique_ptr<OSCMessage> createAdvertiseMessage(String ownIp);
 
-	Uuid uniqueId = nullptr;
-	std::unique_ptr<OSCSender> oscSender;
-    Component *component;
-    
-	std::unique_ptr < String > localName;
-	std::unique_ptr < String > nodeName;
+    Uuid uniqueId = nullptr;
+    std::unique_ptr<OSCSender> oscSender;
+    Component* component;
+
+    std::unique_ptr<String> localName;
+    std::unique_ptr<String> nodeName;
 
     int currentPort;
 };
-
-
-#endif  // __Polytempo_NetworkSupervisor__

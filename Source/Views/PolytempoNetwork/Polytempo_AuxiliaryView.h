@@ -1,29 +1,4 @@
-/* ==============================================================================
- 
- This file is part of the POLYTEMPO software package.
- Copyright (c) 2016 - Zurich University of the Arts,
- ICST Institute for Computer Music and Sound Technology
- http://www.icst.net
- 
- Author: Philippe Kocher
- 
- POLYTEMPO is free software: you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
- 
- POLYTEMPO is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
- 
- You should have received a copy of the GNU General Public License
- along with this software. If not, see <http://www.gnu.org/licenses/>.
- 
- ============================================================================== */
-
-#ifndef __Polytempo_AuxiliaryView__
-#define __Polytempo_AuxiliaryView__
+#pragma once
 
 #include "../../Scheduler/Polytempo_EventObserver.h"
 #include "../../Misc/Polytempo_Textbox.h"
@@ -31,7 +6,6 @@
 #include "Polytempo_TimeSyncControl.h"
 #include "Polytempo_NetworkInfoView.h"
 #include "Polytempo_AnnotationView.h"
-
 
 class Polytempo_AuxiliaryView : public Component,
                                 public Label::Listener,
@@ -42,47 +16,44 @@ public:
     Polytempo_AuxiliaryView();
     ~Polytempo_AuxiliaryView();
 
-    void paint (Graphics&);
-    void resized();
-    void eventNotification(Polytempo_Event *event);
+    void paint(Graphics&) override;
+    void resized() override;
+    void eventNotification(Polytempo_Event* event) override;
 
     /** Called when a Label goes into editing mode */
-    void editorShown(Label* label, TextEditor&);
-    void labelTextChanged(Label* labelThatHasChanged);
-    
-    void buttonClicked(Button *button);
-    void buttonStateChanged(Button *button);
-    
+    void editorShown(Label* label, TextEditor&) override;
+    void labelTextChanged(Label* labelThatHasChanged) override;
+
+    void buttonClicked(Button* button) override;
+    void buttonStateChanged(Button* button) override;
+
 private:
-    Polytempo_Textbox *markerTextbox;
-    String            markerString;
-    Polytempo_Button  *markerBackwards;
-    Polytempo_Button  *markerForwards;
-    Polytempo_Button  *imageBackwards;
-    Polytempo_Button  *imageForwards;
-    
-    Polytempo_Button  *startStop;
-    Polytempo_Button  *returnToLocator;
-    Polytempo_Button  *returnToBeginning;
+    Polytempo_Textbox* markerTextbox;
+    String markerString;
+    Polytempo_Button* markerBackwards;
+    Polytempo_Button* markerForwards;
+    Polytempo_Button* imageBackwards;
+    Polytempo_Button* imageForwards;
 
-    Polytempo_Textbox *timeTextbox;
-    
-    Polytempo_Textbox *tempoFactorTextbox;
+    Polytempo_Button* startStop;
+    Polytempo_Button* returnToLocator;
+    Polytempo_Button* returnToBeginning;
 
-	Polytempo_AnnotationView *annotationView;
+    Polytempo_Textbox* timeTextbox;
 
-	Polytempo_TimeSyncControl *timeSyncControl;
+    Polytempo_Textbox* tempoFactorTextbox;
 
-	String            tempoFactor;
-    
+    Polytempo_AnnotationView* annotationView;
+
+    Polytempo_TimeSyncControl* timeSyncControl;
+
+    String tempoFactor;
+
     AttributedString peers;
-    Polytempo_NetworkInfoView       *networkInfoView;
-	
-	int separator1Position;
-	int separator2Position;
+    Polytempo_NetworkInfoView* networkInfoView;
 
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_AuxiliaryView)
+    int separator1Position;
+    int separator2Position;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_AuxiliaryView)
 };
-
-
-#endif  // __Polytempo_AuxiliaryView__

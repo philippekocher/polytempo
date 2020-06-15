@@ -2,7 +2,6 @@
 
 #include "../Misc/Rational.h"
 
-
 enum Polytempo_EventType
 {
     eventType_None = 0,

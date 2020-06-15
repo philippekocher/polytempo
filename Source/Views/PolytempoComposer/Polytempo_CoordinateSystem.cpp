@@ -1,27 +1,3 @@
-/* ==============================================================================
- 
- This file is part of the POLYTEMPO software package.
- Copyright (c) 2016 - Zurich University of the Arts,
- ICST Institute for Computer Music and Sound Technology
- http://www.icst.net
- 
- Author: Philippe Kocher
- 
- POLYTEMPO is free software: you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
- 
- POLYTEMPO is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
- 
- You should have received a copy of the GNU General Public License
- along with this software. If not, see <http://www.gnu.org/licenses/>.
- 
- ============================================================================== */
-
 #include "Polytempo_CoordinateSystem.h"
 #include "../../Misc/Polytempo_Globals.h"
 #include "../../Preferences/Polytempo_StoredPreferences.h"
@@ -94,7 +70,7 @@ void Polytempo_CoordinateSystemComponent::setSizeAndZooms(int w, int h, float zX
 
     setSize(width, height);
 
-    playhead->setRectangle(Rectangle<float>(playhead->getX(), 0, PLAYHEAD_WIDTH, (float)(getHeight())));
+    playhead->setRectangle(Rectangle<float>(float(playhead->getX()), 0, PLAYHEAD_WIDTH, (float)(getHeight())));
 }
 
 void Polytempo_CoordinateSystemComponent::eventNotification(Polytempo_Event *event)
@@ -109,7 +85,7 @@ void Polytempo_CoordinateSystemComponent::eventNotification(Polytempo_Event *eve
     }
 }
 
-void Polytempo_CoordinateSystemComponent::mouseUp(const MouseEvent &event)
+void Polytempo_CoordinateSystemComponent::mouseUp(const MouseEvent& /*event*/)
 {
     selectionRectangle.setWidth(0);
     draggedControlPointsOrigin.clearQuick(true);
@@ -300,7 +276,7 @@ void Polytempo_TimeMapCoordinateSystem::paintSequence(Graphics& g, Polytempo_Seq
             {
                 g.setColour(sequenceColour.withMultipliedBrightness(brightness).withAlpha(alpha));
             }
-            g.drawSingleLineText("C", x - CONTROL_POINT_SIZE * 1.8f, y + CONTROL_POINT_SIZE * 0.5f);
+            g.drawSingleLineText("C", int(x - CONTROL_POINT_SIZE * 1.8f), int(y + CONTROL_POINT_SIZE * 0.5f));
         }
     }
 }
@@ -663,7 +639,7 @@ void Polytempo_TempoMapCoordinateSystem::paintSequence(Graphics& g, Polytempo_Se
             {
                 g.setColour(sequenceColour.withMultipliedBrightness(brightness).withAlpha(alpha));
             }
-            g.drawSingleLineText("C", x - CONTROL_POINT_SIZE * 1.8f, y + CONTROL_POINT_SIZE * 0.5f);
+            g.drawSingleLineText("C", int(x - CONTROL_POINT_SIZE * 1.8f), int(y + CONTROL_POINT_SIZE * 0.5f));
         }
     }
 }

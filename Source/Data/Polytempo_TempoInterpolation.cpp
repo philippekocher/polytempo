@@ -1,27 +1,3 @@
-/* ==============================================================================
- 
- This file is part of the POLYTEMPO software package.
- Copyright (c) 2016 - Zurich University of the Arts,
- ICST Institute for Computer Music and Sound Technology
- http://www.icst.net
- 
- Author: Philippe Kocher
- 
- POLYTEMPO is free software: you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
- 
- POLYTEMPO is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
- 
- You should have received a copy of the GNU General Public License
- along with this software. If not, see <http://www.gnu.org/licenses/>.
- 
- ============================================================================== */
-
 #include "Polytempo_TempoInterpolation.h"
 
 void calculateBezierPoints(Polytempo_ControlPoint* cp1, Polytempo_ControlPoint* cp2, Point<float>* p0, Point<float>* p1, Point<float>* p2, Point<float>* p3)
@@ -39,8 +15,6 @@ void calculateBezierPoints(Polytempo_ControlPoint* cp1, Polytempo_ControlPoint* 
     
     double dist = sqrt(pow(p3->x - p0->x, 2) + pow(p3->y - p0->y, 2));
     double theta1 = atan2(cp1->tempoOut,1), theta2 = atan2(cp2->tempoIn,1);
-    
-    //double weight = 0.333; // TODO: take tempoInWeight and tempoOutWeight
     
     p1->x = p0->x + float(dist * cp1->tempoOutWeight * cos(theta1));
     p1->y = p0->y + float(dist * cp1->tempoOutWeight * sin(theta1));

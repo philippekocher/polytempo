@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../JuceLibraryCode/JuceHeader.h"
+#include "JuceHeader.h"
 #include "Polytempo_GraphicExportPage.h"
 #include "Polytempo_GraphicExportSettingsComponent.h"
 #include "Polytempo_SequencesViewport.h"

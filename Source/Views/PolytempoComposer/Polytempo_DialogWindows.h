@@ -343,7 +343,7 @@ namespace Polytempo_DialogWindows
            
        }
     
-       void labelTextChanged (Label* label)
+       void labelTextChanged (Label* /*label*/)
        {}
 
        void perform(Button *button)

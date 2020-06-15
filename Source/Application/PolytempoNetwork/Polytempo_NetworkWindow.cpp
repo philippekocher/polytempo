@@ -1,27 +1,3 @@
-/* ==============================================================================
- 
- This file is part of the POLYTEMPO software package.
- Copyright (c) 2016 - Zurich University of the Arts,
- ICST Institute for Computer Music and Sound Technology
- http://www.icst.net
- 
- Author: Philippe Kocher
- 
- POLYTEMPO is free software: you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
- 
- POLYTEMPO is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
- 
- You should have received a copy of the GNU General Public License
- along with this software. If not, see <http://www.gnu.org/licenses/>.
- 
- ============================================================================== */
-
 #include "Polytempo_NetworkWindow.h"
 #include "../../Application/PolytempoNetwork/Polytempo_NetworkApplication.h"
 #include "../../Views/PolytempoNetwork/Polytempo_NetworkMainView.h"
@@ -29,11 +5,9 @@
 #include "../../Scheduler/Polytempo_ScoreScheduler.h"
 #include "../../Misc/Polytempo_Alerts.h"
 
-
-Polytempo_NetworkWindow::Polytempo_NetworkWindow()
-    : DocumentWindow (JUCEApplication::getInstance()->getApplicationName(),
-                      Colours::lightgrey,
-                      DocumentWindow::allButtons)
+Polytempo_NetworkWindow::Polytempo_NetworkWindow() : DocumentWindow(JUCEApplication::getInstance()->getApplicationName(),
+                                                                    Colours::lightgrey,
+                                                                    allButtons)
 {
     setUsingNativeTitleBar(true);
     setTitleBarButtonsRequired(7, true);
@@ -57,8 +31,8 @@ Polytempo_NetworkWindow::Polytempo_NetworkWindow()
     setVisible(true);
 
     // restore the last size and position from our settings file...
-    restoreWindowStateFromString (Polytempo_StoredPreferences::getInstance()->getProps().getValue ("mainWindow"));
-    
+    restoreWindowStateFromString(Polytempo_StoredPreferences::getInstance()->getProps().getValue("mainWindow"));
+
     openGLContext.attachTo(*getTopLevelComponent());
     openGLContext.setContinuousRepainting(true);
 }
@@ -76,22 +50,24 @@ void Polytempo_NetworkWindow::closeButtonPressed()
     JUCEApplication::getInstance()->systemRequestedQuit();
 }
 
-static void saveOkCancelCallback (int result, Polytempo_NetworkWindow* pParent)
+static void saveOkCancelCallback(int result, Polytempo_NetworkWindow* pParent)
 {
-    if(result)
+    if (result)
     {
-        Polytempo_NetworkApplication *const app = dynamic_cast<Polytempo_NetworkApplication *>(JUCEApplication::getInstance());
+        Polytempo_NetworkApplication*const app = dynamic_cast<Polytempo_NetworkApplication *>(JUCEApplication::getInstance());
         app->saveScoreFile(true);
-        if(app->scoreFileExists())
+        if (app->scoreFileExists())
         {
             pParent->performSetContentID();
         }
     }
 }
 
-void Polytempo_NetworkWindow::setContentID(contentID newContentID) {
-    if (newContentID != currentContentID) {
-        Polytempo_NetworkApplication *const app = dynamic_cast<Polytempo_NetworkApplication *>(JUCEApplication::getInstance());
+void Polytempo_NetworkWindow::setContentID(contentID newContentID)
+{
+    if (newContentID != currentContentID)
+    {
+        Polytempo_NetworkApplication*const app = dynamic_cast<Polytempo_NetworkApplication *>(JUCEApplication::getInstance());
 
         contentIdToBeSet = newContentID;
         if (newContentID == pageEditorViewID && !app->scoreFileExists())
@@ -102,7 +78,7 @@ void Polytempo_NetworkWindow::setContentID(contentID newContentID) {
         }
         else if (currentContentID == scoreEditorViewID && newContentID != scoreEditorViewID)
         {
-            if(scoreEditorView->applyChanges())
+            if (scoreEditorView->applyChanges())
                 performSetContentID();
         }
         else
@@ -147,18 +123,18 @@ int Polytempo_NetworkWindow::getContentID()
 
 Component* Polytempo_NetworkWindow::getContentComponent()
 {
-    if(currentContentID == mainViewID) return mainView.get();
-    if(currentContentID == pageEditorViewID)  return pageEditorView.get();
-    if(currentContentID == regionEditorViewID)  return regionEditorView.get();
-    if(currentContentID == scoreEditorViewID)  return scoreEditorView.get();
+    if (currentContentID == mainViewID) return mainView.get();
+    if (currentContentID == pageEditorViewID) return pageEditorView.get();
+    if (currentContentID == regionEditorViewID) return regionEditorView.get();
+    if (currentContentID == scoreEditorViewID) return scoreEditorView.get();
 
     return nullptr;
 }
 
 bool Polytempo_NetworkWindow::applyChanges()
 {
-    if(currentContentID == scoreEditorViewID)
+    if (currentContentID == scoreEditorViewID)
         return scoreEditorView->applyChanges();
-    else
-        return true;
+
+    return true;
 }

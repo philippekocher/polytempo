@@ -1,27 +1,3 @@
-/* ==============================================================================
- 
- This file is part of the POLYTEMPO software package.
- Copyright (c) 2016 - Zurich University of the Arts,
- ICST Institute for Computer Music and Sound Technology
- http://www.icst.net
- 
- Author: Philippe Kocher
- 
- POLYTEMPO is free software: you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
- 
- POLYTEMPO is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
- 
- You should have received a copy of the GNU General Public License
- along with this software. If not, see <http://www.gnu.org/licenses/>.
- 
- ============================================================================== */
-
 #include "Polytempo_Sequence.h"
 #include "Polytempo_Composition.h"
 #include "../Views/PolytempoComposer/Polytempo_ListComponent.h"
@@ -353,8 +329,8 @@ void Polytempo_Sequence::addControlPoint(float t, Rational pos, float tin, float
     }
     else
     {
-        point->tempoIn = tin == 0 ? 0.25 : tin;
-        point->tempoOut = tout == 0 ? 0.25 : tout;
+        point->tempoIn = tin == 0 ? 0.25f : tin;
+        point->tempoOut = tout == 0 ? 0.25f : tout;
     }
     
     update();
@@ -467,9 +443,9 @@ bool Polytempo_Sequence::update()
            (i < controlPoints.size()-1 && controlPoints[i]->position >= controlPoints[i+1]->position))
         {
             controlPoints.clearQuick(true);
-            for(int i=0;i<controlPointsBackup.size();i++)
+            for(int iBackup=0;iBackup<controlPointsBackup.size();iBackup++)
             {
-                controlPoints.add(controlPointsBackup[i]->copy());
+                controlPoints.add(controlPointsBackup[iBackup]->copy());
             }
             return false;
         }
@@ -528,7 +504,7 @@ bool Polytempo_Sequence::update()
     // set the beat durations and store them in the array timedEvents
     timedEvents.clearQuick(true);
 
-    float time = NAN;
+    float eventTime = NAN;
     for(int i=events.size()-1;i>=0;i--)
     {
         Polytempo_Event *event = new Polytempo_Event(*events[i]);
@@ -537,17 +513,17 @@ bool Polytempo_Sequence::update()
         {
             if(event->hasDefinedTime())
             {
-                if(time != time) // time is NaN
+                if(eventTime != eventTime) // time is NaN
                 {
                     event->setProperty(eventPropertyString_Duration, 1.0f);
                     event->setProperty(eventPropertyString_Pattern, int(float(event->getProperty(eventPropertyString_Pattern)) * 0.1f) * 10);
                 }
                 else
                 {
-                    event->setProperty(eventPropertyString_Duration, time - float(event->getProperty(eventPropertyString_Time)));
+                    event->setProperty(eventPropertyString_Duration, eventTime - float(event->getProperty(eventPropertyString_Time)));
                 }
             }
-            time = float(event->getProperty(eventPropertyString_Time));
+            eventTime = float(event->getProperty(eventPropertyString_Time));
         }
         if(event->hasDefinedTime())
         {

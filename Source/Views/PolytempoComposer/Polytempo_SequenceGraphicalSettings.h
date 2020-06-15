@@ -2,7 +2,6 @@
 
 #include "../../Data/Polytempo_Sequence.h"
 #include "../../Misc/Polytempo_Textbox.h"
-#include "../../Misc/Polytempo_Button.h"
 
 
 class Polytempo_SequenceGraphicalSettings : public Component,
