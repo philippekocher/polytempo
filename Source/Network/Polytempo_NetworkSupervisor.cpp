@@ -144,6 +144,19 @@ void Polytempo_NetworkSupervisor::eventNotification(Polytempo_Event* event)
             Polytempo_NetworkWindow* window = app->getMainWindow();
             window->setBrightness(float(event->getProperty("brightness")));
         }
+        if (event->hasProperty("fullScreen"))
+        {
+            bool fullScreen = int(event->getProperty("fullScreen")) != 0;
+            
+            // call on the message thread
+            MessageManager::callAsync ([fullScreen]() {
+                
+                Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
+                Polytempo_NetworkWindow* window = app->getMainWindow();
+
+                window->setFullScreen(fullScreen);
+            });
+        }
     }
     if (event->getType() == eventType_DeleteAll)
     {

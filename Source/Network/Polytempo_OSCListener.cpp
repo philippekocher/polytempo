@@ -80,20 +80,6 @@ void Polytempo_OSCListener::oscMessageReceived(const OSCMessage& message)
                 app->openScoreFilePath(argumentIterator->getString());
         }
     }
-    else if (addressPattern == "/fullScreen")
-    {
-        const MessageManagerLock mml(Thread::getCurrentThread());
-
-        Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
-
-        Polytempo_NetworkWindow* window = app->getMainWindow();
-        if (argumentIterator != message.end() && (*argumentIterator).isInt32())
-        {
-            if (argumentIterator->getInt32() > 0) window->setFullScreen(true);
-            else window->setFullScreen(false);
-        }
-        else window->setFullScreen(true);
-    }
     else if (addressPattern.matchesWildcard("/*/*", true) && Polytempo_TimeProvider::getInstance()->isMaster())
     {
         // parse pattern

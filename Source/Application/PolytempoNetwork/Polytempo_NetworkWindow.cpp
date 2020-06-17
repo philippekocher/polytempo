@@ -55,6 +55,23 @@ void Polytempo_NetworkWindow::setBrightness(float brightness)
     mainView->setBrightness(brightness);
 }
 
+void Polytempo_NetworkWindow::setFullScreen(bool shouldBeFullScreen)
+{
+    Desktop& desktop = Desktop::getInstance();
+
+    if (shouldBeFullScreen && desktop.getKioskModeComponent() == nullptr)
+        desktop.setKioskModeComponent(getTopLevelComponent());
+    else
+        desktop.setKioskModeComponent(nullptr);
+    
+    fullScreen = shouldBeFullScreen;
+}
+
+bool Polytempo_NetworkWindow::isFullScreen()
+{
+    return fullScreen;
+}
+
 static void saveOkCancelCallback(int result, Polytempo_NetworkWindow* pParent)
 {
     if (result)

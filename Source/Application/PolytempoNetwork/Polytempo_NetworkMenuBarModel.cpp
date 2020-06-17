@@ -589,15 +589,8 @@ bool Polytempo_MenuBarModel::perform(const InvocationInfo& info)
 
 #if ! JUCE_LINUX
     case Polytempo_CommandIDs::fullScreen:
-        {
-            Desktop& desktop = Desktop::getInstance();
-
-            if (desktop.getKioskModeComponent() == nullptr)
-                desktop.setKioskModeComponent(window->getTopLevelComponent());
-            else
-                desktop.setKioskModeComponent(nullptr);
-            break;
-        }
+        window->setFullScreen(!window->isFullScreen());
+        break;
 #endif
 
         /* scheduler menu

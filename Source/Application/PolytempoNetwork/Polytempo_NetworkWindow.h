@@ -14,6 +14,8 @@ public:
     void closeButtonPressed() override;
     
     void setBrightness(float);
+    void setFullScreen(bool);
+    bool isFullScreen();
 
     enum contentID
     {
@@ -41,6 +43,8 @@ private:
 
     contentID currentContentID = mainViewID;
     contentID contentIdToBeSet = mainViewID;
+    
+    bool fullScreen = false;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_NetworkWindow)
 };
