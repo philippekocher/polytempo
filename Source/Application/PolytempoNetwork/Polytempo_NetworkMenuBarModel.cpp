@@ -671,7 +671,7 @@ bool Polytempo_MenuBarModel::perform(const InvocationInfo& info)
         /* help menu
          ----------------------------------*/
     case Polytempo_CommandIDs::help:
-        Polytempo_AboutWindow::show();
+        URL("http://polytempo.zhdk.ch/documentation").launchInDefaultBrowser();
         break;
 
     case Polytempo_CommandIDs::visitWebsite:
