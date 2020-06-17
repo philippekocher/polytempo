@@ -22,6 +22,18 @@ public:
     void resized() override;
     void changeListenerCallback(ChangeBroadcaster* source) override;
 
+    class BlackPanel : public Component
+    {
+    public:
+        void paint(Graphics &g)
+        {
+            g.fillAll(Colours::black.withAlpha(alpha));
+        }
+        float alpha = 0;
+    };
+    BlackPanel* blackPanel;
+    void setBrightness(float amount) { if (amount > 1.0f) amount = 1.0f; if (amount < 0) amount = 0; blackPanel->alpha = 1.0-amount; repaint(); }
+
 private:
     Polytempo_VisualMetro* visualMetro;
     Polytempo_GraphicsView* graphicsView;

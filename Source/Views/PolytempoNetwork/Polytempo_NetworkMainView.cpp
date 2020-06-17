@@ -10,8 +10,10 @@ Polytempo_NetworkMainView::Polytempo_NetworkMainView()
 
     addAndMakeVisible(visualMetro = new Polytempo_VisualMetro());
     addAndMakeVisible(graphicsView = new Polytempo_GraphicsView());
-    graphicsView->setAlwaysOnTop(true);
     addAndMakeVisible(auxiliaryView = new Polytempo_AuxiliaryView());
+
+    addAndMakeVisible(blackPanel = new BlackPanel);
+    blackPanel->setAlwaysOnTop(true);
 }
 
 Polytempo_NetworkMainView::~Polytempo_NetworkMainView()
@@ -59,6 +61,8 @@ void Polytempo_NetworkMainView::resized()
                             stripWidth,
                             getWidth() - stripWidth - auxiliaryViewWidth,
                             getHeight() - stripWidth - auxiliaryViewHeight);
+    
+    blackPanel->setBounds(getBounds());
 }
 
 void Polytempo_NetworkMainView::changeListenerCallback(ChangeBroadcaster*)

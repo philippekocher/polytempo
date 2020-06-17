@@ -50,6 +50,11 @@ void Polytempo_NetworkWindow::closeButtonPressed()
     JUCEApplication::getInstance()->systemRequestedQuit();
 }
 
+void Polytempo_NetworkWindow::setBrightness(float brightness)
+{
+    mainView->setBrightness(brightness);
+}
+
 static void saveOkCancelCallback(int result, Polytempo_NetworkWindow* pParent)
 {
     if (result)

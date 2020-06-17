@@ -12,6 +12,8 @@ public:
     ~Polytempo_NetworkWindow();
 
     void closeButtonPressed() override;
+    
+    void setBrightness(float);
 
     enum contentID
     {

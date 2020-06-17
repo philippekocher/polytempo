@@ -4,6 +4,7 @@
 #include "Polytempo_NetworkInterfaceManager.h"
 #include "Polytempo_TimeProvider.h"
 #include "../Misc/Polytempo_Alerts.h"
+#include "../Application/PolytempoNetwork/Polytempo_NetworkApplication.h"
 
 Polytempo_NetworkSupervisor::Polytempo_NetworkSupervisor()
 {
@@ -135,6 +136,18 @@ void Polytempo_NetworkSupervisor::eventNotification(Polytempo_Event* event)
 {
     if (event->getType() == eventType_Settings)
     {
-        localName.reset(new String(event->getProperty("name").toString()));
+        if (event->hasProperty("name"))
+            localName.reset(new String(event->getProperty("name").toString()));
+        if (event->hasProperty("brightness"))
+        {
+            Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
+            Polytempo_NetworkWindow* window = app->getMainWindow();
+            window->setBrightness(float(event->getProperty("brightness")));
+        }
+    }
+    if (event->getType() == eventType_DeleteAll)
+    {
+        // reset name
+        localName.reset(nullptr);
     }
 }
