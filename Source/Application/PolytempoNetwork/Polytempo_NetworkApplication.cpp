@@ -53,15 +53,10 @@ void Polytempo_NetworkApplication::initialise(const String&)
     // time sync
     Polytempo_TimeProvider::getInstance();
 
-#if (!JUCE_DEBUG)
+#if (! JUCE_DEBUG)
     // contact web server
-    getApplicationName();
-    getApplicationVersion();
-    URL url = URL("http://polytempo.zhdk.ch/stats/log.php?application="+getApplicationName()+"&version="+getApplicationVersion());
-    InputStream* stream = url.createInputStream(true);
-    if(stream != nullptr)
-        DBG(stream->readString());
-    delete(stream);
+    URL url = URL("https://polytempo.zhdk.ch/stats/log.php?application="+getApplicationName()+"&version="+getApplicationVersion());
+    auto stream = url.createInputStream(true);
 #endif
 
     // open default score file
