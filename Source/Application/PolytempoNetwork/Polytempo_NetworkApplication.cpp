@@ -182,8 +182,10 @@ void Polytempo_NetworkApplication::applicationShouldQuit()
     quit();
 }
 
-void Polytempo_NetworkApplication::anotherInstanceStarted(const String&)
+void Polytempo_NetworkApplication::anotherInstanceStarted(const String& commandLine)
 {
+    openScoreFilePath(commandLine); // enable 'open with'
+    
     // When another instance of the app is launched while this one is running,
     // this method is invoked, and the commandLine parameter tells you what
     // the other instance's command-line arguments were.
