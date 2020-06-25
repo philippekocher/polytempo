@@ -57,6 +57,8 @@ void Polytempo_NetworkWindow::setBrightness(float brightness)
 
 void Polytempo_NetworkWindow::setFullScreen(bool shouldBeFullScreen)
 {
+    if(fullScreen == shouldBeFullScreen) return;
+    
     Desktop& desktop = Desktop::getInstance();
 
     if (shouldBeFullScreen && desktop.getKioskModeComponent() == nullptr)
@@ -65,6 +67,8 @@ void Polytempo_NetworkWindow::setFullScreen(bool shouldBeFullScreen)
         desktop.setKioskModeComponent(nullptr);
     
     fullScreen = shouldBeFullScreen;
+
+    Polytempo_NetworkApplication::getCommandManager()->commandStatusChanged(); // update menubar
 }
 
 bool Polytempo_NetworkWindow::isFullScreen()
