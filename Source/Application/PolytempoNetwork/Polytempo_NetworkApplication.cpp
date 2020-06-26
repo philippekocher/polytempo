@@ -59,7 +59,7 @@ void Polytempo_NetworkApplication::initialise(const String& commandLine)
     auto stream = url.createInputStream(true);
 #endif
 
-    if (commandLine != String())
+    if (File::isAbsolutePath(commandLine.unquoted()))
     {
         openScoreFilePath(commandLine.unquoted()); // enable 'open with' (WIN)
     }
