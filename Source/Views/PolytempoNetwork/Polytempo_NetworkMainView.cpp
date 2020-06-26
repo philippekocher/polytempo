@@ -62,7 +62,7 @@ void Polytempo_NetworkMainView::resized()
                             getWidth() - stripWidth - auxiliaryViewWidth,
                             getHeight() - stripWidth - auxiliaryViewHeight);
     
-    blackPanel->setBounds(getBounds());
+    blackPanel->setBounds(0, 0, getWidth(), getHeight());
 }
 
 void Polytempo_NetworkMainView::changeListenerCallback(ChangeBroadcaster*)
