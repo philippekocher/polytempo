@@ -16,7 +16,7 @@ Polytempo_NetworkApplication::Polytempo_NetworkApplication()
 {
 }
 
-void Polytempo_NetworkApplication::initialise(const String&)
+void Polytempo_NetworkApplication::initialise(const String& commandLine)
 {
     fileLogger.reset(FileLogger::createDefaultAppLogger("Polytempo Network", "appLog.log", "Polytemp Network Logfile", 10 * 1024 * 1024));
     Logger::setCurrentLogger(fileLogger.get());
@@ -59,8 +59,12 @@ void Polytempo_NetworkApplication::initialise(const String&)
     auto stream = url.createInputStream(true);
 #endif
 
+    if (commandLine != String())
+    {
+        openScoreFilePath(commandLine.unquoted()); // enable 'open with' (WIN)
+    }
     // open default score file
-    if (Polytempo_StoredPreferences::getInstance()->getProps().getValue("defaultFilePath") != String())
+    else if (Polytempo_StoredPreferences::getInstance()->getProps().getValue("defaultFilePath") != String())
     {
         scoreFile = *new File(Polytempo_StoredPreferences::getInstance()->getProps().getValue("defaultFilePath"));
         if (scoreFile.exists())
@@ -179,7 +183,7 @@ void Polytempo_NetworkApplication::applicationShouldQuit()
 
 void Polytempo_NetworkApplication::anotherInstanceStarted(const String& commandLine)
 {
-    openScoreFilePath(commandLine); // enable 'open with'
+    openScoreFilePath(commandLine); // enable 'open with' (MAC)
     
     // When another instance of the app is launched while this one is running,
     // this method is invoked, and the commandLine parameter tells you what
