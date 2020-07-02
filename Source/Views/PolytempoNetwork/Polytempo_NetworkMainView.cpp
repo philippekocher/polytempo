@@ -13,6 +13,7 @@ Polytempo_NetworkMainView::Polytempo_NetworkMainView()
     addAndMakeVisible(auxiliaryView = new Polytempo_AuxiliaryView());
 
     addAndMakeVisible(blackPanel = new BlackPanel);
+    blackPanel->setInterceptsMouseClicks(false, false);
     blackPanel->setAlwaysOnTop(true);
 }
 
