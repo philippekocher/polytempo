@@ -515,4 +515,3 @@ void Polytempo_Score::writeToFile(File& file)
     
     dirty = false;
 }
-

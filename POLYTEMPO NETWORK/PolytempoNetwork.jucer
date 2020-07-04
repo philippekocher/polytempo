@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="at55VB" name="PolytempoNetwork" projectType="guiapp" version="0.4.2"
+<JUCERPROJECT id="at55VB" name="PolytempoNetwork" projectType="guiapp" version="0.4.3"
               bundleIdentifier="net.icst.PolytempoNetwork" jucerVersion="5.4.7"
               companyName="ICST Institute for Computermusic and Sound Technology, Zurich"
               includeBinaryInAppConfig="1" companyWebsite="www.icst.net" defines="POLYTEMPO_NETWORK=1"
@@ -255,7 +255,7 @@
   <EXPORTFORMATS>
     <XCODE_MAC targetFolder="Builds/MacOSX/PolytempoNetwork" smallIcon="KOwPbh"
                customPList="&lt;plist&gt;&lt;dict&gt;&#10;    &lt;key&gt;NSAppTransportSecurity&lt;/key&gt;  &#10;    &lt;dict&gt;  &#10;        &lt;key&gt;NSAllowsArbitraryLoads&lt;/key&gt;&#10;        &lt;true/&gt;  &#10;    &lt;/dict&gt;&#10;&lt;/dict&gt;&lt;/plist&gt;"
-               bigIcon="KOwPbh">
+               bigIcon="KOwPbh" documentExtensions="ptsco">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" osxCompatibility="10.9 SDK" isDebug="1" targetName="PolytempoNetwork"
                        enablePluginBinaryCopyStep="1"/>

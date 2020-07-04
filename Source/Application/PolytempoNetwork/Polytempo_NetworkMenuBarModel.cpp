@@ -589,15 +589,8 @@ bool Polytempo_MenuBarModel::perform(const InvocationInfo& info)
 
 #if ! JUCE_LINUX
     case Polytempo_CommandIDs::fullScreen:
-        {
-            Desktop& desktop = Desktop::getInstance();
-
-            if (desktop.getKioskModeComponent() == nullptr)
-                desktop.setKioskModeComponent(window->getTopLevelComponent());
-            else
-                desktop.setKioskModeComponent(nullptr);
-            break;
-        }
+        window->setFullScreen(!window->isFullScreen());
+        break;
 #endif
 
         /* scheduler menu
@@ -678,7 +671,7 @@ bool Polytempo_MenuBarModel::perform(const InvocationInfo& info)
         /* help menu
          ----------------------------------*/
     case Polytempo_CommandIDs::help:
-        Polytempo_AboutWindow::show();
+        URL("http://polytempo.zhdk.ch/documentation").launchInDefaultBrowser();
         break;
 
     case Polytempo_CommandIDs::visitWebsite:

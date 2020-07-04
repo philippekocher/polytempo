@@ -16,7 +16,7 @@ Polytempo_NetworkApplication::Polytempo_NetworkApplication()
 {
 }
 
-void Polytempo_NetworkApplication::initialise(const String&)
+void Polytempo_NetworkApplication::initialise(const String& commandLine)
 {
     fileLogger.reset(FileLogger::createDefaultAppLogger("Polytempo Network", "appLog.log", "Polytemp Network Logfile", 10 * 1024 * 1024));
     Logger::setCurrentLogger(fileLogger.get());
@@ -53,19 +53,18 @@ void Polytempo_NetworkApplication::initialise(const String&)
     // time sync
     Polytempo_TimeProvider::getInstance();
 
-#if (!JUCE_DEBUG)
+#if (! JUCE_DEBUG)
     // contact web server
-    getApplicationName();
-    getApplicationVersion();
-    URL url = URL("http://polytempo.zhdk.ch/stats/log.php?application="+getApplicationName()+"&version="+getApplicationVersion());
-    InputStream* stream = url.createInputStream(true);
-    if(stream != nullptr)
-        DBG(stream->readString());
-    delete(stream);
+    URL url = URL("https://polytempo.zhdk.ch/stats/log.php?application="+getApplicationName()+"&version="+getApplicationVersion());
+    auto stream = url.createInputStream(true);
 #endif
 
+    if (File::isAbsolutePath(commandLine.unquoted()))
+    {
+        openScoreFilePath(commandLine.unquoted()); // enable 'open with' (WIN)
+    }
     // open default score file
-    if (Polytempo_StoredPreferences::getInstance()->getProps().getValue("defaultFilePath") != String())
+    else if (Polytempo_StoredPreferences::getInstance()->getProps().getValue("defaultFilePath") != String())
     {
         scoreFile = *new File(Polytempo_StoredPreferences::getInstance()->getProps().getValue("defaultFilePath"));
         if (scoreFile.exists())
@@ -182,8 +181,10 @@ void Polytempo_NetworkApplication::applicationShouldQuit()
     quit();
 }
 
-void Polytempo_NetworkApplication::anotherInstanceStarted(const String&)
+void Polytempo_NetworkApplication::anotherInstanceStarted(const String& commandLine)
 {
+    openScoreFilePath(commandLine); // enable 'open with' (MAC)
+    
     // When another instance of the app is launched while this one is running,
     // this method is invoked, and the commandLine parameter tells you what
     // the other instance's command-line arguments were.

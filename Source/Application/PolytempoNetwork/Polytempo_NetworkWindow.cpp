@@ -50,6 +50,32 @@ void Polytempo_NetworkWindow::closeButtonPressed()
     JUCEApplication::getInstance()->systemRequestedQuit();
 }
 
+void Polytempo_NetworkWindow::setBrightness(float brightness)
+{
+    mainView->setBrightness(brightness);
+}
+
+void Polytempo_NetworkWindow::setFullScreen(bool shouldBeFullScreen)
+{
+    if(fullScreen == shouldBeFullScreen) return;
+    
+    Desktop& desktop = Desktop::getInstance();
+
+    if (shouldBeFullScreen && desktop.getKioskModeComponent() == nullptr)
+        desktop.setKioskModeComponent(getTopLevelComponent());
+    else
+        desktop.setKioskModeComponent(nullptr);
+    
+    fullScreen = shouldBeFullScreen;
+
+    Polytempo_NetworkApplication::getCommandManager()->commandStatusChanged(); // update menubar
+}
+
+bool Polytempo_NetworkWindow::isFullScreen()
+{
+    return fullScreen;
+}
+
 static void saveOkCancelCallback(int result, Polytempo_NetworkWindow* pParent)
 {
     if (result)
