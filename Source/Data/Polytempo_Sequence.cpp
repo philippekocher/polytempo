@@ -428,8 +428,7 @@ void Polytempo_Sequence::buildBeatPattern()
         addControlPoint(4,1);
     }
 
-    Polytempo_Composition::getInstance()->updateContent();
-    Polytempo_Composition::getInstance()->setDirty(true);
+    update();
 }
 
 bool Polytempo_Sequence::update()
@@ -440,7 +439,8 @@ bool Polytempo_Sequence::update()
         if((i > 0 && controlPoints[i]->time     <= controlPoints[i-1]->time) ||
            (i > 0 && controlPoints[i]->position <= controlPoints[i-1]->position) ||
            (i < controlPoints.size()-1 && controlPoints[i]->time     >  controlPoints[i+1]->time) ||
-           (i < controlPoints.size()-1 && controlPoints[i]->position >= controlPoints[i+1]->position))
+           (i < controlPoints.size()-1 && controlPoints[i]->position >= controlPoints[i+1]->position) ||
+           controlPoints[i]->position < 0)
         {
             controlPoints.clearQuick(true);
             for(int iBackup=0;iBackup<controlPointsBackup.size();iBackup++)
