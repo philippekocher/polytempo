@@ -58,6 +58,14 @@ void Polytempo_ComposerApplication::shutdown()
     
     Polytempo_StoredPreferences::getInstance()->getProps().save();
     
+    // delete all open windows (except the main window)
+    int num = Desktop::getInstance().getNumComponents();
+    for (int i = 0; i < num; i++)
+    {
+        Component* c = Desktop::getInstance().getComponent(i);
+        if (c != composerWindow.get()) delete c;
+    }
+
     // delete scoped pointers
     composerWindow = nullptr;
     commandManager = nullptr;
