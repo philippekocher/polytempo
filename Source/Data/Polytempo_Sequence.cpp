@@ -286,6 +286,7 @@ void Polytempo_Sequence::adjustPosition(Array<int>* indices, bool relativeToPrev
 
 void Polytempo_Sequence::adjustTempo(Array<int>* indices)
 {
+    indices->sort();
     for(int i=1;i<indices->size();i++)
     {
         if(indices->getUnchecked(i) - indices->getUnchecked(i-1) != 1) continue; // only adjust the tempos of two adjacent points

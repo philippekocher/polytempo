@@ -16,6 +16,7 @@ public:
     void eventNotification(Polytempo_Event*);
 
     void mouseUp(const MouseEvent &);
+    bool keyPressed(const KeyPress &);
     
 protected:
     float zoomX, zoomY;

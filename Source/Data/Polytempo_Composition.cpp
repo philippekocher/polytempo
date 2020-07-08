@@ -157,6 +157,12 @@ void Polytempo_Composition::addSelectedControlPointIndex(int i)
     selectedControlPointIndices->add(i);
 }
 
+void Polytempo_Composition::setSelectedControlPointIndex(int i)
+{
+    clearSelectedControlPointIndices();
+    addSelectedControlPointIndex(i);
+}
+
 void Polytempo_Composition::removeSelectedControlPointIndex(int i)
 {
     int indexToRemove = selectedControlPointIndices->indexOf(i);

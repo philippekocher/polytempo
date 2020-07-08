@@ -36,6 +36,7 @@ public:
     void clearSelectedControlPointIndices();
     void addSelectedControlPointIndex(int);
     void removeSelectedControlPointIndex(int);
+    void setSelectedControlPointIndex(int);
     Array<int>* getSelectedControlPointIndices();
     bool isSelectedControlPointIndex(int);
 
