@@ -223,7 +223,7 @@
   </MAINGROUP>
   <EXPORTFORMATS>
     <XCODE_MAC targetFolder="Builds/MacOSX/PolytempoComposer" bigIcon="af4xJJ"
-               smallIcon="AuXr1H">
+               smallIcon="AuXr1H" documentExtensions="ptcom">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" osxCompatibility="10.9 SDK" isDebug="1" optimisation="1"
                        targetName="PolytempoComposer" cppLanguageStandard="" enablePluginBinaryCopyStep="1"/>
