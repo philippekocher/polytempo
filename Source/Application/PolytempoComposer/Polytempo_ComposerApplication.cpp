@@ -33,6 +33,12 @@ void Polytempo_ComposerApplication::initialise(const String& /*commandLine*/)
 
     // return to beginning
     Polytempo_ScoreScheduler::getInstance()->returnToBeginning();
+    
+#if (! JUCE_DEBUG)
+    // contact web server
+    URL url = URL("https://polytempo.zhdk.ch/stats/log.php?application="+getApplicationName()+"&version="+getApplicationVersion()+"&os="+SystemStats::getOperatingSystemName()+"&user="+SystemStats::getFullUserName());
+    auto stream = url.createInputStream(true);
+#endif
 }
     
 void Polytempo_ComposerApplication::shutdown()
