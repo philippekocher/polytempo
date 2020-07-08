@@ -135,7 +135,9 @@ PopupMenu Polytempo_ComposerMenuBarModel::getMenuForIndex (int /*menuIndex*/, co
     {
 #if ! JUCE_MAC
         menu.addCommandItem (commandManager, Polytempo_CommandIDs::aboutWindow);
+        menu.addSeparator();
 #endif
+        menu.addCommandItem(commandManager,Polytempo_CommandIDs::help);
         menu.addSeparator();
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::visitWebsite);
     }
@@ -208,6 +210,7 @@ void Polytempo_ComposerMenuBarModel::getAllCommands (Array <CommandID>& commands
         
         Polytempo_CommandIDs::aboutWindow,
         Polytempo_CommandIDs::preferencesWindow,
+        Polytempo_CommandIDs::help,
         Polytempo_CommandIDs::visitWebsite,
 
 #if ! JUCE_LINUX
@@ -432,7 +435,7 @@ void Polytempo_ComposerMenuBarModel::getCommandInfo(CommandID commandID, Applica
         /* help menu
          ----------------------------------*/
         case Polytempo_CommandIDs::help:
-            result.setInfo ("Polytempo Help", String(), infoCategory, 0);
+            result.setInfo ("Online Documentation", String(), infoCategory, 0);
             result.addDefaultKeypress ('?', ModifierKeys::commandModifier);
             break;
             
@@ -635,7 +638,7 @@ bool Polytempo_ComposerMenuBarModel::perform (const InvocationInfo& info)
         /* help menu
          ----------------------------------*/
         case Polytempo_CommandIDs::help:
-            Polytempo_AboutWindow::show();
+            URL("http://polytempo.zhdk.ch/documentation").launchInDefaultBrowser();
             break;
             
         case Polytempo_CommandIDs::visitWebsite:
