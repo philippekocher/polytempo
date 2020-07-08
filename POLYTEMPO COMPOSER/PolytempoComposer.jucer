@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="OXoF3n" name="PolytempoComposer" projectType="guiapp" version="0.4.2"
+<JUCERPROJECT id="OXoF3n" name="PolytempoComposer" projectType="guiapp" version="0.4.3"
               bundleIdentifier="net.icst.PolytempoComposer" includeBinaryInAppConfig="1"
-              jucerVersion="5.4.7" companyName="Zurich University of the Arts"
-              companyWebsite="www.icst.net" defines="POLYTEMPO_COMPOSER=1"
-              displaySplashScreen="1" reportAppUsage="1" splashScreenColour="Dark"
-              companyCopyright="Zurich University of the Arts">
+              companyName="Zurich University of the Arts" companyWebsite="www.icst.net"
+              defines="POLYTEMPO_COMPOSER=1" displaySplashScreen="1" reportAppUsage="1"
+              splashScreenColour="Dark" companyCopyright="Zurich University of the Arts"
+              jucerFormatVersion="1">
   <MAINGROUP id="cYhNWq" name="PolytempoComposer">
     <GROUP id="{6A675542-C9E9-872F-C795-8AC67F3B5B9D}" name="Resources">
       <FILE id="ttnIyq" name="adjustPositionBwd.png" compile="0" resource="1"
