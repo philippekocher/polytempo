@@ -91,8 +91,9 @@ Polytempo_Event* Polytempo_Event::makeEvent(String oscAddress, Array<var> messag
     int num = messages.size();
 
     if (messages.contains(eventPropertyString_Rect)) num++;
-    if (num % 2 == 1)
+    if (event->getType() != eventType_Osc && num % 2 == 1)
     // if there is an odd number of messages, the first one is assigned to the property "value"
+    // only for messages other than OSC (OSC message array can have any number of elements)
     {
         event->setProperty(eventPropertyString_Value, messages[i++]);
     }
