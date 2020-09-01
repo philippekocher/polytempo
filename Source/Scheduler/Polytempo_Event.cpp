@@ -72,7 +72,7 @@ Polytempo_Event* Polytempo_Event::makeEvent(String oscAddress, Array<var> messag
     int i = 0;
     int num = messages.size();
 
-    if (messages.contains("rect")) num++;
+    if (messages.contains(eventPropertyString_Rect)) num++;
     if (num % 2 == 1)
     // if there is an odd number of messages, the first one is assigned to the property "value"
     {
@@ -137,8 +137,17 @@ Array<var> Polytempo_Event::getOscMessageFromProperties() const
         Identifier key = val.name;
         if (key.toString()[0] != '~')
         {
-            message.add(key.toString());
-            message.add(val.value);
+            if (key.toString() == eventPropertyString_Rect && val.value.isArray() && val.value.getArray()->size() >= 4)
+            {
+                message.add(eventPropertyString_Rect);
+                for (int i = 0; i < 4; i++)
+                    message.add(val.value.getArray()[i]);
+            }
+            else
+            {
+                message.add(key.toString());
+                message.add(val.value);
+            }
         }
     }
 
