@@ -44,6 +44,14 @@ void Polytempo_OSCSender::eventNotification(Polytempo_Event *event)
 
 void Polytempo_OSCSender::sendOscEventAsMessage(Polytempo_Event *event)
 {
+    if (!event->hasProperty("address") || !event->getProperty("address").toString().startsWith("/"))
+    {
+        String msg = "Malformed OSC address: " + event->getProperty("address").toString();
+        DBG(msg);
+        Logger::writeToLog(msg);
+        return;
+    }
+
 	OSCMessage oscMessage = OSCMessage(OSCAddressPattern(event->getProperty("address").toString()));
 	var message = event->getProperty("message");
 	Array < var > *messageArray;
