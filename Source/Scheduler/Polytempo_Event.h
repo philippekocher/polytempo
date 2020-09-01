@@ -90,6 +90,7 @@ enum Polytempo_EventType
 #define eventPropertyString_SectionID   "sectionID"
 #define eventPropertyString_URL         "url"
 #define eventPropertyString_Rect        "rect"
+#define eventPropertyString_Message     "message"
 #define eventPropertyString_Pattern     "pattern"
 #define eventPropertyDefault_Pattern    10
 #define eventPropertyString_Linear      "linear"
@@ -103,13 +104,14 @@ public:
     Polytempo_Event(const Polytempo_Event&);
     ~Polytempo_Event();
 	XmlElement getXml();
-
-	/* factories
+    
+    /* factories
      --------------------------------------- */
     static Polytempo_Event* makeEvent(String typeString);
     static Polytempo_Event* makeEvent(Polytempo_EventType type);
     static Polytempo_Event* makeEvent(Polytempo_EventType type, var value);
     static Polytempo_Event* makeEvent(String oscAddress, Array<var> values);
+    static Polytempo_Event* makeEvent(XmlElement* xmlElement);
 
     /* event to OSC conversion
      --------------------------------------- */
@@ -147,6 +149,9 @@ public:
     
     
 private:
+    static String getXmlTypedString(const var value);
+    static var fromXmlTypedString(String string);
+
     Polytempo_EventType type;
     int                 time;      // in miliseconds (NB. the property "time" is in seconds and whenever a time is stored in the property "value" it's in seconds as well!)
     uint32              syncTime;  // in miliseconds

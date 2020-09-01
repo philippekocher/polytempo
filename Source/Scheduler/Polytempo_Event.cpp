@@ -29,9 +29,27 @@ Polytempo_Event::~Polytempo_Event()
 
 XmlElement Polytempo_Event::getXml()
 {
+    NamedValueSet tempSet;
+    for (const auto& namedValue : *properties)
+    {
+        if(namedValue.value.isArray())
+        {
+            String serializedArray = "@array:";
+            for(auto v : *namedValue.value.getArray())
+            {
+                serializedArray.append("\t" + getXmlTypedString(v), 10000);
+            }
+            
+            tempSet.set(namedValue.name, serializedArray);
+        }
+        else 
+        {
+            tempSet.set(namedValue.name, getXmlTypedString(namedValue.value));
+        }
+    }
     XmlElement ret = XmlElement("Event");
     ret.setAttribute("Type", getOscAddressFromType());
-    properties->copyToXmlAttributes(ret);
+    tempSet.copyToXmlAttributes(ret);
     return ret;
 }
 
@@ -99,6 +117,17 @@ Polytempo_Event* Polytempo_Event::makeEvent(String oscAddress, Array<var> messag
                 }
                 event->setProperty(eventPropertyString_Rect, r);
             }
+            // for type OSC, all elements following a "message" key are considered as array element of the "message" property
+            else if(event->getType() == eventType_Osc && messages[i] == eventPropertyString_Message)
+            {
+                Array<var> arr;
+                i++;
+                while(i < messages.size())
+                {
+                    arr.add(messages[i++]);
+                }
+                event->setProperty(eventPropertyString_Message, arr);
+            }
             // other parameters are followed by one value
             else
             {
@@ -109,6 +138,41 @@ Polytempo_Event* Polytempo_Event::makeEvent(String oscAddress, Array<var> messag
         else
         {
             i++;
+        }
+    }
+
+    return event;
+}
+
+Polytempo_Event* Polytempo_Event::makeEvent(XmlElement* xmlElement)
+{
+    Polytempo_Event* event = new Polytempo_Event();
+
+    String type = xmlElement->getStringAttribute("Type");
+    xmlElement->removeAttribute("Type");
+    event->setType(type.substring(1));
+
+    for (int i = 0; i < xmlElement->getNumAttributes(); i++)
+    {
+        String name = xmlElement->getAttributeName(i);
+        String valueString = xmlElement->getStringAttribute(name);
+        if(valueString.startsWith("@array:"))
+        {
+            StringArray tokens;
+            Array<var> varArray;
+            tokens.addTokens(valueString, "\t");
+            for (int iToken = 1; iToken < tokens.size(); iToken++)
+            {
+                var v = fromXmlTypedString(tokens[iToken]);
+                varArray.add(v);
+            }
+
+            event->setProperty(name, varArray);
+        }
+        else
+        {
+            var v = fromXmlTypedString(valueString);
+            event->setProperty(name, v);
         }
     }
 
@@ -367,4 +431,35 @@ void Polytempo_Event::removeProperty(String key)
 NamedValueSet* Polytempo_Event::getProperties() const
 {
     return properties.get();
+}
+
+String Polytempo_Event::getXmlTypedString(const var value)
+{
+    if (value.isBool())
+        return "b:" + value.toString();
+    if (value.isDouble())
+        return "d:" + value.toString();
+    if (value.isInt())
+        return "i:" + value.toString();
+    if (value.isInt64())
+        return "i64:" + value.toString();
+    
+    return "s:" + value.toString();
+}
+
+var Polytempo_Event::fromXmlTypedString(String string)
+{
+    if (string.startsWith("b:"))
+        return bool(string.substring(2).getIntValue());
+    if (string.startsWith("d:"))
+        return string.substring(2).getDoubleValue();
+    if (string.startsWith("i:"))
+        return string.substring(2).getIntValue();
+    if (string.startsWith("i64:"))
+        return string.substring(4).getLargeIntValue();
+    if (string.startsWith("s:"))
+        return string.substring(2);
+
+    DBG("Invalid typed string received: " + string);
+    return 0;
 }
