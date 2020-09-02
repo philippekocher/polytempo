@@ -222,7 +222,7 @@ void Polytempo_InterprocessCommunication::notifyAllClients(MemoryBlock m, String
 {
     for (Ipc* connection : serverConnections)
     {
-        if (namePattern == String() || connection->getRemoteScoreName().matchesWildcard(namePattern, true))
+        if (namePattern == String() || connection->getRemoteScoreName().matchesWildcard(namePattern, true) || connection->getRemotePeerName().matchesWildcard(namePattern, true))
             connection->sendMessage(m);
     }
 }
@@ -288,9 +288,10 @@ void Polytempo_InterprocessCommunication::distributeEvent(Polytempo_Event* pEven
 {
     pEvent->setSyncTime(Polytempo_TimeProvider::getInstance()->getDelaySafeTimestamp());
     String localScoreName = Polytempo_NetworkSupervisor::getInstance()->getScoreName();
+    String localInstanceName = Polytempo_NetworkSupervisor::getInstance()->getPeerName();
 
     XmlElement eventAsXml = pEvent->getXml();
-    if (localScoreName.matchesWildcard(namePattern, true))
+    if (localScoreName.matchesWildcard(namePattern, true) || localInstanceName.matchesWildcard(namePattern, true))
         Polytempo_EventScheduler::getInstance()->scheduleEvent(pEvent);
 
     notifyAllClients(eventAsXml, namePattern);
