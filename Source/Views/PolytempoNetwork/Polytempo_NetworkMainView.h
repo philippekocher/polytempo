@@ -32,7 +32,7 @@ public:
         float alpha = 0;
     };
     BlackPanel* blackPanel;
-    void setBrightness(float amount) { if (amount > 1.0f) amount = 1.0f; if (amount < 0) amount = 0; blackPanel->alpha = 1.0-amount; repaint(); }
+    void setBrightness(float amount) { if (amount > 1.0f) amount = 1.0f; if (amount < 0) amount = 0; blackPanel->alpha = 1.0f-amount; repaint(); }
 
 private:
     Polytempo_VisualMetro* visualMetro;

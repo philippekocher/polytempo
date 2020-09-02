@@ -292,7 +292,12 @@ void Polytempo_InterprocessCommunication::distributeEvent(Polytempo_Event* pEven
 
     XmlElement eventAsXml = pEvent->getXml();
     if (localScoreName.matchesWildcard(namePattern, true) || localInstanceName.matchesWildcard(namePattern, true))
+    {
+        if (pEvent->hasProperty(eventPropertyString_Defer))
+            pEvent->setSyncTime(pEvent->getSyncTime() + int(float(pEvent->getProperty(eventPropertyString_Defer)) * 1000.0f));
+
         Polytempo_EventScheduler::getInstance()->scheduleEvent(pEvent);
+    }
 
     notifyAllClients(eventAsXml, namePattern);
 }
