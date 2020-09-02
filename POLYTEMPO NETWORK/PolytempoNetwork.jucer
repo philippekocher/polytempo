@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="at55VB" name="PolytempoNetwork" projectType="guiapp" version="0.4.3"
-              bundleIdentifier="net.icst.PolytempoNetwork" jucerVersion="5.4.7"
-              companyName="ICST Institute for Computermusic and Sound Technology, Zurich"
+              bundleIdentifier="net.icst.PolytempoNetwork" companyName="ICST Institute for Computermusic and Sound Technology, Zurich"
               includeBinaryInAppConfig="1" companyWebsite="www.icst.net" defines="POLYTEMPO_NETWORK=1"
               displaySplashScreen="1" reportAppUsage="1" splashScreenColour="Dark"
-              cppLanguageStandard="11" companyCopyright="ICST Institute for Computermusic and Sound Technology, Zurich">
+              cppLanguageStandard="11" companyCopyright="ICST Institute for Computermusic and Sound Technology, Zurich"
+              jucerFormatVersion="1">
   <MAINGROUP id="AdMxtt" name="PolytempoNetwork">
     <GROUP id="{380F2332-7EED-CAEF-0B98-BEC0BC16E53A}" name="Resources">
       <FILE id="Z9EfR9" name="colorPalette.png" compile="0" resource="1"
@@ -80,6 +80,10 @@
             file="../Source/Misc/Polytempo_Textbox.h"/>
     </GROUP>
     <GROUP id="{20871079-D757-6FAE-C7D7-6B4E6D796F76}" name="Network">
+      <FILE id="CDFXnW" name="Polytempo_OSCSender.cpp" compile="1" resource="0"
+            file="../Source/Network/Polytempo_OSCSender.cpp"/>
+      <FILE id="YEFdmU" name="Polytempo_OSCSender.h" compile="0" resource="0"
+            file="../Source/Network/Polytempo_OSCSender.h"/>
       <FILE id="CTcOpu" name="Polytempo_InterprocessCommunication.cpp" compile="1"
             resource="0" file="../Source/Network/Polytempo_InterprocessCommunication.cpp"/>
       <FILE id="EEzCc0" name="Polytempo_InterprocessCommunication.h" compile="0"

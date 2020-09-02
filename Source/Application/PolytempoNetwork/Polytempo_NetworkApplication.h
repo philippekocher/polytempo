@@ -3,6 +3,7 @@
 #include "Polytempo_NetworkWindow.h"
 #include "Polytempo_NetworkMenuBarModel.h"
 #include "../../Network/Polytempo_OSCListener.h"
+#include "../../Network/Polytempo_OSCSender.h"
 #include "../../Data/Polytempo_Score.h"
 #include "../../Audio+Midi/Polytempo_MidiInput.h"
 #include "../../Misc/Polytempo_Alerts.h"
@@ -46,6 +47,7 @@ private:
     std::unique_ptr<Polytempo_NetworkWindow> mainWindow;
     std::unique_ptr<Polytempo_MenuBarModel> menuBarModel;
     std::unique_ptr<Polytempo_OSCListener> oscListener;
+    std::unique_ptr<Polytempo_OSCSender> oscSender;
     std::unique_ptr<Polytempo_MidiInput> midiInput;
     std::unique_ptr<Polytempo_Score> score;
     std::unique_ptr<FileLogger> fileLogger;
