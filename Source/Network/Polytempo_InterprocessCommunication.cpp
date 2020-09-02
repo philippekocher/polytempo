@@ -46,28 +46,7 @@ void Ipc::messageReceived(const MemoryBlock& message)
         }
         else if (xml->getTagName() == "Event")
         {
-            String type = xml->getStringAttribute("Type");
-            xml->removeAttribute("Type");
-            Array<var> messages;
-            for (int i = 0; i < xml->getNumAttributes(); i++)
-            {
-                String name = xml->getAttributeName(i);
-                messages.add(name);
-                String val = xml->getStringAttribute(name);
-                if (val.containsOnly("0123456789"))
-                {
-                    messages.add(val.getIntValue());
-                }
-                else if (val.containsOnly("0123456789."))
-                {
-                    messages.add(val.getDoubleValue());
-                }
-                else
-                {
-                    messages.add(xml->getStringAttribute(name));
-                }
-            }
-            Polytempo_Event* e = Polytempo_Event::makeEvent(type, messages);
+            Polytempo_Event* e = Polytempo_Event::makeEvent(xml.get());
             if (e->getType() == eventType_None)
             {
                 DBG("--unknown");
