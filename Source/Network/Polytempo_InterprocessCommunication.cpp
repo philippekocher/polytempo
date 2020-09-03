@@ -4,6 +4,7 @@
 #include "../Scheduler/Polytempo_EventScheduler.h"
 #include "../Misc/Polytempo_Alerts.h"
 #include "Polytempo_NetworkSupervisor.h"
+#include "../Application/PolytempoNetwork/Polytempo_NetworkApplication.h"
 
 Ipc::Ipc() : InterprocessConnection(false), lastHeartBeat(0)
 {
@@ -53,7 +54,29 @@ void Ipc::messageReceived(const MemoryBlock& message)
                 delete e;
                 return;
             }
+            
+#ifdef POLYTEMPO_NETWORK
+            else if(e->getType() == Polytempo_EventType::eventType_Open)
+            {
+                const MessageManagerLock mml(Thread::getCurrentThread());
 
+                DBG("open");
+                // "Open Score": only PolytempoNetwork
+
+                Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
+                if (e->hasProperty(eventPropertyString_URL))
+                {
+                    String filePath(e->getProperty(eventPropertyString_URL).toString());
+                    if (filePath.startsWithChar(File::getSeparatorChar()) ||
+                        filePath.startsWithChar('~'))
+                        // call on the message thread
+                        MessageManager::callAsync ([app, filePath]() {
+                            app->openScoreFilePath(filePath);
+                        });
+                }
+            }
+#endif
+            
             // calculate syncTime
             uint32 syncTime;
 
@@ -78,7 +101,7 @@ void Ipc::messageReceived(const MemoryBlock& message)
                 syncTime += int(float(e->getProperty(eventPropertyString_Defer)) * 1000.0f);
 
             e->setSyncTime(syncTime);
-
+            
             Polytempo_EventScheduler::getInstance()->scheduleEvent(e);
         }
     }
