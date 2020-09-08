@@ -67,12 +67,12 @@ void Ipc::messageReceived(const MemoryBlock& message)
                 if (e->hasProperty(eventPropertyString_URL))
                 {
                     String filePath(e->getProperty(eventPropertyString_URL).toString());
-                    if (filePath.startsWithChar(File::getSeparatorChar()) ||
-                        filePath.startsWithChar('~'))
+                    File file(filePath);
+                    if (file.existsAsFile())
+                    {
                         // call on the message thread
-                        MessageManager::callAsync ([app, filePath]() {
-                            app->openScoreFilePath(filePath);
-                        });
+                        MessageManager::callAsync([app, filePath]() { app->openScoreFilePath(filePath); });
+                    }
                 }
             }
 #endif

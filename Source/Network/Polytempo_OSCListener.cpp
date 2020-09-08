@@ -75,12 +75,12 @@ void Polytempo_OSCListener::oscMessageReceived(const OSCMessage& message)
         if (argumentIterator != message.end() && (*argumentIterator).isString())
         {
             String filePath(argumentIterator->getString());
-            if (filePath.startsWithChar(File::getSeparatorChar()) ||
-                filePath.startsWithChar('~'))
+            File file(filePath);
+            if (file.existsAsFile())
+            {
                 // call on the message thread
-                MessageManager::callAsync ([app, filePath]() {
-                    app->openScoreFilePath(filePath);
-                });
+                MessageManager::callAsync([app, filePath]() { app->openScoreFilePath(filePath); });
+            }
         }
     }
     else if (addressPattern.matchesWildcard("/*/*", true) && Polytempo_TimeProvider::getInstance()->isMaster())
