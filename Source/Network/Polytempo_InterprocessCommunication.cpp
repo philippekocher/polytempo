@@ -61,12 +61,12 @@ void Ipc::messageReceived(const MemoryBlock& message)
                 const MessageManagerLock mml(Thread::getCurrentThread());
 
                 DBG("open");
-                // "Open Score": only PolytempoNetwork
 
                 Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
-                if (e->hasProperty(eventPropertyString_URL))
+                if (e->hasProperty(eventPropertyString_URL) || e->hasProperty(eventPropertyString_Value))
                 {
                     String filePath(e->getProperty(eventPropertyString_URL).toString());
+                    if(filePath.isEmpty()) filePath = e->getProperty(eventPropertyString_Value).toString();
                     File file(filePath);
                     if (file.existsAsFile())
                     {
