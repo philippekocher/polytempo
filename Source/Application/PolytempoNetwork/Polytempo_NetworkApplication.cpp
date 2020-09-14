@@ -56,7 +56,7 @@ void Polytempo_NetworkApplication::initialise(const String& commandLine)
 
 #if (! JUCE_DEBUG)
     // contact web server
-    URL url = URL("https://polytempo.zhdk.ch/stats/log.php?application="+getApplicationName()+"&version="+getApplicationVersion());
+    URL url = URL("https://polytempo.zhdk.ch/stats/log.php?application="+getApplicationName()+"&version="+getApplicationVersion()+"&os="+SystemStats::getOperatingSystemName()+"&user="+SystemStats::getFullUserName());
     auto stream = url.createInputStream(true);
 #endif
 
