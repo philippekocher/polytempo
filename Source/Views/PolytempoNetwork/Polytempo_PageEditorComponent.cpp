@@ -53,7 +53,8 @@ void Polytempo_PageEditorComponent::resized()
 {
     if (image && image->isValid())
     {
-        setBounds(0, 0, (int)(image->getWidth() * zoomFactor), (int)(image->getHeight() * zoomFactor));
+        Rectangle<int> r = getBounds();
+        setBounds(r.getX(), r.getY(), (int)(image->getWidth() * zoomFactor), (int)(image->getHeight() * zoomFactor));
 
         if (dragHandles.getUnchecked(0)->isVisible())
         {
@@ -89,7 +90,8 @@ void Polytempo_PageEditorComponent::setSectionRect(Rectangle<float> r)
         for (int i = 0; i < 4; i++)
         {
             dragHandles.getUnchecked(i)->setVisible(true);
-            dragHandles.getUnchecked(i)->setBoundsConstraint(getBounds());
+            Rectangle<int> r = Rectangle<int>(0,0,image->getWidth() * zoomFactor, image->getHeight() * zoomFactor);
+            dragHandles.getUnchecked(i)->setBoundsConstraint(r);
         }
         resized();
     }
