@@ -302,7 +302,7 @@ void Polytempo_NetworkApplication::saveScoreFile(bool showFileDialog)
 void Polytempo_NetworkApplication::openScoreFilePath(String filePath)
 {
     // check if Path exists and open file
-    File file = File(filePath);
+    File file = File(filePath.unquoted());
     if (file.existsAsFile() == 1) openScoreFile(file);
 }
 
