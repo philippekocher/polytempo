@@ -34,7 +34,8 @@ void Polytempo_NetworkInfoView::paint(Graphics& g)
             for (Polytempo_PeerInfo* peer : peers)
             {
                 attributedPeers.append(" \n", Font(4.0f, Font::plain));
-                attributedPeers.append(peer->scoreName + " (" + peer->peerName + ")\n", Font(12.0f, Font::plain), peer->connectionOk ? Colours::darkgreen : Colours::orangered);
+                String name = peer->scoreName + " (" + (peer->peerName.isNotEmpty() ? peer->peerName : "-") + ")\n";
+                attributedPeers.append(name, Font(12.0f, Font::plain), peer->connectionOk ? Colours::darkgreen : Colours::orangered);
             }
         }
     }
@@ -46,7 +47,8 @@ void Polytempo_NetworkInfoView::paint(Graphics& g)
         {
             attributedPeers.append("Connected to Master:\n", Font(12, Font::bold));
             attributedPeers.append(" \n", Font(4.0f, Font::plain));
-            attributedPeers.append(peer->scoreName + " (" + peer->peerName + ")\n", Font(12.0f, Font::plain), peer->connectionOk ? Colours::darkgreen : Colours::orangered);
+            String name = peer->scoreName + " (" + (peer->peerName.isNotEmpty() ? peer->peerName : "-") + ")\n";
+            attributedPeers.append(name, Font(12.0f, Font::plain), peer->connectionOk ? Colours::darkgreen : Colours::orangered);
         }
     }
     attributedPeers.draw(g, Rectangle<int>(0, 10, getWidth(), getHeight()).toFloat());

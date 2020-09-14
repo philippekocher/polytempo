@@ -935,14 +935,17 @@ public:
 #pragma mark -
 #pragma mark Network Preferences Page
 
-class NetworkPreferencesPage : public Component, Button::Listener, TableListBoxModel
+class NetworkPreferencesPage : public Component, Button::Listener, TableListBoxModel, TextEditor::Listener
 {
     TableListBox* ipList;
     Button* refreshButton;
     Button* manualConnectButton;
     Label* adapterInfoLabel;
+    Label* networkListLabel;
     Array<Polytempo_IPAddress> ipAddresses;
     Polytempo_IPAddress selectedAddress;
+    TextEditor* instanceName;
+    Label* instanceNameLabel;
     int numRows = 0;
 
     const static int ColumnIdIp = 1;
@@ -952,6 +955,22 @@ class NetworkPreferencesPage : public Component, Button::Listener, TableListBoxM
 public:
     NetworkPreferencesPage()
     {
+        addAndMakeVisible(instanceName = new TextEditor());
+        instanceName->setText(Polytempo_StoredPreferences::getInstance()->getProps().getValue("instanceName"));
+        instanceName->setBorder(BorderSize<int>(1));
+        instanceName->setColour(TextEditor::outlineColourId, Colours::grey);
+        instanceName->addListener(this);
+
+        addAndMakeVisible(instanceNameLabel = new Label(String(), L"Instance Name:"));
+        instanceNameLabel->setFont(Font(15.0000f, Font::plain));
+        instanceNameLabel->setJustificationType(Justification::centredLeft);
+        instanceNameLabel->setEditable(false, false, false);
+
+        addAndMakeVisible(networkListLabel = new Label(String(), L"Available networks:"));
+        networkListLabel->setFont(Font(15.0000f, Font::plain));
+        networkListLabel->setJustificationType(Justification::centredLeft);
+        networkListLabel->setEditable(false, false, false);
+
         addAndMakeVisible(ipList = new TableListBox());
         ipList->setModel(this);
         ipList->getHeader().addColumn("IP-Address", ColumnIdIp, 110);
@@ -983,6 +1002,12 @@ public:
         deleteAllChildren();
     }
 
+    void textEditorTextChanged(TextEditor& editor) override
+    {
+        DBG(editor.getText());
+        Polytempo_StoredPreferences::getInstance()->getProps().setValue("instanceName", editor.getText());
+    }
+
     void updateIpList()
     {
         numRows = 0;
@@ -993,10 +1018,13 @@ public:
 
     void resized() override
     {
-        ipList->setBounds(20, 110, getWidth() - 40, getHeight() - 260);
-        refreshButton->setBounds(20, 40, getWidth() - 40, 24);
-        manualConnectButton->setBounds(20, 70, getWidth() - 40, 24);
-        adapterInfoLabel->setBounds(20, getHeight() - 150, getWidth() - 40, 150);
+        instanceNameLabel->setBounds(20, 40, 120, 24);
+        instanceName->setBounds(140, 40, getWidth() - 160, 24);
+        networkListLabel->setBounds(20, 80, getWidth() - 40, 24);
+        ipList->setBounds(20, 110, getWidth() - 40, getHeight() - 340);
+        refreshButton->setBounds(20, getHeight() - 80, getWidth() - 40, 24);
+        manualConnectButton->setBounds(20, getHeight() - 50, getWidth() - 40, 24);
+        adapterInfoLabel->setBounds(20, getHeight() - 230, getWidth() - 40, 150);
     }
 
     /* combobox & button listener
