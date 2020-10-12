@@ -185,7 +185,7 @@ void Polytempo_NetworkApplication::applicationShouldQuit()
 
 void Polytempo_NetworkApplication::anotherInstanceStarted(const String& commandLine)
 {
-    openScoreFilePath(commandLine); // enable 'open with' (MAC)
+    openScoreFilePath(commandLine.unquoted()); // enable 'open with' (MAC)
     
     // When another instance of the app is launched while this one is running,
     // this method is invoked, and the commandLine parameter tells you what
@@ -302,7 +302,7 @@ void Polytempo_NetworkApplication::saveScoreFile(bool showFileDialog)
 void Polytempo_NetworkApplication::openScoreFilePath(String filePath)
 {
     // check if Path exists and open file
-    File file = File(filePath.unquoted());
+    File file = File(filePath);
     if (file.existsAsFile() == 1) openScoreFile(file);
 }
 
