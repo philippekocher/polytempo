@@ -163,7 +163,7 @@ bool Polytempo_Score::setTime(int time, Array<Polytempo_Event*> *events, float *
             || eventType == eventType_Progressbar
            || (eventType == eventType_Image && imageEvent != nullptr))
         {
-            tempTime = imageEvent != nullptr ? float(event->getTime()) : float(imageEvent->getTime());
+            tempTime = imageEvent == nullptr ? float(event->getTime()) : float(imageEvent->getTime());
             *waitBeforStart = tempTime - time;
             
             // find the first event that has the same time as the downbeat
