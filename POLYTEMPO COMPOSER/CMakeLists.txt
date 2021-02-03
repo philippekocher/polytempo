@@ -29,7 +29,6 @@ target_sources(PolytempoComposer PRIVATE
     ../Source/Data/Polytempo_TempoInterpolation.cpp
     ../Source/Network/Polytempo_IPAddress.cpp
     ../Source/Network/Polytempo_NetworkInterfaceManager.cpp
-    ../Source/Network/Polytempo_NetworkSupervisor.cpp
     ../Source/Network/Polytempo_TimeProvider.cpp
     ../Source/Preferences/Polytempo_DefaultPreferences.cpp
     ../Source/Preferences/Polytempo_ComposerPreferencesPanel.cpp
@@ -64,7 +63,7 @@ target_compile_definitions(PolytempoComposer PRIVATE
     JUCE_STRICT_REFCOUNTEDPOINTER=1
     JUCE_USE_CURL=0
     JUCE_WEB_BROWSER=0
-    POLYTEMPO_NETWORK=1)
+    POLYTEMPO_COMPOSER=1)
 
 
 juce_add_binary_data(PolytempoComposerData SOURCES
