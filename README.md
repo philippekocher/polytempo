@@ -26,4 +26,4 @@ Use CMake to build PolytempoNetwork and PolytempoComposer
     cd build
 
     cmake ..
-    build
+    cmake --build . --config Release
