@@ -31,7 +31,7 @@ private:
     void notify(Polytempo_Event* event);
 
     Array<class Polytempo_EventObserver *> observers;
-    Array<Polytempo_Event*> scheduledScoreEvents;
-    Array<Polytempo_Event*> scheduledEvents;
+    Array<Polytempo_Event*, CriticalSection> scheduledScoreEvents;
+    Array<Polytempo_Event*, CriticalSection> scheduledEvents;
     bool deleteEvents = false;
 };
