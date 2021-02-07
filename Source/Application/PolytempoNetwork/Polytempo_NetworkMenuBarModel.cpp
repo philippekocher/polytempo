@@ -482,7 +482,7 @@ void Polytempo_MenuBarModel::getCommandInfo(CommandID commandID, ApplicationComm
         /* help menu
          ----------------------------------*/
     case Polytempo_CommandIDs::help:
-        result.setInfo ("Online Documentation", String(), infoCategory, 0);
+        result.setInfo("Online Documentation", String(), infoCategory, 0);
         result.addDefaultKeypress('?', ModifierKeys::commandModifier);
         break;
 

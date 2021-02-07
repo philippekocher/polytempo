@@ -144,19 +144,26 @@ bool Polytempo_Score::setTime(int time, Array<Polytempo_Event*> *events, float *
     int i,j;
     float tempTime;
     Polytempo_Event *event = nullptr;
+    Polytempo_Event *imageEvent = nullptr;
+
     bool done = false;
     
     // find next downbeat OR next cue-in OR next progressbar
+    // OR next image that is not followed by one of the above
     for(i=0;i<sections[currentSectionIndex]->events.size();i++)
     {
         event = sections[currentSectionIndex]->events[i];
-        if(event->getTime() >= time &&
-           ((event->getType() == eventType_Beat &&
+        if(event->getTime() < time) continue;
+        
+        Polytempo_EventType eventType = event->getType();
+
+        if((eventType == eventType_Beat &&
             (int(event->getProperty(eventPropertyString_Pattern)) < 20 ||
              int(event->getProperty(eventPropertyString_Cue)) > 0))
-            || event->getType() == eventType_Progressbar))
+            || eventType == eventType_Progressbar
+           || (eventType == eventType_Image && imageEvent != nullptr))
         {
-            tempTime = float(event->getTime());
+            tempTime = imageEvent == nullptr ? float(event->getTime()) : float(imageEvent->getTime());
             *waitBeforStart = tempTime - time;
             
             // find the first event that has the same time as the downbeat
@@ -167,6 +174,8 @@ bool Polytempo_Score::setTime(int time, Array<Polytempo_Event*> *events, float *
             done = true;
             break;
         }
+        
+        if(eventType == eventType_Image) imageEvent = event;
     }
     
     // if no downbeat, cue-in or progressbar has been found: find any event
@@ -198,13 +207,18 @@ bool Polytempo_Score::setTime(int time, Array<Polytempo_Event*> *events, float *
         if(event->getTime() > time + *waitBeforStart)
             break;
         
-        if(event->getType() == eventType_Beat ||
-           event->getType() == eventType_Osc)   continue;
+        Polytempo_EventType eventType = event->getType();
         
-        else if(event->getType() == eventType_Marker)
+        if(eventType == eventType_Beat ||
+           eventType == eventType_Osc ||
+           eventType == eventType_GotoTime || eventType == eventType_GotoMarker ||
+           eventType == eventType_Start || eventType == eventType_Pause || eventType == eventType_Stop)
+            continue;
+        
+        else if(eventType == eventType_Marker)
             marker = event;
         
-        else if(event->getType() == eventType_Image)
+        else if(eventType == eventType_Image)
             images.set(event->getProperty(eventPropertyString_RegionID), event);
         
         else

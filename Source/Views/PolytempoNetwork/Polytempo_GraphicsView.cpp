@@ -86,7 +86,7 @@ void Polytempo_GraphicsView::displayImage(Polytempo_Event* event)
     Polytempo_GraphicsViewRegion* region = nullptr;
     Image* image = nullptr;
     var rect;
-    String imageId;
+    var imageId;
 
     if (regionsMap.contains(event->getProperty(eventPropertyString_RegionID)))
     {

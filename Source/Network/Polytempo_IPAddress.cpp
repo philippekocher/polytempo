@@ -1,7 +1,7 @@
 #include "Polytempo_IPAddress.h"
 
 #if JUCE_WINDOWS
-#include "../JuceLibraryCode/modules/juce_core/native/juce_BasicNativeHeaders.h"
+#include "../../JUCE/modules/juce_core/native/juce_BasicNativeHeaders.h"
 #else
 #include "sys/socket.h"
 #include "sys/ioctl.h"

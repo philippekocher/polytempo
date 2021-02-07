@@ -4,6 +4,7 @@
 #include "../Scheduler/Polytempo_EventScheduler.h"
 #include "../Misc/Polytempo_Alerts.h"
 #include "Polytempo_NetworkSupervisor.h"
+#include "../Application/PolytempoNetwork/Polytempo_NetworkApplication.h"
 
 Ipc::Ipc() : InterprocessConnection(false), lastHeartBeat(0)
 {
@@ -46,35 +47,36 @@ void Ipc::messageReceived(const MemoryBlock& message)
         }
         else if (xml->getTagName() == "Event")
         {
-            String type = xml->getStringAttribute("Type");
-            xml->removeAttribute("Type");
-            Array<var> messages;
-            for (int i = 0; i < xml->getNumAttributes(); i++)
-            {
-                String name = xml->getAttributeName(i);
-                messages.add(name);
-                String val = xml->getStringAttribute(name);
-                if (val.containsOnly("0123456789"))
-                {
-                    messages.add(val.getIntValue());
-                }
-                else if (val.containsOnly("0123456789."))
-                {
-                    messages.add(val.getDoubleValue());
-                }
-                else
-                {
-                    messages.add(xml->getStringAttribute(name));
-                }
-            }
-            Polytempo_Event* e = Polytempo_Event::makeEvent(type, messages);
+            Polytempo_Event* e = Polytempo_Event::makeEvent(xml.get());
             if (e->getType() == eventType_None)
             {
                 DBG("--unknown");
                 delete e;
                 return;
             }
+            
+#ifdef POLYTEMPO_NETWORK
+            else if(e->getType() == Polytempo_EventType::eventType_Open)
+            {
+                const MessageManagerLock mml(Thread::getCurrentThread());
 
+                DBG("open");
+
+                Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
+                if (e->hasProperty(eventPropertyString_URL) || e->hasProperty(eventPropertyString_Value))
+                {
+                    String filePath(e->getProperty(eventPropertyString_URL).toString());
+                    if(filePath.isEmpty()) filePath = e->getProperty(eventPropertyString_Value).toString();
+                    File file(filePath);
+                    if (file.existsAsFile())
+                    {
+                        // call on the message thread
+                        MessageManager::callAsync([app, filePath]() { app->openScoreFilePath(filePath); });
+                    }
+                }
+            }
+#endif
+            
             // calculate syncTime
             uint32 syncTime;
 
@@ -99,7 +101,7 @@ void Ipc::messageReceived(const MemoryBlock& message)
                 syncTime += int(float(e->getProperty(eventPropertyString_Defer)) * 1000.0f);
 
             e->setSyncTime(syncTime);
-
+            
             Polytempo_EventScheduler::getInstance()->scheduleEvent(e);
         }
     }
@@ -222,7 +224,7 @@ void Polytempo_InterprocessCommunication::notifyAllClients(MemoryBlock m, String
 {
     for (Ipc* connection : serverConnections)
     {
-        if (namePattern == String() || connection->getRemoteScoreName().matchesWildcard(namePattern, true))
+        if (namePattern == String() || connection->getRemoteScoreName().matchesWildcard(namePattern, true) || connection->getRemotePeerName().matchesWildcard(namePattern, true))
             connection->sendMessage(m);
     }
 }
@@ -288,10 +290,16 @@ void Polytempo_InterprocessCommunication::distributeEvent(Polytempo_Event* pEven
 {
     pEvent->setSyncTime(Polytempo_TimeProvider::getInstance()->getDelaySafeTimestamp());
     String localScoreName = Polytempo_NetworkSupervisor::getInstance()->getScoreName();
+    String localInstanceName = Polytempo_NetworkSupervisor::getInstance()->getPeerName();
 
     XmlElement eventAsXml = pEvent->getXml();
-    if (localScoreName.matchesWildcard(namePattern, true))
+    if (localScoreName.matchesWildcard(namePattern, true) || localInstanceName.matchesWildcard(namePattern, true))
+    {
+        if (pEvent->hasProperty(eventPropertyString_Defer))
+            pEvent->setSyncTime(pEvent->getSyncTime() + int(float(pEvent->getProperty(eventPropertyString_Defer)) * 1000.0f));
+
         Polytempo_EventScheduler::getInstance()->scheduleEvent(pEvent);
+    }
 
     notifyAllClients(eventAsXml, namePattern);
 }

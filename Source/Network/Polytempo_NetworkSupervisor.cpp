@@ -107,7 +107,8 @@ void Polytempo_NetworkSupervisor::unicastFlood(Polytempo_IPAddress ownIp)
 
 String Polytempo_NetworkSupervisor::getDescription() const
 {
-    return getScoreName() + String(" (") + getPeerName() + String(")");
+    String peerName = getPeerName();
+    return getScoreName() + " (" + (peerName.isNotEmpty() ? peerName : "-") + ")";
 }
 
 String Polytempo_NetworkSupervisor::getScoreName() const
@@ -117,7 +118,7 @@ String Polytempo_NetworkSupervisor::getScoreName() const
 
 String Polytempo_NetworkSupervisor::getPeerName() const
 {
-    return String(*nodeName);
+    return String(Polytempo_StoredPreferences::getInstance()->getProps().getValue("instanceName"));
 }
 
 void Polytempo_NetworkSupervisor::createSender(int port)

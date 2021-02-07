@@ -1,8 +1,5 @@
 # Exclude the build directory
-**/Builds/*
-
-# Exclude the juce specific code
-**/JuceLibraryCode/*
+build/
 
 # Exclude OS X folder attributes
 .DS_Store

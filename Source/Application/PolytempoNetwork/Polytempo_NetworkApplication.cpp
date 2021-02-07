@@ -41,6 +41,7 @@ void Polytempo_NetworkApplication::initialise(const String& commandLine)
     // create network connection
     oscListener.reset(new Polytempo_OSCListener(OSC_PORT_COMMUNICATION));
     Polytempo_NetworkSupervisor::getInstance()->createSender(OSC_PORT_COMMUNICATION);
+    oscSender.reset(new Polytempo_OSCSender());
 
     // audio and midi
     Polytempo_AudioClick::getInstance();
@@ -113,6 +114,7 @@ void Polytempo_NetworkApplication::shutdown()
     // delete scoped pointers
     mainWindow = nullptr;
     oscListener = nullptr;
+    oscSender = nullptr;
     midiInput = nullptr;
     score = nullptr;
     menuBarModel = nullptr;
@@ -183,7 +185,7 @@ void Polytempo_NetworkApplication::applicationShouldQuit()
 
 void Polytempo_NetworkApplication::anotherInstanceStarted(const String& commandLine)
 {
-    openScoreFilePath(commandLine); // enable 'open with' (MAC)
+    openScoreFilePath(commandLine.unquoted()); // enable 'open with' (MAC)
     
     // When another instance of the app is launched while this one is running,
     // this method is invoked, and the commandLine parameter tells you what

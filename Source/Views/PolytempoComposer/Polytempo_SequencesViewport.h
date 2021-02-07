@@ -27,7 +27,7 @@ public:
         colourSelector->setColour(ColourSelector::backgroundColourId, Colours::transparentBlack);
         colourSelector->setSize(200, 200);
         
-        CallOutBox::launchAsynchronously(colourSelector, getScreenBounds(), nullptr);
+        CallOutBox::launchAsynchronously((std::unique_ptr<Component>)colourSelector, getScreenBounds(), nullptr);
     }
     
     void changeListenerCallback (ChangeBroadcaster* source) override
