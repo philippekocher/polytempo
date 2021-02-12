@@ -28,10 +28,13 @@ jobs:
         include:
         - os: ubuntu-latest
           artifact: Linux
+          extension: ''
         - os: windows-latest
           artifact: Windows
+          extension: '.exe'
         - os: macos-latest
           artifact: MacOS
+          extension: '.app'
     
     steps:
     - name: Get the version
@@ -45,6 +48,12 @@ jobs:
       
     - name: Checkout submodules
       run: git submodule update --init --recursive --depth 1
+      
+    - name: Set Project Version
+      shell: bash
+      run: |
+        sed -i.bak "s/VERSION.*/VERSION ${{ steps.get_version.outputs.VERSION }}/" ${{env.NETWORK_DIR}}/CMakeLists.txt
+        sed -i.bak "s/VERSION.*/VERSION ${{ steps.get_version.outputs.VERSION }}/" ${{env.COMPOSER_DIR}}/CMakeLists.txt
       
     - if: ${{ runner.os == 'Linux' }}
       name: Install JUCE dependencies (Linux only)
@@ -88,13 +97,13 @@ jobs:
     - name: Upload Artifact Polytempo Network
       uses: actions/upload-artifact@v2
       with:
-        path: ${{runner.workspace}}/${{ env.BUILD_DIR }}/${{env.NETWORK_DIR}}/${{ env.PROJECT_NAME_NETWORK }}_artefacts/${{ env.BUILD_TYPE }}/${{env.PROJECT_NAME_NETWORK}}.exe
+        path: ${{runner.workspace}}/${{ env.BUILD_DIR }}/${{env.NETWORK_DIR}}/${{ env.PROJECT_NAME_NETWORK }}_artefacts/${{ env.BUILD_TYPE }}/${{env.PROJECT_NAME_NETWORK}}${{matrix.extension}}
         name: ${{ env.PROJECT_NAME_NETWORK }}-${{ matrix.artifact }}
 
     - name: Upload Artifact Polytempo Composer
       uses: actions/upload-artifact@v2
       with:
-        path: ${{runner.workspace}}/${{ env.BUILD_DIR }}/${{env.COMPOSER_DIR}}/${{ env.PROJECT_NAME_COMPOSER }}_artefacts/${{ env.BUILD_TYPE }}/${{env.PROJECT_NAME_COMPOSER}}.exe
+        path: ${{runner.workspace}}/${{ env.BUILD_DIR }}/${{env.COMPOSER_DIR}}/${{ env.PROJECT_NAME_COMPOSER }}_artefacts/${{ env.BUILD_TYPE }}/${{env.PROJECT_NAME_COMPOSER}}${{matrix.extension}}
         name: ${{ env.PROJECT_NAME_COMPOSER }}-${{ matrix.artifact }}
 
 # create release
@@ -117,6 +126,6 @@ jobs:
 #        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 #      with:
 #        upload_url: ${{ steps.create_release.outputs.upload_url }} 
-#        asset_path: ${{runner.workspace}}/${{ env.BUILD_DIR }}/${{env.NETWORK_DIR}}/${{ env.PROJECT_NAME_NETWORK }}_artefacts/${{ env.BUILD_TYPE }}/${{env.PROJECT_NAME_NETWORK}}.exe
+#        asset_path: ${{runner.workspace}}/${{ env.BUILD_DIR }}/${{env.NETWORK_DIR}}/${{ env.PROJECT_NAME_NETWORK }}_artefacts/${{ env.BUILD_TYPE }}/${{env.PROJECT_NAME_NETWORK}}${{matrix.extension}}
 #        asset_name: ${{env.PROJECT_NAME_NETWORK}}_${{ steps.get_version.outputs.VERSION }}.exe
 #        asset_content_type: application/x-executable
