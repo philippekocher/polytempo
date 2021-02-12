@@ -2,9 +2,6 @@ name: CI
 
 on: push
   
-#  push:
-#    branches: 
-#      - master
 #  pull_request:
 #    branches:
 #      - master
@@ -34,26 +31,14 @@ jobs:
           extension: '.exe'
         - os: macos-latest
           artifact: MacOS
-          extension: '.app'
+          extension: '.zip'
     
     steps:
-    - name: Get the version
-      id: get_version
-      shell: bash
-      #run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
-      run: echo ::set-output name=VERSION::0.0.1
-      
     - name: Checkout Code
       uses: actions/checkout@v2
       
     - name: Checkout submodules
       run: git submodule update --init --recursive --depth 1
-      
-    - name: Set Project Version
-      shell: bash
-      run: |
-        sed -i.bak "s/VERSION.*/VERSION ${{ steps.get_version.outputs.VERSION }}/" "${{env.NETWORK_DIR}}/CMakeLists.txt"
-        sed -i.bak "s/VERSION.*/VERSION ${{ steps.get_version.outputs.VERSION }}/" "${{env.COMPOSER_DIR}}/CMakeLists.txt"
       
     - if: ${{ runner.os == 'Linux' }}
       name: Install JUCE dependencies (Linux only)
@@ -64,68 +49,50 @@ jobs:
         sudo apt-get install libwebkit2gtk-4.0-37 libwebkit2gtk-4.0-dev
         
     - name: Create Build Environment
-      # Some projects don't allow in-source building, so create a separate build directory
-      # We'll use this as our working directory for all subsequent commands
       run: cmake -E make_directory ${{runner.workspace}}/${{ env.BUILD_DIR }}
 
     - name: Configure CMake
-      # Use a bash shell so we can use the same syntax for environment variable
-      # access regardless of the host operating system
       shell: bash
       working-directory: ${{runner.workspace}}/${{ env.BUILD_DIR }}
-      # Note the current convention is to use the -S and -B options here to specify source 
-      # and build directories, but this is only available with CMake 3.13 and higher.  
-      # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
       run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE
 
     - name: Build
       working-directory: ${{runner.workspace}}/${{ env.BUILD_DIR }}
       shell: bash
-      # Execute the build.  You can specify a specific target with "--target <NAME>"
       run: cmake --build . --config $BUILD_TYPE
 
-    #- name: Zip 
-    #  working-directory: ${{runner.workspace}}/${{ env.BUILD_DIR }}
-    #  run: cmake -E tar cfv ${{ env.PROJECT_NAME_NETWORK }}-${{ matrix.artifact }}.zip --format=zip ${{env.NETWORK_DIR}}/${{ env.PROJECT_NAME_NETWORK }}_artefacts/${{ env.BUILD_TYPE }}
+# upload artifacts
+    - if: ${{ runner.os == 'macOS' }} 
+      name: Zip (MacOS only)
+      working-directory: ${{runner.workspace}}/${{ env.BUILD_DIR }}
+      run: |
+        cmake -E tar cfv ${{env.NETWORK_DIR}}/${{ env.PROJECT_NAME_NETWORK }}_artefacts/${{ env.BUILD_TYPE }}/${{ env.PROJECT_NAME_NETWORK }}_${{ matrix.artifact }}_ci_build.zip --format=zip ${{env.NETWORK_DIR}}/${{ env.PROJECT_NAME_NETWORK }}_artefacts/${{ env.BUILD_TYPE }}
+        cmake -E tar cfv ${{env.COMPOSER_DIR}}/${{ env.PROJECT_NAME_COMPOSER }}_artefacts/${{ env.BUILD_TYPE }}/${{ env.PROJECT_NAME_COMPOSER }}_${{ matrix.artifact }}_ci_build.zip --format=zip ${{env.COMPOSER_DIR}}/${{ env.PROJECT_NAME_COMPOSER }}_artefacts/${{ env.BUILD_TYPE }}
 
-    #- name: Upload Artifact
-    #  uses: actions/upload-artifact@v2
-    #  with:
-    #    path: ${{runner.workspace}}/${{ env.BUILD_DIR }}/${{ env.PROJECT_NAME_NETWORK }}-${{ matrix.artifact }}.zip
-    #    name: ${{ env.PROJECT_NAME_NETWORK }}-${{ matrix.artifact }}
+#    - if: ${{ runner.os == 'macOS' }} 
+#      name: Upload Artifact Polytempo Network (MacOS)
+#      uses: actions/upload-artifact@v2
+#      with:
+#        path: ${{runner.workspace}}/${{ env.BUILD_DIR }}/${{ env.PROJECT_NAME_NETWORK }}_${{ matrix.artifact }}_ci_build.zip
+#        name: ${{ env.PROJECT_NAME_NETWORK }}_${{ matrix.artifact }}_ci_build
 
+#    - if: ${{ runner.os == 'macOS' }} 
+#      name: Upload Artifact Polytempo Composer (MacOS)
+#      uses: actions/upload-artifact@v2
+#      with:
+#        path: ${{runner.workspace}}/${{ env.BUILD_DIR }}/${{ env.PROJECT_NAME_COMPOSER }}_${{ matrix.artifact }}_ci_build.zip
+#        name: ${{ env.PROJECT_NAME_COMPOSER }}_${{ matrix.artifact }}_ci_build
+
+#    - if: ${{ runner.os != 'macOS' }} 
     - name: Upload Artifact Polytempo Network
       uses: actions/upload-artifact@v2
       with:
         path: ${{runner.workspace}}/${{ env.BUILD_DIR }}/${{env.NETWORK_DIR}}/${{ env.PROJECT_NAME_NETWORK }}_artefacts/${{ env.BUILD_TYPE }}/${{env.PROJECT_NAME_NETWORK}}${{matrix.extension}}
-        name: ${{ env.PROJECT_NAME_NETWORK }}-${{ matrix.artifact }}
+        name: ${{ env.PROJECT_NAME_NETWORK }}_${{ matrix.artifact }}_ci_build
 
+#    - if: ${{ runner.os != 'macOS' }} 
     - name: Upload Artifact Polytempo Composer
       uses: actions/upload-artifact@v2
       with:
         path: ${{runner.workspace}}/${{ env.BUILD_DIR }}/${{env.COMPOSER_DIR}}/${{ env.PROJECT_NAME_COMPOSER }}_artefacts/${{ env.BUILD_TYPE }}/${{env.PROJECT_NAME_COMPOSER}}${{matrix.extension}}
-        name: ${{ env.PROJECT_NAME_COMPOSER }}-${{ matrix.artifact }}
-
-# create release
-#    - name: Create Release
-#      id: create_release
-#      uses: actions/create-release@v1
-#      env:
-#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#      with:
-#        tag_name: ${{ github.ref }}
-#        release_name: Release ${{ github.ref }}
-#        draft: false
-#        prerelease: false
-
-# upload asset
-#    - name: Upload Release Asset
-#      id: upload-release-asset
-#      uses: actions/upload-release-asset@v1
-#      env:
-#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#      with:
-#        upload_url: ${{ steps.create_release.outputs.upload_url }} 
-#        asset_path: ${{runner.workspace}}/${{ env.BUILD_DIR }}/${{env.NETWORK_DIR}}/${{ env.PROJECT_NAME_NETWORK }}_artefacts/${{ env.BUILD_TYPE }}/${{env.PROJECT_NAME_NETWORK}}${{matrix.extension}}
-#        asset_name: ${{env.PROJECT_NAME_NETWORK}}_${{ steps.get_version.outputs.VERSION }}.exe
-#        asset_content_type: application/x-executable
+        name: ${{ env.PROJECT_NAME_COMPOSER }}_${{ matrix.artifact }}_ci_build
