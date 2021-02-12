@@ -43,8 +43,8 @@ jobs:
     - name: Get the version
       id: get_version
       shell: bash
-      #run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
-      run: echo ::set-output name=VERSION::${{github.event.inputs.version}}
+      run: [ ${{github.event_name}} == "workflow_dispatch" ] && echo ::set-output name=VERSION::${{github.event.inputs.version}} || echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+      # if from manual run, use this version, otherwise use the version from the github ref tag
       
     - name: Checkout Code
       uses: actions/checkout@v2
@@ -67,32 +67,24 @@ jobs:
         sudo apt-get install libwebkit2gtk-4.0-37 libwebkit2gtk-4.0-dev
         
     - name: Create Build Environment
-      # Some projects don't allow in-source building, so create a separate build directory
-      # We'll use this as our working directory for all subsequent commands
       run: cmake -E make_directory ${{runner.workspace}}/${{ env.BUILD_DIR }}
 
     - name: Configure CMake
-      # Use a bash shell so we can use the same syntax for environment variable
-      # access regardless of the host operating system
       shell: bash
       working-directory: ${{runner.workspace}}/${{ env.BUILD_DIR }}
-      # Note the current convention is to use the -S and -B options here to specify source 
-      # and build directories, but this is only available with CMake 3.13 and higher.  
-      # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
       run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE
 
     - name: Build
       working-directory: ${{runner.workspace}}/${{ env.BUILD_DIR }}
       shell: bash
-      # Execute the build.  You can specify a specific target with "--target <NAME>"
       run: cmake --build . --config $BUILD_TYPE
 
     - if: ${{ runner.os == 'macOS' }} 
       name: Zip (MacOS only)
       working-directory: ${{runner.workspace}}/${{ env.BUILD_DIR }}
       run: |
-        cmake -E tar cfv ${{env.NETWORK_DIR}}/${{ env.PROJECT_NAME_NETWORK }}_artefacts/${{ env.BUILD_TYPE }}/${{ env.PROJECT_NAME_NETWORK }}_${{ matrix.artifact }}_ci_build.zip --format=zip ${{env.NETWORK_DIR}}/${{ env.PROJECT_NAME_NETWORK }}_artefacts/${{ env.BUILD_TYPE }}
-        cmake -E tar cfv ${{env.COMPOSER_DIR}}/${{ env.PROJECT_NAME_COMPOSER }}_artefacts/${{ env.BUILD_TYPE }}/${{ env.PROJECT_NAME_COMPOSER }}_${{ matrix.artifact }}_ci_build.zip --format=zip ${{env.COMPOSER_DIR}}/${{ env.PROJECT_NAME_COMPOSER }}_artefacts/${{ env.BUILD_TYPE }}
+        cmake -E tar cfv "${{env.NETWORK_DIR}}/${{ env.PROJECT_NAME_NETWORK }}_artefacts/${{ env.BUILD_TYPE }}/${{ env.PROJECT_NAME_NETWORK }}.zip" --format=zip "${{env.NETWORK_DIR}}/${{ env.PROJECT_NAME_NETWORK }}_artefacts/${{ env.BUILD_TYPE }}"
+        cmake -E tar cfv "${{env.COMPOSER_DIR}}/${{ env.PROJECT_NAME_COMPOSER }}_artefacts/${{ env.BUILD_TYPE }}/${{ env.PROJECT_NAME_COMPOSER }}.zip" --format=zip "${{env.COMPOSER_DIR}}/${{ env.PROJECT_NAME_COMPOSER }}_artefacts/${{ env.BUILD_TYPE }}"
 
 # create release
     - name: Create Release
