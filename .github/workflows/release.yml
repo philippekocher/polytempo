@@ -55,8 +55,8 @@ jobs:
     - name: Set Project Version
       shell: bash
       run: |
-        sed -i.bak "s/VERSION.*/VERSION ${{ steps.get_version.outputs.VERSION }}/" ${{env.NETWORK_DIR}}/CMakeLists.txt
-        sed -i.bak "s/VERSION.*/VERSION ${{ steps.get_version.outputs.VERSION }}/" ${{env.COMPOSER_DIR}}/CMakeLists.txt
+        sed -i.bak "s/VERSION.*/VERSION ${{ steps.get_version.outputs.VERSION }}/" "${{env.NETWORK_DIR}}/CMakeLists.txt"
+        sed -i.bak "s/VERSION.*/VERSION ${{ steps.get_version.outputs.VERSION }}/" "${{env.COMPOSER_DIR}}/CMakeLists.txt"
       
     - if: ${{ runner.os == 'Linux' }}
       name: Install JUCE dependencies (Linux only)
