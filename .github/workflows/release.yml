@@ -80,7 +80,7 @@ jobs:
 
     #- name: Zip 
     #  working-directory: ${{runner.workspace}}/${{ env.BUILD_DIR }}
-    #  run: cmake -E tar cfv ${{ env.PROJECT_NAME_NETWORK }}-${{ matrix.artifact }}.zip --format=zip ${{NETWORK_DIR}}/${{ env.PROJECT_NAME_NETWORK }}_artefacts/${{ env.BUILD_TYPE }}
+    #  run: cmake -E tar cfv ${{ env.PROJECT_NAME_NETWORK }}-${{ matrix.artifact }}.zip --format=zip ${{env.NETWORK_DIR}}/${{ env.PROJECT_NAME_NETWORK }}_artefacts/${{ env.BUILD_TYPE }}
 
     #- name: Upload Artifact
     #  uses: actions/upload-artifact@v2
@@ -91,13 +91,13 @@ jobs:
     - name: Upload Artifact Polytempo Network
       uses: actions/upload-artifact@v2
       with:
-        path: ${{runner.workspace}}/${{ env.BUILD_DIR }}/${{NETWORK_DIR}}/${{ env.PROJECT_NAME_NETWORK }}_artefacts/${{ env.BUILD_TYPE }}/${{env.PROJECT_NAME_NETWORK}}.exe
+        path: ${{runner.workspace}}/${{ env.BUILD_DIR }}/${{env.NETWORK_DIR}}/${{ env.PROJECT_NAME_NETWORK }}_artefacts/${{ env.BUILD_TYPE }}/${{env.PROJECT_NAME_NETWORK}}.exe
         name: ${{ env.PROJECT_NAME_NETWORK }}-${{ matrix.artifact }}
 
     - name: Upload Artifact Polytempo Composer
       uses: actions/upload-artifact@v2
       with:
-        path: ${{runner.workspace}}/${{ env.BUILD_DIR }}/${{COMPOSER_DIR}}/${{ env.PROJECT_NAME_COMPOSER }}_artefacts/${{ env.BUILD_TYPE }}/${{env.PROJECT_NAME_COMPOSER}}.exe
+        path: ${{runner.workspace}}/${{ env.BUILD_DIR }}/${{env.COMPOSER_DIR}}/${{ env.PROJECT_NAME_COMPOSER }}_artefacts/${{ env.BUILD_TYPE }}/${{env.PROJECT_NAME_COMPOSER}}.exe
         name: ${{ env.PROJECT_NAME_COMPOSER }}-${{ matrix.artifact }}
 
 # create release
@@ -120,6 +120,6 @@ jobs:
 #        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 #      with:
 #        upload_url: ${{ steps.create_release.outputs.upload_url }} 
-#        asset_path: ${{runner.workspace}}/${{ env.BUILD_DIR }}/${{NETWORK_DIR}}/${{ env.PROJECT_NAME_NETWORK }}_artefacts/${{ env.BUILD_TYPE }}/${{env.PROJECT_NAME_NETWORK}}.exe
+#        asset_path: ${{runner.workspace}}/${{ env.BUILD_DIR }}/${{env.NETWORK_DIR}}/${{ env.PROJECT_NAME_NETWORK }}_artefacts/${{ env.BUILD_TYPE }}/${{env.PROJECT_NAME_NETWORK}}.exe
 #        asset_name: ${{env.PROJECT_NAME_NETWORK}}_${{ steps.get_version.outputs.VERSION }}.exe
 #        asset_content_type: application/x-executable
