@@ -53,20 +53,19 @@ jobs:
     name: ${{ matrix.artifact }}
     runs-on: ${{ matrix.os }}
     strategy:
-      fail-fast: false # show all errors for each platform (vs. cancel jobs on error)
+      fail-fast: true
       matrix:
-#        os: [windows-latest, ubuntu-latest, macos-latest]
-        os: [windows-latest]
+        os: [windows-latest, ubuntu-latest, macos-latest]
         include:
-#        - os: ubuntu-latest
-#          artifact: Linux
-#          extension: ''
+        - os: ubuntu-latest
+          artifact: Linux
+          extension: ''
         - os: windows-latest
           artifact: Windows
           extension: '.exe'
-#        - os: macos-latest
-#          artifact: MacOS
-#          extension: '.zip'
+        - os: macos-latest
+          artifact: MacOS
+          extension: '.zip'
     
     steps:
     - name: Checkout Code
