@@ -22,25 +22,24 @@ env:
   BUILD_DIR: build
   
 jobs:
-  build:
-    name: ${{ matrix.artifact }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false # show all errors for each platform (vs. cancel jobs on error)
-      matrix:
-        os: [windows-latest, ubuntu-latest, macos-latest]
-        include:
-        - os: ubuntu-latest
-          artifact: Linux
-          extension: ''
-        - os: windows-latest
-          artifact: Windows
-          extension: '.exe'
-        - os: macos-latest
-          artifact: MacOS
-          extension: '.zip'
-    
+# preparation once for all platforms: create release and define version
+  prepare:
+    name: Prepare
+    runs-on: ubuntu-latest
+    outputs:
+      release_url: ${{ steps.create_release.outputs.upload_url }}
+      version: ${{ steps.get_version.outputs.VERSION }}
     steps:
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: false
     - name: Get the version
       id: get_version
       shell: bash
@@ -48,6 +47,28 @@ jobs:
       run: |
         [ "${{github.event_name}}" == "workflow_dispatch" ] && echo ::set-output name=VERSION::${{github.event.inputs.version}} || echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
       
+    
+  build:
+    needs: prepare
+    name: ${{ matrix.artifact }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false # show all errors for each platform (vs. cancel jobs on error)
+      matrix:
+#        os: [windows-latest, ubuntu-latest, macos-latest]
+        os: [windows-latest]
+        include:
+#        - os: ubuntu-latest
+#          artifact: Linux
+#          extension: ''
+        - os: windows-latest
+          artifact: Windows
+          extension: '.exe'
+#        - os: macos-latest
+#          artifact: MacOS
+#          extension: '.zip'
+    
+    steps:
     - name: Checkout Code
       uses: actions/checkout@v2
       
@@ -57,8 +78,8 @@ jobs:
     - name: Set Project Version
       shell: bash
       run: |
-        sed -i.bak "s/VERSION.*/VERSION ${{ steps.get_version.outputs.VERSION }}/" "${{env.NETWORK_DIR}}/CMakeLists.txt"
-        sed -i.bak "s/VERSION.*/VERSION ${{ steps.get_version.outputs.VERSION }}/" "${{env.COMPOSER_DIR}}/CMakeLists.txt"
+        sed -i.bak "s/VERSION.*/VERSION ${{ needs.prepare.outputs.version }}/" "${{env.NETWORK_DIR}}/CMakeLists.txt"
+        sed -i.bak "s/VERSION.*/VERSION ${{ needs.prepare.outputs.version }}/" "${{env.COMPOSER_DIR}}/CMakeLists.txt"
       
     - if: ${{ runner.os == 'Linux' }}
       name: Install JUCE dependencies (Linux only)
@@ -93,18 +114,6 @@ jobs:
       run: |
         cmake -E tar cfv "${{ env.PROJECT_NAME_COMPOSER }}.zip" --format=zip "${{env.PROJECT_NAME_COMPOSER}}.app"
 
-# create release
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
-        draft: false
-        prerelease: false
-
 # upload assets
     - name: Upload Release Asset (Polytempo Network)
       id: upload-release-asset-network
@@ -112,9 +121,9 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }} 
+        upload_url: ${{ needs.prepare.outputs.upload_url }} 
         asset_path: ${{runner.workspace}}/${{ env.BUILD_DIR }}/${{env.NETWORK_DIR}}/${{ env.PROJECT_NAME_NETWORK }}_artefacts/${{ env.BUILD_TYPE }}/${{env.PROJECT_NAME_NETWORK}}${{matrix.extension}}
-        asset_name: ${{env.PROJECT_NAME_NETWORK}}_${{ matrix.artifact }}_${{ steps.get_version.outputs.VERSION }}
+        asset_name: ${{env.PROJECT_NAME_NETWORK}}_${{ matrix.artifact }}_${{ needs.prepare.outputs.version }}${{matrix.extension}}
         asset_content_type: application/x-executable    
     
     - name: Upload Release Asset (Polytempo Composer)
@@ -123,7 +132,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }} 
+        upload_url: ${{ needs.prepare.outputs.upload_url }} 
         asset_path: ${{runner.workspace}}/${{ env.BUILD_DIR }}/${{env.COMPOSER_DIR}}/${{ env.PROJECT_NAME_COMPOSER }}_artefacts/${{ env.BUILD_TYPE }}/${{env.PROJECT_NAME_COMPOSER}}${{matrix.extension}}
-        asset_name: ${{env.PROJECT_NAME_COMPOSER}}_${{ matrix.artifact }}_${{ steps.get_version.outputs.VERSION }}
+        asset_name: ${{env.PROJECT_NAME_COMPOSER}}_${{ matrix.artifact }}_${{ needs.prepare.outputs.version }}${{matrix.extension}}
         asset_content_type: application/x-executable
