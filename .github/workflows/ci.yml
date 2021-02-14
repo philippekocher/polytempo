@@ -1,10 +1,9 @@
 name: CI
 
-on: push
-  
-#  pull_request:
-#    branches:
-#      - master
+on:  
+  pull_request:
+    branches:
+      - master
       
 env:
   BUILD_TYPE: Release
@@ -74,36 +73,12 @@ jobs:
       run: |
         cmake -E tar cfv "${{ env.PROJECT_NAME_COMPOSER }}.zip" --format=zip "${{env.PROJECT_NAME_COMPOSER}}.app"
 
-
-#    - if: ${{ runner.os == 'macOS' }} 
-#      name: Zip (MacOS only)
-#      working-directory: ${{runner.workspace}}/${{ env.BUILD_DIR }}
-#      run: |
-#        cmake -E tar cfv "${{env.NETWORK_DIR}}/${{ env.PROJECT_NAME_NETWORK }}_artefacts/${{ env.BUILD_TYPE }}/${{ env.PROJECT_NAME_NETWORK }}.zip" --format=zip "${{env.NETWORK_DIR}}/${{ env.PROJECT_NAME_NETWORK }}_artefacts/${{ env.BUILD_TYPE }}"
-#        cmake -E tar cfv "${{env.COMPOSER_DIR}}/${{ env.PROJECT_NAME_COMPOSER }}_artefacts/${{ env.BUILD_TYPE }}/${{ env.PROJECT_NAME_COMPOSER }}.zip" --format=zip "${{env.COMPOSER_DIR}}/${{ env.PROJECT_NAME_COMPOSER }}_artefacts/${{ env.BUILD_TYPE }}"
-
-#    - if: ${{ runner.os == 'macOS' }} 
-#      name: Upload Artifact Polytempo Network (MacOS)
-#      uses: actions/upload-artifact@v2
-#      with:
-#        path: ${{runner.workspace}}/${{ env.BUILD_DIR }}/${{ env.PROJECT_NAME_NETWORK }}_${{ matrix.artifact }}_ci_build.zip
-#        name: ${{ env.PROJECT_NAME_NETWORK }}_${{ matrix.artifact }}_ci_build
-
-#    - if: ${{ runner.os == 'macOS' }} 
-#      name: Upload Artifact Polytempo Composer (MacOS)
-#      uses: actions/upload-artifact@v2
-#      with:
-#        path: ${{runner.workspace}}/${{ env.BUILD_DIR }}/${{ env.PROJECT_NAME_COMPOSER }}_${{ matrix.artifact }}_ci_build.zip
-#        name: ${{ env.PROJECT_NAME_COMPOSER }}_${{ matrix.artifact }}_ci_build
-
-#    - if: ${{ runner.os != 'macOS' }} 
     - name: Upload Artifact Polytempo Network
       uses: actions/upload-artifact@v2
       with:
         path: ${{runner.workspace}}/${{ env.BUILD_DIR }}/${{env.NETWORK_DIR}}/${{ env.PROJECT_NAME_NETWORK }}_artefacts/${{ env.BUILD_TYPE }}/${{env.PROJECT_NAME_NETWORK}}${{matrix.extension}}
         name: ${{ env.PROJECT_NAME_NETWORK }}_${{ matrix.artifact }}_CI
 
-#    - if: ${{ runner.os != 'macOS' }} 
     - name: Upload Artifact Polytempo Composer
       uses: actions/upload-artifact@v2
       with:
