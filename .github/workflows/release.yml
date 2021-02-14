@@ -43,8 +43,9 @@ jobs:
     - name: Get the version
       id: get_version
       shell: bash
-      run: [ ${{github.event_name}} == "workflow_dispatch" ] && echo ::set-output name=VERSION::${{github.event.inputs.version}} || echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
       # if from manual run, use this version, otherwise use the version from the github ref tag
+      run: |
+        [ "${{github.event_name}}" == "workflow_dispatch" ] && echo ::set-output name=VERSION::${{github.event.inputs.version}} || echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
       
     - name: Checkout Code
       uses: actions/checkout@v2
@@ -80,11 +81,16 @@ jobs:
       run: cmake --build . --config $BUILD_TYPE
 
     - if: ${{ runner.os == 'macOS' }} 
-      name: Zip (MacOS only)
-      working-directory: ${{runner.workspace}}/${{ env.BUILD_DIR }}
+      name: Zip Polytempo Network (MacOS only)
+      working-directory: ${{runner.workspace}}/${{ env.BUILD_DIR }}/${{env.NETWORK_DIR}}/${{ env.PROJECT_NAME_NETWORK }}_artefacts/${{ env.BUILD_TYPE }}
       run: |
-        cmake -E tar cfv "${{env.NETWORK_DIR}}/${{ env.PROJECT_NAME_NETWORK }}_artefacts/${{ env.BUILD_TYPE }}/${{ env.PROJECT_NAME_NETWORK }}.zip" --format=zip "${{env.NETWORK_DIR}}/${{ env.PROJECT_NAME_NETWORK }}_artefacts/${{ env.BUILD_TYPE }}"
-        cmake -E tar cfv "${{env.COMPOSER_DIR}}/${{ env.PROJECT_NAME_COMPOSER }}_artefacts/${{ env.BUILD_TYPE }}/${{ env.PROJECT_NAME_COMPOSER }}.zip" --format=zip "${{env.COMPOSER_DIR}}/${{ env.PROJECT_NAME_COMPOSER }}_artefacts/${{ env.BUILD_TYPE }}"
+        cmake -E tar cfv "${{ env.PROJECT_NAME_NETWORK }}.zip" --format=zip "${{env.PROJECT_NAME_NETWORK}}.app"
+    
+    - if: ${{ runner.os == 'macOS' }} 
+      name: Zip Polytempo Composer (MacOS only)
+      working-directory: ${{runner.workspace}}/${{ env.BUILD_DIR }}/${{env.COMPOSER_DIR}}/${{ env.PROJECT_NAME_COMPOSER }}_artefacts/${{ env.BUILD_TYPE }}
+      run: |
+        cmake -E tar cfv "${{ env.PROJECT_NAME_COMPOSER }}.zip" --format=zip "${{env.PROJECT_NAME_COMPOSER}}.app"
 
 # create release
     - name: Create Release
