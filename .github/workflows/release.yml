@@ -1,0 +1,135 @@
+name: Release
+
+on:
+  push:
+    tags:
+    - '[0-9]+.[0-9]+.[0-9]+'
+
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Release Version
+        default: 0.0.1
+        required: true
+      
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+  PROJECT_NAME_NETWORK: PolytempoNetwork
+  PROJECT_NAME_COMPOSER: PolytempoComposer
+  NETWORK_DIR: 'POLYTEMPO NETWORK'
+  COMPOSER_DIR: 'POLYTEMPO COMPOSER'
+  BUILD_DIR: build
+  
+jobs:
+# preparation once for all platforms: create release and define version
+  prepare:
+    name: Prepare
+    runs-on: ubuntu-latest
+    outputs:
+      release_url: ${{ steps.create_release.outputs.upload_url }}
+      version: ${{ steps.get_version.outputs.VERSION }}
+    steps:
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: false
+    - name: Get the version
+      id: get_version
+      shell: bash
+      # if from manual run, use this version, otherwise use the version from the github ref tag
+      run: |
+        [ "${{github.event_name}}" == "workflow_dispatch" ] && echo ::set-output name=VERSION::${{github.event.inputs.version}} || echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+      
+    
+  build:
+    needs: prepare
+    name: ${{ matrix.artifact }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+        include:
+        - os: ubuntu-latest
+          artifact: Linux
+          extension: ''
+        - os: windows-latest
+          artifact: Windows
+          extension: '.exe'
+        - os: macos-latest
+          artifact: MacOS
+          extension: '.app'
+    
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v2
+      
+    - name: Checkout submodules
+      run: git submodule update --init --recursive --depth 1
+      
+    - name: Set Project Version
+      shell: bash
+      run: |
+        sed -i.bak "s/VERSION.*/VERSION ${{ needs.prepare.outputs.version }}/" "${{env.NETWORK_DIR}}/CMakeLists.txt"
+        sed -i.bak "s/VERSION.*/VERSION ${{ needs.prepare.outputs.version }}/" "${{env.COMPOSER_DIR}}/CMakeLists.txt"
+      
+    - if: ${{ runner.os == 'Linux' }}
+      name: Install JUCE dependencies (Linux only)
+      id: juce_dependencies
+      run: | 
+        sudo apt-get install -y g++ libgtk-3-dev libfreetype6-dev libx11-dev libxinerama-dev libxrandr-dev libxcursor-dev mesa-common-dev libasound2-dev freeglut3-dev libxcomposite-dev libcurl4-openssl-dev
+        sudo add-apt-repository -y ppa:webkit-team && sudo apt-get update
+        sudo apt-get install libwebkit2gtk-4.0-37 libwebkit2gtk-4.0-dev
+        
+    - name: Create Build Environment
+      run: cmake -E make_directory ${{runner.workspace}}/${{ env.BUILD_DIR }}
+
+    - name: Configure CMake
+      shell: bash
+      working-directory: ${{runner.workspace}}/${{ env.BUILD_DIR }}
+      run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+
+    - name: Build
+      working-directory: ${{runner.workspace}}/${{ env.BUILD_DIR }}
+      shell: bash
+      run: cmake --build . --config $BUILD_TYPE
+
+    - name: Zip Polytempo Network
+      working-directory: ${{runner.workspace}}/${{ env.BUILD_DIR }}/${{env.NETWORK_DIR}}/${{ env.PROJECT_NAME_NETWORK }}_artefacts/${{ env.BUILD_TYPE }}
+      run: |
+        cmake -E tar cfv "${{ env.PROJECT_NAME_NETWORK }}.zip" --format=zip "${{env.PROJECT_NAME_NETWORK}}${{matrix.extension}}"
+    
+    - name: Zip Polytempo Composer
+      working-directory: ${{runner.workspace}}/${{ env.BUILD_DIR }}/${{env.COMPOSER_DIR}}/${{ env.PROJECT_NAME_COMPOSER }}_artefacts/${{ env.BUILD_TYPE }}
+      run: |
+        cmake -E tar cfv "${{ env.PROJECT_NAME_COMPOSER }}.zip" --format=zip "${{env.PROJECT_NAME_COMPOSER}}${{matrix.extension}}"
+
+# upload assets
+    - name: Upload Release Asset (Polytempo Network)
+      id: upload-release-asset-network
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ needs.prepare.outputs.release_url }} 
+        asset_path: ${{runner.workspace}}/${{ env.BUILD_DIR }}/${{env.NETWORK_DIR}}/${{ env.PROJECT_NAME_NETWORK }}_artefacts/${{ env.BUILD_TYPE }}/${{env.PROJECT_NAME_NETWORK}}.zip
+        asset_name: ${{env.PROJECT_NAME_NETWORK}}_${{ matrix.artifact }}_${{ needs.prepare.outputs.version }}.zip
+        asset_content_type: application/x-executable    
+    
+    - name: Upload Release Asset (Polytempo Composer)
+      id: upload-release-asset-composer
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ needs.prepare.outputs.release_url }} 
+        asset_path: ${{runner.workspace}}/${{ env.BUILD_DIR }}/${{env.COMPOSER_DIR}}/${{ env.PROJECT_NAME_COMPOSER }}_artefacts/${{ env.BUILD_TYPE }}/${{env.PROJECT_NAME_COMPOSER}}.zip
+        asset_name: ${{env.PROJECT_NAME_COMPOSER}}_${{ matrix.artifact }}_${{ needs.prepare.outputs.version }}.zip
+        asset_content_type: application/x-executable
