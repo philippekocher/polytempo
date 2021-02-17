@@ -30,7 +30,7 @@ jobs:
           extension: '.exe'
         - os: macos-latest
           artifact: MacOS
-          extension: '.zip'
+          extension: '.app'
     
     steps:
     - name: Checkout Code
@@ -61,26 +61,24 @@ jobs:
       run: cmake --build . --config $BUILD_TYPE
 
 # upload artifacts
-    - if: ${{ runner.os == 'macOS' }} 
-      name: Zip Polytempo Network (MacOS only)
+    - name: Zip Polytempo Network
       working-directory: ${{runner.workspace}}/${{ env.BUILD_DIR }}/${{env.NETWORK_DIR}}/${{ env.PROJECT_NAME_NETWORK }}_artefacts/${{ env.BUILD_TYPE }}
       run: |
-        cmake -E tar cfv "${{ env.PROJECT_NAME_NETWORK }}.zip" --format=zip "${{env.PROJECT_NAME_NETWORK}}.app"
+        cmake -E tar cfv "${{ env.PROJECT_NAME_NETWORK }}.zip" --format=zip "${{env.PROJECT_NAME_NETWORK}}${{matrix.extension}}"
     
-    - if: ${{ runner.os == 'macOS' }} 
-      name: Zip Polytempo Composer (MacOS only)
+    - name: Zip Polytempo Composer
       working-directory: ${{runner.workspace}}/${{ env.BUILD_DIR }}/${{env.COMPOSER_DIR}}/${{ env.PROJECT_NAME_COMPOSER }}_artefacts/${{ env.BUILD_TYPE }}
       run: |
-        cmake -E tar cfv "${{ env.PROJECT_NAME_COMPOSER }}.zip" --format=zip "${{env.PROJECT_NAME_COMPOSER}}.app"
+        cmake -E tar cfv "${{ env.PROJECT_NAME_COMPOSER }}.zip" --format=zip "${{env.PROJECT_NAME_COMPOSER}}${{matrix.extension}}"
 
     - name: Upload Artifact Polytempo Network
       uses: actions/upload-artifact@v2
       with:
-        path: ${{runner.workspace}}/${{ env.BUILD_DIR }}/${{env.NETWORK_DIR}}/${{ env.PROJECT_NAME_NETWORK }}_artefacts/${{ env.BUILD_TYPE }}/${{env.PROJECT_NAME_NETWORK}}${{matrix.extension}}
+        path: ${{runner.workspace}}/${{ env.BUILD_DIR }}/${{env.NETWORK_DIR}}/${{ env.PROJECT_NAME_NETWORK }}_artefacts/${{ env.BUILD_TYPE }}/${{env.PROJECT_NAME_NETWORK}}.zip
         name: ${{ env.PROJECT_NAME_NETWORK }}_${{ matrix.artifact }}_CI
 
     - name: Upload Artifact Polytempo Composer
       uses: actions/upload-artifact@v2
       with:
-        path: ${{runner.workspace}}/${{ env.BUILD_DIR }}/${{env.COMPOSER_DIR}}/${{ env.PROJECT_NAME_COMPOSER }}_artefacts/${{ env.BUILD_TYPE }}/${{env.PROJECT_NAME_COMPOSER}}${{matrix.extension}}
+        path: ${{runner.workspace}}/${{ env.BUILD_DIR }}/${{env.COMPOSER_DIR}}/${{ env.PROJECT_NAME_COMPOSER }}_artefacts/${{ env.BUILD_TYPE }}/${{env.PROJECT_NAME_COMPOSER}}.zip
         name: ${{ env.PROJECT_NAME_COMPOSER }}_${{ matrix.artifact }}_CI

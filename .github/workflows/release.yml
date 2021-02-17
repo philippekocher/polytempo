@@ -65,7 +65,7 @@ jobs:
           extension: '.exe'
         - os: macos-latest
           artifact: MacOS
-          extension: '.zip'
+          extension: '.app'
     
     steps:
     - name: Checkout Code
@@ -101,17 +101,15 @@ jobs:
       shell: bash
       run: cmake --build . --config $BUILD_TYPE
 
-    - if: ${{ runner.os == 'macOS' }} 
-      name: Zip Polytempo Network (MacOS only)
+    - name: Zip Polytempo Network
       working-directory: ${{runner.workspace}}/${{ env.BUILD_DIR }}/${{env.NETWORK_DIR}}/${{ env.PROJECT_NAME_NETWORK }}_artefacts/${{ env.BUILD_TYPE }}
       run: |
-        cmake -E tar cfv "${{ env.PROJECT_NAME_NETWORK }}.zip" --format=zip "${{env.PROJECT_NAME_NETWORK}}.app"
+        cmake -E tar cfv "${{ env.PROJECT_NAME_NETWORK }}.zip" --format=zip "${{env.PROJECT_NAME_NETWORK}}${{matrix.extension}}"
     
-    - if: ${{ runner.os == 'macOS' }} 
-      name: Zip Polytempo Composer (MacOS only)
+    - name: Zip Polytempo Composer
       working-directory: ${{runner.workspace}}/${{ env.BUILD_DIR }}/${{env.COMPOSER_DIR}}/${{ env.PROJECT_NAME_COMPOSER }}_artefacts/${{ env.BUILD_TYPE }}
       run: |
-        cmake -E tar cfv "${{ env.PROJECT_NAME_COMPOSER }}.zip" --format=zip "${{env.PROJECT_NAME_COMPOSER}}.app"
+        cmake -E tar cfv "${{ env.PROJECT_NAME_COMPOSER }}.zip" --format=zip "${{env.PROJECT_NAME_COMPOSER}}${{matrix.extension}}"
 
 # upload assets
     - name: Upload Release Asset (Polytempo Network)
@@ -121,8 +119,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ needs.prepare.outputs.release_url }} 
-        asset_path: ${{runner.workspace}}/${{ env.BUILD_DIR }}/${{env.NETWORK_DIR}}/${{ env.PROJECT_NAME_NETWORK }}_artefacts/${{ env.BUILD_TYPE }}/${{env.PROJECT_NAME_NETWORK}}${{matrix.extension}}
-        asset_name: ${{env.PROJECT_NAME_NETWORK}}_${{ matrix.artifact }}_${{ needs.prepare.outputs.version }}${{matrix.extension}}
+        asset_path: ${{runner.workspace}}/${{ env.BUILD_DIR }}/${{env.NETWORK_DIR}}/${{ env.PROJECT_NAME_NETWORK }}_artefacts/${{ env.BUILD_TYPE }}/${{env.PROJECT_NAME_NETWORK}}.zip
+        asset_name: ${{env.PROJECT_NAME_NETWORK}}_${{ matrix.artifact }}_${{ needs.prepare.outputs.version }}.zip
         asset_content_type: application/x-executable    
     
     - name: Upload Release Asset (Polytempo Composer)
@@ -132,6 +130,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ needs.prepare.outputs.release_url }} 
-        asset_path: ${{runner.workspace}}/${{ env.BUILD_DIR }}/${{env.COMPOSER_DIR}}/${{ env.PROJECT_NAME_COMPOSER }}_artefacts/${{ env.BUILD_TYPE }}/${{env.PROJECT_NAME_COMPOSER}}${{matrix.extension}}
-        asset_name: ${{env.PROJECT_NAME_COMPOSER}}_${{ matrix.artifact }}_${{ needs.prepare.outputs.version }}${{matrix.extension}}
+        asset_path: ${{runner.workspace}}/${{ env.BUILD_DIR }}/${{env.COMPOSER_DIR}}/${{ env.PROJECT_NAME_COMPOSER }}_artefacts/${{ env.BUILD_TYPE }}/${{env.PROJECT_NAME_COMPOSER}}.zip
+        asset_name: ${{env.PROJECT_NAME_COMPOSER}}_${{ matrix.artifact }}_${{ needs.prepare.outputs.version }}.zip
         asset_content_type: application/x-executable
