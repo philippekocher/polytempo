@@ -22,6 +22,7 @@ public:
     /* playback
      --------------------------------------- */
     void startStop();
+    void broadcastStop();
     void start();
     void stop();
     void pause(Polytempo_Event*);

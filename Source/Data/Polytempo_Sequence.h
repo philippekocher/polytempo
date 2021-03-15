@@ -68,6 +68,7 @@ public:
     
     void addPlaybackPropertiesToEvent(Polytempo_Event*);
     Polytempo_Event* getOscEvent(Polytempo_Event*);
+    void updateOscReceiver();
     
     // serialisation
     DynamicObject* getObject();
@@ -112,7 +113,7 @@ private:
     String oscBeatMessage     = "/beat pattern #pattern duration #duration";
     String oscCueMessage      = "/beat pattern #pattern duration #duration cue 1";
 
-    String oscReceiver        = "#broadcast";
+    String oscReceiver        = "127.0.0.1";
     String oscPort            = "47522";
     
     friend class Polytempo_SequenceControlComponent;

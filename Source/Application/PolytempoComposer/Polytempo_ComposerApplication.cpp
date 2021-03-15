@@ -21,6 +21,9 @@ void Polytempo_ComposerApplication::initialise(const String& commandLine)
     Polytempo_ScoreScheduler::getInstance()->setEngine(new Polytempo_ComposerEngine);
     Polytempo_EventScheduler::getInstance()->startThread(5); // priority between 0 and 10
     
+    // network
+    oscSender.reset(new Polytempo_OSCSender());
+
     // audio and midi
     Polytempo_AudioClick::getInstance();
     Polytempo_MidiClick::getInstance();
@@ -69,7 +72,8 @@ void Polytempo_ComposerApplication::shutdown()
     // delete scoped pointers
     composerWindow = nullptr;
     commandManager = nullptr;
-    
+    oscSender = nullptr;
+
     // delete singletons
     Polytempo_StoredPreferences::deleteInstance();
     Polytempo_Composition::deleteInstance();

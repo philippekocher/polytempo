@@ -55,6 +55,11 @@ void Polytempo_ScoreScheduler::startStop()
         Polytempo_EventDispatcher::getInstance()->broadcastEvent(Polytempo_Event::makeEvent(eventType_Start));
 }
 
+void Polytempo_ScoreScheduler::broadcastStop()
+{
+    Polytempo_EventDispatcher::getInstance()->broadcastEvent(Polytempo_Event::makeEvent(eventType_Stop));
+}
+
 void Polytempo_ScoreScheduler::start()
 {
     if (!score) return;

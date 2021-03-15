@@ -1,7 +1,6 @@
 #include "Polytempo_SequencePlaybackSettings.h"
 #include "../../Application/PolytempoComposer/Polytempo_ComposerApplication.h"
 #include "../../Data/Polytempo_Sequence.h"
-#include "../../Scheduler/Polytempo_EventDispatcher.h"
 
 
 Polytempo_SequencePlaybackSettings::Polytempo_SequencePlaybackSettings(Polytempo_Sequence* theSequence)
@@ -165,14 +164,14 @@ Polytempo_SequencePlaybackSettings::Polytempo_SequencePlaybackSettings(Polytempo
     oscCueDefaultButton->setEnabled(sequence->sendOsc);
     oscCueDefaultButton->addListener(this);
 
-    addAndMakeVisible(oscReceiver = new Polytempo_Textbox("Receiver (IP-Address or Node Name)"));
+    addAndMakeVisible(oscReceiver = new Polytempo_Textbox("Receiver (IP-Address)"));
     oscReceiver->setText(sequence->oscReceiver, dontSendNotification);
     oscReceiver->setEnabled(sequence->sendOsc);
     oscReceiver->addListener(this);
 
-    addAndMakeVisible(oscBroadcastButton = new Polytempo_Button("Broadcast"));
-    oscBroadcastButton->setEnabled(sequence->sendOsc);
-    oscBroadcastButton->addListener(this);
+    addAndMakeVisible(oscLocalhostButton = new Polytempo_Button("Localhost"));
+    oscLocalhostButton->setEnabled(sequence->sendOsc);
+    oscLocalhostButton->addListener(this);
 
     addAndMakeVisible(oscPort = new Polytempo_Textbox("Port"));
     oscPort->setText(sequence->oscPort, dontSendNotification);
@@ -183,6 +182,8 @@ Polytempo_SequencePlaybackSettings::Polytempo_SequencePlaybackSettings(Polytempo
     addAndMakeVisible(oscPortDefaultButton = new Polytempo_Button("Default"));
     oscPortDefaultButton->setEnabled(sequence->sendOsc);
     oscPortDefaultButton->addListener(this);
+
+    sequence->updateOscReceiver();
 }
 
 Polytempo_SequencePlaybackSettings::~Polytempo_SequencePlaybackSettings()
@@ -221,7 +222,7 @@ void Polytempo_SequencePlaybackSettings::resized()
     oscCueMessage->setBounds            (20, 430, getWidth() - 120, 20);
     oscCueDefaultButton->setBounds      (getWidth() - 90, 430, 70, 20);
     oscReceiver->setBounds              (20, 500, getWidth() - 120, 20);
-    oscBroadcastButton->setBounds       (getWidth() - 90, 500, 70, 20);
+    oscLocalhostButton->setBounds       (getWidth() - 90, 500, 70, 20);
     oscPort->setBounds                  (20, 540, getWidth() - 120, 20);
     oscPortDefaultButton->setBounds     (getWidth() - 90, 540, 70, 20);
 }
@@ -271,11 +272,11 @@ void Polytempo_SequencePlaybackSettings::buttonClicked(Button* button)
         oscCueMessage->setEnabled(buttonState);
         oscCueDefaultButton->setEnabled(buttonState);
         oscReceiver->setEnabled(buttonState);
-        oscBroadcastButton->setEnabled(buttonState);
+        oscLocalhostButton->setEnabled(buttonState);
         oscPort->setEnabled(buttonState);
         oscPortDefaultButton->setEnabled(buttonState);
         
-        if(buttonState) updateOscReceiver();
+        sequence->updateOscReceiver();
     }
     else if(button == oscDownbeatDefaultButton)
     {
@@ -295,19 +296,19 @@ void Polytempo_SequencePlaybackSettings::buttonClicked(Button* button)
         oscCueMessage->setText(text, dontSendNotification);
         sequence->oscCueMessage = text;
     }
-    else if(button == oscBroadcastButton)
+    else if(button == oscLocalhostButton)
     {
-        String text = "#broadcast";
+        String text = "127.0.0.1";
         oscReceiver->setText(text, dontSendNotification);
         sequence->oscReceiver = text;
-        updateOscReceiver();
+        sequence->updateOscReceiver();
     }
     else if(button == oscPortDefaultButton)
     {
         String text = "47522";
         oscPort->setText(text, dontSendNotification);
         sequence->oscPort = text;
-        updateOscReceiver();
+        sequence->updateOscReceiver();
     }
 }
 
@@ -337,25 +338,14 @@ void Polytempo_SequencePlaybackSettings::labelTextChanged(Label* textbox)
     else if(textbox == oscReceiver)
     {
         sequence->oscReceiver = labelText;
-        updateOscReceiver();
+        sequence->updateOscReceiver();
     }
     else if(textbox == oscPort)
     {
         sequence->oscPort = labelText;
-        updateOscReceiver();
+        sequence->updateOscReceiver();
     }
 }
-
-void Polytempo_SequencePlaybackSettings::updateOscReceiver()
-{
-    Polytempo_Event *event = new Polytempo_Event(eventType_AddSender);
-    event->setProperty("senderID", "sequence"+String(sequence->sequenceID));
-    event->setProperty("ip", sequence->oscReceiver);
-    event->setProperty("port", sequence->oscPort);
-    
-    Polytempo_EventDispatcher::getInstance()->broadcastEvent(event);
-}
-
 
 void Polytempo_SequencePlaybackSettings::show(Polytempo_Sequence* sequence)
 {

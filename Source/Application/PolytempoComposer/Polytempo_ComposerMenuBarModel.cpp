@@ -588,10 +588,12 @@ bool Polytempo_ComposerMenuBarModel::perform (const InvocationInfo& info)
             break;
             
         case Polytempo_CommandIDs::returnToLoc:
+            Polytempo_ScoreScheduler::getInstance()->broadcastStop();
             Polytempo_ScoreScheduler::getInstance()->returnToLocator();
             break;
             
         case Polytempo_CommandIDs::returnToBeginning:
+            Polytempo_ScoreScheduler::getInstance()->broadcastStop();
             Polytempo_ScoreScheduler::getInstance()->returnToBeginning();
             break;
             

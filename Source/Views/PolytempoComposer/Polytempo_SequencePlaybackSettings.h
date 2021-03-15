@@ -21,10 +21,7 @@ public:
     void buttonClicked(Button* button) override;
     void labelTextChanged(Label* textbox) override;
     
-    void updateOscReceiver();
-
     static void show(Polytempo_Sequence*);
-    
 
 private:
     Polytempo_Sequence* sequence;
@@ -55,7 +52,7 @@ private:
     Polytempo_Textbox *oscCueMessage;
     Polytempo_Button  *oscCueDefaultButton;
     Polytempo_Textbox *oscReceiver;
-    Polytempo_Button  *oscBroadcastButton;
+    Polytempo_Button  *oscLocalhostButton;
     Polytempo_Textbox *oscPort;
     Polytempo_Button  *oscPortDefaultButton;
     

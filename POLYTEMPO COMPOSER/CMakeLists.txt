@@ -27,8 +27,7 @@ target_sources(PolytempoComposer PRIVATE
     ../Source/Data/Polytempo_Score.cpp
     ../Source/Data/Polytempo_Sequence.cpp
     ../Source/Data/Polytempo_TempoInterpolation.cpp
-    ../Source/Network/Polytempo_IPAddress.cpp
-    ../Source/Network/Polytempo_NetworkInterfaceManager.cpp
+    ../Source/Network/Polytempo_OSCSender.cpp
     ../Source/Network/Polytempo_TimeProvider.cpp
     ../Source/Preferences/Polytempo_DefaultPreferences.cpp
     ../Source/Preferences/Polytempo_ComposerPreferencesPanel.cpp

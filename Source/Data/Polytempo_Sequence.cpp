@@ -2,6 +2,7 @@
 #include "Polytempo_Composition.h"
 #include "../Views/PolytempoComposer/Polytempo_ListComponent.h"
 #include "../Preferences/Polytempo_StoredPreferences.h"
+#include "../Scheduler/Polytempo_EventDispatcher.h"
 
 
 Polytempo_Sequence::Polytempo_Sequence(int i) : sequenceID(i)
@@ -608,8 +609,7 @@ void Polytempo_Sequence::addPlaybackPropertiesToEvent(Polytempo_Event* event)
             else
             {
                 event->setProperty("midiPitch", midiBeatPitch);
-                event->setProperty("midiVelocity", midiBeatVelocity
-                                   );
+                event->setProperty("midiVelocity", midiBeatVelocity);
             }
         }
         event->setProperty("midiChannel", midiChannel);
@@ -624,26 +624,33 @@ Polytempo_Event* Polytempo_Sequence::getOscEvent(Polytempo_Event* event)
 
         String oscString;
     
-        if(int(event->getProperty("cue")) != 0)
+        if(event->getType() == eventType_Beat)
         {
-            oscString = oscCueMessage;
-        }
-        else
-        {
-            int pattern = event->getProperty(eventPropertyString_Pattern);
-            
-            if(pattern < 20)
+            if(int(event->getProperty("cue")) != 0)
             {
-                oscString = oscDownbeatMessage;
+                oscString = oscCueMessage;
             }
             else
             {
-                oscString = oscBeatMessage;
+                int pattern = event->getProperty(eventPropertyString_Pattern);
+                
+                if(pattern < 20)
+                {
+                    oscString = oscDownbeatMessage;
+                }
+                else
+                {
+                    oscString = oscBeatMessage;
+                }
             }
-        }
 
-        oscString = oscString.replace("#pattern", event->getProperty(eventPropertyString_Pattern).toString());
-        oscString = oscString.replace("#duration", event->getProperty(eventPropertyString_Duration).toString());
+            oscString = oscString.replace("#pattern", event->getProperty(eventPropertyString_Pattern).toString());
+            oscString = oscString.replace("#duration", event->getProperty(eventPropertyString_Duration).toString());
+        }
+        else if(event->getType() == eventType_Marker)
+        {
+            oscString = "/marker value " + event->getValue().toString();
+        }
         
         
         StringArray tokens;
@@ -665,6 +672,17 @@ Polytempo_Event* Polytempo_Sequence::getOscEvent(Polytempo_Event* event)
     }
     
     return nullptr;
+}
+
+void Polytempo_Sequence::updateOscReceiver()
+{
+    Polytempo_Event *event = new Polytempo_Event(eventType_AddSender);
+    event->setProperty("senderID", "sequence"+String(sequenceID));
+    event->setProperty("ip", oscReceiver);
+    event->setProperty("port", oscPort);
+    event->setProperty("tick", sendOsc ? 1 : 0);
+
+    Polytempo_EventDispatcher::getInstance()->broadcastEvent(event);
 }
 
 //------------------------------------------------------------------------------
@@ -789,6 +807,8 @@ void Polytempo_Sequence::setObject(DynamicObject* object)
     oscCueMessage = object->getProperty("oscCueMessage");
     oscReceiver = object->getProperty("oscReceiver");
     oscPort = object->getProperty("oscPort");
+    
+    updateOscReceiver();
     
     mute = object->getProperty("mute");
     

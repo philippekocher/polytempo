@@ -2,7 +2,7 @@
 
 #include "JuceHeader.h"
 #include "Polytempo_ComposerWindow.h"
-
+#include "../../Network/Polytempo_OSCSender.h"
 
 class Polytempo_ComposerApplication : public JUCEApplication
 {
@@ -26,4 +26,5 @@ public:
 private:
     std::unique_ptr<Polytempo_ComposerWindow> composerWindow;
     std::unique_ptr<ApplicationCommandManager> commandManager;
+    std::unique_ptr<Polytempo_OSCSender> oscSender;
 };
