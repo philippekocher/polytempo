@@ -94,7 +94,9 @@ void Polytempo_ComposerApplication::applicationShouldQuit()
 {
     if(Polytempo_ScoreScheduler::getInstance()->isRunning())
     {
-        Polytempo_ScoreScheduler::getInstance()->kill();
+        quitApplication = true;
+        Polytempo_ScoreScheduler::getInstance()->stop();
+        return;
     }
     
     if(Polytempo_Composition::getInstance()->isDirty())

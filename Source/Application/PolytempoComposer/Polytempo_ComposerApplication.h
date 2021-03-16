@@ -17,6 +17,7 @@ public:
     void shutdown() override;
     void systemRequestedQuit() override;
     void applicationShouldQuit();
+    bool quitApplication = false;
     void anotherInstanceStarted(const String& commandLine) override;
 
     static ApplicationCommandManager& getCommandManager();

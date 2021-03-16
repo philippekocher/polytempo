@@ -3,6 +3,8 @@
 #include "../Data/Polytempo_Composition.h"
 #include "Polytempo_EventScheduler.h"
 #include "../Network/Polytempo_TimeProvider.h"
+#include "../Application/PolytempoComposer/Polytempo_ComposerApplication.h"
+
 
 #ifdef POLYTEMPO_COMPOSER
 void Polytempo_ComposerEngine::setScoreTime(int time)
@@ -91,6 +93,9 @@ void Polytempo_ComposerEngine::run()
          (which is already ahead by the amount of lookahead).
 	*/
     if(!killed) scoreScheduler->gotoTime(scoreTime);
+
+    Polytempo_ComposerApplication* const app = dynamic_cast<Polytempo_ComposerApplication*>(JUCEApplication::getInstance());
+    if (app->quitApplication) app->applicationShouldQuit();
 }
 #endif
 
