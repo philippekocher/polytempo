@@ -161,6 +161,7 @@ PopupMenu Polytempo_MenuBarModel::getMenuForIndex(int, const String& menuName)
     {
 #if ! JUCE_MAC
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::aboutWindow);
+        menu.addSeparator();
 #endif
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::help);
         menu.addSeparator();

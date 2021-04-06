@@ -54,12 +54,12 @@ void Polytempo_NetworkApplication::initialise(const String& commandLine)
     // time sync
     Polytempo_TimeProvider::getInstance();
 
-#if (! JUCE_DEBUG)
+    #if (! JUCE_DEBUG)
     // contact web server
     URL url = URL("https://polytempo.zhdk.ch/stats/log.php?application="+getApplicationName()+"&version="+getApplicationVersion()+"&os="+SystemStats::getOperatingSystemName()+"&user="+SystemStats::getFullUserName());
     auto stream = url.createInputStream(true);
 #endif
-
+    
     if (File::isAbsolutePath(commandLine.unquoted()))
     {
         openScoreFilePath(commandLine.unquoted()); // enable 'open with' (WIN)

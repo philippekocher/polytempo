@@ -50,6 +50,7 @@ Polytempo_CoordinateSystemComponent::Polytempo_CoordinateSystemComponent()
     playhead.reset(new DrawableRectangle());
     playhead->setFill(Colours::black);
     addAndMakeVisible(playhead.get());
+    setWantsKeyboardFocus(true);
 }
 
 Polytempo_CoordinateSystemComponent::~Polytempo_CoordinateSystemComponent()
@@ -93,6 +94,39 @@ void Polytempo_CoordinateSystemComponent::mouseUp(const MouseEvent& /*event*/)
     Polytempo_ComposerApplication::getCommandManager().commandStatusChanged(); // update menubar
     repaint();
 }
+
+bool Polytempo_CoordinateSystemComponent::keyPressed(const KeyPress &key)
+{
+    // cycle through selection of control points
+    // tab = forwards / shift tab = backwards
+    if(key.getKeyCode() == KeyPress::tabKey)
+    {
+        Polytempo_Composition* composition = Polytempo_Composition::getInstance();
+        Polytempo_Sequence* sequence = composition->getSelectedSequence();
+        
+        if(sequence == nullptr) return false;
+        if(composition->getSelectedControlPointIndices()->size() == 0) return false;
+               
+        int numControlPoints = sequence->getControlPoints()->size();
+        composition->getSelectedControlPointIndices()->sort();
+        
+        if(key.getModifiers() == ModifierKeys::noModifiers)
+        {
+            int last = composition->getSelectedControlPointIndices()->getLast();
+            composition->setSelectedControlPointIndex((last + 1) % numControlPoints);
+        }
+        else if (key.getModifiers() == ModifierKeys::shiftModifier)
+        {
+            int first = composition->getSelectedControlPointIndices()->getFirst();
+            composition->setSelectedControlPointIndex((numControlPoints + first - 1) % numControlPoints);
+        }
+        repaint();
+        return true;
+    }
+    
+    return false;
+}
+
 
 //------------------------------------------------------------------------------
 #pragma mark -

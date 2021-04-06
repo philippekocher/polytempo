@@ -355,6 +355,8 @@ namespace Polytempo_DialogWindows
            else if(button == adjustTimeBwdButton)     sequence->adjustTime(composition->getSelectedControlPointIndices(), false);
            else if(button == adjustPositionFwdButton) sequence->adjustPosition(composition->getSelectedControlPointIndices(), true);
            else if(button == adjustPositionBwdButton) sequence->adjustPosition(composition->getSelectedControlPointIndices(), false);
+
+           setVisible(false);
        }
     private:
         Polytempo_ImageButton *adjustTimeFwdButton;

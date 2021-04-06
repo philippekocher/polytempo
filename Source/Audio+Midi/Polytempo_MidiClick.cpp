@@ -36,9 +36,9 @@ void Polytempo_MidiClick::eventNotification(Polytempo_Event* event)
         if (!event->getProperty("midiPitch").isVoid())
         {
             int pitch = event->getProperty("midiPitch");
-            float velocity = event->getProperty("midiVelocity");
-
-            midiOutput->sendMessageNow(MidiMessage::noteOn(1, pitch, velocity));
+            int velocity = event->getProperty("midiVelocity");
+            
+            midiOutput->sendMessageNow(MidiMessage::noteOn(1, pitch, uint8(velocity)));
             midiOutput->sendMessageNow(MidiMessage::noteOff(1, pitch, 0.0f));
         }
 #ifdef POLYTEMPO_NETWORK

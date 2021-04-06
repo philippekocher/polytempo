@@ -12,7 +12,7 @@
 
 Polytempo_ComposerApplication::Polytempo_ComposerApplication() {}
     
-void Polytempo_ComposerApplication::initialise(const String& /*commandLine*/)
+void Polytempo_ComposerApplication::initialise(const String& commandLine)
 {
     commandManager.reset(new ApplicationCommandManager());
     commandManager->registerAllCommandsForTarget(this);
@@ -21,6 +21,9 @@ void Polytempo_ComposerApplication::initialise(const String& /*commandLine*/)
     Polytempo_ScoreScheduler::getInstance()->setEngine(new Polytempo_ComposerEngine);
     Polytempo_EventScheduler::getInstance()->startThread(5); // priority between 0 and 10
     
+    // network
+    oscSender.reset(new Polytempo_OSCSender());
+
     // audio and midi
     Polytempo_AudioClick::getInstance();
     Polytempo_MidiClick::getInstance();
@@ -33,6 +36,17 @@ void Polytempo_ComposerApplication::initialise(const String& /*commandLine*/)
 
     // return to beginning
     Polytempo_ScoreScheduler::getInstance()->returnToBeginning();
+    
+#if (! JUCE_DEBUG)
+    // contact web server
+    URL url = URL("https://polytempo.zhdk.ch/stats/log.php?application="+getApplicationName()+"&version="+getApplicationVersion()+"&os="+SystemStats::getOperatingSystemName()+"&user="+SystemStats::getFullUserName());
+    auto stream = url.createInputStream(true);
+#endif
+    
+    if (File::isAbsolutePath(commandLine.unquoted()))
+    {
+        Polytempo_Composition::getInstance()->openFile(commandLine.unquoted()); // enable 'open with' (WIN)
+    }
 }
     
 void Polytempo_ComposerApplication::shutdown()
@@ -47,10 +61,19 @@ void Polytempo_ComposerApplication::shutdown()
     
     Polytempo_StoredPreferences::getInstance()->getProps().save();
     
+    // delete all open windows (except the main window)
+    int num = Desktop::getInstance().getNumComponents();
+    for (int i = 0; i < num; i++)
+    {
+        Component* c = Desktop::getInstance().getComponent(i);
+        if (c != composerWindow.get()) delete c;
+    }
+
     // delete scoped pointers
     composerWindow = nullptr;
     commandManager = nullptr;
-    
+    oscSender = nullptr;
+
     // delete singletons
     Polytempo_StoredPreferences::deleteInstance();
     Polytempo_Composition::deleteInstance();
@@ -71,7 +94,9 @@ void Polytempo_ComposerApplication::applicationShouldQuit()
 {
     if(Polytempo_ScoreScheduler::getInstance()->isRunning())
     {
-        Polytempo_ScoreScheduler::getInstance()->kill();
+        quitApplication = true;
+        Polytempo_ScoreScheduler::getInstance()->stop();
+        return;
     }
     
     if(Polytempo_Composition::getInstance()->isDirty())
@@ -86,11 +111,9 @@ void Polytempo_ComposerApplication::applicationShouldQuit()
     quit();
 }
     
-void Polytempo_ComposerApplication::anotherInstanceStarted(const String& /*commandLine*/)
+void Polytempo_ComposerApplication::anotherInstanceStarted(const String& commandLine)
 {
-    // When another instance of the app is launched while this one is running,
-    // this method is invoked, and the commandLine parameter tells you what
-    // the other instance's command-line arguments were.
+    Polytempo_Composition::getInstance()->openFile(commandLine.unquoted()); // enable 'open with' (MAC)
 }
     
 ApplicationCommandManager& Polytempo_ComposerApplication::getCommandManager()

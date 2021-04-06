@@ -157,6 +157,12 @@ void Polytempo_Composition::addSelectedControlPointIndex(int i)
     selectedControlPointIndices->add(i);
 }
 
+void Polytempo_Composition::setSelectedControlPointIndex(int i)
+{
+    clearSelectedControlPointIndices();
+    addSelectedControlPointIndex(i);
+}
+
 void Polytempo_Composition::removeSelectedControlPointIndex(int i)
 {
     int indexToRemove = selectedControlPointIndices->indexOf(i);
@@ -593,14 +599,13 @@ void Polytempo_Composition::exportAsPolytempoScore()
         
         if(exportAll)
         {
-            int i=-1;
             for(Polytempo_Sequence *sequence : sequences)
             {
-                tempScore.addSection("sequence"+String(++i));
+                tempScore.addSection("sequence"+String(sequence->getID()));
                 
                 for(Polytempo_Event *event : sequence->getTimedEvents())
                 {
-                    if(event->hasProperty("~sequence") && (int)event->getProperty("~sequence") == i)
+                    if(event->hasProperty("~sequence") && (int)event->getProperty("~sequence") == sequence->getID())
                     {
                         tempEvent = new Polytempo_Event(*event);
 
@@ -619,12 +624,12 @@ void Polytempo_Composition::exportAsPolytempoScore()
         }
         else
         {
-            tempScore.addSection("sequence"+String(selectedSequenceIndex));
             Polytempo_Sequence *sequence = getSelectedSequence();
-            
+            tempScore.addSection("sequence"+String(sequence->getID()));
+
             for(Polytempo_Event *event : sequence->getTimedEvents())
             {
-                if(event->hasProperty("~sequence") && (int)event->getProperty("~sequence") == selectedSequenceIndex)
+                if(event->hasProperty("~sequence") && (int)event->getProperty("~sequence") == sequence->getID())
                 {
                     tempEvent = new Polytempo_Event(*event);
 

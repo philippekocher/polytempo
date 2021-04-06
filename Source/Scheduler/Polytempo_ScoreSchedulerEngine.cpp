@@ -3,6 +3,8 @@
 #include "../Data/Polytempo_Composition.h"
 #include "Polytempo_EventScheduler.h"
 #include "../Network/Polytempo_TimeProvider.h"
+#include "../Application/PolytempoComposer/Polytempo_ComposerApplication.h"
+
 
 #ifdef POLYTEMPO_COMPOSER
 void Polytempo_ComposerEngine::setScoreTime(int time)
@@ -46,24 +48,28 @@ void Polytempo_ComposerEngine::run()
                 
                 nextScoreEvent->setSyncTime(syncTime);
                 
-                if(nextScoreEvent->getType() == eventType_Beat)
+                if(nextScoreEvent->getType() == eventType_Beat ||
+                   nextScoreEvent->getType() == eventType_Marker)
                 {
                     // add playback properties to next event
                     int sequenceID = nextScoreEvent->getProperty("~sequence");
                     Polytempo_Composition *composition = Polytempo_Composition::getInstance();
                     Polytempo_Sequence* sequence = composition->getSequenceWithID(sequenceID);
                     
-                    if((!composition->isOneSequenceSoloed() && !sequence->isMuted())
-                       || sequence->isSoloed())
+                    if(sequence != nullptr)
                     {
-                        nextScoreEvent = new Polytempo_Event(*nextScoreEvent); // we need a copy to add the playback properties
-                        nextScoreEvent->setOwned(false); // this event can be deleted by the scheduler after its use
-                        
-                        sequence->addPlaybackPropertiesToEvent(nextScoreEvent);
+                        if((!composition->isOneSequenceSoloed() && !sequence->isMuted())
+                           || sequence->isSoloed())
+                        {
+                            nextScoreEvent = new Polytempo_Event(*nextScoreEvent); // we need a copy to add the playback properties
+                            nextScoreEvent->setOwned(false); // this event can be deleted by the scheduler after its use
+                            
+                            sequence->addPlaybackPropertiesToEvent(nextScoreEvent);
 
-                        // next osc event
-                        nextOscEvent = sequence->getOscEvent(nextScoreEvent);
-                        Polytempo_EventScheduler::getInstance()->scheduleScoreEvent(nextOscEvent);
+                            // next osc event
+                            nextOscEvent = sequence->getOscEvent(nextScoreEvent);
+                            Polytempo_EventScheduler::getInstance()->scheduleScoreEvent(nextOscEvent);
+                        }
                     }
                 }
             
@@ -87,6 +93,9 @@ void Polytempo_ComposerEngine::run()
          (which is already ahead by the amount of lookahead).
 	*/
     if(!killed) scoreScheduler->gotoTime(scoreTime);
+
+    Polytempo_ComposerApplication* const app = dynamic_cast<Polytempo_ComposerApplication*>(JUCEApplication::getInstance());
+    if (app->quitApplication) app->applicationShouldQuit();
 }
 #endif
 

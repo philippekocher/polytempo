@@ -38,7 +38,8 @@ void Polytempo_OSCSender::eventNotification(Polytempo_Event *event)
         sendOscEventAsMessage(event);
     else if(event->getType() == eventType_Tick   ||
             event->getType() == eventType_Start  ||
-            event->getType() == eventType_Stop)
+            event->getType() == eventType_Stop ||
+            event->getType() == eventType_GotoTime)
         sendTick(event);
 }
 

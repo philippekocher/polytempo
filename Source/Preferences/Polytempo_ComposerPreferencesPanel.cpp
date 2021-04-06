@@ -1,5 +1,6 @@
 #include "Polytempo_ComposerPreferencesPanel.h"
 #include "Polytempo_StoredPreferences.h"
+#include "../Audio+Midi/Polytempo_MidiClick.h"
 #include "../Misc/Rational.h"
 #include "../Application/PolytempoComposer/Polytempo_ComposerApplication.h"
 
@@ -178,16 +179,82 @@ public:
 
 //------------------------------------------------------------------------------
 #pragma mark -
+#pragma mark Midi Preferences Page
+
+class MidiPreferencesPage : public Component,
+                            ComboBox::Listener,
+                            ChangeListener
+{
+    Label* midiOutputDeviceListLabel;
+    ComboBox* midiOutputDeviceList;
+
+public:
+    MidiPreferencesPage()
+    {
+        addAndMakeVisible(midiOutputDeviceListLabel = new Label(String(), "MIDI Output"));
+        midiOutputDeviceListLabel->setFont(Font(15.0000f, Font::plain));
+        midiOutputDeviceListLabel->setJustificationType(Justification::centredLeft);
+
+        addAndMakeVisible(midiOutputDeviceList = new ComboBox());
+        midiOutputDeviceList->setTextWhenNoChoicesAvailable("No MIDI Outputs Enabled");
+        const StringArray midiOutputs(MidiOutput::getDevices());
+        midiOutputDeviceList->addItemList(midiOutputs, 1);
+        midiOutputDeviceList->addListener(this);
+
+        // find the device stored in the settings
+        StringArray midiDevices = MidiOutput::getDevices();
+        int index = midiDevices.indexOf(Polytempo_StoredPreferences::getInstance()->getProps().getValue("midiOutputDevice"));
+        if (index < 0) index = 0; // otherwise set first device
+        midiOutputDeviceList->setSelectedId(index + 1, dontSendNotification);
+    }
+
+    ~MidiPreferencesPage()
+    {
+        deleteAllChildren();
+    }
+
+    void resized() override
+    {
+        midiOutputDeviceListLabel->setBounds(20, 35, 100, 24);
+        midiOutputDeviceList->setBounds(120, 35, getWidth() - 140, 24);
+    }
+
+    /* combo box listener
+     --------------------------------------- */
+
+    void comboBoxChanged(ComboBox* box) override
+    {
+        if (box == midiOutputDeviceList)
+        {
+            int index = midiOutputDeviceList->getSelectedItemIndex();
+            Polytempo_MidiClick::getInstance()->setOutputDeviceIndex(index);
+
+            StringArray midiDevices = MidiOutput::getDevices();
+            Polytempo_StoredPreferences::getInstance()->getProps().setValue("midiOutputDevice", midiDevices[index]);
+        }
+    }
+
+    /* change listener
+     --------------------------------------- */
+
+    void changeListenerCallback(ChangeBroadcaster*) override
+    {
+    }
+};
+//------------------------------------------------------------------------------
+#pragma mark -
 #pragma mark Preferences Panel
 
 static const char* generalPreferencesPage = "General";
+static const char* midiPreferencesPage = "Midi";
 
 Polytempo_ComposerPreferencesPanel::Polytempo_ComposerPreferencesPanel()
 {
     String preferencePage = Polytempo_StoredPreferences::getInstance()->getProps().getValue("settingsPage");
     
     addSettingsPage(generalPreferencesPage, 0, 0);
-    
+    addSettingsPage(midiPreferencesPage, 0, 0);
+
     if(preferencePage == String()) preferencePage = generalPreferencesPage;
     setCurrentPage(preferencePage);
 }
@@ -201,13 +268,16 @@ Component* Polytempo_ComposerPreferencesPanel::createComponentForPage(const Stri
 {
     Polytempo_StoredPreferences::getInstance()->getProps().setValue("settingsPage", pageName);
     
+    if (pageName == midiPreferencesPage)
+        return new MidiPreferencesPage();
+
     return new GeneralPreferencesPage();
 }
 
 void Polytempo_ComposerPreferencesPanel::show()
 {
     Polytempo_ComposerPreferencesPanel *p = new Polytempo_ComposerPreferencesPanel;
-    p->setSize(500, 690);
+    p->setSize(500, 320);
     
     DialogWindow::LaunchOptions options;
     options.content.setOwned(p);
