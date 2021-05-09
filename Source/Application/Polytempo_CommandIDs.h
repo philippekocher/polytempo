@@ -18,6 +18,7 @@ namespace Polytempo_CommandIDs
         returnToBeginning,
         gotoTime,
         aboutWindow,
+        checkForNewVersion,
         preferencesWindow,
         fullScreen,
         help,
