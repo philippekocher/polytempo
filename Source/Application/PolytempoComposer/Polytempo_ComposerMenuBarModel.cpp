@@ -6,6 +6,7 @@
 #include "../../Data/Polytempo_Composition.h"
 #include "../../Scheduler/Polytempo_ScoreScheduler.h"
 #include "../Polytempo_CommandIDs.h"
+#include "../Polytempo_LatestVersionChecker.h"
 #include "../../Views/PolytempoComposer/Polytempo_DialogWindows.h"
 
 
@@ -243,7 +244,7 @@ void Polytempo_ComposerMenuBarModel::getCommandInfo(CommandID commandID, Applica
             break;
             
         case Polytempo_CommandIDs::checkForNewVersion:
-            result.setInfo("Check for new version", String(), infoCategory, 0);
+            result.setInfo("Check for New Version", String(), infoCategory, 0);
             break;
 
         /* file menu
@@ -471,7 +472,7 @@ bool Polytempo_ComposerMenuBarModel::perform (const InvocationInfo& info)
             break;
 
         case Polytempo_CommandIDs::checkForNewVersion:
-            //LatestVersionChecker::getInstance()->checkForNewVersion(true);
+            Polytempo_LatestVersionChecker::getInstance()->checkForNewVersion(true);
             break;
 
         /* file menu

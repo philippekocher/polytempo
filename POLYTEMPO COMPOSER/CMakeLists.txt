@@ -19,6 +19,7 @@ target_sources(PolytempoComposer PRIVATE
     ../Source/Application/PolytempoComposer/Polytempo_ComposerMenuBarModel.cpp
     ../Source/Application/PolytempoComposer/Polytempo_ComposerWindow.cpp
     ../Source/Application/Polytempo_AboutWindow.cpp
+    ../Source/Application/Polytempo_LatestVersionChecker.cpp
     ../Source/Audio+Midi/Polytempo_AudioClick.cpp
     ../Source/Audio+Midi/Polytempo_MidiClick.cpp
     ../Source/Audio+Midi/Polytempo_MidiInput.cpp

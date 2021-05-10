@@ -2,6 +2,7 @@
 #include "../Polytempo_AboutWindow.h"
 #include "Polytempo_NetworkApplication.h"
 #include "../Polytempo_CommandIDs.h"
+#include "../Polytempo_LatestVersionChecker.h"
 #include "../../Preferences/Polytempo_NetworkPreferencesPanel.h"
 #include "../../Preferences/Polytempo_StoredPreferences.h"
 #include "../../Scheduler/Polytempo_ScoreScheduler.h"
@@ -272,7 +273,7 @@ void Polytempo_MenuBarModel::getCommandInfo(CommandID commandID, ApplicationComm
         break;
 
     case Polytempo_CommandIDs::checkForNewVersion:
-        result.setInfo("Check for new version", String(), infoCategory, 0);
+        result.setInfo("Check for New Version", String(), infoCategory, 0);
         break;
 
         /* file menu
@@ -519,7 +520,7 @@ bool Polytempo_MenuBarModel::perform(const InvocationInfo& info)
         break;
 
     case Polytempo_CommandIDs::checkForNewVersion:
-        //LatestVersionChecker::getInstance()->checkForNewVersion(true);
+        Polytempo_LatestVersionChecker::getInstance()->checkForNewVersion(true);
         break;
 
         /* file menu
