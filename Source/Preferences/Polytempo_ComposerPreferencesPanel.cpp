@@ -3,6 +3,7 @@
 #include "../Audio+Midi/Polytempo_MidiClick.h"
 #include "../Misc/Rational.h"
 #include "../Application/PolytempoComposer/Polytempo_ComposerApplication.h"
+#include "../Application/Polytempo_LatestVersionChecker.h"
 
 
 //------------------------------------------------------------------------------
@@ -22,6 +23,9 @@ class GeneralPreferencesPage : public Component, Button::Listener, TextEditor::L
     TextEditor *defaultBeatPatternMetre;
     Label      *defaultBeatPatternRepeatsLabel;
     TextEditor *defaultBeatPatternRepeats;
+
+    ToggleButton* checkForNewVersionToggle;
+    TextButton* checkNowButton;
 
 public:
     GeneralPreferencesPage()
@@ -99,6 +103,16 @@ public:
         defaultBeatPatternRepeats->setInputRestrictions(0, "0123456789");
         defaultBeatPatternRepeats->addListener(this);
 
+
+        // check for new version
+        
+        addAndMakeVisible(checkForNewVersionToggle = new ToggleButton(String()));
+        checkForNewVersionToggle->setButtonText(L"Automatically check for new versions");
+        checkForNewVersionToggle->setToggleState(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("checkForNewVersion"), dontSendNotification);
+        checkForNewVersionToggle->addListener(this);
+        
+        addAndMakeVisible(checkNowButton = new TextButton("Check now"));
+        checkNowButton->addListener(this);
     }
     
     ~GeneralPreferencesPage()
@@ -119,6 +133,9 @@ public:
         defaultBeatPatternMetre->setBounds       (70,  170, 40, 24);
         defaultBeatPatternRepeatsLabel->setBounds(120, 170, 50, 24);
         defaultBeatPatternRepeats->setBounds     (170, 170, 40, 24);
+
+        checkForNewVersionToggle->setBounds(20, 280, 260, 24);
+        checkNowButton->setBounds          (290, 280, 100, 24);
 }
     
     /* text editor & button listener
@@ -170,8 +187,17 @@ public:
         }
     }
     
-    void buttonClicked(Button*)
-    {}
+    void buttonClicked(Button* button)
+    {
+        if(button == checkForNewVersionToggle)
+        {
+            Polytempo_StoredPreferences::getInstance()->getProps().setValue("checkForNewVersion", button->getToggleState());
+        }
+        else if(button == checkNowButton)
+        {
+            Polytempo_LatestVersionChecker::getInstance()->checkForNewVersion(true);
+        }
+    }
     
     void buttonStateChanged(Button&)
     {}
@@ -277,7 +303,7 @@ Component* Polytempo_ComposerPreferencesPanel::createComponentForPage(const Stri
 void Polytempo_ComposerPreferencesPanel::show()
 {
     Polytempo_ComposerPreferencesPanel *p = new Polytempo_ComposerPreferencesPanel;
-    p->setSize(500, 320);
+    p->setSize(500, 420);
     
     DialogWindow::LaunchOptions options;
     options.content.setOwned(p);

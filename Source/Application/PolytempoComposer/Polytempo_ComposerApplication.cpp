@@ -1,5 +1,5 @@
 #include "Polytempo_ComposerApplication.h"
-
+#include "../Polytempo_LatestVersionChecker.h"
 #include "../../Preferences/Polytempo_StoredPreferences.h"
 #include "../../Audio+Midi/Polytempo_AudioClick.h"
 #include "../../Audio+Midi/Polytempo_MidiClick.h"
@@ -37,6 +37,10 @@ void Polytempo_ComposerApplication::initialise(const String& commandLine)
     // return to beginning
     Polytempo_ScoreScheduler::getInstance()->returnToBeginning();
     
+    // check for updates
+    if(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("checkForNewVersion"))
+        Polytempo_LatestVersionChecker::getInstance()->checkForNewVersion(false);
+
 #if (! JUCE_DEBUG)
     // contact web server
     URL url = URL("https://polytempo.zhdk.ch/stats/log.php?application="+getApplicationName()+"&version="+getApplicationVersion()+"&os="+SystemStats::getOperatingSystemName()+"&user="+SystemStats::getFullUserName());

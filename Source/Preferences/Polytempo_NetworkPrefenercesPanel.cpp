@@ -1,6 +1,7 @@
 #include "Polytempo_NetworkPreferencesPanel.h"
 #include "Polytempo_StoredPreferences.h"
 #include "../Application/PolytempoNetwork/Polytempo_NetworkApplication.h"
+#include "../Application/Polytempo_LatestVersionChecker.h"
 #include "../Audio+Midi/Polytempo_AudioDeviceManager.h"
 #include "../Audio+Midi/Polytempo_AudioClick.h"
 #include "../Audio+Midi/Polytempo_MidiClick.h"
@@ -61,6 +62,9 @@ class GeneralPreferencesPage : public Component, Button::Listener, TextEditor::L
     TextButton* chooseDefaultFile;
     Label* defaultFilePathLabel;
     ToggleButton* fullScreenToggle;
+    
+    ToggleButton* checkForNewVersionToggle;
+    TextButton* checkNowButton;
 
 public:
     GeneralPreferencesPage()
@@ -83,20 +87,30 @@ public:
         fullScreenToggle->setButtonText(L"Full Screen");
         fullScreenToggle->setToggleState(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("fullScreen"), dontSendNotification);
         fullScreenToggle->addListener(this);
+
+        addAndMakeVisible(checkForNewVersionToggle = new ToggleButton(String()));
+        checkForNewVersionToggle->setButtonText(L"Automatically check for new versions");
+        checkForNewVersionToggle->setToggleState(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("checkForNewVersion"), dontSendNotification);
+        checkForNewVersionToggle->addListener(this);
+        
+        addAndMakeVisible(checkNowButton = new TextButton("Check now"));
+        checkNowButton->addListener(this);
     }
 
-    ~GeneralPreferencesPage()
+    ~GeneralPreferencesPage() override
     {
         deleteAllChildren();
     }
 
     void resized() override
     {
-        defaultFilePath->setBounds(20, 70, proportionOfWidth(0.9f), 24);
+        defaultFilePath->setBounds(20, 70, getWidth() - 40, 24);
         defaultFilePathLabel->setBounds(18, 35, 200, 24);
-        chooseDefaultFile->setBounds(20, 100, proportionOfWidth(0.2f), 24);
-
-        fullScreenToggle->setBounds(getWidth() - proportionOfWidth(0.2f) - 20, 100, proportionOfWidth(0.2f), 24);
+        chooseDefaultFile->setBounds(20, 100, 100, 24);
+        fullScreenToggle->setBounds(getWidth() - 110, 100, 90, 24);
+        
+        checkForNewVersionToggle->setBounds(20, 200, 260, 24);
+        checkNowButton->setBounds(290, 200, 100, 24);
     }
 
     /* text editor & button listener
@@ -157,6 +171,14 @@ public:
         else if (button == fullScreenToggle)
         {
             Polytempo_StoredPreferences::getInstance()->getProps().setValue("fullScreen", button->getToggleState());
+        }
+        else if (button == checkForNewVersionToggle)
+        {
+            Polytempo_StoredPreferences::getInstance()->getProps().setValue("checkForNewVersion", button->getToggleState());
+        }
+        else if (button == checkNowButton)
+        {
+            Polytempo_LatestVersionChecker::getInstance()->checkForNewVersion(true);
         }
     }
 
