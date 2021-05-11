@@ -1,5 +1,5 @@
 #include "Polytempo_NetworkApplication.h"
-
+#include "../Polytempo_LatestVersionChecker.h"
 #include "../../Preferences/Polytempo_StoredPreferences.h"
 #include "../../Scheduler/Polytempo_ScoreScheduler.h"
 #include "../../Scheduler/Polytempo_EventScheduler.h"
@@ -53,6 +53,10 @@ void Polytempo_NetworkApplication::initialise(const String& commandLine)
 
     // time sync
     Polytempo_TimeProvider::getInstance();
+    
+    // check for updates
+    if(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("checkForNewVersion"))
+        Polytempo_LatestVersionChecker::getInstance()->checkForNewVersion(false);
 
     #if (! JUCE_DEBUG)
     // contact web server

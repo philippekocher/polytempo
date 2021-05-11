@@ -37,6 +37,7 @@ Polytempo_DefaultPreferences::Polytempo_DefaultPreferences()
     setValue("audioCueVolume", 1.0);
 
     setValue("annotationMode", 1);
+    setValue("checkForNewVersion", 1);
 }
 
 Polytempo_DefaultPreferences::~Polytempo_DefaultPreferences()

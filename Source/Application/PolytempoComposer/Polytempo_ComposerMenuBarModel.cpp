@@ -6,6 +6,7 @@
 #include "../../Data/Polytempo_Composition.h"
 #include "../../Scheduler/Polytempo_ScoreScheduler.h"
 #include "../Polytempo_CommandIDs.h"
+#include "../Polytempo_LatestVersionChecker.h"
 #include "../../Views/PolytempoComposer/Polytempo_DialogWindows.h"
 
 
@@ -26,6 +27,7 @@ Polytempo_ComposerMenuBarModel::Polytempo_ComposerMenuBarModel(Polytempo_Compose
     extraAppleMenuItems.reset(new PopupMenu());
     
     extraAppleMenuItems->addCommandItem(commandManager, Polytempo_CommandIDs::aboutWindow);
+    extraAppleMenuItems->addCommandItem(commandManager, Polytempo_CommandIDs::checkForNewVersion);
     extraAppleMenuItems->addSeparator();
     extraAppleMenuItems->addCommandItem(commandManager, Polytempo_CommandIDs::preferencesWindow);
     
@@ -50,9 +52,9 @@ Polytempo_ComposerMenuBarModel::~Polytempo_ComposerMenuBarModel()
 StringArray Polytempo_ComposerMenuBarModel::getMenuBarNames()
 {
 #if JUCE_MAC
-    const char* const names[] = { "File", "Edit", "View", "Scheduler", /*"Window",*/ "Help", 0 };
+    const char* const names[] = { "File", "Edit", "View", "Scheduler", "Help", nullptr };
 #else
-    const char* const names[] = { "PolytempoComposer", "File", "Edit", "View", "Scheduler", /*"Window",*/ "Help", 0 };
+    const char* const names[] = { "PolytempoComposer", "File", "Edit", "View", "Scheduler", "Help", nullptr };
 #endif
     
     return StringArray (names);
@@ -67,6 +69,8 @@ PopupMenu Polytempo_ComposerMenuBarModel::getMenuForIndex (int /*menuIndex*/, co
     if (menuName == "PolytempoComposer")
     {
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::aboutWindow);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::checkForNewVersion);
+        menu.addSeparator();
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::preferencesWindow);
         menu.addSeparator();
         menu.addCommandItem(commandManager, StandardApplicationCommandIDs::quit);
@@ -133,10 +137,6 @@ PopupMenu Polytempo_ComposerMenuBarModel::getMenuForIndex (int /*menuIndex*/, co
 
     else if (menuName == "Help")
     {
-#if ! JUCE_MAC
-        menu.addCommandItem (commandManager, Polytempo_CommandIDs::aboutWindow);
-        menu.addSeparator();
-#endif
         menu.addCommandItem(commandManager,Polytempo_CommandIDs::help);
         menu.addSeparator();
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::visitWebsite);
@@ -209,6 +209,7 @@ void Polytempo_ComposerMenuBarModel::getAllCommands (Array <CommandID>& commands
         Polytempo_CommandIDs::adjustTempo,
         
         Polytempo_CommandIDs::aboutWindow,
+        Polytempo_CommandIDs::checkForNewVersion,
         Polytempo_CommandIDs::preferencesWindow,
         Polytempo_CommandIDs::help,
         Polytempo_CommandIDs::visitWebsite,
@@ -242,7 +243,10 @@ void Polytempo_ComposerMenuBarModel::getCommandInfo(CommandID commandID, Applica
             result.setInfo ("About " + JUCEApplication::getInstance()->getApplicationName(), "About", infoCategory, 0);
             break;
             
-       
+        case Polytempo_CommandIDs::checkForNewVersion:
+            result.setInfo("Check for New Version", String(), infoCategory, 0);
+            break;
+
         /* file menu
          ----------------------------------*/
             
@@ -467,7 +471,10 @@ bool Polytempo_ComposerMenuBarModel::perform (const InvocationInfo& info)
             Polytempo_AboutWindow::show();
             break;
 
-            
+        case Polytempo_CommandIDs::checkForNewVersion:
+            Polytempo_LatestVersionChecker::getInstance()->checkForNewVersion(true);
+            break;
+
         /* file menu
          ----------------------------------*/
             
