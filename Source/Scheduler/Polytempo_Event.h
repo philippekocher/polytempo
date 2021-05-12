@@ -25,6 +25,7 @@ enum Polytempo_EventType
     eventType_AddSection,
     
     eventType_Image,  // 14
+    eventType_AppendImage,
     eventType_Text,
     eventType_Progressbar,
     
@@ -61,6 +62,7 @@ enum Polytempo_EventType
 #define eventTypeString_AddSection      "addSection"
 
 #define eventTypeString_Image           "image"
+#define eventTypeString_AppendImage     "appendImage"
 #define eventTypeString_Text            "text"
 #define eventTypeString_Progressbar     "progressbar"
 

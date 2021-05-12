@@ -247,6 +247,7 @@ void Polytempo_Event::setType(String typeString)
     else if (typeString == eventTypeString_ClearAll) type = eventType_ClearAll;
 
     else if (typeString == eventTypeString_Image) type = eventType_Image;
+    else if (typeString == eventTypeString_AppendImage) type = eventType_AppendImage;
     else if (typeString == eventTypeString_Text) type = eventType_Text;
     else if (typeString == eventTypeString_Progressbar) type = eventType_Progressbar;
 
@@ -317,6 +318,9 @@ String Polytempo_Event::getTypeString()
 
     case eventType_Image:
         return eventTypeString_Image;
+
+    case eventType_AppendImage:
+        return eventTypeString_AppendImage;
 
     case eventType_Text:
         return eventTypeString_Text;
