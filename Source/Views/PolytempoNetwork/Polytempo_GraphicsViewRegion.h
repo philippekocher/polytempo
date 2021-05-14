@@ -10,6 +10,12 @@ enum Polytempo_ViewContentType
     contentType_Progressbar
 };
 
+enum Polytempo_ViewContentLayout
+{
+    contentLayout_Row = 0,
+    contentLayout_Column
+};
+
 class Polytempo_GraphicsViewRegion : public Component, public ChangeListener
 {
 public:
@@ -18,7 +24,7 @@ public:
 
     void paint(Graphics& g) override;
     void resized() override;
-    void setImage(Image* img, var rect, String imageId);
+    void setImage(Image* img, var rect, String imageId, bool append = false);
 
     void setRelativeBounds(const Rectangle<float>& newBounds);
 
@@ -40,27 +46,34 @@ public:
     bool imageRectangleContains(Point<float> point) const;
 
 private:
-    void setViewImage(Image* img, var rect);
     void changeListenerCallback(ChangeBroadcaster* source) override;
 
     var regionID;
     Polytempo_ViewContentType contentType;
+    Polytempo_ViewContentLayout contentLayout;
 
     float borderSize;
     Rectangle<float> relativeBounds;
-    Image* image;
+
+    struct imageRegion
+    {
+        Image* image;
+        const Rectangle<int> imageRect;
+        Rectangle<int> targetArea;
+    };
+    std::vector<imageRegion> imageRegions;
+
     std::unique_ptr<String> text;
     std::unique_ptr<Polytempo_Progressbar> progressbar;
     float imageZoom = 1;
     float maxImageZoom = -1;
 
-    Rectangle<int> targetArea;
+//    Rectangle<int> targetArea;
     bool allowAnnotations;
 
-    Rectangle<float> currentImageRectangle;
+    Rectangle<int> currentImageRectangle;
     String currentImageId;
 
     AffineTransform imageToScreen;
     AffineTransform screenToImage;
-    float imageLeft, imageTop, imageWidth, imageHeight;
 };

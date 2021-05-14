@@ -36,6 +36,7 @@ void Polytempo_GraphicsView::eventNotification(Polytempo_Event* event)
     else if (event->getType() == eventType_AddRegion) addRegion(event);
     else if (event->getType() == eventType_AddSection) addSection(event);
     else if (event->getType() == eventType_Image) displayImage(event);
+    else if (event->getType() == eventType_AppendImage) displayImage(event);
     else if (event->getType() == eventType_Text) displayText(event);
     else if (event->getType() == eventType_Progressbar) displayProgessbar(event);
 }
@@ -68,9 +69,13 @@ void Polytempo_GraphicsView::addRegion(Polytempo_Event* event)
     delete regionsMap[event->getProperty(eventPropertyString_RegionID)]; // old region
     regionsMap.set(event->getProperty(eventPropertyString_RegionID), region);
 
-    Array<var> r = *event->getProperty(eventPropertyString_Rect).getArray();
-    Rectangle<float> bounds = Rectangle<float>(r[0], r[1], r[2], r[3]);
-    region->setRelativeBounds(bounds);
+    Array<var> r;
+    if(event->hasProperty(eventPropertyString_Rect))
+        r = *event->getProperty(eventPropertyString_Rect).getArray();
+    else
+        r = defaultRectangle();
+
+    region->setRelativeBounds(Rectangle<float>(r[0], r[1], r[2], r[3]));
 
     region->setMaxImageZoom(event->getProperty(eventPropertyString_MaxZoom));
 }
@@ -115,18 +120,9 @@ void Polytempo_GraphicsView::displayImage(Polytempo_Event* event)
         return;
     }
 
-    // default rectangle [0,0,1,1]
-    if (rect == var())
-    {
-        Array<var> r;
-        r.set(0, 0);
-        r.set(1, 0);
-        r.set(2, 1);
-        r.set(3, 1);
-        rect = r;
-    }
+    if (rect == var()) rect = defaultRectangle();
 
-    region->setImage(image, rect, imageId);
+    region->setImage(image, rect, imageId, event->getType() == eventType_AppendImage);
     region->setVisible(true);
     region->repaint();
     annotationLayer->requireUpdate();
@@ -166,3 +162,16 @@ void Polytempo_GraphicsView::displayProgessbar(Polytempo_Event* event)
     region->setVisible(true);
     region->repaint();
 }
+
+
+Array<var> Polytempo_GraphicsView::defaultRectangle()
+{
+    // default rectangle [0,0,1,1]
+    Array<var> r;
+    r.set(0, 0);
+    r.set(1, 0);
+    r.set(2, 1);
+    r.set(3, 1);
+    return r;
+}
+

@@ -9,6 +9,7 @@ Polytempo_GraphicsViewRegion::Polytempo_GraphicsViewRegion(var id)
 
     regionID = id;
     contentType = contentType_Empty;
+    contentLayout = contentLayout_Row;
     allowAnnotations = false;
 
     Polytempo_GraphicsAnnotationManager::getInstance()->addChangeListener(this);
@@ -28,7 +29,7 @@ void Polytempo_GraphicsViewRegion::paint(Graphics& g)
 
     g.fillAll(Colours::white);
 
-    if (contentType == contentType_Image && image != nullptr)
+    if (contentType == contentType_Image && imageRegions.size() > 0)
     {
         Polytempo_GraphicsAnnotationManager::eAnnotationMode annotationMode = Polytempo_GraphicsAnnotationManager::getInstance()->getAnnotationMode();
         if (annotationMode == Polytempo_GraphicsAnnotationManager::Standard || annotationMode == Polytempo_GraphicsAnnotationManager::Edit)
@@ -36,9 +37,12 @@ void Polytempo_GraphicsViewRegion::paint(Graphics& g)
             g.fillAll(Colours::lightgrey.brighter(0.7f));
         }
 
-        g.drawImage(*image,
-                    targetArea.getX(), targetArea.getY(), targetArea.getWidth(), targetArea.getHeight(),
-                    (int)imageLeft, (int)imageTop, (int)imageWidth, (int)imageHeight);
+        for (imageRegion region : imageRegions)
+        {
+            g.drawImage(*region.image,
+                        region.targetArea.getX(), region.targetArea.getY(), region.targetArea.getWidth(), region.targetArea.getHeight(),
+                        region.imageRect.getX(), region.imageRect.getY(), region.imageRect.getWidth(), region.imageRect.getHeight());
+        }
     }
     else if (contentType == contentType_Text)
     {
@@ -69,29 +73,63 @@ void Polytempo_GraphicsViewRegion::resized()
 
     if (contentType == contentType_Image)
     {
-        float widthZoom = getWidth() / imageWidth;
-        float heightZoom = getHeight() / imageHeight;
-
+        float totalWidth = 0, maxWidth = 0;
+        float totalHeight = 0, maxHeight = 0;
+        for (imageRegion region : imageRegions)
+        {
+            float regionWidth = region.imageRect.getWidth();
+            float regionHeight = region.imageRect.getHeight();
+            totalWidth += regionWidth;
+            if (regionWidth > maxWidth) maxWidth = regionWidth;
+            totalHeight += regionHeight;
+            if (regionHeight > maxHeight) maxHeight = regionHeight;
+        }
+        
+        float widthZoom, heightZoom;
+        if (contentLayout == contentLayout_Row)
+        {
+            widthZoom = getWidth() / totalWidth;
+            heightZoom = getHeight() / maxHeight;
+        }
+        else
+        {
+            widthZoom = getWidth() / maxWidth;
+            heightZoom = getHeight() / totalHeight;
+        }
+    
         imageZoom = widthZoom < heightZoom ? widthZoom : heightZoom;
 
         if (maxImageZoom > 0.0f && imageZoom > maxImageZoom) imageZoom = maxImageZoom;
 
         if (imageZoom == INFINITY) imageZoom = 1;
 
-        int yOffset = int((getHeight() - (imageHeight * imageZoom)) * 0.5f);
-        targetArea = Rectangle<int>(0, yOffset, int(imageWidth * imageZoom), int(imageHeight * imageZoom));
+        float x = 0, y;
+        if (contentLayout == contentLayout_Row)
+            y = (getHeight() - (maxHeight * imageZoom)) * 0.5f;
+        else
+            y = (getHeight() - (totalHeight * imageZoom)) * 0.5f;
+
+        for (imageRegion &region : imageRegions)
+        {
+            region.targetArea = Rectangle<int>(int(x), int(y), int(region.imageRect.getWidth() * imageZoom), int(region.imageRect.getHeight() * imageZoom));
+            
+            if(contentLayout == contentLayout_Row)
+                x += region.imageRect.getWidth() * imageZoom;
+            else
+                y += region.imageRect.getHeight() * imageZoom;
+        }
     }
     else if (contentType == contentType_Progressbar)
     {
         progressbar->setBounds(getLocalBounds().reduced(15, 10)); // inset rect
     }
 
-    if (currentImageRectangle.isEmpty())
+    if (imageRegions.size() == 0)
         allowAnnotations = false;
     else
     {
-        screenToImage = AffineTransform::translation(-float(getX() + targetArea.getX()), -float(getY() + targetArea.getY()));
-        screenToImage = screenToImage.followedBy(AffineTransform::scale(currentImageRectangle.getWidth() / float(targetArea.getWidth()), currentImageRectangle.getHeight() / float(targetArea.getHeight())));
+        screenToImage = AffineTransform::translation(-float(getX() + imageRegions[0].targetArea.getX()), -float(getY() + imageRegions[0].targetArea.getY()));
+        screenToImage = screenToImage.followedBy(AffineTransform::scale(currentImageRectangle.getWidth() / float(imageRegions[0].targetArea.getWidth()), currentImageRectangle.getHeight() / float(imageRegions[0].targetArea.getHeight())));
         screenToImage = screenToImage.followedBy(AffineTransform::translation(currentImageRectangle.getX(), currentImageRectangle.getY()));
 
         imageToScreen = screenToImage.inverted();
@@ -114,45 +152,30 @@ void Polytempo_GraphicsViewRegion::clear()
     setVisible(false);
 }
 
-void Polytempo_GraphicsViewRegion::setImage(Image* img, var rect, String imageId)
-{
-    Array<var> r = *rect.getArray();
-    float relTopLeftX = float(r[0]);
-    float relTopLeftY = float(r[1]);
-    float relWidth = float(r[2]);
-    float relHeight = float(r[3]);
-    float imgWidth = float(img->getWidth());
-    float imgHeight = float(img->getHeight());
-    currentImageRectangle = Rectangle<float>(
-        imgWidth * relTopLeftX,
-        imgHeight * relTopLeftY,
-        imgWidth * relWidth,
-        imgHeight * relHeight);
-
-    currentImageId = imageId;
-
-    setViewImage(img, rect);
-
-    resized();
-}
-
-void Polytempo_GraphicsViewRegion::setViewImage(Image* img, var rect)
+void Polytempo_GraphicsViewRegion::setImage(Image* img, var rect, String imageId, bool append)
 {
     contentType = contentType_Image;
-    image = img;
-    Array<var> r = *rect.getArray();
 
-    if (image == nullptr) return;
+    Array<var> r = *rect.getArray();
+    currentImageId = imageId;
+
+    if (img == nullptr) return;
     if (r.size() != 4) return;
 
     // to avoid errors:
     if (float(r[2]) < 0) r.set(2, 0.0);
     if (float(r[3]) < 0) r.set(3, 0.0);
 
-    imageLeft = image->getWidth() * float(r[0]); // left
-    imageTop = image->getHeight() * float(r[1]); // top
-    imageWidth = image->getWidth() * float(r[2]); // width
-    imageHeight = image->getHeight() * float(r[3]); // height
+    Rectangle<int> imageRect;
+    imageRect.setX(int(img->getWidth() * float(r[0]))); // left
+    imageRect.setY(int(img->getHeight() * float(r[1]))); // top
+    imageRect.setWidth(int(img->getWidth() * float(r[2]))); // width
+    imageRect.setHeight(int(img->getHeight() * float(r[3]))); // height
+    
+    currentImageRectangle = imageRect;
+    
+    if (!append) imageRegions.clear();
+    imageRegions.push_back({img, imageRect});
 
     // calculate zoom to fit image section
     resized();
@@ -219,7 +242,7 @@ Point<float> Polytempo_GraphicsViewRegion::getImageCoordinatesAt(Point<int> scre
 
 bool Polytempo_GraphicsViewRegion::imageRectangleContains(Point<float> point) const
 {
-    return currentImageRectangle.contains(point);
+    return false; //currentImageRectangle.contains(point);
 }
 
 void Polytempo_GraphicsViewRegion::changeListenerCallback(ChangeBroadcaster*)

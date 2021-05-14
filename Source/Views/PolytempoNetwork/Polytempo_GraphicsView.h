@@ -25,6 +25,8 @@ private:
     void displayText(Polytempo_Event* event);
     void displayProgessbar(Polytempo_Event* event);
 
+    Array<var> defaultRectangle();
+
     HashMap<String, Polytempo_GraphicsViewRegion*> regionsMap;
     HashMap<String, var> sectionBoundsMap;
     HashMap<String, String> sectionImageIDMap;
