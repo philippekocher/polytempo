@@ -29,7 +29,7 @@ void Polytempo_GraphicsViewRegion::paint(Graphics& g)
 
     g.fillAll(Colours::white);
 
-    if (contentType == contentType_Image && imageRegions.size() > 0)
+    if (contentType == contentType_Image && displayedImages.size() > 0)
     {
         Polytempo_GraphicsAnnotationManager::eAnnotationMode annotationMode = Polytempo_GraphicsAnnotationManager::getInstance()->getAnnotationMode();
         if (annotationMode == Polytempo_GraphicsAnnotationManager::Standard || annotationMode == Polytempo_GraphicsAnnotationManager::Edit)
@@ -37,11 +37,11 @@ void Polytempo_GraphicsViewRegion::paint(Graphics& g)
             g.fillAll(Colours::lightgrey.brighter(0.7f));
         }
 
-        for (imageRegion region : imageRegions)
+        for (displayedImage img : displayedImages)
         {
-            g.drawImage(*region.image,
-                        region.targetArea.getX(), region.targetArea.getY(), region.targetArea.getWidth(), region.targetArea.getHeight(),
-                        region.imageRect.getX(), region.imageRect.getY(), region.imageRect.getWidth(), region.imageRect.getHeight());
+            g.drawImage(*img.image,
+                        img.targetArea.getX(), img.targetArea.getY(), img.targetArea.getWidth(), img.targetArea.getHeight(),
+                        img.imageRect.getX(), img.imageRect.getY(), img.imageRect.getWidth(), img.imageRect.getHeight());
         }
     }
     else if (contentType == contentType_Text)
@@ -75,14 +75,14 @@ void Polytempo_GraphicsViewRegion::resized()
     {
         float totalWidth = 0, maxWidth = 0;
         float totalHeight = 0, maxHeight = 0;
-        for (imageRegion region : imageRegions)
+        for (displayedImage img : displayedImages)
         {
-            float regionWidth = region.imageRect.getWidth();
-            float regionHeight = region.imageRect.getHeight();
-            totalWidth += regionWidth;
-            if (regionWidth > maxWidth) maxWidth = regionWidth;
-            totalHeight += regionHeight;
-            if (regionHeight > maxHeight) maxHeight = regionHeight;
+            float imageWidth = img.imageRect.getWidth();
+            float imageHeight = img.imageRect.getHeight();
+            totalWidth += imageWidth;
+            if (imageWidth > maxWidth) maxWidth = imageWidth;
+            totalHeight += imageHeight;
+            if (imageHeight > maxHeight) maxHeight = imageHeight;
         }
         
         float widthZoom, heightZoom;
@@ -109,14 +109,14 @@ void Polytempo_GraphicsViewRegion::resized()
         else
             y = (getHeight() - (totalHeight * imageZoom)) * 0.5f;
 
-        for (imageRegion &region : imageRegions)
+        for (displayedImage &img : displayedImages)
         {
-            region.targetArea = Rectangle<int>(int(x), int(y), int(region.imageRect.getWidth() * imageZoom), int(region.imageRect.getHeight() * imageZoom));
+            img.targetArea = Rectangle<int>(int(x), int(y), int(img.imageRect.getWidth() * imageZoom), int(img.imageRect.getHeight() * imageZoom));
             
             if(contentLayout == contentLayout_Row)
-                x += region.imageRect.getWidth() * imageZoom;
+                x += img.imageRect.getWidth() * imageZoom;
             else
-                y += region.imageRect.getHeight() * imageZoom;
+                y += img.imageRect.getHeight() * imageZoom;
         }
     }
     else if (contentType == contentType_Progressbar)
@@ -124,13 +124,13 @@ void Polytempo_GraphicsViewRegion::resized()
         progressbar->setBounds(getLocalBounds().reduced(15, 10)); // inset rect
     }
 
-    if (imageRegions.size() == 0)
+    if (displayedImages.size() == 0)
         allowAnnotations = false;
     else
     {
-        screenToImage = AffineTransform::translation(-float(getX() + imageRegions[0].targetArea.getX()), -float(getY() + imageRegions[0].targetArea.getY()));
-        screenToImage = screenToImage.followedBy(AffineTransform::scale(imageRegions[0].imageRect.getWidth() / float(imageRegions[0].targetArea.getWidth()), imageRegions[0].imageRect.getHeight() / float(imageRegions[0].targetArea.getHeight())));
-        screenToImage = screenToImage.followedBy(AffineTransform::translation(imageRegions[0].imageRect.getX(), imageRegions[0].imageRect.getY()));
+        screenToImage = AffineTransform::translation(-float(getX() + displayedImages[0].targetArea.getX()), -float(getY() + displayedImages[0].targetArea.getY()));
+        screenToImage = screenToImage.followedBy(AffineTransform::scale(displayedImages[0].imageRect.getWidth() / float(displayedImages[0].targetArea.getWidth()), displayedImages[0].imageRect.getHeight() / float(displayedImages[0].targetArea.getHeight())));
+        screenToImage = screenToImage.followedBy(AffineTransform::translation(displayedImages[0].imageRect.getX(), displayedImages[0].imageRect.getY()));
 
         imageToScreen = screenToImage.inverted();
         allowAnnotations = true;
@@ -155,7 +155,7 @@ void Polytempo_GraphicsViewRegion::clear()
 void Polytempo_GraphicsViewRegion::setImage(Image* img, var rect, String imageId, bool append)
 {
     contentType = contentType_Image;
-    if (!append) imageRegions.clear();
+    if (!append) displayedImages.clear();
 
     Array<var> r = *rect.getArray();
 
@@ -172,7 +172,7 @@ void Polytempo_GraphicsViewRegion::setImage(Image* img, var rect, String imageId
     imageRect.setWidth(int(img->getWidth() * float(r[2]))); // width
     imageRect.setHeight(int(img->getHeight() * float(r[3]))); // height
         
-    imageRegions.push_back({img, imageId, imageRect});
+    displayedImages.push_back({img, imageId, imageRect});
 
     // calculate zoom to fit image section
     resized();

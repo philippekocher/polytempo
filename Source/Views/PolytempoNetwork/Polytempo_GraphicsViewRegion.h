@@ -56,14 +56,14 @@ private:
     float borderSize;
     Rectangle<float> relativeBounds;
 
-    struct imageRegion
+    struct displayedImage
     {
         Image* image;
         const String imageId;
         const Rectangle<int> imageRect;
         Rectangle<int> targetArea;
     };
-    std::vector<imageRegion> imageRegions;
+    std::vector<displayedImage> displayedImages;
 
     std::unique_ptr<String> text;
     std::unique_ptr<Polytempo_Progressbar> progressbar;
