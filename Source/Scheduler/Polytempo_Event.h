@@ -92,6 +92,7 @@ enum Polytempo_EventType
 #define eventPropertyString_SectionID   "sectionID"
 #define eventPropertyString_URL         "url"
 #define eventPropertyString_Rect        "rect"
+#define eventPropertyString_Layout      "layout"
 #define eventPropertyString_Message     "message"
 #define eventPropertyString_Pattern     "pattern"
 #define eventPropertyDefault_Pattern    10

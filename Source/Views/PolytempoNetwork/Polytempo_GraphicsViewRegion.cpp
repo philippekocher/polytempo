@@ -210,6 +210,12 @@ void Polytempo_GraphicsViewRegion::setMaxImageZoom(float maxZoom)
     else maxImageZoom = -1;
 }
 
+void Polytempo_GraphicsViewRegion::setLayout(String layout)
+{
+    if(layout == "column")   contentLayout = contentLayout_Column;
+    else if(layout == "row") contentLayout = contentLayout_Row;
+}
+
 Polytempo_ViewContentType Polytempo_GraphicsViewRegion::getContentType() { return contentType; }
 
 AffineTransform& Polytempo_GraphicsViewRegion::getImageToScreenTransform()

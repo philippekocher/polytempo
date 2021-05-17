@@ -78,6 +78,8 @@ void Polytempo_GraphicsView::addRegion(Polytempo_Event* event)
     region->setRelativeBounds(Rectangle<float>(r[0], r[1], r[2], r[3]));
 
     region->setMaxImageZoom(event->getProperty(eventPropertyString_MaxZoom));
+    
+    region->setLayout(event->getProperty(eventPropertyString_Layout));
 }
 
 void Polytempo_GraphicsView::addSection(Polytempo_Event* event)

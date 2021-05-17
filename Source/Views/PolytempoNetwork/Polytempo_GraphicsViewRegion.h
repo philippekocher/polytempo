@@ -36,6 +36,7 @@ public:
                         float duration = 0);
 
     void setMaxImageZoom(float maxZoom);
+    void setLayout(String layout);
 
     Polytempo_ViewContentType getContentType();
     AffineTransform& getImageToScreenTransform();
@@ -68,7 +69,6 @@ private:
     float imageZoom = 1;
     float maxImageZoom = -1;
 
-//    Rectangle<int> targetArea;
     bool allowAnnotations;
 
     Rectangle<int> currentImageRectangle;
