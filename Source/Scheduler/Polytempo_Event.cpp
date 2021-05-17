@@ -105,11 +105,7 @@ Polytempo_Event* Polytempo_Event::makeEvent(String oscAddress, Array<var> messag
             // "rect" is followed by 4 numbers
             if (messages[i] == eventPropertyString_Rect)
             {
-                Array<var> r;
-                r.set(0, 0);
-                r.set(1, 0);
-                r.set(2, 1);
-                r.set(3, 1);
+                Array<var> r = defaultRectangle();
                 int j = 0;
                 i++;
                 while (messages[i].isDouble() || messages[i].isInt())
@@ -178,6 +174,17 @@ Polytempo_Event* Polytempo_Event::makeEvent(XmlElement* xmlElement)
     }
 
     return event;
+}
+
+Array<var> Polytempo_Event::defaultRectangle()
+{
+    // default rectangle [0,0,1,1]
+    Array<var> r;
+    r.set(0, 0);
+    r.set(1, 0);
+    r.set(2, 1);
+    r.set(3, 1);
+    return r;
 }
 
 // ----------------------------------------------------

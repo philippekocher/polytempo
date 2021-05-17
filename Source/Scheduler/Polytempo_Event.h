@@ -116,6 +116,8 @@ public:
     static Polytempo_Event* makeEvent(String oscAddress, Array<var> values);
     static Polytempo_Event* makeEvent(XmlElement* xmlElement);
 
+    static Array<var> defaultRectangle();
+
     /* event to OSC conversion
      --------------------------------------- */
 

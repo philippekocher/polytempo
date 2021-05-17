@@ -73,7 +73,7 @@ void Polytempo_GraphicsView::addRegion(Polytempo_Event* event)
     if(event->hasProperty(eventPropertyString_Rect))
         r = *event->getProperty(eventPropertyString_Rect).getArray();
     else
-        r = defaultRectangle();
+        r = Polytempo_Event::defaultRectangle();
 
     region->setRelativeBounds(Rectangle<float>(r[0], r[1], r[2], r[3]));
 
@@ -122,7 +122,7 @@ void Polytempo_GraphicsView::displayImage(Polytempo_Event* event)
         return;
     }
 
-    if (rect == var()) rect = defaultRectangle();
+    if (rect == var()) rect = Polytempo_Event::defaultRectangle();
 
     region->setImage(image, rect, imageId, event->getType() == eventType_AppendImage);
     region->setVisible(true);
@@ -164,16 +164,3 @@ void Polytempo_GraphicsView::displayProgessbar(Polytempo_Event* event)
     region->setVisible(true);
     region->repaint();
 }
-
-
-Array<var> Polytempo_GraphicsView::defaultRectangle()
-{
-    // default rectangle [0,0,1,1]
-    Array<var> r;
-    r.set(0, 0);
-    r.set(1, 0);
-    r.set(2, 1);
-    r.set(3, 1);
-    return r;
-}
-
