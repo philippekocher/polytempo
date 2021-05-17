@@ -116,12 +116,6 @@ void Polytempo_GraphicsView::displayImage(Polytempo_Event* event)
         rect = event->getProperty(eventPropertyString_Rect);
     }
 
-    if (image == nullptr) // invalid image ID
-    {
-        if (region) region->setVisible(false);
-        return;
-    }
-
     if (rect == var()) rect = Polytempo_Event::defaultRectangle();
 
     region->setImage(image, rect, imageId, event->getType() == eventType_AppendImage);

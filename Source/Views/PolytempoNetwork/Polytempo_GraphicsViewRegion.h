@@ -59,6 +59,7 @@ private:
     struct imageRegion
     {
         Image* image;
+        const String imageId;
         const Rectangle<int> imageRect;
         Rectangle<int> targetArea;
     };
@@ -70,9 +71,6 @@ private:
     float maxImageZoom = -1;
 
     bool allowAnnotations;
-
-    Rectangle<int> currentImageRectangle;
-    String currentImageId;
 
     AffineTransform imageToScreen;
     AffineTransform screenToImage;

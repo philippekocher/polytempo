@@ -129,8 +129,8 @@ void Polytempo_GraphicsViewRegion::resized()
     else
     {
         screenToImage = AffineTransform::translation(-float(getX() + imageRegions[0].targetArea.getX()), -float(getY() + imageRegions[0].targetArea.getY()));
-        screenToImage = screenToImage.followedBy(AffineTransform::scale(currentImageRectangle.getWidth() / float(imageRegions[0].targetArea.getWidth()), currentImageRectangle.getHeight() / float(imageRegions[0].targetArea.getHeight())));
-        screenToImage = screenToImage.followedBy(AffineTransform::translation(currentImageRectangle.getX(), currentImageRectangle.getY()));
+        screenToImage = screenToImage.followedBy(AffineTransform::scale(imageRegions[0].imageRect.getWidth() / float(imageRegions[0].targetArea.getWidth()), imageRegions[0].imageRect.getHeight() / float(imageRegions[0].targetArea.getHeight())));
+        screenToImage = screenToImage.followedBy(AffineTransform::translation(imageRegions[0].imageRect.getX(), imageRegions[0].imageRect.getY()));
 
         imageToScreen = screenToImage.inverted();
         allowAnnotations = true;
@@ -155,9 +155,9 @@ void Polytempo_GraphicsViewRegion::clear()
 void Polytempo_GraphicsViewRegion::setImage(Image* img, var rect, String imageId, bool append)
 {
     contentType = contentType_Image;
+    if (!append) imageRegions.clear();
 
     Array<var> r = *rect.getArray();
-    currentImageId = imageId;
 
     if (img == nullptr) return;
     if (r.size() != 4) return;
@@ -171,11 +171,8 @@ void Polytempo_GraphicsViewRegion::setImage(Image* img, var rect, String imageId
     imageRect.setY(int(img->getHeight() * float(r[1]))); // top
     imageRect.setWidth(int(img->getWidth() * float(r[2]))); // width
     imageRect.setHeight(int(img->getHeight() * float(r[3]))); // height
-    
-    currentImageRectangle = imageRect;
-    
-    if (!append) imageRegions.clear();
-    imageRegions.push_back({img, imageRect});
+        
+    imageRegions.push_back({img, imageId, imageRect});
 
     // calculate zoom to fit image section
     resized();
@@ -235,7 +232,7 @@ bool Polytempo_GraphicsViewRegion::annotationsAllowed() const
 
 String Polytempo_GraphicsViewRegion::getImageID() const
 {
-    return currentImageId;
+    return "-1"; //currentImageId;
 }
 
 Point<float> Polytempo_GraphicsViewRegion::getImageCoordinatesAt(Point<int> screenPoint) const
