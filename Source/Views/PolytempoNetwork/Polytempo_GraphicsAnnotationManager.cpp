@@ -6,7 +6,6 @@ juce_ImplementSingleton(Polytempo_GraphicsAnnotationManager)
 
 void Polytempo_GraphicsAnnotationManager::getAnnotationsForImage(String imageId, OwnedArray<Polytempo_GraphicsAnnotation>* pAnnotations) const
 {
-    pAnnotations->clear();
     if (annotationMode == Off)
         return;
 

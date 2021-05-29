@@ -39,12 +39,20 @@ public:
     void setLayout(String layout);
 
     Polytempo_ViewContentType getContentType();
-    AffineTransform& getImageToScreenTransform();
-    AffineTransform& getScreenToImageTransform();
     bool annotationsAllowed() const;
-    String getImageID() const;
-    Point<float> getImageCoordinatesAt(Point<int> screenPoint) const;
-    bool imageRectangleContains(Point<float> point) const;
+
+    struct displayedImage
+    {
+        Image* image;
+        const String imageId;
+        const Rectangle<int> imageRect;
+        Rectangle<int> targetArea;
+        AffineTransform imageToScreen;
+        AffineTransform screenToImage;
+    };
+
+    std::vector<displayedImage> getDisplayedImages();
+    displayedImage* getDisplayedImageAt(Point<int>);
 
 private:
     void changeListenerCallback(ChangeBroadcaster* source) override;
@@ -56,13 +64,6 @@ private:
     float borderSize;
     Rectangle<float> relativeBounds;
 
-    struct displayedImage
-    {
-        Image* image;
-        const String imageId;
-        const Rectangle<int> imageRect;
-        Rectangle<int> targetArea;
-    };
     std::vector<displayedImage> displayedImages;
 
     std::unique_ptr<String> text;
@@ -71,7 +72,4 @@ private:
     float maxImageZoom = -1;
 
     bool allowAnnotations;
-
-    AffineTransform imageToScreen;
-    AffineTransform screenToImage;
 };

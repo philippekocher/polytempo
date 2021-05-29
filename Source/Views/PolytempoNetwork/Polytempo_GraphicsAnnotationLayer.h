@@ -48,10 +48,12 @@ private:
     void paint(Graphics&) override;
     void resized() override;
 
-    Polytempo_GraphicsViewRegion* getRegionAt(Point<int> point) const;
+    Polytempo_GraphicsViewRegion::displayedImage* getDisplayedImageAt(Point<int> point) const;
+    Point<float> getImageCoordinates(Polytempo_GraphicsViewRegion::displayedImage*, Point<int> screenPoint) const;
+
     static void paintAnnotation(Graphics& g, const Polytempo_GraphicsAnnotation* annotation, bool anchorFlag, Colour anchorColor);
     void prepareAnnotationLayer();
-    bool tryGetExistingAnnotation(Point<float> point, Polytempo_GraphicsViewRegion* pRegion);
+    bool tryGetExistingAnnotation(Polytempo_GraphicsViewRegion::displayedImage*, Point<float>);
     void handleStartEditing(Point<int> point);
     void handleFreeHandPainting(const Point<int>& mousePosition);
     void handleEndEdit();
