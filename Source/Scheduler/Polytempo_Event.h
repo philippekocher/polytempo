@@ -186,8 +186,11 @@ public:
             Polytempo_EventType type1 = e1->getType();
             Polytempo_EventType type2 = e2->getType();
             
-            if(type1 == eventType_Beat && type2 != eventType_Beat) result = 1;
-            if(type1 != eventType_Beat && type2 == eventType_Beat) result = -1;
+            if(type1 == eventType_Beat && type2 != eventType_Beat) return 1;
+            if(type1 != eventType_Beat && type2 == eventType_Beat) return -1;
+
+            if(type1 == eventType_AppendImage && type2 == eventType_Image) return 1;
+            if(type1 == eventType_Image && type2 == eventType_AppendImage) return -1;
         }
         
         return result;

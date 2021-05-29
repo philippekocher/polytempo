@@ -71,23 +71,13 @@ void Polytempo_NetworkApplication::initialise(const String& commandLine)
     // open default score file
     else if (Polytempo_StoredPreferences::getInstance()->getProps().getValue("defaultFilePath") != String())
     {
-        scoreFile = *new File(Polytempo_StoredPreferences::getInstance()->getProps().getValue("defaultFilePath"));
-        if (scoreFile.exists())
+        File defaultFile = *new File(Polytempo_StoredPreferences::getInstance()->getProps().getValue("defaultFilePath"));
+        if (defaultFile.exists())
         {
-            Polytempo_StoredPreferences::getInstance()->getProps().setValue("scoreFileDirectory", scoreFile.getParentDirectory().getFullPathName());
-            Polytempo_Score* newScore = nullptr;
-            Polytempo_Score::parse(scoreFile, &newScore);
-            if (newScore != nullptr)
-            {
-                score.reset(newScore);
-                Polytempo_ScoreScheduler::getInstance()->setScore(score.get());
-                mainWindow->setName(scoreFile.getFileNameWithoutExtension());
+            openScoreFile(defaultFile);
 
-                if (Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("fullScreen"))
-                {
-                    mainWindow->setFullScreen(true);
-                }
-            }
+            if (Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("fullScreen"))
+                mainWindow->setFullScreen(true);
         }
     }
     else
@@ -101,7 +91,7 @@ void Polytempo_NetworkApplication::shutdown()
     DBG("..shutdown");
     // cleaning-up needed before the app is shut down.
 
-    if (mainWindow != nullptr) mainWindow->setMenuBar(0);
+    if (mainWindow != nullptr) mainWindow->setMenuBar(nullptr);
 
     // save the current size and position to our settings file..
     Polytempo_StoredPreferences::getInstance()->getProps().setValue("mainWindow", mainWindow->getWindowStateAsString());

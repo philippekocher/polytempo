@@ -114,7 +114,7 @@ void Polytempo_GraphicsViewRegion::resized()
             img.targetArea = Rectangle<int>(int(x), int(y), int(img.imageRect.getWidth() * imageZoom), int(img.imageRect.getHeight() * imageZoom));
             
             img.screenToImage = AffineTransform::translation(-float(getX() + img.targetArea.getX()), -float(getY() + img.targetArea.getY()));
-            img.screenToImage = img.screenToImage.followedBy(AffineTransform::scale(img.imageRect.getWidth() / float(img.targetArea.getWidth()), img.imageRect.getHeight() / float(displayedImages[0].targetArea.getHeight())));
+            img.screenToImage = img.screenToImage.followedBy(AffineTransform::scale(img.imageRect.getWidth() / float(img.targetArea.getWidth()), img.imageRect.getHeight() / float(img.targetArea.getHeight())));
             img.screenToImage = img.screenToImage.followedBy(AffineTransform::translation(img.imageRect.getX(), img.imageRect.getY()));
 
             img.imageToScreen = img.screenToImage.inverted();
@@ -226,6 +226,9 @@ std::vector<Polytempo_GraphicsViewRegion::displayedImage> Polytempo_GraphicsView
 
 Polytempo_GraphicsViewRegion::displayedImage* Polytempo_GraphicsViewRegion::getDisplayedImageAt(Point<int> point)
 {
+    point.x -= getBounds().getX();
+    point.y -= getBounds().getY();
+    
     for (displayedImage &img : displayedImages)
     {
         if(img.targetArea.contains(point))

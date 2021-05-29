@@ -198,8 +198,8 @@ bool Polytempo_Score::setTime(int time, Array<Polytempo_Event*> *events, float *
     
     // events to be executed immediately to update the internal state
     
-    Polytempo_Event *marker = nullptr;               // the last marker is enough;
-    HashMap<var, Polytempo_Event*> images; // one image per region is enough;
+    Polytempo_Event *marker = nullptr;                    // the last marker is enough
+    HashMap<var, Array<Polytempo_Event*>*> images;   // the last image (+ appended images) per region are enough
     
     for(i=0;i<sections[currentSectionIndex]->events.size();i++)
     {
@@ -219,8 +219,16 @@ bool Polytempo_Score::setTime(int time, Array<Polytempo_Event*> *events, float *
             marker = event;
         
         else if(eventType == eventType_Image)
-            images.set(event->getProperty(eventPropertyString_RegionID), event);
-        
+            images.set(event->getProperty(eventPropertyString_RegionID), new Array<Polytempo_Event*>(event));
+
+        else if(eventType == eventType_AppendImage)
+        {
+            if(!images.contains(event->getProperty(eventPropertyString_RegionID)))
+                images.set(event->getProperty(eventPropertyString_RegionID), new Array<Polytempo_Event*>(event));
+            else
+                images[event->getProperty(eventPropertyString_RegionID)]->add(event);
+        }
+
         else
             events->add(event);
 
@@ -229,8 +237,10 @@ bool Polytempo_Score::setTime(int time, Array<Polytempo_Event*> *events, float *
 	if (marker != nullptr)
 		events->add(marker);
 	
-	for(Polytempo_Event *image : images)
-        events->add(image);
+    for(Array<Polytempo_Event*>* regionImages : images) {
+        for(Polytempo_Event *image : *regionImages)
+            events->add(image);
+    }
     
     return true;
 }

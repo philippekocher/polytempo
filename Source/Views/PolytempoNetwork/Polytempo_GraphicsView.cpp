@@ -80,6 +80,9 @@ void Polytempo_GraphicsView::addRegion(Polytempo_Event* event)
     region->setMaxImageZoom(event->getProperty(eventPropertyString_MaxZoom));
     
     region->setLayout(event->getProperty(eventPropertyString_Layout));
+
+    region->repaint();
+    annotationLayer->requireUpdate();
 }
 
 void Polytempo_GraphicsView::addSection(Polytempo_Event* event)
