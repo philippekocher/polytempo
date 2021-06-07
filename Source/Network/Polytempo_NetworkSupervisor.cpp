@@ -163,5 +163,10 @@ void Polytempo_NetworkSupervisor::eventNotification(Polytempo_Event* event)
     {
         // reset name
         localName.reset(nullptr);
+
+        // reset brightness
+        Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
+        Polytempo_NetworkWindow* window = app->getMainWindow();
+        window->setBrightness(1.0f);
     }
 }
