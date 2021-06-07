@@ -186,6 +186,11 @@ public:
             Polytempo_EventType type1 = e1->getType();
             Polytempo_EventType type2 = e2->getType();
             
+            // markers first
+            if(type1 == eventType_Marker && type2 != eventType_Marker) return -1;
+            if(type1 != eventType_Marker && type2 == eventType_Marker) return 1;
+
+            // beats last
             if(type1 == eventType_Beat && type2 != eventType_Beat) return 1;
             if(type1 != eventType_Beat && type2 == eventType_Beat) return -1;
 
