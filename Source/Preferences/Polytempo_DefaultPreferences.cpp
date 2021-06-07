@@ -4,8 +4,8 @@ Polytempo_DefaultPreferences::Polytempo_DefaultPreferences()
 {
     // composer
     setValue("zoomX", 50);
-    setValue("timeMapZoomY", 20);
-    setValue("tempoMapZoomY", 20);
+    setValue("timeMapZoomY", 40);
+    setValue("tempoMapZoomY", 700);
     setValue("mainWindowContent", "0.5 1 3");
     setValue("tempoMeasurement", "1/4 60");
     setValue("defaultBeatPattern", "4/4 1");
