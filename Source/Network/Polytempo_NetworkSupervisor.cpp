@@ -135,7 +135,24 @@ void Polytempo_NetworkSupervisor::setComponent(Component* aComponent)
 
 void Polytempo_NetworkSupervisor::eventNotification(Polytempo_Event* event)
 {
-    if (event->getType() == eventType_Settings)
+    if (event->getType() == eventType_Open)
+    {
+        const MessageManagerLock mml(Thread::getCurrentThread());
+
+        Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
+        if (event->hasProperty(eventPropertyString_URL) || event->hasProperty(eventPropertyString_Value))
+        {
+            String filePath(event->getProperty(eventPropertyString_URL).toString());
+            if(filePath.isEmpty()) filePath = event->getProperty(eventPropertyString_Value).toString();
+            File file(filePath);
+            if (file.existsAsFile())
+            {
+                // call on the message thread
+                MessageManager::callAsync([app, filePath]() { app->openScoreFilePath(filePath); });
+            }
+        }
+    }
+    else if (event->getType() == eventType_Settings)
     {
         if (event->hasProperty("name"))
             localName.reset(new String(event->getProperty("name").toString()));
@@ -159,7 +176,7 @@ void Polytempo_NetworkSupervisor::eventNotification(Polytempo_Event* event)
             });
         }
     }
-    if (event->getType() == eventType_DeleteAll)
+    else if (event->getType() == eventType_DeleteAll)
     {
         // reset name
         localName.reset(nullptr);
