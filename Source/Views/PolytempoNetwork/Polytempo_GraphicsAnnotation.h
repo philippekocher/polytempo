@@ -1,6 +1,7 @@
 #pragma once
 
 #include "JuceHeader.h"
+#include "Polytempo_GraphicsViewRegion.h"
 
 #define STANDARD_FONT_SIZE 40.0f
 #define STANDARD_LINE_WEIGHT 5.0f
@@ -20,7 +21,7 @@ public:
                                                                                                                                                                                                                        text(text),
                                                                                                                                                                                                                        fontSize(fontSize),
                                                                                                                                                                                                                        lineWeight(lineWeight),
-                                                                                                                                                                                                                       pRegion(nullptr)
+                                                                                                                                                                                                                       displayedImage(nullptr)
     {
     }
 
@@ -36,5 +37,5 @@ public:
     String text;
     float fontSize;
     float lineWeight;
-    Polytempo_GraphicsViewRegion* pRegion; // temporary usage
+    Polytempo_GraphicsViewRegion::displayedImage* displayedImage; // temporary usage
 };

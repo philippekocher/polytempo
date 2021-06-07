@@ -248,7 +248,7 @@ void Polytempo_PageEditorView::update()
         }
         else
         {
-            r.set(0,0); r.set(1,0); r.set(2,1); r.set(3,1);
+            r = Polytempo_Event::defaultRectangle();
         }
 
         pageEditorViewport->getComponent()->setSectionRect(Rectangle<float>(r[0],r[1],r[2],r[3]));
@@ -524,9 +524,7 @@ void Polytempo_PageEditorView::addSection()
     event->setProperty(eventPropertyString_ImageID, imageID);
     event->setProperty(eventPropertyString_SectionID, findNewID(eventPropertyString_SectionID, addSectionEvents));
     
-    Array < var > r;
-    r.set(0,0); r.set(1,0); r.set(2,1); r.set(3,1);
-    event->setProperty(eventPropertyString_Rect, r);
+    event->setProperty(eventPropertyString_Rect, Polytempo_Event::defaultRectangle());
     
     score->addEvent(event, true);
     score->setDirty();
@@ -544,12 +542,9 @@ void Polytempo_PageEditorView::addInstance()
         // add a region if there are none
         if(addRegionEvents.size() == 0)
         {
-            Array < var > r;
-            r.set(0,0); r.set(1,0); r.set(2,1); r.set(3,1);
-            
             event = Polytempo_Event::makeEvent(eventType_AddRegion);
             event->setProperty(eventPropertyString_RegionID, "1");
-            event->setProperty(eventPropertyString_Rect, r);
+            event->setProperty(eventPropertyString_Rect, Polytempo_Event::defaultRectangle());
             
             score->addEvent(event, true); // add to init
             addRegionEvents.add(event);

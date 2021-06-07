@@ -10,6 +10,12 @@ enum Polytempo_ViewContentType
     contentType_Progressbar
 };
 
+enum Polytempo_ViewContentLayout
+{
+    contentLayout_Row = 0,
+    contentLayout_Column
+};
+
 class Polytempo_GraphicsViewRegion : public Component, public ChangeListener
 {
 public:
@@ -18,7 +24,7 @@ public:
 
     void paint(Graphics& g) override;
     void resized() override;
-    void setImage(Image* img, var rect, String imageId);
+    void setImage(Image* img, var rect, String imageId, bool append = false);
 
     void setRelativeBounds(const Rectangle<float>& newBounds);
 
@@ -30,37 +36,40 @@ public:
                         float duration = 0);
 
     void setMaxImageZoom(float maxZoom);
+    void setLayout(String layout);
 
     Polytempo_ViewContentType getContentType();
-    AffineTransform& getImageToScreenTransform();
-    AffineTransform& getScreenToImageTransform();
     bool annotationsAllowed() const;
-    String getImageID() const;
-    Point<float> getImageCoordinatesAt(Point<int> screenPoint) const;
-    bool imageRectangleContains(Point<float> point) const;
+
+    struct displayedImage
+    {
+        Image* image;
+        const String imageId;
+        const Rectangle<int> imageRect;
+        Rectangle<int> targetArea;
+        AffineTransform imageToScreen;
+        AffineTransform screenToImage;
+    };
+
+    std::vector<displayedImage> getDisplayedImages();
+    displayedImage* getDisplayedImageAt(Point<int>);
 
 private:
-    void setViewImage(Image* img, var rect);
     void changeListenerCallback(ChangeBroadcaster* source) override;
 
     var regionID;
     Polytempo_ViewContentType contentType;
+    Polytempo_ViewContentLayout contentLayout;
 
     float borderSize;
     Rectangle<float> relativeBounds;
-    Image* image;
+
+    std::vector<displayedImage> displayedImages;
+
     std::unique_ptr<String> text;
     std::unique_ptr<Polytempo_Progressbar> progressbar;
     float imageZoom = 1;
     float maxImageZoom = -1;
 
-    Rectangle<int> targetArea;
     bool allowAnnotations;
-
-    Rectangle<float> currentImageRectangle;
-    String currentImageId;
-
-    AffineTransform imageToScreen;
-    AffineTransform screenToImage;
-    float imageLeft, imageTop, imageWidth, imageHeight;
 };

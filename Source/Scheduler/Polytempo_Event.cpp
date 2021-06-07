@@ -105,11 +105,7 @@ Polytempo_Event* Polytempo_Event::makeEvent(String oscAddress, Array<var> messag
             // "rect" is followed by 4 numbers
             if (messages[i] == eventPropertyString_Rect)
             {
-                Array<var> r;
-                r.set(0, 0);
-                r.set(1, 0);
-                r.set(2, 1);
-                r.set(3, 1);
+                Array<var> r = defaultRectangle();
                 int j = 0;
                 i++;
                 while (messages[i].isDouble() || messages[i].isInt())
@@ -180,6 +176,17 @@ Polytempo_Event* Polytempo_Event::makeEvent(XmlElement* xmlElement)
     return event;
 }
 
+Array<var> Polytempo_Event::defaultRectangle()
+{
+    // default rectangle [0,0,1,1]
+    Array<var> r;
+    r.set(0, 0);
+    r.set(1, 0);
+    r.set(2, 1);
+    r.set(3, 1);
+    return r;
+}
+
 // ----------------------------------------------------
 #pragma mark -
 #pragma mark event to OSC conversion
@@ -247,6 +254,7 @@ void Polytempo_Event::setType(String typeString)
     else if (typeString == eventTypeString_ClearAll) type = eventType_ClearAll;
 
     else if (typeString == eventTypeString_Image) type = eventType_Image;
+    else if (typeString == eventTypeString_AppendImage) type = eventType_AppendImage;
     else if (typeString == eventTypeString_Text) type = eventType_Text;
     else if (typeString == eventTypeString_Progressbar) type = eventType_Progressbar;
 
@@ -317,6 +325,9 @@ String Polytempo_Event::getTypeString()
 
     case eventType_Image:
         return eventTypeString_Image;
+
+    case eventType_AppendImage:
+        return eventTypeString_AppendImage;
 
     case eventType_Text:
         return eventTypeString_Text;

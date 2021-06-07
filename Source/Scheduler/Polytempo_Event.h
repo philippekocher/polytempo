@@ -25,6 +25,7 @@ enum Polytempo_EventType
     eventType_AddSection,
     
     eventType_Image,  // 14
+    eventType_AppendImage,
     eventType_Text,
     eventType_Progressbar,
     
@@ -61,6 +62,7 @@ enum Polytempo_EventType
 #define eventTypeString_AddSection      "addSection"
 
 #define eventTypeString_Image           "image"
+#define eventTypeString_AppendImage     "appendImage"
 #define eventTypeString_Text            "text"
 #define eventTypeString_Progressbar     "progressbar"
 
@@ -90,6 +92,7 @@ enum Polytempo_EventType
 #define eventPropertyString_SectionID   "sectionID"
 #define eventPropertyString_URL         "url"
 #define eventPropertyString_Rect        "rect"
+#define eventPropertyString_Layout      "layout"
 #define eventPropertyString_Message     "message"
 #define eventPropertyString_Pattern     "pattern"
 #define eventPropertyDefault_Pattern    10
@@ -112,6 +115,8 @@ public:
     static Polytempo_Event* makeEvent(Polytempo_EventType type, var value);
     static Polytempo_Event* makeEvent(String oscAddress, Array<var> values);
     static Polytempo_Event* makeEvent(XmlElement* xmlElement);
+
+    static Array<var> defaultRectangle();
 
     /* event to OSC conversion
      --------------------------------------- */
@@ -181,8 +186,11 @@ public:
             Polytempo_EventType type1 = e1->getType();
             Polytempo_EventType type2 = e2->getType();
             
-            if(type1 == eventType_Beat && type2 != eventType_Beat) result = 1;
-            if(type1 != eventType_Beat && type2 == eventType_Beat) result = -1;
+            if(type1 == eventType_Beat && type2 != eventType_Beat) return 1;
+            if(type1 != eventType_Beat && type2 == eventType_Beat) return -1;
+
+            if(type1 == eventType_AppendImage && type2 == eventType_Image) return 1;
+            if(type1 == eventType_Image && type2 == eventType_AppendImage) return -1;
         }
         
         return result;

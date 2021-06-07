@@ -179,12 +179,7 @@ void Polytempo_RegionEditorView::addRegion()
     }
 
     Polytempo_Event* event = Polytempo_Event::makeEvent(eventType_AddRegion);
-    Array<var> r;
-    r.set(0, 0);
-    r.set(1, 0);
-    r.set(2, 1);
-    r.set(3, 1);
-    event->setProperty(eventPropertyString_Rect, r);
+    event->setProperty(eventPropertyString_Rect, Polytempo_Event::defaultRectangle());
     event->setProperty(eventPropertyString_RegionID, var(newID));
 
     score->addEvent(event, true);
@@ -276,6 +271,9 @@ void Polytempo_RegionEditorView::setSelectedRegionID(int id)
 
     if (selectedRegionID < addRegionEvents.size())
     {
+        if (!addRegionEvents.getUnchecked(selectedRegionID)->hasProperty(eventPropertyString_Rect))
+            addRegionEvents.getUnchecked(selectedRegionID)->setProperty(eventPropertyString_Rect, Polytempo_Event::defaultRectangle());
+        
         Array<var> r = *addRegionEvents.getUnchecked(selectedRegionID)->getProperty(eventPropertyString_Rect).getArray();
 
         xTextbox->setFloat(r[0], dontSendNotification);

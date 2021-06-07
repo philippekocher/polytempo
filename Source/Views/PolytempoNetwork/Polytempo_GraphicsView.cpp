@@ -36,6 +36,7 @@ void Polytempo_GraphicsView::eventNotification(Polytempo_Event* event)
     else if (event->getType() == eventType_AddRegion) addRegion(event);
     else if (event->getType() == eventType_AddSection) addSection(event);
     else if (event->getType() == eventType_Image) displayImage(event);
+    else if (event->getType() == eventType_AppendImage) displayImage(event);
     else if (event->getType() == eventType_Text) displayText(event);
     else if (event->getType() == eventType_Progressbar) displayProgessbar(event);
 }
@@ -68,11 +69,20 @@ void Polytempo_GraphicsView::addRegion(Polytempo_Event* event)
     delete regionsMap[event->getProperty(eventPropertyString_RegionID)]; // old region
     regionsMap.set(event->getProperty(eventPropertyString_RegionID), region);
 
-    Array<var> r = *event->getProperty(eventPropertyString_Rect).getArray();
-    Rectangle<float> bounds = Rectangle<float>(r[0], r[1], r[2], r[3]);
-    region->setRelativeBounds(bounds);
+    Array<var> r;
+    if(event->hasProperty(eventPropertyString_Rect))
+        r = *event->getProperty(eventPropertyString_Rect).getArray();
+    else
+        r = Polytempo_Event::defaultRectangle();
+
+    region->setRelativeBounds(Rectangle<float>(r[0], r[1], r[2], r[3]));
 
     region->setMaxImageZoom(event->getProperty(eventPropertyString_MaxZoom));
+    
+    region->setLayout(event->getProperty(eventPropertyString_Layout));
+
+    region->repaint();
+    annotationLayer->requireUpdate();
 }
 
 void Polytempo_GraphicsView::addSection(Polytempo_Event* event)
@@ -109,24 +119,9 @@ void Polytempo_GraphicsView::displayImage(Polytempo_Event* event)
         rect = event->getProperty(eventPropertyString_Rect);
     }
 
-    if (image == nullptr) // invalid image ID
-    {
-        if (region) region->setVisible(false);
-        return;
-    }
+    if (rect == var()) rect = Polytempo_Event::defaultRectangle();
 
-    // default rectangle [0,0,1,1]
-    if (rect == var())
-    {
-        Array<var> r;
-        r.set(0, 0);
-        r.set(1, 0);
-        r.set(2, 1);
-        r.set(3, 1);
-        rect = r;
-    }
-
-    region->setImage(image, rect, imageId);
+    region->setImage(image, rect, imageId, event->getType() == eventType_AppendImage);
     region->setVisible(true);
     region->repaint();
     annotationLayer->requireUpdate();
