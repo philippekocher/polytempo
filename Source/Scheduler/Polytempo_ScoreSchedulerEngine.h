@@ -11,7 +11,7 @@ public:
     Polytempo_ScoreSchedulerEngine() : Thread("Polytempo_ScoreScheduler_Thread"), score(nullptr),
                                        scoreScheduler(nullptr), scoreTime(0),
                                        killed(false),
-                                       shouldStop(false),
+                                       shouldStop(true),
                                        pausing(false),
                                        scoreTimeOffset(0)
     {
