@@ -162,7 +162,7 @@ Polytempo_AudioClick::Polytempo_AudioClick(): audioDeviceManager(Polytempo_Audio
 
 Polytempo_AudioClick::~Polytempo_AudioClick()
 {
-    audioSourcePlayer->setSource(0);
+    audioSourcePlayer->setSource(nullptr);
     audioDeviceManager.removeAudioCallback(audioSourcePlayer.get());
     audioDeviceManager.closeAudioDevice();
 

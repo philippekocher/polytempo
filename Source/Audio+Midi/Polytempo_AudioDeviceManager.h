@@ -15,7 +15,7 @@ public:
             std::unique_ptr<XmlElement> audioDeviceManagerState = Polytempo_StoredPreferences::getInstance()->getProps().getXmlValue("audioDevice");
             sharedAudioDeviceManager->initialise(0, 2,
                                                  nullptr,
-                                                 true, String(), 0);
+                                                 true, String(), nullptr);
         }
 
         return *sharedAudioDeviceManager;
