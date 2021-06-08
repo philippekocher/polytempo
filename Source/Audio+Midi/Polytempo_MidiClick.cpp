@@ -59,19 +59,19 @@ void Polytempo_MidiClick::eventNotification(Polytempo_Event* event)
             if (int(event->getProperty(eventPropertyString_Cue)) != 0)
             {
                 pitch = cuePitch;
-                velocity = (int8)cueVelocity;
+                velocity = (uint8)cueVelocity;
             }
             else
             {
                 if (pattern < 20)
                 {
                     pitch = downbeatPitch;
-                    velocity = (int8)downbeatVelocity;
+                    velocity = (uint8)downbeatVelocity;
                 }
                 else
                 {
                     pitch = beatPitch;
-                    velocity = (int8)beatVelocity;
+                    velocity = (uint8)beatVelocity;
                 }
             }
 

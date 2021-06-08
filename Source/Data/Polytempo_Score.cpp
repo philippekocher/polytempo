@@ -130,7 +130,7 @@ void Polytempo_Score::setTime(int time)
             event = sections[currentSectionIndex]->events[i];
             if(event->getTime() >= time)
             {
-                nextEventIndex = i;
+                nextEventIndex = (uint)i;
                 return;
             }
         }
@@ -169,7 +169,7 @@ bool Polytempo_Score::setTime(int time, Array<Polytempo_Event*> *events, float *
             // find the first event that has the same time as the downbeat
             j=i;
             while(j>0 && sections[currentSectionIndex]->events[--j]->getTime() == tempTime) i=j;
-            nextEventIndex = i;
+            nextEventIndex = (uint32)i;
             
             done = true;
             break;
@@ -189,7 +189,7 @@ bool Polytempo_Score::setTime(int time, Array<Polytempo_Event*> *events, float *
                 tempTime = float(event->getTime());
                 *waitBeforStart = tempTime - time;
                 
-                nextEventIndex = ++i;
+                nextEventIndex = (uint)(++i);
                 
                 break;
             }

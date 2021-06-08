@@ -235,7 +235,7 @@ MemoryBlock Polytempo_InterprocessCommunication::xmlToMemoryBlock(XmlElement e)
     MemoryOutputStream os;
     e.writeTo(os);
     String s = os.toString();
-    m.append(s.getCharPointer(), s.length());
+    m.append(s.getCharPointer(), (size_t)s.length());
     return m;
 }
 
