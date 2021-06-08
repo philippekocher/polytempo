@@ -182,7 +182,7 @@ public:
         }
     }
 
-    void buttonStateChanged(Button&)
+    void buttonStateChanged(Button*) override
     {
     }
 
