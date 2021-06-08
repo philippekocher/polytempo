@@ -1073,7 +1073,7 @@ public:
                 }
             });
 
-            alertWindow->addTextEditor("ip", selectedAddress.ipAddress.isNull() ? "" : selectedAddress.ipAddress.toString().upToLastOccurrenceOf(".", true, true));
+            alertWindow->addTextEditor("ip", selectedAddress.m_ipAddress.isNull() ? "" : selectedAddress.m_ipAddress.toString().upToLastOccurrenceOf(".", true, true));
             alertWindow->addButton("OK", 1, KeyPress(KeyPress::returnKey, 0, 0));
             alertWindow->addButton("Cancel", 0, KeyPress(KeyPress::escapeKey, 0, 0));
             alertWindow->enterModalState(false, ModalCallbackFunction::create(alertLambda), true);
@@ -1098,13 +1098,13 @@ public:
             + address.addressDescription()
             + "\r\n"
             + "IP Address: "
-            + address.ipAddress.toString()
+            + address.m_ipAddress.toString()
             + "\r\n"
             + "Network address: "
             + address.getNetworkAddress().toString()
             + "\r\n"
             + "Subnet mask: "
-            + address.subnetMask.toString()
+            + address.m_subnetMask.toString()
             + "\r\n"
             + "Broadcast address: "
             + address.getBroadcastAddress().toString()
@@ -1142,7 +1142,7 @@ public:
             switch (columnId)
             {
             case ColumnIdIp:
-                text = ipAddresses[rowNumber].ipAddress.toString();
+                text = ipAddresses[rowNumber].m_ipAddress.toString();
                 break;
             case ColumnIdRange:
                 text = ipAddresses[rowNumber].getFirstNetworkAddress().toString() + " - " + ipAddresses[rowNumber].getLastNetworkAddress().toString();

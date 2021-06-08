@@ -32,6 +32,6 @@ private:
     std::unique_ptr<TextButton> addLayerBtn;
 
     int numRows;
-    OwnedArray<Polytempo_GraphicsAnnotationSet>* pAnnotationSet;
+    OwnedArray<Polytempo_GraphicsAnnotationSet>* m_pAnnotationSet;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_GraphicsAnnotationSettingsDialog)
 };

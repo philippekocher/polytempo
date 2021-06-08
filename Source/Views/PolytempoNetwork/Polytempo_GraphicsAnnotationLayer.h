@@ -62,7 +62,7 @@ private:
 private:
     Atomic<bool> fullUpdateRequired;
 
-    HashMap<String, Polytempo_GraphicsViewRegion*>* pRegionMap;
+    HashMap<String, Polytempo_GraphicsViewRegion*>* m_pRegionMap;
     std::unique_ptr<Image> annotationImage;
     Polytempo_GraphicsAnnotation temporaryAnnotation;
     Polytempo_GraphicsAnnotation temporaryAnnotationMove;

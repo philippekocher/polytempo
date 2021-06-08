@@ -27,7 +27,7 @@ void Polytempo_GraphicsAnnotationSet::getAnnotationsForImage(String imageId, Own
 {
     for (Polytempo_GraphicsAnnotation* annotation : annotations)
     {
-        if (annotation->imageId == imageId)
+        if (annotation->m_imageId == imageId)
             pAnnotations->add(new Polytempo_GraphicsAnnotation(*annotation));
     }
 }
@@ -37,7 +37,7 @@ void Polytempo_GraphicsAnnotationSet::addAnnotation(Polytempo_GraphicsAnnotation
     // remove duplicates
     for (int i = annotations.size() - 1; i >= 0; i--)
     {
-        if (annotations[i]->id == annotation.id)
+        if (annotations[i]->m_id == annotation.m_id)
             annotations.remove(i);
     }
     annotations.add(new Polytempo_GraphicsAnnotation(annotation));
@@ -47,7 +47,7 @@ bool Polytempo_GraphicsAnnotationSet::getAnnotation(Uuid id, Polytempo_GraphicsA
 {
     for (int i = 0; i < annotations.size(); i++)
     {
-        if (annotations[i]->id == id)
+        if (annotations[i]->m_id == id)
         {
             *pAnnotation = *(annotations[i]);
             return true;
@@ -61,7 +61,7 @@ bool Polytempo_GraphicsAnnotationSet::removeAnnotation(Uuid id)
 {
     for (int i = 0; i < annotations.size(); i++)
     {
-        if (annotations[i]->id == id)
+        if (annotations[i]->m_id == id)
         {
             annotations.remove(i);
             return true;
@@ -134,15 +134,15 @@ bool Polytempo_GraphicsAnnotationSet::SaveToFile()
     for (Polytempo_GraphicsAnnotation* annotation : annotations)
     {
         XmlElement* xmlAnnotation = new XmlElement(XML_TAG_ANNOTATION);
-        xmlAnnotation->setAttribute(XML_ATTRIBUTE_UUID, annotation->id.toString());
-        xmlAnnotation->setAttribute(XML_ATTRIBUTE_IMAGEID, annotation->imageId);
-        xmlAnnotation->setAttribute(XML_ATTRIBUTE_REFERENCEX, annotation->referencePoint.getX());
-        xmlAnnotation->setAttribute(XML_ATTRIBUTE_REFERENCEY, annotation->referencePoint.getY());
-        xmlAnnotation->setAttribute(XML_ATTRIBUTE_TEXT, annotation->text);
-        xmlAnnotation->setAttribute(XML_ATTRIBUTE_PATH, annotation->freeHandPath.toString());
-        xmlAnnotation->setAttribute(XML_ATTRIBUTE_COLOR, annotation->color.toString());
-        xmlAnnotation->setAttribute(XML_ATTRIBUTE_FONTSIZE, annotation->fontSize);
-        xmlAnnotation->setAttribute(XML_ATTRIBUTE_LINEWEIGHT, annotation->lineWeight);
+        xmlAnnotation->setAttribute(XML_ATTRIBUTE_UUID, annotation->m_id.toString());
+        xmlAnnotation->setAttribute(XML_ATTRIBUTE_IMAGEID, annotation->m_imageId);
+        xmlAnnotation->setAttribute(XML_ATTRIBUTE_REFERENCEX, annotation->m_referencePoint.getX());
+        xmlAnnotation->setAttribute(XML_ATTRIBUTE_REFERENCEY, annotation->m_referencePoint.getY());
+        xmlAnnotation->setAttribute(XML_ATTRIBUTE_TEXT, annotation->m_text);
+        xmlAnnotation->setAttribute(XML_ATTRIBUTE_PATH, annotation->m_freeHandPath.toString());
+        xmlAnnotation->setAttribute(XML_ATTRIBUTE_COLOR, annotation->m_color.toString());
+        xmlAnnotation->setAttribute(XML_ATTRIBUTE_FONTSIZE, annotation->m_fontSize);
+        xmlAnnotation->setAttribute(XML_ATTRIBUTE_LINEWEIGHT, annotation->m_lineWeight);
         xmlAnnotations->addChildElement(xmlAnnotation);
     }
     xmlMain->addChildElement(xmlAnnotations);

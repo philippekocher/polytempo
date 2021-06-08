@@ -12,21 +12,21 @@
 
 Polytempo_IPAddress::Polytempo_IPAddress() noexcept
 {
-    ipAddress = IPAddress();
-    subnetMask = IPAddress();
-    adapterName = "";
+    m_ipAddress = IPAddress();
+    m_subnetMask = IPAddress();
+    m_adapterName = "";
 }
 
 Polytempo_IPAddress::Polytempo_IPAddress(IPAddress ipAdress, IPAddress subnetMask, String adapterName)
 {
-    this->ipAddress = ipAdress;
-    this->subnetMask = subnetMask;
-    this->adapterName = adapterName;
+    this->m_ipAddress = ipAdress;
+    this->m_subnetMask = subnetMask;
+    this->m_adapterName = adapterName;
 }
 
 bool Polytempo_IPAddress::operator==(const Polytempo_IPAddress& other) const noexcept
 {
-    return ipAddress == other.ipAddress && subnetMask == other.subnetMask;
+    return m_ipAddress == other.m_ipAddress && m_subnetMask == other.m_subnetMask;
 }
 
 bool Polytempo_IPAddress::operator!=(const Polytempo_IPAddress& other) const noexcept
@@ -38,15 +38,15 @@ Polytempo_IPAddress Polytempo_IPAddress::local() noexcept { return Polytempo_IPA
 
 String Polytempo_IPAddress::addressDescription()
 {
-    if (ipAddress == IPAddress(127, 0, 0, 1))
+    if (m_ipAddress == IPAddress(127, 0, 0, 1))
         return "Localhost";
-    if (ipAddress.address[0] == 192 && ipAddress.address[1] == 168)
+    if (m_ipAddress.address[0] == 192 && m_ipAddress.address[1] == 168)
         return "Private local network";
-    if (ipAddress.address[0] == 172 && ipAddress.address[1] >= 16 && ipAddress.address[1] <= 31)
+    if (m_ipAddress.address[0] == 172 && m_ipAddress.address[1] >= 16 && m_ipAddress.address[1] <= 31)
         return "Private local network";
-    if (ipAddress.address[0] == 10)
+    if (m_ipAddress.address[0] == 10)
         return "Private local network";
-    if (ipAddress.address[0] == 169 && ipAddress.address[1] == 254)
+    if (m_ipAddress.address[0] == 169 && m_ipAddress.address[1] == 254)
         return "Link-local network";
 
     return "Other network";
@@ -55,20 +55,20 @@ String Polytempo_IPAddress::addressDescription()
 IPAddress Polytempo_IPAddress::getBroadcastAddress()
 {
     IPAddress networkAddress = getNetworkAddress();
-    int8 broadcastAddress[4];
+    uint8 broadcastAddress[4];
     for (int i = 0; i < 4; i++)
     {
-        broadcastAddress[i] = networkAddress.address[i] | ~subnetMask.address[i];
+        broadcastAddress[i] = networkAddress.address[i] | ~m_subnetMask.address[i];
     }
     return IPAddress(broadcastAddress[0], broadcastAddress[1], broadcastAddress[2], broadcastAddress[3]);
 }
 
 IPAddress Polytempo_IPAddress::getNetworkAddress()
 {
-    int8 networkAddress[4];
+    uint8 networkAddress[4];
     for (int i = 0; i < 4; i++)
     {
-        networkAddress[i] = ipAddress.address[i] & subnetMask.address[i];
+        networkAddress[i] = m_ipAddress.address[i] & m_subnetMask.address[i];
     }
     return IPAddress(networkAddress[0], networkAddress[1], networkAddress[2], networkAddress[3]);
 }

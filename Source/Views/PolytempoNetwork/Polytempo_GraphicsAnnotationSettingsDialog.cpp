@@ -104,7 +104,7 @@ private:
 //==============================================================================
 Polytempo_GraphicsAnnotationSettingsDialog::Polytempo_GraphicsAnnotationSettingsDialog(OwnedArray<Polytempo_GraphicsAnnotationSet>* pAnnotationSet)
 {
-    this->pAnnotationSet = pAnnotationSet;
+    this->m_pAnnotationSet = pAnnotationSet;
 
     addAndMakeVisible(table);
     table.setModel(this);
@@ -147,7 +147,7 @@ int Polytempo_GraphicsAnnotationSettingsDialog::getNumRows()
 
 bool Polytempo_GraphicsAnnotationSettingsDialog::setText(const int rowNumber, String newText) const
 {
-    bool ok = pAnnotationSet->getUnchecked(rowNumber)->setAnnotationLayerName(newText);
+    bool ok = m_pAnnotationSet->getUnchecked(rowNumber)->setAnnotationLayerName(newText);
     if (!ok)
     {
         AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Layer renaming", "Renaming layer failed");
@@ -159,23 +159,23 @@ bool Polytempo_GraphicsAnnotationSettingsDialog::setText(const int rowNumber, St
 
 String Polytempo_GraphicsAnnotationSettingsDialog::getText(int row) const
 {
-    return pAnnotationSet->getUnchecked(row)->getAnnotationLayerName();
+    return m_pAnnotationSet->getUnchecked(row)->getAnnotationLayerName();
 }
 
 bool Polytempo_GraphicsAnnotationSettingsDialog::getShowInfo(int row) const
 {
-    return pAnnotationSet->getUnchecked(row)->getShow();
+    return m_pAnnotationSet->getUnchecked(row)->getShow();
 }
 
 bool Polytempo_GraphicsAnnotationSettingsDialog::setShowInfo(int row, bool state)
 {
-    if (!state && pAnnotationSet->getUnchecked(row)->getEdit())
+    if (!state && m_pAnnotationSet->getUnchecked(row)->getEdit())
     {
         AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Set visibility state", "Editable layer has to be visible");
         return false;
     }
 
-    bool ok = pAnnotationSet->getUnchecked(row)->setShow(state);
+    bool ok = m_pAnnotationSet->getUnchecked(row)->setShow(state);
     if (!ok)
     {
         AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Set visibility state", "Setting visibility state failed");
@@ -187,25 +187,25 @@ bool Polytempo_GraphicsAnnotationSettingsDialog::setShowInfo(int row, bool state
 
 bool Polytempo_GraphicsAnnotationSettingsDialog::getEditInfo(int row) const
 {
-    return pAnnotationSet->getUnchecked(row)->getEdit();
+    return m_pAnnotationSet->getUnchecked(row)->getEdit();
 }
 
 bool Polytempo_GraphicsAnnotationSettingsDialog::setEditInfo(int row, bool state)
 {
     if (!state)
-        pAnnotationSet->getUnchecked(row)->setEdit(false); // unselect is not allowed
+        m_pAnnotationSet->getUnchecked(row)->setEdit(false); // unselect is not allowed
     else
     {
         // select only new layer
-        for (int i = 0; i < pAnnotationSet->size(); i++)
+        for (int i = 0; i < m_pAnnotationSet->size(); i++)
         {
             if (i == row)
             {
-                pAnnotationSet->getUnchecked(i)->setEdit(true);
-                pAnnotationSet->getUnchecked(i)->setShow(true);
+                m_pAnnotationSet->getUnchecked(i)->setEdit(true);
+                m_pAnnotationSet->getUnchecked(i)->setShow(true);
             }
             else
-                pAnnotationSet->getUnchecked(i)->setEdit(false);
+                m_pAnnotationSet->getUnchecked(i)->setEdit(false);
         }
 
         table.updateContent();
@@ -258,7 +258,7 @@ void Polytempo_GraphicsAnnotationSettingsDialog::buttonClicked(Button* btn)
     if (btn == addLayerBtn.get())
     {
         Polytempo_GraphicsAnnotationManager::getInstance()->createAndAddNewLayer(false);
-        numRows = pAnnotationSet->size();
+        numRows = m_pAnnotationSet->size();
         table.updateContent();
     }
 }

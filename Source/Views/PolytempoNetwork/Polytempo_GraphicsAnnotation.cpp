@@ -12,10 +12,10 @@ Polytempo_GraphicsAnnotation::~Polytempo_GraphicsAnnotation()
 
 void Polytempo_GraphicsAnnotation::clear()
 {
-    color = Colours::black;
-    freeHandPath.clear();
-    imageId = String();
-    referencePoint = Point<float>();
-    text = String();
-    fontSize = STANDARD_FONT_SIZE;
+    m_color = Colours::black;
+    m_freeHandPath.clear();
+    m_imageId = String();
+    m_referencePoint = Point<float>();
+    m_text = String();
+    m_fontSize = STANDARD_FONT_SIZE;
 }

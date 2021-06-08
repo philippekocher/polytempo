@@ -50,7 +50,7 @@ void Polytempo_NetworkSupervisor::timerCallback()
     // broadcast a heartbeat
     for (Polytempo_IPAddress localIpAddress : localIpAddresses)
     {
-        std::unique_ptr<OSCMessage> msg = createAdvertiseMessage(localIpAddress.ipAddress.toString());
+        std::unique_ptr<OSCMessage> msg = createAdvertiseMessage(localIpAddress.m_ipAddress.toString());
         oscSender->sendToIPAddress(localIpAddress.getBroadcastAddress().toString(), currentPort, *msg);
     }
 
@@ -68,8 +68,8 @@ Uuid Polytempo_NetworkSupervisor::getUniqueId()
 void Polytempo_NetworkSupervisor::unicastFlood(Polytempo_IPAddress ownIp)
 {
     OSCSender localSender;
-    localSender.connect(ownIp.ipAddress.toString(), 0);
-    std::unique_ptr<OSCMessage> msg = this->createAdvertiseMessage(ownIp.ipAddress.toString());
+    localSender.connect(ownIp.m_ipAddress.toString(), 0);
+    std::unique_ptr<OSCMessage> msg = this->createAdvertiseMessage(ownIp.m_ipAddress.toString());
     IPAddress currentIp = ownIp.getFirstNetworkAddress();
     IPAddress lastIp = ownIp.getLastNetworkAddress();
 
