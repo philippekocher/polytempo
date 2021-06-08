@@ -8,7 +8,7 @@ class Polytempo_ComposerMenuBarModel;
 
 struct Polytempo_LookAndFeel : public LookAndFeel_V3
 {
-    void drawTableHeaderBackground (Graphics& g, TableHeaderComponent&)
+    void drawTableHeaderBackground (Graphics& g, TableHeaderComponent&) override
     {
         g.fillAll(Colour(245,245,245));
     }

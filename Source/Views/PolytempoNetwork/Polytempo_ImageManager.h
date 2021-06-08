@@ -5,7 +5,7 @@
 class Polytempo_ImageManager : public Polytempo_EventObserver
 {
 public:
-    ~Polytempo_ImageManager();
+    ~Polytempo_ImageManager() override;
 
     juce_DeclareSingleton(Polytempo_ImageManager, false)
 

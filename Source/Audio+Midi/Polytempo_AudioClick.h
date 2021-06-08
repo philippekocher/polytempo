@@ -8,7 +8,7 @@ class Polytempo_AudioClick : public Polytempo_EventObserver
 {
 public:
     Polytempo_AudioClick();
-    ~Polytempo_AudioClick();
+    ~Polytempo_AudioClick() override;
 
     juce_DeclareSingleton(Polytempo_AudioClick, false)
 

@@ -6,7 +6,7 @@ class Polytempo_MidiClick : public Polytempo_EventObserver
 {
 public:
     Polytempo_MidiClick();
-    ~Polytempo_MidiClick();
+    ~Polytempo_MidiClick() override;
 
     juce_DeclareSingleton (Polytempo_MidiClick, false)
 

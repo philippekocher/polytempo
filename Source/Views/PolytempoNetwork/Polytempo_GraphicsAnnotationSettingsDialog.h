@@ -9,7 +9,7 @@ public:
     static void show(OwnedArray<Polytempo_GraphicsAnnotationSet>* pAnnotationSet);
 
     Polytempo_GraphicsAnnotationSettingsDialog(OwnedArray<Polytempo_GraphicsAnnotationSet>* pAnnotationSet);
-    ~Polytempo_GraphicsAnnotationSettingsDialog();
+    ~Polytempo_GraphicsAnnotationSettingsDialog() override;
 
     void paint(Graphics&) override;
     void resized() override;

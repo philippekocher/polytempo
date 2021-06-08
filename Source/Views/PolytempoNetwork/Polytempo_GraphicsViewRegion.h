@@ -20,7 +20,7 @@ class Polytempo_GraphicsViewRegion : public Component, public ChangeListener
 {
 public:
     Polytempo_GraphicsViewRegion(var = var());
-    ~Polytempo_GraphicsViewRegion();
+    ~Polytempo_GraphicsViewRegion() override;
 
     void paint(Graphics& g) override;
     void resized() override;

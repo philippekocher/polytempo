@@ -21,7 +21,7 @@ public:
         changeWidthToFitText();
     }
 
-    ~ColourChangeButton()
+    ~ColourChangeButton() override
     {
     }
 
@@ -287,7 +287,7 @@ public:
         showAuxiliaryView->addListener(this);
     }
 
-    ~VisualPreferencesPage()
+    ~VisualPreferencesPage() override
     {
         deleteAllChildren();
     }
@@ -490,7 +490,7 @@ public:
         audioDeviceManager.addChangeListener(this);
     }
 
-    ~AudioPreferencesPage()
+    ~AudioPreferencesPage() override
     {
         deleteAllChildren();
         audioDeviceManager.removeChangeListener(this);
@@ -789,7 +789,7 @@ public:
         midiChannel->addListener(this);
     }
 
-    ~MidiPreferencesPage()
+    ~MidiPreferencesPage() override
     {
         deleteAllChildren();
     }
@@ -1017,7 +1017,7 @@ public:
         updateIpList();
     }
 
-    ~NetworkPreferencesPage()
+    ~NetworkPreferencesPage() override
     {
         deleteAllChildren();
     }

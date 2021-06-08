@@ -17,7 +17,7 @@ public:
     juce_DeclareSingleton(Polytempo_TimeProvider, true)
 
     Polytempo_TimeProvider();
-    ~Polytempo_TimeProvider();
+    ~Polytempo_TimeProvider() override;
 
     bool getSyncTime(uint32* pTime);
     int32 getMRT() const;

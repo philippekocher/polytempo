@@ -7,7 +7,7 @@ class Polytempo_MenuBarModel : public MenuBarModel,
 {
 public:
     Polytempo_MenuBarModel(Polytempo_NetworkWindow*);
-    ~Polytempo_MenuBarModel();
+    ~Polytempo_MenuBarModel() override;
 
     StringArray getMenuBarNames() override;
     PopupMenu getMenuForIndex(int menuIndex, const String& menuName) override;

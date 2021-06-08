@@ -17,7 +17,7 @@ public:
         subdivisionPosition = 0;
     }
 
-    ~Polytempo_VisualConductorComponent()
+    ~Polytempo_VisualConductorComponent() override
     {
     }
 

@@ -16,7 +16,7 @@ class Polytempo_NetworkMainView : public Component,
 {
 public:
     Polytempo_NetworkMainView();
-    ~Polytempo_NetworkMainView();
+    ~Polytempo_NetworkMainView() override;
 
     void paint(Graphics& g) override;
     void resized() override;

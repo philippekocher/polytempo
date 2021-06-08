@@ -9,7 +9,7 @@ public:
     {
     }
 
-    ~Polytempo_MidiInput()
+    ~Polytempo_MidiInput() override
     {
     }
 

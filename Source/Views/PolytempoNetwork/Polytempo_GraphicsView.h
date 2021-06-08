@@ -9,7 +9,7 @@ class Polytempo_GraphicsView : public Component,
 {
 public:
     Polytempo_GraphicsView();
-    ~Polytempo_GraphicsView();
+    ~Polytempo_GraphicsView() override;
 
     void paint(Graphics& g) override;
     void resized() override;

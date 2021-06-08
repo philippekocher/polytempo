@@ -7,7 +7,7 @@ class Polytempo_OSCListener : OSCReceiver, OSCReceiver::Listener<OSCReceiver::Re
 {
 public:
     Polytempo_OSCListener(int port);
-    ~Polytempo_OSCListener();
+    ~Polytempo_OSCListener() override;
 
 private:
     void oscMessageReceived(const OSCMessage& message) override;

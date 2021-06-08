@@ -6,7 +6,7 @@ class Polytempo_AnnotationView : public Component, Button::Listener, ComboBox::L
 {
 public:
     Polytempo_AnnotationView();
-    ~Polytempo_AnnotationView();
+    ~Polytempo_AnnotationView() override;
 
     void paint(Graphics&) override;
     void resized() override;

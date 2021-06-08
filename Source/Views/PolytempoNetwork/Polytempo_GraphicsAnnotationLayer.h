@@ -14,7 +14,7 @@ class Polytempo_GraphicsAnnotationLayer : public Component, MultiTimer, KeyListe
 {
 public:
     Polytempo_GraphicsAnnotationLayer(HashMap<String, Polytempo_GraphicsViewRegion*>* pRegionMap);
-    ~Polytempo_GraphicsAnnotationLayer();
+    ~Polytempo_GraphicsAnnotationLayer() override;
 
     void requireUpdate();
     void handleEndEditAccept();

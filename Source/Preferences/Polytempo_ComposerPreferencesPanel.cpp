@@ -234,7 +234,7 @@ public:
         midiOutputDeviceList->setSelectedId(index + 1, dontSendNotification);
     }
 
-    ~MidiPreferencesPage()
+    ~MidiPreferencesPage() override
     {
         deleteAllChildren();
     }

@@ -14,7 +14,7 @@ class Polytempo_AuxiliaryView : public Component,
 {
 public:
     Polytempo_AuxiliaryView();
-    ~Polytempo_AuxiliaryView();
+    ~Polytempo_AuxiliaryView() override;
 
     void paint(Graphics&) override;
     void resized() override;

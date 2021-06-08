@@ -12,7 +12,7 @@ class Polytempo_OSCSender : public Polytempo_EventObserver
 
 public:
     Polytempo_OSCSender();
-    ~Polytempo_OSCSender();
+    ~Polytempo_OSCSender() override;
     
     void eventNotification(Polytempo_Event *event) override;
     void addSender(const String& senderID, const String& hostName, int port, bool ticks = false);

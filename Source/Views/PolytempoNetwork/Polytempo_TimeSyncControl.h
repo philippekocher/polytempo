@@ -11,7 +11,7 @@ class Polytempo_TimeSyncControl : public Component, Button::Listener, MultiTimer
 {
 public:
     Polytempo_TimeSyncControl();
-    ~Polytempo_TimeSyncControl();
+    ~Polytempo_TimeSyncControl() override;
 
     void paint(Graphics&) override;
     void resized() override;

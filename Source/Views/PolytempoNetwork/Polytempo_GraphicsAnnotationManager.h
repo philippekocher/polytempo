@@ -44,7 +44,7 @@ private:
         annotationMode = eAnnotationMode(Polytempo_StoredPreferences::getInstance()->getProps().getIntValue("annotationMode", Standard));
     }
 
-    ~Polytempo_GraphicsAnnotationManager()
+    ~Polytempo_GraphicsAnnotationManager() override
     {
         Polytempo_StoredPreferences::getInstance()->getProps().setValue("annotationMode", annotationMode);
     }

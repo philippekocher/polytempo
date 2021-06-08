@@ -9,7 +9,7 @@ class Polytempo_GraphicsAnnotationLayer;
 class Polytempo_GraphicsPalette : public Button::Listener, Slider::Listener, ChangeListener
 {
     Polytempo_GraphicsPalette();
-    ~Polytempo_GraphicsPalette();
+    ~Polytempo_GraphicsPalette() override;
 
 public:
     juce_DeclareSingleton(Polytempo_GraphicsPalette, false)

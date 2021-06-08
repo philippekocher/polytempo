@@ -11,7 +11,7 @@ class Polytempo_SectionInstancesComponent : public Component, public Label::List
 {
 public:
     Polytempo_SectionInstancesComponent();
-    ~Polytempo_SectionInstancesComponent();
+    ~Polytempo_SectionInstancesComponent() override;
 
     void paint(Graphics&) override;
     void resized() override;
