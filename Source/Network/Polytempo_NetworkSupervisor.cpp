@@ -29,7 +29,7 @@ Polytempo_NetworkSupervisor::~Polytempo_NetworkSupervisor()
     Polytempo_NetworkInterfaceManager::deleteInstance();
 }
 
-juce_ImplementSingleton(Polytempo_NetworkSupervisor);
+juce_ImplementSingleton(Polytempo_NetworkSupervisor)
 
 std::unique_ptr<OSCMessage> Polytempo_NetworkSupervisor::createAdvertiseMessage(String ownIp)
 {

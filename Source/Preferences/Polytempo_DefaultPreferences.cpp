@@ -45,4 +45,4 @@ Polytempo_DefaultPreferences::~Polytempo_DefaultPreferences()
     clearSingletonInstance();
 }
 
-juce_ImplementSingleton (Polytempo_DefaultPreferences);
+juce_ImplementSingleton (Polytempo_DefaultPreferences)

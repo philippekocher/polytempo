@@ -12,7 +12,7 @@ public:
     Polytempo_ScoreScheduler();
     ~Polytempo_ScoreScheduler();
 
-    juce_DeclareSingleton(Polytempo_ScoreScheduler, false);
+    juce_DeclareSingleton(Polytempo_ScoreScheduler, false)
 
     void setEngine(Polytempo_ScoreSchedulerEngine*);
     bool isRunning();

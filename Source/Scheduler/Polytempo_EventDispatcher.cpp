@@ -2,7 +2,7 @@
 #include "../Network/Polytempo_TimeProvider.h"
 #include "../Network/Polytempo_InterprocessCommunication.h"
 
-juce_ImplementSingleton(Polytempo_EventDispatcher);
+juce_ImplementSingleton(Polytempo_EventDispatcher)
 
 void Polytempo_EventDispatcher::broadcastEvent(Polytempo_Event* event)
 {

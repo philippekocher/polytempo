@@ -13,7 +13,7 @@ Polytempo_EventScheduler::~Polytempo_EventScheduler()
     clearSingletonInstance();
 }
 
-juce_ImplementSingleton(Polytempo_EventScheduler);
+juce_ImplementSingleton(Polytempo_EventScheduler)
 
 // ----------------------------------------------------
 #pragma mark -

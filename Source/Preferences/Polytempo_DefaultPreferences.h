@@ -9,5 +9,5 @@ public:
     Polytempo_DefaultPreferences();
     ~Polytempo_DefaultPreferences();
 
-    juce_DeclareSingleton (Polytempo_DefaultPreferences, false);
+    juce_DeclareSingleton (Polytempo_DefaultPreferences, false)
 };

@@ -61,7 +61,7 @@ class FontSizeCallback : public ModalComponentManager::Callback
 public:
     FontSizeCallback(Polytempo_GraphicsPalette* pParent) : pParent(pParent)
     {
-    };
+    }
     void modalStateFinished(int returnValue) override { if (returnValue > 0) { pParent->setTemporaryFontSize(float(returnValue)); } }
 
 private:

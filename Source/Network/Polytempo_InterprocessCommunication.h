@@ -36,7 +36,7 @@ protected:
 class Polytempo_InterprocessCommunication
 {
 public:
-    juce_DeclareSingleton(Polytempo_InterprocessCommunication, false);
+    juce_DeclareSingleton(Polytempo_InterprocessCommunication, false)
 
     Polytempo_InterprocessCommunication();
     ~Polytempo_InterprocessCommunication();

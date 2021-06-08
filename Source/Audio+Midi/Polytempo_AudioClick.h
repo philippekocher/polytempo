@@ -10,7 +10,7 @@ public:
     Polytempo_AudioClick();
     ~Polytempo_AudioClick();
 
-    juce_DeclareSingleton(Polytempo_AudioClick, false);
+    juce_DeclareSingleton(Polytempo_AudioClick, false)
 
     void setNumVoices(int num);
     void eventNotification(Polytempo_Event* event) override;

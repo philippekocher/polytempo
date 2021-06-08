@@ -174,7 +174,7 @@ Polytempo_AudioClick::~Polytempo_AudioClick()
     clearSingletonInstance();
 }
 
-juce_ImplementSingleton(Polytempo_AudioClick);
+juce_ImplementSingleton(Polytempo_AudioClick)
 
 void Polytempo_AudioClick::setNumVoices(int num)
 {

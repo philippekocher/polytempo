@@ -7,7 +7,7 @@ class Polytempo_ImageManager : public Polytempo_EventObserver
 public:
     ~Polytempo_ImageManager();
 
-    juce_DeclareSingleton(Polytempo_ImageManager, false);
+    juce_DeclareSingleton(Polytempo_ImageManager, false)
 
     Image* getImage(var imageID);
     HashMap<var, Image*>& getImages();

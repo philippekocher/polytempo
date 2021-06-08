@@ -26,7 +26,7 @@ public:
     bool quitApplication = false;
     void anotherInstanceStarted(const String& commandLine) override;
 
-    Polytempo_Score* getScore() { return score.get(); };
+    Polytempo_Score* getScore() { return score.get(); }
     bool scoreFileExists() { return scoreFile.exists(); }
     Polytempo_NetworkWindow* getMainWindow() { return mainWindow.get(); }
 

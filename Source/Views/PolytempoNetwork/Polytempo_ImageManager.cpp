@@ -8,7 +8,7 @@ Polytempo_ImageManager::~Polytempo_ImageManager()
     clearSingletonInstance();
 }
 
-juce_ImplementSingleton(Polytempo_ImageManager);
+juce_ImplementSingleton(Polytempo_ImageManager)
 
 Image* Polytempo_ImageManager::getImage(var imageID)
 {

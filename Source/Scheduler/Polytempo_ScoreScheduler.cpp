@@ -17,7 +17,7 @@ Polytempo_ScoreScheduler::~Polytempo_ScoreScheduler()
     clearSingletonInstance();
 }
 
-juce_ImplementSingleton (Polytempo_ScoreScheduler);
+juce_ImplementSingleton (Polytempo_ScoreScheduler)
 
 void Polytempo_ScoreScheduler::setEngine(Polytempo_ScoreSchedulerEngine* theEngine)
 {

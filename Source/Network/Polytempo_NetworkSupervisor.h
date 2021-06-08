@@ -10,7 +10,7 @@ class Polytempo_NetworkSupervisor : public Timer,
                                     public Polytempo_EventObserver
 {
 public:
-    juce_DeclareSingleton(Polytempo_NetworkSupervisor, false);
+    juce_DeclareSingleton(Polytempo_NetworkSupervisor, false)
 
     Polytempo_NetworkSupervisor();
     ~Polytempo_NetworkSupervisor();

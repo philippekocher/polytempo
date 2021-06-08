@@ -314,4 +314,4 @@ Polytempo_PeerInfo* Polytempo_InterprocessCommunication::getPeerInfoFromIpc(Ipc*
     return info;
 }
 
-juce_ImplementSingleton(Polytempo_InterprocessCommunication);
+juce_ImplementSingleton(Polytempo_InterprocessCommunication)

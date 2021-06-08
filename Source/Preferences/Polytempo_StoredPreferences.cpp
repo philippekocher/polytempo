@@ -16,7 +16,7 @@ Polytempo_StoredPreferences::~Polytempo_StoredPreferences()
     clearSingletonInstance();
 }
 
-juce_ImplementSingleton (Polytempo_StoredPreferences);
+juce_ImplementSingleton (Polytempo_StoredPreferences)
 
 PropertiesFile& Polytempo_StoredPreferences::getProps()
 {

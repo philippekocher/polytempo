@@ -15,7 +15,7 @@ public:
                                        pausing(false),
                                        scoreTimeOffset(0)
     {
-    };
+    }
 
     void run() override = 0;
 

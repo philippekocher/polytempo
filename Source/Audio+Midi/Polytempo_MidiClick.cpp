@@ -24,7 +24,7 @@ Polytempo_MidiClick::~Polytempo_MidiClick()
     clearSingletonInstance();
 }
 
-juce_ImplementSingleton(Polytempo_MidiClick);
+juce_ImplementSingleton(Polytempo_MidiClick)
 
 void Polytempo_MidiClick::eventNotification(Polytempo_Event* event)
 {

@@ -8,7 +8,7 @@ public:
     Polytempo_EventScheduler();
     ~Polytempo_EventScheduler();
 
-    juce_DeclareSingleton(Polytempo_EventScheduler, false);
+    juce_DeclareSingleton(Polytempo_EventScheduler, false)
 
     /* schedule events
      --------------------------------------- */

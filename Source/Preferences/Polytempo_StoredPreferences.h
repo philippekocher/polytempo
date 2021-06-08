@@ -13,7 +13,7 @@ public:
     Polytempo_StoredPreferences();
     ~Polytempo_StoredPreferences();
 
-    juce_DeclareSingleton (Polytempo_StoredPreferences, false);
+    juce_DeclareSingleton (Polytempo_StoredPreferences, false)
 
     PropertiesFile& getProps();
     void flush();

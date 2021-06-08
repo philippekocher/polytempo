@@ -8,7 +8,7 @@ public:
     Polytempo_MidiClick();
     ~Polytempo_MidiClick();
 
-    juce_DeclareSingleton (Polytempo_MidiClick, false);
+    juce_DeclareSingleton (Polytempo_MidiClick, false)
 
     void eventNotification(Polytempo_Event* event) override;
 
