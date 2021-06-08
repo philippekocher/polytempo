@@ -200,8 +200,6 @@ class VisualPreferencesPage : public Component, Button::Listener, Slider::Listen
     ToggleButton* showVisualMetro;
     Label* stripWidthLabel;
     Slider* stripWidthSlider;
-    Label* stripLengthLabel;
-    Slider* stripLengthSlider;
     Label* stripNormalColourLabel;
     ColourChangeButton* stripNormalColourSelector;
     Label* stripCueColourLabel;
