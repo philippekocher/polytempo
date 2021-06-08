@@ -171,7 +171,7 @@ static void findIPAddresses(int sock, Array<Polytempo_IPAddress>& result)
             }
 
             String ifName = String(conf.ifr_name);
-			addAddress((const sockaddr_in*)&cfg.ifc_req->ifr_addr, (const sockaddr_in*)&conf.ifr_addr, ifName, result);
+			addAddress(reinterpret_cast<const sockaddr_in*>(&cfg.ifc_req->ifr_addr), reinterpret_cast<const sockaddr_in*>(&conf.ifr_addr), ifName, result);
         }
 		cfg.ifc_len -= IFNAMSIZ + cfg.ifc_req->ifr_addr.sa_len;
 		cfg.ifc_buf += IFNAMSIZ + cfg.ifc_req->ifr_addr.sa_len;
@@ -182,7 +182,7 @@ static void findIPAddresses(int sock, Array<Polytempo_IPAddress>& result)
 		const ifreq& item = cfg.ifc_req[i];
 
 		if (item.ifr_addr.sa_family == AF_INET)
-			addAddress((const sockaddr_in*)&item.ifr_addr, (const sockaddr_in*)&item.ifr_netmask, item.ifr_name, result);
+			addAddress(reinterpret_cast<const sockaddr_in*>(&item.ifr_addr), reinterpret_cast<const sockaddr_in*>(&item.ifr_netmask), item.ifr_name, result);
 	}
 #endif
 }
