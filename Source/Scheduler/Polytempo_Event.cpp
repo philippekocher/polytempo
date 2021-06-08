@@ -157,7 +157,7 @@ Polytempo_Event* Polytempo_Event::makeEvent(XmlElement* xmlElement)
         {
             StringArray tokens;
             Array<var> varArray;
-            tokens.addTokens(valueString, "\t");
+            tokens.addTokens(valueString, "\t", "");
             for (int iToken = 1; iToken < tokens.size(); iToken++)
             {
                 var v = fromXmlTypedString(tokens[iToken]);
