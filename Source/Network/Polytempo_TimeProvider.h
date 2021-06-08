@@ -53,7 +53,9 @@ private:
     int32 maxRoundTrip;
 
     int32 timeDiffHistory[TIME_DIFF_HISTORY_SIZE];
+#ifdef POLYTEMPO_NETWORK
     int32 roundTripTime[ROUND_TRIP_HISTORY_SIZE];
+#endif
     int timeDiffHistorySize;
     int timeDiffHistoryWritePosition;
     int roundTripHistorySize;
