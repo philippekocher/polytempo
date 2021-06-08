@@ -84,25 +84,6 @@ void Polytempo_OSCListener::oscMessageReceived(const OSCMessage& message)
             return;
         }
         
-#ifdef POLYTEMPO_NETWORK
-        if (event->getType() == eventType_Open)
-        {
-            const MessageManagerLock mml(Thread::getCurrentThread());
-
-            Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
-            if (event->hasProperty(eventPropertyString_URL) || event->hasProperty(eventPropertyString_Value))
-            {
-                String filePath(event->getProperty(eventPropertyString_URL).toString());
-                if(filePath.isEmpty()) filePath = event->getProperty(eventPropertyString_Value).toString();
-                File file(filePath);
-                if (file.existsAsFile())
-                {
-                    // call on the message thread
-                    MessageManager::callAsync([app, filePath]() { app->openScoreFilePath(filePath); });
-                }
-            }
-        }
-#endif
         // calculate syncTime
         uint32 syncTime;
 

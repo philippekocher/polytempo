@@ -59,6 +59,8 @@ void Polytempo_GraphicsView::clearAll()
 {
     HashMap<String, Polytempo_GraphicsViewRegion*>::Iterator it1(regionsMap);
     while (it1.next()) { it1.getValue()->setVisible(false); }
+
+    annotationLayer->requireUpdate();
 }
 
 void Polytempo_GraphicsView::addRegion(Polytempo_Event* event)
