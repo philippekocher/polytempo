@@ -57,8 +57,8 @@ private:
     OwnedArray <Polytempo_Score_Section> sections;
 	std::unique_ptr<Polytempo_Score_Section> initSection;
     
-    int    currentSectionIndex;
-    uint32 nextEventIndex;
+    int  currentSectionIndex;
+    int  nextEventIndex;
     
     bool dirty = false;
     bool jsonStringInTwoBlocks = true;
