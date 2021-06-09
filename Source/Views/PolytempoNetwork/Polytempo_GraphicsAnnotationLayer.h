@@ -10,7 +10,7 @@
 #define MIN_MOUSE_DOWN_TIME_MS				500
 #define AUTO_ACCEPT_INTERVAL_MS				5000
 
-class Polytempo_GraphicsAnnotationLayer : public Component, MultiTimer, KeyListener, ChangeListener
+class Polytempo_GraphicsAnnotationLayer : public Component, MultiTimer, ChangeListener
 {
 public:
     Polytempo_GraphicsAnnotationLayer(HashMap<String, Polytempo_GraphicsViewRegion*>* pRegionMap);
@@ -42,7 +42,7 @@ private:
     void mouseUp(const MouseEvent& event) override;
     void mouseDrag(const MouseEvent& event) override;
     void mouseDoubleClick(const MouseEvent& event) override;
-    bool keyPressed(const KeyPress& key, Component* /*originatingComponent*/) override;
+    bool keyPressed(const KeyPress& key) override;
     void timerCallback(int timerID) override;
     void changeListenerCallback(ChangeBroadcaster* source) override;
     void paint(Graphics&) override;

@@ -9,7 +9,6 @@ Polytempo_GraphicsAnnotationLayer::Polytempo_GraphicsAnnotationLayer(HashMap<Str
     this->m_pRegionMap = pRegionMap;
     status = Default;
     setAlwaysOnTop(true);
-    addKeyListener(this);
     startTimer(TIMER_ID_REPAINT, MIN_INTERVAL_BETWEEN_REPAINTS_MS);
     Polytempo_GraphicsPalette::getInstance()->setAnnotationLayer(this);
     setWantsKeyboardFocus(true);
@@ -370,7 +369,7 @@ void Polytempo_GraphicsAnnotationLayer::timerCallback(int timerID)
     }
 }
 
-bool Polytempo_GraphicsAnnotationLayer::keyPressed(const KeyPress& key, Component* /*originatingComponent*/)
+bool Polytempo_GraphicsAnnotationLayer::keyPressed(const KeyPress& key)
 {
     if (status != Default && key.isValid() && !key.getModifiers().isCtrlDown())
     {
