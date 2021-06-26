@@ -70,7 +70,7 @@ public:
 protected:
     int scoreTimeIncrement()
     {
-        int increment = pausing ? 0 : Time::getMillisecondCounter() - scoreTimeOffset;
+        int increment = pausing ? 0 : (int32)(Time::getMillisecondCounter() - scoreTimeOffset);
         scoreTimeOffset = Time::getMillisecondCounter();
         return increment;
     }
@@ -84,7 +84,7 @@ protected:
     bool pausing;
 
 private:
-    int scoreTimeOffset;
+    uint32 scoreTimeOffset;
 };
 
 /*
