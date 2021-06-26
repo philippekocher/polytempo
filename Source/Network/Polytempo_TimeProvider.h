@@ -20,7 +20,7 @@ public:
     ~Polytempo_TimeProvider() override;
 
     bool getSyncTime(uint32* pTime);
-    int32 getMRT() const;
+    uint32 getMRT() const;
 
 #ifdef POLYTEMPO_NETWORK
     void toggleMaster(bool master);
@@ -38,7 +38,7 @@ public:
     };
 
 private:
-    void handleTimeSyncMessage(Uuid senderId, uint32 masterTime, int timeIndex, int32 roundTrip);
+    void handleTimeSyncMessage(Uuid senderId, uint32 masterTime, int timeIndex, uint32 roundTrip);
     void createTimeIndex(int* pIndex, uint32* pTimestamp);
     void timerCallback() override;
     void displayMessage(String message, MessageType messageType) const;
@@ -50,11 +50,11 @@ private:
 #endif
 
     int32 relativeMsToMaster;
-    int32 maxRoundTrip;
+    uint32 maxRoundTrip;
 
     int32 timeDiffHistory[TIME_DIFF_HISTORY_SIZE];
 #ifdef POLYTEMPO_NETWORK
-    int32 roundTripTime[ROUND_TRIP_HISTORY_SIZE];
+    uint32 roundTripTime[ROUND_TRIP_HISTORY_SIZE];
 #endif
     int timeDiffHistorySize;
     int timeDiffHistoryWritePosition;
@@ -67,7 +67,7 @@ private:
     int lastSentTimeIndex;
     uint32 lastSentTimestamp;
     uint32 lastReceivedTimestamp;
-    int32 lastRoundTrip;
+    uint32 lastRoundTrip;
 
     Uuid lastMasterID;
 };
