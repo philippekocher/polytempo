@@ -121,7 +121,7 @@ void Polytempo_IPAddress::findAllAddresses(Array<Polytempo_IPAddress>& result)
             String name(adapter->AdapterName);
             Polytempo_IPAddress ip(IPAddress(String(adapter->IpAddressList.IpAddress.String)), IPAddress(String(adapter->IpAddressList.IpMask.String)), name);
 
-            if (ip.ipAddress != IPAddress::any())
+            if (ip.m_ipAddress != IPAddress::any())
                 result.addIfNotAlreadyThere(ip);
         }
     }
