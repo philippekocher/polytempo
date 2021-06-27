@@ -77,8 +77,8 @@ void Polytempo_GraphicsViewRegion::resized()
         float totalHeight = 0, maxHeight = 0;
         for (displayedImage img : displayedImages)
         {
-            float imageWidth = img.imageRect.getWidth();
-            float imageHeight = img.imageRect.getHeight();
+            float imageWidth = (float)img.imageRect.getWidth();
+            float imageHeight = (float)img.imageRect.getHeight();
             totalWidth += imageWidth;
             if (imageWidth > maxWidth) maxWidth = imageWidth;
             totalHeight += imageHeight;
@@ -115,7 +115,7 @@ void Polytempo_GraphicsViewRegion::resized()
             
             img.screenToImage = AffineTransform::translation(-float(getX() + img.targetArea.getX()), -float(getY() + img.targetArea.getY()));
             img.screenToImage = img.screenToImage.followedBy(AffineTransform::scale(img.imageRect.getWidth() / float(img.targetArea.getWidth()), img.imageRect.getHeight() / float(img.targetArea.getHeight())));
-            img.screenToImage = img.screenToImage.followedBy(AffineTransform::translation(img.imageRect.getX(), img.imageRect.getY()));
+            img.screenToImage = img.screenToImage.followedBy(AffineTransform::translation((float)img.imageRect.getX(), (float)img.imageRect.getY()));
 
             img.imageToScreen = img.screenToImage.inverted();
 
