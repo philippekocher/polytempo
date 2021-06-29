@@ -1,7 +1,7 @@
 set(CMAKE_BUILD_TYPE Release)
 
 juce_add_gui_app(PolytempoComposer
-    VERSION 0.5
+    VERSION 0.0
     ICON_BIG ../Resources/icon.png
     ICON_SMALL ../Resources/icon.png
     DOCUMENT_EXTENSIONS ptsco
