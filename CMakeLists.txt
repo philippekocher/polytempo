@@ -8,7 +8,11 @@ project(Polytempo)
 if ( MSVC )
     set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} /wd4068")
 endif()
+if ( CMAKE_COMPILER_IS_GNUCC )
+    set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wno-unknown-pragmas -Wno-overloaded-virtual")
+endif()
 
 add_subdirectory(JUCE)
 add_subdirectory("POLYTEMPO NETWORK")
 add_subdirectory("POLYTEMPO COMPOSER")
+
