@@ -11,19 +11,19 @@ For further information please refer to the [project's website](https://polytemp
 
 #### Clone repository
 
-    https://github.com/philippekocher/polytempo.git
+Run the following commands to clone the repository and checkout the submodules.
 
-#### Checkout submodules
-
+    git clone https://github.com/philippekocher/polytempo.git
+    cd polytempo
     git submodule update --init --recursive
 
-#### Build
+#### Build applications
 
-Use CMake to build PolytempoNetwork and PolytempoComposer
+To use [CMake](https://cmake.org), you need to [download](https://cmake.org/download/) and install it.
+To build PolytempoNetwork and PolytempoComposer, run the following commands.
 
-    cd {folder where you checked out the code}
+    cd {path to polytempo folder}
     mkdir build
     cd build
-
     cmake ..
     cmake --build . --config Release
