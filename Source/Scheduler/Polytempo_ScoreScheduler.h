@@ -10,9 +10,9 @@ class Polytempo_ScoreScheduler : public Polytempo_EventObserver
 {
 public:
     Polytempo_ScoreScheduler();
-    ~Polytempo_ScoreScheduler();
+    ~Polytempo_ScoreScheduler() override;
 
-    juce_DeclareSingleton(Polytempo_ScoreScheduler, false);
+    juce_DeclareSingleton(Polytempo_ScoreScheduler, false)
 
     void setEngine(Polytempo_ScoreSchedulerEngine*);
     bool isRunning();

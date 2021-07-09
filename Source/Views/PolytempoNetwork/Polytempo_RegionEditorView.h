@@ -13,7 +13,7 @@ class Polytempo_RegionEditorView : public Component,
 {
 public:
     Polytempo_RegionEditorView();
-    ~Polytempo_RegionEditorView();
+    ~Polytempo_RegionEditorView() override;
 
     void paint(Graphics&) override;
     void resized() override;

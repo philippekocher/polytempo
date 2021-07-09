@@ -101,11 +101,11 @@ void Polytempo_OSCListener::oscMessageReceived(const OSCMessage& message)
             if (!scoreScheduler->isRunning()) return; // ignore an event that has a "time"
             // when the score scheduler isn't running
 
-            syncTime += event->getTime() - scoreScheduler->getScoreTime();
+            syncTime += uint32(event->getTime() - scoreScheduler->getScoreTime());
         }
 
         if (event->hasProperty(eventPropertyString_Defer))
-            syncTime += int(float(event->getProperty(eventPropertyString_Defer)) * 1000.0f);
+            syncTime += uint32(float(event->getProperty(eventPropertyString_Defer)) * 1000.0f);
 
         event->setSyncTime(syncTime);
 

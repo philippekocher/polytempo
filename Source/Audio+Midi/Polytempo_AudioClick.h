@@ -8,9 +8,9 @@ class Polytempo_AudioClick : public Polytempo_EventObserver
 {
 public:
     Polytempo_AudioClick();
-    ~Polytempo_AudioClick();
+    ~Polytempo_AudioClick() override;
 
-    juce_DeclareSingleton(Polytempo_AudioClick, false);
+    juce_DeclareSingleton(Polytempo_AudioClick, false)
 
     void setNumVoices(int num);
     void eventNotification(Polytempo_Event* event) override;

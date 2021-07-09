@@ -20,7 +20,7 @@ public:
     bool operator==(const Polytempo_IPAddress& other) const noexcept;
     bool operator!=(const Polytempo_IPAddress& other) const noexcept;
 
-    IPAddress ipAddress;
-    IPAddress subnetMask;
-    String adapterName;
+    IPAddress m_ipAddress;
+    IPAddress m_subnetMask;
+    String m_adapterName;
 };

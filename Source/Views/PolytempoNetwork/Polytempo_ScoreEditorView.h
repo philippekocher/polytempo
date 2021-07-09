@@ -8,7 +8,7 @@ class Polytempo_ScoreEditorView : public Component, public Polytempo_EventObserv
 {
 public:
     Polytempo_ScoreEditorView();
-    ~Polytempo_ScoreEditorView();
+    ~Polytempo_ScoreEditorView() override;
 
     void paint(Graphics&) override;
     void resized() override;

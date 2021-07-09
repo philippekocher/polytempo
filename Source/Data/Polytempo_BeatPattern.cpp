@@ -7,7 +7,7 @@ Polytempo_BeatPattern::Polytempo_BeatPattern()
 {}
 
 Polytempo_BeatPattern::~Polytempo_BeatPattern()
-{};
+{}
 
 //------------------------------------------------------------------------------
 #pragma mark -

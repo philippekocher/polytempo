@@ -6,7 +6,7 @@ class Polytempo_GraphicExportPage : public Component
 {
 public:
     Polytempo_GraphicExportPage(int pageNumber, int, int);
-    ~Polytempo_GraphicExportPage();
+    ~Polytempo_GraphicExportPage() override;
 
     void paint (Graphics&) override;
     

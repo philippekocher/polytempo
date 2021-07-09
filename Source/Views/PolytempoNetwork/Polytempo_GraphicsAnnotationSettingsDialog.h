@@ -9,7 +9,7 @@ public:
     static void show(OwnedArray<Polytempo_GraphicsAnnotationSet>* pAnnotationSet);
 
     Polytempo_GraphicsAnnotationSettingsDialog(OwnedArray<Polytempo_GraphicsAnnotationSet>* pAnnotationSet);
-    ~Polytempo_GraphicsAnnotationSettingsDialog();
+    ~Polytempo_GraphicsAnnotationSettingsDialog() override;
 
     void paint(Graphics&) override;
     void resized() override;
@@ -32,6 +32,6 @@ private:
     std::unique_ptr<TextButton> addLayerBtn;
 
     int numRows;
-    OwnedArray<Polytempo_GraphicsAnnotationSet>* pAnnotationSet;
+    OwnedArray<Polytempo_GraphicsAnnotationSet>* m_pAnnotationSet;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_GraphicsAnnotationSettingsDialog)
 };

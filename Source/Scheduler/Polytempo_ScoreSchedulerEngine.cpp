@@ -17,7 +17,7 @@ void Polytempo_ComposerEngine::run()
 {
     int interval = 100;
     int lookAhead = 2000;
-    int syncTime;
+    uint32 syncTime;
     
     Polytempo_Event *nextScoreEvent = score->getNextEvent();
     Polytempo_Event *nextOscEvent;
@@ -41,10 +41,10 @@ void Polytempo_ComposerEngine::run()
                 // calculate syncTime
             
                 syncTime = Time::getMillisecondCounter();
-                syncTime += int((nextScoreEvent->getTime() - scoreTime) / tempoFactor);
+                syncTime += uint32((nextScoreEvent->getTime() - scoreTime) / tempoFactor);
                 
                 if(nextScoreEvent->hasProperty(eventPropertyString_Defer))
-                    syncTime += int(float(nextScoreEvent->getProperty(eventPropertyString_Defer)) * 1000.0f);
+                    syncTime += uint32(float(nextScoreEvent->getProperty(eventPropertyString_Defer)) * 1000.0f);
                 
                 nextScoreEvent->setSyncTime(syncTime);
                 
@@ -145,10 +145,10 @@ void Polytempo_NetworkEngine::run()
 
             uint32 syncTime;
             Polytempo_TimeProvider::getInstance()->getSyncTime(&syncTime);
-            syncTime += int(double(nextScoreEvent->getTime() - scoreTime) / tempoFactor);
+            syncTime += uint32(double(nextScoreEvent->getTime() - scoreTime) / tempoFactor);
 
             if (nextScoreEvent->hasProperty(eventPropertyString_Defer))
-                syncTime += int(float(nextScoreEvent->getProperty(eventPropertyString_Defer)) * 1000.0f);
+                syncTime += uint32(float(nextScoreEvent->getProperty(eventPropertyString_Defer)) * 1000.0f);
 
             nextScoreEvent->setSyncTime(syncTime);
 

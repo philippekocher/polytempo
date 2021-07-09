@@ -13,15 +13,15 @@ class Polytempo_GraphicsAnnotation
 public:
     Polytempo_GraphicsAnnotation();
 
-    Polytempo_GraphicsAnnotation(const Uuid& id, const String& image_id, const Point<float>& reference_point, const Colour& color, const Path& free_hand_path, const String& text, float fontSize, float lineWeight) : id(id),
-                                                                                                                                                                                                                       imageId(image_id),
-                                                                                                                                                                                                                       referencePoint(reference_point),
-                                                                                                                                                                                                                       color(color),
-                                                                                                                                                                                                                       freeHandPath(free_hand_path),
-                                                                                                                                                                                                                       text(text),
-                                                                                                                                                                                                                       fontSize(fontSize),
-                                                                                                                                                                                                                       lineWeight(lineWeight),
-                                                                                                                                                                                                                       displayedImage(nullptr)
+    Polytempo_GraphicsAnnotation(const Uuid& id, const String& imageId, const Point<float>& referencePoint, const Colour& color, const Path& freeHandPath, const String& text, float fontSize, float lineWeight) : m_id(id),
+                                                                                                                                                                                                                       m_imageId(imageId),
+                                                                                                                                                                                                                       m_referencePoint(referencePoint),
+                                                                                                                                                                                                                       m_color(color),
+                                                                                                                                                                                                                       m_freeHandPath(freeHandPath),
+                                                                                                                                                                                                                       m_text(text),
+                                                                                                                                                                                                                       m_fontSize(fontSize),
+                                                                                                                                                                                                                       m_lineWeight(lineWeight),
+                                                                                                                                                                                                                       m_displayedImage(nullptr)
     {
     }
 
@@ -29,13 +29,13 @@ public:
 
     void clear();
 
-    Uuid id;
-    String imageId;
-    Point<float> referencePoint;
-    Colour color;
-    Path freeHandPath;
-    String text;
-    float fontSize;
-    float lineWeight;
-    Polytempo_GraphicsViewRegion::displayedImage* displayedImage; // temporary usage
+    Uuid m_id;
+    String m_imageId;
+    Point<float> m_referencePoint;
+    Colour m_color;
+    Path m_freeHandPath;
+    String m_text;
+    float m_fontSize;
+    float m_lineWeight;
+    Polytempo_GraphicsViewRegion::displayedImage* m_displayedImage; // temporary usage
 };

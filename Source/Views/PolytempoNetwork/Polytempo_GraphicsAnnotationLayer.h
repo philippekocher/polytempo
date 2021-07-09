@@ -10,11 +10,11 @@
 #define MIN_MOUSE_DOWN_TIME_MS				500
 #define AUTO_ACCEPT_INTERVAL_MS				5000
 
-class Polytempo_GraphicsAnnotationLayer : public Component, MultiTimer, KeyListener, ChangeListener
+class Polytempo_GraphicsAnnotationLayer : public Component, MultiTimer, ChangeListener
 {
 public:
     Polytempo_GraphicsAnnotationLayer(HashMap<String, Polytempo_GraphicsViewRegion*>* pRegionMap);
-    ~Polytempo_GraphicsAnnotationLayer();
+    ~Polytempo_GraphicsAnnotationLayer() override;
 
     void requireUpdate();
     void handleEndEditAccept();
@@ -42,7 +42,7 @@ private:
     void mouseUp(const MouseEvent& event) override;
     void mouseDrag(const MouseEvent& event) override;
     void mouseDoubleClick(const MouseEvent& event) override;
-    bool keyPressed(const KeyPress& key, Component* /*originatingComponent*/) override;
+    bool keyPressed(const KeyPress& key) override;
     void timerCallback(int timerID) override;
     void changeListenerCallback(ChangeBroadcaster* source) override;
     void paint(Graphics&) override;
@@ -62,7 +62,7 @@ private:
 private:
     Atomic<bool> fullUpdateRequired;
 
-    HashMap<String, Polytempo_GraphicsViewRegion*>* pRegionMap;
+    HashMap<String, Polytempo_GraphicsViewRegion*>* m_pRegionMap;
     std::unique_ptr<Image> annotationImage;
     Polytempo_GraphicsAnnotation temporaryAnnotation;
     Polytempo_GraphicsAnnotation temporaryAnnotationMove;

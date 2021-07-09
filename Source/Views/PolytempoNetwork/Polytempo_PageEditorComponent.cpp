@@ -90,8 +90,8 @@ void Polytempo_PageEditorComponent::setSectionRect(Rectangle<float> r)
         for (int i = 0; i < 4; i++)
         {
             dragHandles.getUnchecked(i)->setVisible(true);
-            Rectangle<int> r = Rectangle<int>(0,0,image->getWidth() * zoomFactor, image->getHeight() * zoomFactor);
-            dragHandles.getUnchecked(i)->setBoundsConstraint(r);
+            Rectangle<int> nr = Rectangle<int>(0,0,(int)(image->getWidth() * zoomFactor), (int)(image->getHeight() * zoomFactor));
+            dragHandles.getUnchecked(i)->setBoundsConstraint(nr);
         }
         resized();
     }

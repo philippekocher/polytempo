@@ -11,7 +11,7 @@ class Ipc : public InterprocessConnection
 {
 public:
     Ipc();
-    ~Ipc();
+    ~Ipc() override;
     void connectionMade() override;
     void connectionLost() override;
     void messageReceived(const MemoryBlock& message) override;
@@ -36,7 +36,7 @@ protected:
 class Polytempo_InterprocessCommunication
 {
 public:
-    juce_DeclareSingleton(Polytempo_InterprocessCommunication, false);
+    juce_DeclareSingleton(Polytempo_InterprocessCommunication, false)
 
     Polytempo_InterprocessCommunication();
     ~Polytempo_InterprocessCommunication();

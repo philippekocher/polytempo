@@ -124,7 +124,7 @@ class Polytempo_PageEditorView : public Component,
 {
 public:
     Polytempo_PageEditorView();
-    ~Polytempo_PageEditorView();
+    ~Polytempo_PageEditorView() override;
     
     void refresh();
     void update();

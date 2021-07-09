@@ -7,7 +7,7 @@ class Polytempo_OSCListener : OSCReceiver, OSCReceiver::Listener<OSCReceiver::Re
 {
 public:
     Polytempo_OSCListener(int port);
-    ~Polytempo_OSCListener();
+    ~Polytempo_OSCListener() override;
 
 private:
     void oscMessageReceived(const OSCMessage& message) override;
@@ -16,5 +16,5 @@ private:
 
     std::unique_ptr<OSCReceiver> oscReceiver;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_OSCListener);
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_OSCListener)
 };

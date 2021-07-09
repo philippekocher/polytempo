@@ -199,7 +199,7 @@ public:
         }
     }
     
-    void buttonStateChanged(Button&)
+    void buttonStateChanged(Button*)
     {}
 };
 
@@ -234,7 +234,7 @@ public:
         midiOutputDeviceList->setSelectedId(index + 1, dontSendNotification);
     }
 
-    ~MidiPreferencesPage()
+    ~MidiPreferencesPage() override
     {
         deleteAllChildren();
     }
@@ -278,8 +278,8 @@ Polytempo_ComposerPreferencesPanel::Polytempo_ComposerPreferencesPanel()
 {
     String preferencePage = Polytempo_StoredPreferences::getInstance()->getProps().getValue("settingsPage");
     
-    addSettingsPage(generalPreferencesPage, 0, 0);
-    addSettingsPage(midiPreferencesPage, 0, 0);
+    addSettingsPage(generalPreferencesPage, nullptr, 0);
+    addSettingsPage(midiPreferencesPage, nullptr, 0);
 
     if(preferencePage == String()) preferencePage = generalPreferencesPage;
     setCurrentPage(preferencePage);

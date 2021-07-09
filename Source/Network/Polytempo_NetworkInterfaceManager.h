@@ -8,7 +8,7 @@ public:
     Polytempo_NetworkInterfaceManager();
     ~Polytempo_NetworkInterfaceManager();
 
-    juce_DeclareSingleton(Polytempo_NetworkInterfaceManager, false);
+    juce_DeclareSingleton(Polytempo_NetworkInterfaceManager, false)
 
     int getAvailableIpAddresses(Array<Polytempo_IPAddress>& ipAdresses);
 

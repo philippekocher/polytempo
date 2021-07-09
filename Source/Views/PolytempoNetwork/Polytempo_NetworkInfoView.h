@@ -6,7 +6,7 @@ class Polytempo_NetworkInfoView : public Component
 {
 public:
     Polytempo_NetworkInfoView();
-    ~Polytempo_NetworkInfoView();
+    ~Polytempo_NetworkInfoView() override;
 
     void paint(Graphics&) override;
     void resized() override;

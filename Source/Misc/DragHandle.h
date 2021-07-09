@@ -7,7 +7,7 @@ class DragHandleListener
 public:
     virtual ~DragHandleListener()
     {
-    };
+    }
     virtual void draggingSessionEnded() = 0;
     virtual void positionChanged(DragHandle*) = 0;
 };

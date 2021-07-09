@@ -21,7 +21,7 @@ public:
         changeWidthToFitText();
     }
 
-    ~ColourChangeButton()
+    ~ColourChangeButton() override
     {
     }
 
@@ -182,7 +182,7 @@ public:
         }
     }
 
-    void buttonStateChanged(Button&)
+    void buttonStateChanged(Button*) override
     {
     }
 
@@ -200,8 +200,6 @@ class VisualPreferencesPage : public Component, Button::Listener, Slider::Listen
     ToggleButton* showVisualMetro;
     Label* stripWidthLabel;
     Slider* stripWidthSlider;
-    Label* stripLengthLabel;
-    Slider* stripLengthSlider;
     Label* stripNormalColourLabel;
     ColourChangeButton* stripNormalColourSelector;
     Label* stripCueColourLabel;
@@ -289,7 +287,7 @@ public:
         showAuxiliaryView->addListener(this);
     }
 
-    ~VisualPreferencesPage()
+    ~VisualPreferencesPage() override
     {
         deleteAllChildren();
     }
@@ -492,7 +490,7 @@ public:
         audioDeviceManager.addChangeListener(this);
     }
 
-    ~AudioPreferencesPage()
+    ~AudioPreferencesPage() override
     {
         deleteAllChildren();
         audioDeviceManager.removeChangeListener(this);
@@ -791,7 +789,7 @@ public:
         midiChannel->addListener(this);
     }
 
-    ~MidiPreferencesPage()
+    ~MidiPreferencesPage() override
     {
         deleteAllChildren();
     }
@@ -1019,7 +1017,7 @@ public:
         updateIpList();
     }
 
-    ~NetworkPreferencesPage()
+    ~NetworkPreferencesPage() override
     {
         deleteAllChildren();
     }
@@ -1075,7 +1073,7 @@ public:
                 }
             });
 
-            alertWindow->addTextEditor("ip", selectedAddress.ipAddress.isNull() ? "" : selectedAddress.ipAddress.toString().upToLastOccurrenceOf(".", true, true));
+            alertWindow->addTextEditor("ip", selectedAddress.m_ipAddress.isNull() ? "" : selectedAddress.m_ipAddress.toString().upToLastOccurrenceOf(".", true, true));
             alertWindow->addButton("OK", 1, KeyPress(KeyPress::returnKey, 0, 0));
             alertWindow->addButton("Cancel", 0, KeyPress(KeyPress::escapeKey, 0, 0));
             alertWindow->enterModalState(false, ModalCallbackFunction::create(alertLambda), true);
@@ -1100,13 +1098,13 @@ public:
             + address.addressDescription()
             + "\r\n"
             + "IP Address: "
-            + address.ipAddress.toString()
+            + address.m_ipAddress.toString()
             + "\r\n"
             + "Network address: "
             + address.getNetworkAddress().toString()
             + "\r\n"
             + "Subnet mask: "
-            + address.subnetMask.toString()
+            + address.m_subnetMask.toString()
             + "\r\n"
             + "Broadcast address: "
             + address.getBroadcastAddress().toString()
@@ -1144,7 +1142,7 @@ public:
             switch (columnId)
             {
             case ColumnIdIp:
-                text = ipAddresses[rowNumber].ipAddress.toString();
+                text = ipAddresses[rowNumber].m_ipAddress.toString();
                 break;
             case ColumnIdRange:
                 text = ipAddresses[rowNumber].getFirstNetworkAddress().toString() + " - " + ipAddresses[rowNumber].getLastNetworkAddress().toString();
@@ -1174,11 +1172,11 @@ Polytempo_NetworkPreferencesPanel::Polytempo_NetworkPreferencesPanel()
 {
     String preferencePage = Polytempo_StoredPreferences::getInstance()->getProps().getValue("settingsPage");
 
-    addSettingsPage(generalPreferencesPage, 0, 0);
-    addSettingsPage(visualPreferencesPage, 0, 0);
-    addSettingsPage(audioPreferencesPage, 0, 0);
-    addSettingsPage(midiPreferencesPage, 0, 0);
-    addSettingsPage(networkPreferencesPage, 0, 0);
+    addSettingsPage(generalPreferencesPage, nullptr, 0);
+    addSettingsPage(visualPreferencesPage, nullptr, 0);
+    addSettingsPage(audioPreferencesPage, nullptr, 0);
+    addSettingsPage(midiPreferencesPage, nullptr, 0);
+    addSettingsPage(networkPreferencesPage, nullptr, 0);
 
     if (preferencePage == String()) preferencePage = generalPreferencesPage;
     setCurrentPage(preferencePage);

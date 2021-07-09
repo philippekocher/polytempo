@@ -9,7 +9,7 @@ class Polytempo_NetworkWindow : public DocumentWindow
 {
 public:
     Polytempo_NetworkWindow();
-    ~Polytempo_NetworkWindow();
+    ~Polytempo_NetworkWindow() override;
 
     void closeButtonPressed() override;
     

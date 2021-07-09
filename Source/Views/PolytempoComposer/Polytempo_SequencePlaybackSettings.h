@@ -11,7 +11,7 @@ class Polytempo_SequencePlaybackSettings : public Component,
 {
 public:
     Polytempo_SequencePlaybackSettings(Polytempo_Sequence*);
-    ~Polytempo_SequencePlaybackSettings();
+    ~Polytempo_SequencePlaybackSettings() override;
     
     void paint(Graphics&) override;
     void resized() override;

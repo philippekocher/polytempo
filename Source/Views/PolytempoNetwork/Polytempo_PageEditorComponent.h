@@ -10,7 +10,7 @@ class Polytempo_PageEditorComponent : public Component,
 {
 public:
     Polytempo_PageEditorComponent();
-    ~Polytempo_PageEditorComponent();
+    ~Polytempo_PageEditorComponent() override;
 
     void update();
     void paint(Graphics&) override;

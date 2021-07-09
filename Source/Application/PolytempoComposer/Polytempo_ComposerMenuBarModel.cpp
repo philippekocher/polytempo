@@ -411,7 +411,7 @@ void Polytempo_ComposerMenuBarModel::getCommandInfo(CommandID commandID, Applica
         case Polytempo_CommandIDs::fullScreen:
             result.setInfo ("Enter full-screen", String(), infoCategory, 0);
             result.addDefaultKeypress ('f', ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
-            result.setTicked (Desktop::getInstance().getKioskModeComponent() != 0);
+            result.setTicked (Desktop::getInstance().getKioskModeComponent() != nullptr);
             break;
 #endif
 

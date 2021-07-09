@@ -94,11 +94,11 @@ void Ipc::messageReceived(const MemoryBlock& message)
                 if (!scoreScheduler->isRunning()) return; // ignore an event that has a "time"
                 // when the score scheduler isn't running
 
-                syncTime += e->getTime() - scoreScheduler->getScoreTime();
+                syncTime += uint32(e->getTime() - scoreScheduler->getScoreTime());
             }
 
             if (e->hasProperty(eventPropertyString_Defer))
-                syncTime += int(float(e->getProperty(eventPropertyString_Defer)) * 1000.0f);
+                syncTime += uint32(float(e->getProperty(eventPropertyString_Defer)) * 1000.0f);
 
             e->setSyncTime(syncTime);
             
@@ -235,7 +235,7 @@ MemoryBlock Polytempo_InterprocessCommunication::xmlToMemoryBlock(XmlElement e)
     MemoryOutputStream os;
     e.writeTo(os);
     String s = os.toString();
-    m.append(s.getCharPointer(), s.length());
+    m.append(s.getCharPointer(), (size_t)s.length());
     return m;
 }
 
@@ -296,7 +296,7 @@ void Polytempo_InterprocessCommunication::distributeEvent(Polytempo_Event* pEven
     if (localScoreName.matchesWildcard(namePattern, true) || localInstanceName.matchesWildcard(namePattern, true))
     {
         if (pEvent->hasProperty(eventPropertyString_Defer))
-            pEvent->setSyncTime(pEvent->getSyncTime() + int(float(pEvent->getProperty(eventPropertyString_Defer)) * 1000.0f));
+            pEvent->setSyncTime(pEvent->getSyncTime() + uint32(float(pEvent->getProperty(eventPropertyString_Defer)) * 1000.0f));
 
         Polytempo_EventScheduler::getInstance()->scheduleEvent(pEvent);
     }
@@ -314,4 +314,4 @@ Polytempo_PeerInfo* Polytempo_InterprocessCommunication::getPeerInfoFromIpc(Ipc*
     return info;
 }
 
-juce_ImplementSingleton(Polytempo_InterprocessCommunication);
+juce_ImplementSingleton(Polytempo_InterprocessCommunication)

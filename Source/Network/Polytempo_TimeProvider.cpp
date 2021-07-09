@@ -26,17 +26,17 @@ bool Polytempo_TimeProvider::getSyncTime(uint32* pTime)
     if (masterFlag || !sync)
         relativeMsToMaster = 0;
 
-    *pTime = Time::getMillisecondCounter() + relativeMsToMaster;
+    *pTime = Time::getMillisecondCounter() + uint32(relativeMsToMaster);
 
     return sync;
 }
 
-int32 Polytempo_TimeProvider::getMRT() const
+uint32 Polytempo_TimeProvider::getMRT() const
 {
     return maxRoundTrip;
 }
 
-void Polytempo_TimeProvider::handleTimeSyncMessage(Uuid senderId, uint32 masterTime, int timeIndex, int32 roundTrip)
+void Polytempo_TimeProvider::handleTimeSyncMessage(Uuid senderId, uint32 masterTime, int timeIndex, uint32 roundTrip)
 {
     uint32 localLastSentTimestamp = lastSentTimestamp;
     int localLastSentTimeIndex = lastSentTimeIndex;
@@ -47,8 +47,8 @@ void Polytempo_TimeProvider::handleTimeSyncMessage(Uuid senderId, uint32 masterT
         return;
     }
 
-    int32 currentTimestamp = Time::getMillisecondCounter();
-    int32 localTimeDiff = currentTimestamp - localLastSentTimestamp;
+    uint32 currentTimestamp = Time::getMillisecondCounter();
+    uint32 localTimeDiff = currentTimestamp > localLastSentTimestamp ? currentTimestamp - localLastSentTimestamp : 0;
     int32 newTimeDiffToMaster = int32(int64(masterTime) - int64(currentTimestamp - localTimeDiff * 0.5));
     lastReceivedTimestamp = currentTimestamp;
 
@@ -152,7 +152,7 @@ void Polytempo_TimeProvider::handleMessage(XmlElement message, Ipc* sender)
         String senderScoreName = syncParams.getWithDefault("ScoreName", "");
         String senderPeerName = syncParams.getWithDefault("PeerName", "");
         int timeIndex = syncParams.getWithDefault("Index", 0);
-        int32 lastRoundTripFromClient = syncParams.getWithDefault("LastRT", 0);
+        uint32 lastRoundTripFromClient = uint32(int32(syncParams.getWithDefault("LastRT", 0)));
         sender->setRemoteNames(senderScoreName, senderPeerName);
 
         if (masterFlag)
@@ -164,7 +164,7 @@ void Polytempo_TimeProvider::handleMessage(XmlElement message, Ipc* sender)
             replayParams.set("PeerName", Polytempo_NetworkSupervisor::getInstance()->getPeerName());
             replayParams.set("Timestamp", int32(ts));
             replayParams.set("Index", timeIndex);
-            replayParams.set("MaxRT", maxRoundTrip);
+            replayParams.set("MaxRT", int32(maxRoundTrip));
             XmlElement xml = XmlElement("TimeSyncReply");
             replayParams.copyToXmlAttributes(xml);
             bool ok = sender->sendMessage(Polytempo_InterprocessCommunication::xmlToMemoryBlock(xml));
@@ -175,7 +175,7 @@ void Polytempo_TimeProvider::handleMessage(XmlElement message, Ipc* sender)
             roundTripHistorySize = jmin(++roundTripHistorySize, ROUND_TRIP_HISTORY_SIZE);
             roundTripHistoryWritePosition = (++roundTripHistoryWritePosition) % ROUND_TRIP_HISTORY_SIZE;
 
-            int32 localMaxRoundTrip = 0;
+            uint32 localMaxRoundTrip = 0;
             for (int i = 0; i < roundTripHistorySize; i++)
                 localMaxRoundTrip = jmax(localMaxRoundTrip, roundTripTime[i]);
             maxRoundTrip = localMaxRoundTrip;
@@ -192,7 +192,7 @@ void Polytempo_TimeProvider::handleMessage(XmlElement message, Ipc* sender)
         String senderPeerName = syncParams.getWithDefault("PeerName", "");
         uint32 argMasterTime = uint32(int32(syncParams.getWithDefault("Timestamp", 0)));
         int timeIndex = syncParams.getWithDefault("Index", 0);
-        int32 maxRoundTripFromMaster = syncParams.getWithDefault("MaxRT", 0);
+        uint32 maxRoundTripFromMaster = uint32(int32(syncParams.getWithDefault("MaxRT", 0)));
         sender->setRemoteNames(senderScoreName, senderPeerName);
 
         handleTimeSyncMessage(senderId, argMasterTime, timeIndex, maxRoundTripFromMaster);
@@ -218,7 +218,7 @@ void Polytempo_TimeProvider::timerCallback()
         syncParams.set("ScoreName", Polytempo_NetworkSupervisor::getInstance()->getScoreName());
         syncParams.set("PeerName", Polytempo_NetworkSupervisor::getInstance()->getPeerName());
         syncParams.set("Index", index);
-        syncParams.set("LastRT", lastRoundTrip);
+        syncParams.set("LastRT", int32(lastRoundTrip));
         XmlElement xml = XmlElement("TimeSyncRequest");
         syncParams.copyToXmlAttributes(xml);
         bool ok = Polytempo_InterprocessCommunication::getInstance()->notifyServer(xml);

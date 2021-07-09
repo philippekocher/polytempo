@@ -10,7 +10,7 @@ public Label::Listener
 {
 public:
     Polytempo_SequenceGraphicalSettings(Polytempo_Sequence*);
-    ~Polytempo_SequenceGraphicalSettings();
+    ~Polytempo_SequenceGraphicalSettings() override;
     
     void paint(Graphics&) override;
     void resized() override;

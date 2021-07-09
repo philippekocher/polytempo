@@ -9,7 +9,7 @@ class Polytempo_GraphicsAnnotationLayer;
 class Polytempo_GraphicsPalette : public Button::Listener, Slider::Listener, ChangeListener
 {
     Polytempo_GraphicsPalette();
-    ~Polytempo_GraphicsPalette();
+    ~Polytempo_GraphicsPalette() override;
 
 public:
     juce_DeclareSingleton(Polytempo_GraphicsPalette, false)
@@ -59,11 +59,11 @@ private:
 class FontSizeCallback : public ModalComponentManager::Callback
 {
 public:
-    FontSizeCallback(Polytempo_GraphicsPalette* pParent) : pParent(pParent)
+    FontSizeCallback(Polytempo_GraphicsPalette* pParent) : m_pParent(pParent)
     {
-    };
-    void modalStateFinished(int returnValue) override { if (returnValue > 0) { pParent->setTemporaryFontSize(float(returnValue)); } }
+    }
+    void modalStateFinished(int returnValue) override { if (returnValue > 0) { m_pParent->setTemporaryFontSize(float(returnValue)); } }
 
 private:
-    Polytempo_GraphicsPalette* pParent;
+    Polytempo_GraphicsPalette* m_pParent;
 };

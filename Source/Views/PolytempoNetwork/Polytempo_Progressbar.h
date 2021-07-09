@@ -7,7 +7,7 @@ class Polytempo_Progressbar : public Component,
 {
 public:
     Polytempo_Progressbar();
-    ~Polytempo_Progressbar();
+    ~Polytempo_Progressbar() override;
 
     void paint(Graphics& g) override;
 

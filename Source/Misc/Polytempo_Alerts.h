@@ -8,7 +8,7 @@ public:
                      Component* associatedComponent = nullptr)
     {
         AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, title, message, "OK", associatedComponent);
-    };
+    }
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_Alert)

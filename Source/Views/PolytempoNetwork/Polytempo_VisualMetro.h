@@ -10,7 +10,7 @@ class Polytempo_VisualMetro : public Component,
 {
 public:
     Polytempo_VisualMetro();
-    ~Polytempo_VisualMetro();
+    ~Polytempo_VisualMetro() override;
 
     void paint(Graphics& g) override;
 

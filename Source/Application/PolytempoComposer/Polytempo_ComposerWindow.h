@@ -8,14 +8,14 @@ class Polytempo_ComposerMenuBarModel;
 
 struct Polytempo_LookAndFeel : public LookAndFeel_V3
 {
-    void drawTableHeaderBackground (Graphics& g, TableHeaderComponent&)
+    void drawTableHeaderBackground (Graphics& g, TableHeaderComponent&) override
     {
         g.fillAll(Colour(245,245,245));
     }
-    
-    void drawTableHeaderColumn (Graphics& g, const String& columnName, int /*columnId*/,
+   
+    void drawTableHeaderColumn (Graphics& g, TableHeaderComponent&, const String& columnName, int /*columnId*/,
                                                 int width, int height, bool /*isMouseOver*/, bool /*isMouseDown*/,
-                                                int /*columnFlags*/)
+                                                int /*columnFlags*/) override
     {
         Rectangle<int> area(width, height);
         area.reduce(2, 0);

@@ -12,7 +12,7 @@ public Label::Listener
 {
 public:
     Polytempo_GraphicExportSettingsComponent();
-    ~Polytempo_GraphicExportSettingsComponent();
+    ~Polytempo_GraphicExportSettingsComponent() override;
     
     void update(Polytempo_GraphicExportView*);
     
