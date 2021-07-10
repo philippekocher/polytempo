@@ -36,7 +36,7 @@ jobs:
       id: get_version
       shell: bash
       run: |
-        v=$((( "${{github.event_name}}" == "workflow_dispatch" ) ? ${{github.event.inputs.version}} : ${GITHUB_REF/refs\/tags\//}))
+        [ "${{github.event_name}}" == "workflow_dispatch" ] && v=${{github.event.inputs.version}} || v=${GITHUB_REF/refs\/tags\//}
         va=${v}
         vb=${v%-*}
         echo ::set-output name=VERSIONLONG::${va}
