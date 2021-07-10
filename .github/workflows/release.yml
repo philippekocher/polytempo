@@ -4,6 +4,7 @@ on:
   push:
     tags:
     - '[0-9]+.[0-9]+.[0-9]+'
+    - '[0-9]+.[0-9].[0-9]-**'
 
   workflow_dispatch:
     inputs:
@@ -29,7 +30,17 @@ jobs:
     outputs:
       release_url: ${{ steps.create_release.outputs.upload_url }}
       version: ${{ steps.get_version.outputs.VERSION }}
+      versionlong: ${{ steps.get_version.outputs.VERSIONLONG }}
     steps:
+    - name: Get the version
+      id: get_version
+      shell: bash
+      run: |
+        v=$((( "${{github.event_name}}" == "workflow_dispatch" ) ? ${{github.event.inputs.version}} : ${GITHUB_REF/refs\/tags\//}))
+        va=${v}
+        vb=${v%-*}
+        echo ::set-output name=VERSIONLONG::${va}
+        echo ::set-output name=VERSION::${vb}      
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
@@ -39,14 +50,7 @@ jobs:
         tag_name: ${{ github.ref }}
         release_name: Release ${{ github.ref }}
         draft: false
-        prerelease: false
-    - name: Get the version
-      id: get_version
-      shell: bash
-      # if from manual run, use this version, otherwise use the version from the github ref tag
-      run: |
-        [ "${{github.event_name}}" == "workflow_dispatch" ] && echo ::set-output name=VERSION::${{github.event.inputs.version}} || echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
-      
+        prerelease: ${{ steps.get_version.outputs.VERSION != steps.get_version.outputs.VERSIONLONG }}
     
   build:
     needs: prepare
@@ -121,7 +125,7 @@ jobs:
       with:
         upload_url: ${{ needs.prepare.outputs.release_url }} 
         asset_path: ${{runner.workspace}}/${{ env.BUILD_DIR }}/${{env.NETWORK_DIR}}/${{ env.PROJECT_NAME_NETWORK }}_artefacts/${{ env.BUILD_TYPE }}/${{env.PROJECT_NAME_NETWORK}}.zip
-        asset_name: ${{env.PROJECT_NAME_NETWORK}}_${{ matrix.artifact }}_${{ needs.prepare.outputs.version }}.zip
+        asset_name: ${{env.PROJECT_NAME_NETWORK}}_${{ matrix.artifact }}_${{ needs.prepare.outputs.versionlong }}.zip
         asset_content_type: application/x-executable    
     
     - name: Upload Release Asset (Polytempo Composer)
@@ -132,5 +136,5 @@ jobs:
       with:
         upload_url: ${{ needs.prepare.outputs.release_url }} 
         asset_path: ${{runner.workspace}}/${{ env.BUILD_DIR }}/${{env.COMPOSER_DIR}}/${{ env.PROJECT_NAME_COMPOSER }}_artefacts/${{ env.BUILD_TYPE }}/${{env.PROJECT_NAME_COMPOSER}}.zip
-        asset_name: ${{env.PROJECT_NAME_COMPOSER}}_${{ matrix.artifact }}_${{ needs.prepare.outputs.version }}.zip
+        asset_name: ${{env.PROJECT_NAME_COMPOSER}}_${{ matrix.artifact }}_${{ needs.prepare.outputs.versionlong }}.zip
         asset_content_type: application/x-executable
