@@ -142,7 +142,10 @@ void Polytempo_GraphicsView::displayText(Polytempo_Event* event)
         return;
     }
 
-    region->setText(String(event->getProperty("value").toString()));
+    if (event->getValue().isDouble())
+        region->setText(String((double)event->getProperty("value"),0));
+    else
+        region->setText(String(event->getProperty("value").toString()));
     region->setVisible(true);
     region->repaint();
 }
