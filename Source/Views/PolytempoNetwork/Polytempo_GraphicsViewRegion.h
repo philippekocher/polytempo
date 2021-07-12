@@ -28,7 +28,7 @@ public:
 
     void setRelativeBounds(const Rectangle<float>& newBounds);
 
-    void clear();
+    void clear(bool keepImages = false);
 
     void setText(String text);
     void setProgressbar(String text,

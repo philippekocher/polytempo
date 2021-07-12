@@ -95,18 +95,13 @@ void Polytempo_GraphicsView::addSection(Polytempo_Event* event)
 
 void Polytempo_GraphicsView::displayImage(Polytempo_Event* event)
 {
-    Polytempo_GraphicsViewRegion* region = nullptr;
+    if (!regionsMap.contains(event->getProperty(eventPropertyString_RegionID)))
+        return; // invalid region id
+
+    Polytempo_GraphicsViewRegion* region = regionsMap[event->getProperty(eventPropertyString_RegionID)];
     Image* image = nullptr;
     var rect;
     var imageId;
-
-    if (regionsMap.contains(event->getProperty(eventPropertyString_RegionID)))
-    {
-        region = regionsMap[event->getProperty(eventPropertyString_RegionID)];
-    }
-
-    if (region == nullptr) // invalid region ID
-        return;
 
     if (!event->getProperty(eventPropertyString_SectionID).isVoid()) // a section ID is given
     {
@@ -120,6 +115,11 @@ void Polytempo_GraphicsView::displayImage(Polytempo_Event* event)
         image = Polytempo_ImageManager::getInstance()->getImage(imageId);
         rect = event->getProperty(eventPropertyString_Rect);
     }
+    else
+    {
+        region->clear();
+        return;
+    }
 
     if (rect == var()) rect = Polytempo_Event::defaultRectangle();
 
@@ -131,26 +131,20 @@ void Polytempo_GraphicsView::displayImage(Polytempo_Event* event)
 
 void Polytempo_GraphicsView::displayText(Polytempo_Event* event)
 {
-    Polytempo_GraphicsViewRegion* region = nullptr;
+    if (!regionsMap.contains(event->getProperty(eventPropertyString_RegionID)))
+        return; // invalid region id
 
-    if (regionsMap.contains(event->getProperty(eventPropertyString_RegionID)))
-    {
-        region = regionsMap[event->getProperty(eventPropertyString_RegionID)];
-    }
-    else return; // invalid region id
+    Polytempo_GraphicsViewRegion* region = regionsMap[event->getProperty(eventPropertyString_RegionID)];
 
     if (event->getProperty("value").isVoid()) // no text given
     {
-        if (region) region->setVisible(false);
+        region->clear();
         return;
     }
 
-    if (region)
-    {
-        region->setText(String(event->getProperty("value").toString()));
-        region->setVisible(true);
-        region->repaint();
-    }
+    region->setText(String(event->getProperty("value").toString()));
+    region->setVisible(true);
+    region->repaint();
 }
 
 void Polytempo_GraphicsView::displayProgessbar(Polytempo_Event* event)

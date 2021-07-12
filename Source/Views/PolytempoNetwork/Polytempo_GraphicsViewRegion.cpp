@@ -141,20 +141,19 @@ void Polytempo_GraphicsViewRegion::setRelativeBounds(const Rectangle<float>& new
     relativeBounds = newBounds;
 }
 
-void Polytempo_GraphicsViewRegion::clear()
+void Polytempo_GraphicsViewRegion::clear(bool keepImages)
 {
     contentType = contentType_Empty;
-
-    text = nullptr;
+    removeAllChildren();
     progressbar = nullptr;
-
+    if (!keepImages) displayedImages.clear();
     setVisible(false);
 }
 
 void Polytempo_GraphicsViewRegion::setImage(Image* img, var rect, String imageId, bool append)
 {
+    clear(append);
     contentType = contentType_Image;
-    if (!append) displayedImages.clear();
 
     Array<var> r = *rect.getArray();
 
@@ -179,6 +178,7 @@ void Polytempo_GraphicsViewRegion::setImage(Image* img, var rect, String imageId
 
 void Polytempo_GraphicsViewRegion::setText(String text_)
 {
+    clear();
     contentType = contentType_Text;
     text.reset(new String(text_));
 
@@ -187,6 +187,7 @@ void Polytempo_GraphicsViewRegion::setText(String text_)
 
 void Polytempo_GraphicsViewRegion::setProgressbar(String txt, float time, float duration)
 {
+    clear();
     contentType = contentType_Progressbar;
     progressbar.reset(new Polytempo_Progressbar());
     progressbar->setText(txt);
