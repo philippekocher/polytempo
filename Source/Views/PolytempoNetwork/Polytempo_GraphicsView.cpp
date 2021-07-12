@@ -98,6 +98,8 @@ void Polytempo_GraphicsView::displayImage(Polytempo_Event* event)
     if (!regionsMap.contains(event->getProperty(eventPropertyString_RegionID)))
         return; // invalid region id
 
+    annotationLayer->requireUpdate();
+
     Polytempo_GraphicsViewRegion* region = regionsMap[event->getProperty(eventPropertyString_RegionID)];
     Image* image = nullptr;
     var rect;
@@ -126,13 +128,14 @@ void Polytempo_GraphicsView::displayImage(Polytempo_Event* event)
     region->setImage(image, rect, imageId, event->getType() == eventType_AppendImage);
     region->setVisible(true);
     region->repaint();
-    annotationLayer->requireUpdate();
 }
 
 void Polytempo_GraphicsView::displayText(Polytempo_Event* event)
 {
     if (!regionsMap.contains(event->getProperty(eventPropertyString_RegionID)))
         return; // invalid region id
+
+    annotationLayer->requireUpdate();
 
     Polytempo_GraphicsViewRegion* region = regionsMap[event->getProperty(eventPropertyString_RegionID)];
 
@@ -154,6 +157,8 @@ void Polytempo_GraphicsView::displayProgessbar(Polytempo_Event* event)
 {
     if (!regionsMap.contains(event->getProperty(eventPropertyString_RegionID)))
         return; // invalid region id
+
+    annotationLayer->requireUpdate();
 
     Polytempo_GraphicsViewRegion* region = regionsMap[event->getProperty(eventPropertyString_RegionID)];
     region->setProgressbar(String(event->getValue().toString()), float(event->getTime()), event->getProperty("duration"));

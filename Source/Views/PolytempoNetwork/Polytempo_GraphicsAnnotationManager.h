@@ -37,6 +37,7 @@ public:
     Polytempo_GraphicsAnnotationLayer* getCurrentPendingAnnotationLayer() const;
     void setAnnotationMode(eAnnotationMode mode);
     eAnnotationMode getAnnotationMode() const;
+    bool currentDirectoryExists();
 
 private:
     Polytempo_GraphicsAnnotationManager() : annotationMode(ReadOnly), annotationPending(false), pCurrentPendingAnnotationLyer(nullptr)

@@ -77,6 +77,8 @@ void Polytempo_GraphicsAnnotationManager::initialize(String folder, String score
     currentDirectory.reset(new File(folder));
     currentScoreName = scoreName;
 
+    sendChangeMessage();
+
     if (!currentDirectory->exists())
         return;
 
@@ -226,4 +228,10 @@ void Polytempo_GraphicsAnnotationManager::setAnnotationMode(eAnnotationMode mode
 Polytempo_GraphicsAnnotationManager::eAnnotationMode Polytempo_GraphicsAnnotationManager::getAnnotationMode() const
 {
     return annotationMode;
+}
+
+bool Polytempo_GraphicsAnnotationManager::currentDirectoryExists()
+{
+    if (!currentDirectory) return false;
+    return currentDirectory->exists();
 }

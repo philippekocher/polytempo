@@ -208,8 +208,13 @@ void Polytempo_NetworkApplication::newScore()
     score.reset(new Polytempo_Score());
     score->addSection("sequence");
     Polytempo_ScoreScheduler::getInstance()->setScore(score.get());
+    
+    scoreFile = File();
 
     mainWindow->setName("Untitled");
+
+    // update annotations
+    Polytempo_GraphicsAnnotationManager::getInstance()->initialize(String(), String());
 }
 
 void Polytempo_NetworkApplication::openFileDialog()
@@ -253,6 +258,9 @@ void Polytempo_NetworkApplication::saveAs(File targetFile)
 
     // add to recent files
     Polytempo_StoredPreferences::getInstance()->recentFiles.addFile(scoreFile);
+
+    String name = scoreFile.getFileNameWithoutExtension();
+    Polytempo_GraphicsAnnotationManager::getInstance()->initialize(scoreFile.getParentDirectory().getFullPathName(), name);
 }
 
 void Polytempo_NetworkApplication::saveScoreFile(bool showFileDialog)
