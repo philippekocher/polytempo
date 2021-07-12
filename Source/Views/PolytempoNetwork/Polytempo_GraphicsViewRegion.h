@@ -15,6 +15,29 @@ enum Polytempo_ViewContentLayout
     contentLayout_Row = 0,
     contentLayout_Column
 };
+#define contentLayoutString_Row    "row"
+#define contentLayoutString_Column "column"
+
+enum Polytempo_ViewContentXAlignment
+{
+    contentXAlignment_Left = 0,
+    contentXAlignment_Center,
+    contentXAlignment_Right,
+};
+#define contentXAlignmentString_Left   "left"
+#define contentXAlignmentString_Center "center"
+#define contentXAlignmentString_Right  "right"
+
+enum Polytempo_ViewContentYAlignment
+{
+    contentYAlignment_Top = 0,
+    contentYAlignment_Center,
+    contentYAlignment_Bottom
+};
+#define contentYAlignmentString_Top    "top"
+#define contentYAlignmentString_Center "center"
+#define contentYAlignmentString_Bottom "bottom"
+
 
 class Polytempo_GraphicsViewRegion : public Component, public ChangeListener
 {
@@ -37,6 +60,7 @@ public:
 
     void setMaxImageZoom(float maxZoom);
     void setLayout(String layout);
+    void setAlignment(String xAlignment, String yAlignment);
 
     Polytempo_ViewContentType getContentType();
     bool annotationsAllowed() const;
@@ -60,6 +84,8 @@ private:
     var regionID;
     Polytempo_ViewContentType contentType;
     Polytempo_ViewContentLayout contentLayout;
+    Polytempo_ViewContentXAlignment contentXAlignment;
+    Polytempo_ViewContentYAlignment contentYAlignment;
 
     float borderSize;
     Rectangle<float> relativeBounds;

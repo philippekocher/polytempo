@@ -10,6 +10,8 @@ Polytempo_GraphicsViewRegion::Polytempo_GraphicsViewRegion(var id)
     regionID = id;
     contentType = contentType_Empty;
     contentLayout = contentLayout_Row;
+    contentXAlignment = contentXAlignment_Left;
+    contentYAlignment = contentYAlignment_Top;
     allowAnnotations = false;
 
     Polytempo_GraphicsAnnotationManager::getInstance()->addChangeListener(this);
@@ -103,14 +105,39 @@ void Polytempo_GraphicsViewRegion::resized()
 
         if (imageZoom == INFINITY) imageZoom = 1;
 
-        float x = 0, y;
+        float x = 0, y = 0;
         if (contentLayout == contentLayout_Row)
-            y = (getHeight() - (maxHeight * imageZoom)) * 0.5f;
-        else
-            y = (getHeight() - (totalHeight * imageZoom)) * 0.5f;
+        {
+            if (contentXAlignment == contentXAlignment_Center)
+                x = (getWidth() - (totalWidth * imageZoom)) * 0.5f;
+            else if (contentXAlignment == contentXAlignment_Right)
+                x = getWidth() - (totalWidth * imageZoom);
 
+            if (contentYAlignment == contentYAlignment_Top)
+                y = (getHeight() - (maxHeight * imageZoom)) * 0.5f;
+        }
+        else if (contentLayout == contentLayout_Column)
+        {
+            y = (getHeight() - (totalHeight * imageZoom)) * 0.5f;
+        }
+        
         for (displayedImage &img : displayedImages)
         {
+            if (contentLayout == contentLayout_Row)
+            {
+                if (contentYAlignment == contentYAlignment_Center)
+                    y = (getHeight() - (img.imageRect.getHeight() * imageZoom)) * 0.5f;
+                else if (contentYAlignment == contentYAlignment_Bottom)
+                    y = (getHeight() - (maxHeight * imageZoom)) * 0.5f + (maxHeight - img.imageRect.getHeight()) * imageZoom;
+            }
+            else if (contentLayout == contentLayout_Column)
+            {
+                if (contentXAlignment == contentXAlignment_Center)
+                    x = (getWidth() - (img.imageRect.getWidth() * imageZoom)) * 0.5f;
+                else if (contentXAlignment == contentXAlignment_Right)
+                    x = (getWidth() - (img.imageRect.getWidth() * imageZoom));
+            }
+            
             img.targetArea = Rectangle<int>(int(x), int(y), int(img.imageRect.getWidth() * imageZoom), int(img.imageRect.getHeight() * imageZoom));
             
             img.screenToImage = AffineTransform::translation(-float(getX() + img.targetArea.getX()), -float(getY() + img.targetArea.getY()));
@@ -209,8 +236,19 @@ void Polytempo_GraphicsViewRegion::setMaxImageZoom(float maxZoom)
 
 void Polytempo_GraphicsViewRegion::setLayout(String layout)
 {
-    if(layout == "column")   contentLayout = contentLayout_Column;
-    else if(layout == "row") contentLayout = contentLayout_Row;
+    if (layout == contentLayoutString_Row)         contentLayout = contentLayout_Row;
+    else if (layout == contentLayoutString_Column) contentLayout = contentLayout_Column;
+}
+
+void Polytempo_GraphicsViewRegion::setAlignment(String xAlignment, String yAlignment)
+{
+    if (xAlignment == contentXAlignmentString_Left)        contentXAlignment = contentXAlignment_Left;
+    else if (xAlignment == contentXAlignmentString_Center) contentXAlignment = contentXAlignment_Center;
+    else if (xAlignment == contentXAlignmentString_Right)  contentXAlignment = contentXAlignment_Right;
+
+    if (yAlignment == contentYAlignmentString_Top)         contentYAlignment = contentYAlignment_Top;
+    else if (yAlignment == contentYAlignmentString_Center) contentYAlignment = contentYAlignment_Center;
+    else if (yAlignment == contentYAlignmentString_Bottom) contentYAlignment = contentYAlignment_Bottom;
 }
 
 Polytempo_ViewContentType Polytempo_GraphicsViewRegion::getContentType() { return contentType; }
