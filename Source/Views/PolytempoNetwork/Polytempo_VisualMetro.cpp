@@ -169,9 +169,6 @@ void Polytempo_VisualMetro::timerCallback()
     {
         pattern = 0;
         stopTimer();
-
-        Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
-        if (app->quitApplication) app->applicationShouldQuit();
     }
 
     /* conductor position
@@ -304,15 +301,9 @@ void Polytempo_VisualMetro::eventNotification(Polytempo_Event* event)
     }
     else if (event->getType() == eventType_Stop)
     {
-        Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
-
         if (isTimerRunning())
         {
             shouldStop = true;
-        }
-        else if (app->quitApplication)
-        {
-            app->applicationShouldQuit();
         }
     }
 }
