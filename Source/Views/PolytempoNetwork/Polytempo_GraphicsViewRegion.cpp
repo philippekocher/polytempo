@@ -11,7 +11,7 @@ Polytempo_GraphicsViewRegion::Polytempo_GraphicsViewRegion(var id)
     contentType = contentType_Empty;
     contentLayout = contentLayout_Row;
     contentXAlignment = contentXAlignment_Left;
-    contentYAlignment = contentYAlignment_Top;
+    contentYAlignment = contentYAlignment_Center;
     allowAnnotations = false;
 
     Polytempo_GraphicsAnnotationManager::getInstance()->addChangeListener(this);
@@ -106,36 +106,37 @@ void Polytempo_GraphicsViewRegion::resized()
         if (imageZoom == INFINITY) imageZoom = 1;
 
         float x = 0, y = 0;
+
         if (contentLayout == contentLayout_Row)
         {
             if (contentXAlignment == contentXAlignment_Center)
                 x = (getWidth() - (totalWidth * imageZoom)) * 0.5f;
             else if (contentXAlignment == contentXAlignment_Right)
                 x = getWidth() - (totalWidth * imageZoom);
-
-            if (contentYAlignment == contentYAlignment_Top)
-                y = (getHeight() - (maxHeight * imageZoom)) * 0.5f;
         }
-        else if (contentLayout == contentLayout_Column)
+        else
         {
-            y = (getHeight() - (totalHeight * imageZoom)) * 0.5f;
+            if (contentYAlignment == contentYAlignment_Center)
+                y = (getHeight() - (totalHeight * imageZoom)) * 0.5f;
+            else if (contentYAlignment == contentYAlignment_Bottom)
+                y = getHeight() - (totalHeight * imageZoom);
         }
-        
+
         for (displayedImage &img : displayedImages)
         {
-            if (contentLayout == contentLayout_Row)
-            {
-                if (contentYAlignment == contentYAlignment_Center)
-                    y = (getHeight() - (img.imageRect.getHeight() * imageZoom)) * 0.5f;
-                else if (contentYAlignment == contentYAlignment_Bottom)
-                    y = (getHeight() - (maxHeight * imageZoom)) * 0.5f + (maxHeight - img.imageRect.getHeight()) * imageZoom;
-            }
-            else if (contentLayout == contentLayout_Column)
+            if (contentLayout == contentLayout_Column)
             {
                 if (contentXAlignment == contentXAlignment_Center)
                     x = (getWidth() - (img.imageRect.getWidth() * imageZoom)) * 0.5f;
                 else if (contentXAlignment == contentXAlignment_Right)
                     x = (getWidth() - (img.imageRect.getWidth() * imageZoom));
+            }
+            else
+            {
+                if (contentYAlignment == contentYAlignment_Center)
+                    y = (getHeight() - (img.imageRect.getHeight() * imageZoom)) * 0.5f;
+                else if (contentYAlignment == contentYAlignment_Bottom)
+                    y = getHeight() - (img.imageRect.getHeight() * imageZoom);
             }
             
             img.targetArea = Rectangle<int>(int(x), int(y), int(img.imageRect.getWidth() * imageZoom), int(img.imageRect.getHeight() * imageZoom));
