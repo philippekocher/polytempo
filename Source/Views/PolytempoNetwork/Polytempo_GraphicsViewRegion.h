@@ -87,7 +87,6 @@ private:
     Polytempo_ViewContentXAlignment contentXAlignment;
     Polytempo_ViewContentYAlignment contentYAlignment;
 
-    float borderSize;
     Rectangle<float> relativeBounds;
 
     std::vector<displayedImage> displayedImages;

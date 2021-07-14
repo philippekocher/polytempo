@@ -4,7 +4,6 @@
 Polytempo_GraphicsViewRegion::Polytempo_GraphicsViewRegion(var id)
 {
     setOpaque(true);
-    borderSize = 0;
     setBufferedToImage(true);
 
     regionID = id;
@@ -56,8 +55,6 @@ void Polytempo_GraphicsViewRegion::paint(Graphics& g)
                          5,
                          0.00001f);
     }
-
-    if (borderSize > 0.0) g.drawRect(getLocalBounds());
 }
 
 void Polytempo_GraphicsViewRegion::resized()
