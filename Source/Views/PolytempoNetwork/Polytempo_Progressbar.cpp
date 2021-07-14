@@ -4,8 +4,7 @@
 Polytempo_Progressbar::Polytempo_Progressbar()
 {
     setOpaque(false);
-
-    elapsedTime = 0.0;
+    elapsedTime = 0;
 }
 
 Polytempo_Progressbar::~Polytempo_Progressbar()
@@ -16,27 +15,36 @@ void Polytempo_Progressbar::paint(Graphics& g)
 {
     Rectangle<int> bounds = getLocalBounds();
 
+    g.setColour(Colours::white);
+    g.fillRect(bounds);
+
+    bounds.reduce(5,5);
+
     // text above
-    bounds.setHeight(bounds.getHeight() / 2);
-    g.setFont(24.0f);
+    if (text->isNotEmpty())
+    {
+        int textHeight = bounds.getHeight() > 54 ? 27 : bounds.getHeight() / 2;
+        g.setColour(Colours::black);
+        g.setFont(24.0f);
+        g.drawFittedText(*text,
+                         bounds.removeFromTop(textHeight),
+                         Justification::topLeft, 1);
+    }
+
+    // frame
     g.setColour(Colours::black);
-    g.drawFittedText(*text,
-                     bounds, // inset rect
-                     Justification::topLeft, 1);
+    g.drawRect(bounds, 1);
 
     // text in progress bar
-    bounds.setY(bounds.getHeight());
     g.setFont(16.0f);
     g.drawFittedText(String(duration * elapsedTime, 2) + " s",
-                     bounds.reduced(2, 2), // inset rect
+                     bounds,
                      Justification::centred, 1);
 
     // progress bar
-    g.setColour(Colours::grey);
-    g.drawRect(bounds);
-
+    bounds.reduce(3,3);
     bounds.setWidth((int)(bounds.getWidth() * elapsedTime));
-    g.setColour(Colours::blue.withAlpha(0.2f));
+    g.setColour(Colours::blue.withAlpha(0.4f));
     g.fillRect(bounds);
 }
 
@@ -64,6 +72,10 @@ void Polytempo_Progressbar::eventNotification(Polytempo_Event* event)
     // remove when time is over
     if (elapsedTime >= 1)
     {
-        ((Polytempo_GraphicsViewRegion*)getParentComponent())->clear();
+        // call on the message thread
+        MessageManager::callAsync([this]() {
+            auto parent = (Polytempo_GraphicsViewRegion*)getParentComponent();
+            if (parent != nullptr) parent->clear();
+        });
     }
 }

@@ -371,7 +371,8 @@ int Polytempo_Event::getTime() const
 
 bool Polytempo_Event::hasDefinedTime() const
 {
-    return getProperty(eventPropertyString_Time).toString() != "nan";
+    return !getProperty(eventPropertyString_Time).isVoid() &&
+           getProperty(eventPropertyString_Time).toString() != "nan";
 }
 
 void Polytempo_Event::setSyncTime(uint32 t)

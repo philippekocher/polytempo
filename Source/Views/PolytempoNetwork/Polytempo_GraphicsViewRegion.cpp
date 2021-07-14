@@ -56,10 +56,6 @@ void Polytempo_GraphicsViewRegion::paint(Graphics& g)
                          5,
                          0.00001f);
     }
-    else if (contentType == contentType_Progressbar)
-    {
-        g.fillAll(Colours::black.withAlpha(0.1f));
-    }
 
     if (borderSize > 0.0) g.drawRect(getLocalBounds());
 }
@@ -155,7 +151,7 @@ void Polytempo_GraphicsViewRegion::resized()
     }
     else if (contentType == contentType_Progressbar)
     {
-        progressbar->setBounds(getLocalBounds().reduced(15, 10)); // inset rect
+        progressbar->setBounds(getLocalBounds());
     }
 
     if (displayedImages.size() == 0)
@@ -172,8 +168,11 @@ void Polytempo_GraphicsViewRegion::setRelativeBounds(const Rectangle<float>& new
 void Polytempo_GraphicsViewRegion::clear(bool keepImages)
 {
     contentType = contentType_Empty;
-    removeAllChildren();
-    progressbar = nullptr;
+    
+    // call on the message thread
+    auto aProgressbar = progressbar.get();
+    MessageManager::callAsync([this, aProgressbar]() { removeChildComponent(aProgressbar); });
+    
     if (!keepImages) displayedImages.clear();
     setVisible(false);
 }

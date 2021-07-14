@@ -1,5 +1,6 @@
 #include "Polytempo_GraphicsView.h"
 #include "Polytempo_ImageManager.h"
+#include "../../Scheduler/Polytempo_ScoreScheduler.h"
 #include "../../Preferences/Polytempo_StoredPreferences.h"
 
 Polytempo_GraphicsView::Polytempo_GraphicsView()
@@ -162,7 +163,8 @@ void Polytempo_GraphicsView::displayProgessbar(Polytempo_Event* event)
     annotationLayer->requireUpdate();
 
     Polytempo_GraphicsViewRegion* region = regionsMap[event->getProperty(eventPropertyString_RegionID)];
-    region->setProgressbar(String(event->getValue().toString()), float(event->getTime()), event->getProperty("duration"));
+    float time = event->hasDefinedTime() ? event->getTime() : Polytempo_ScoreScheduler::getInstance()->getScoreTime();
+    region->setProgressbar(String(event->getValue().toString()), time, event->getProperty("duration"));
     region->setVisible(true);
     region->repaint();
 }
