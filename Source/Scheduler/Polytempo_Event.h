@@ -6,6 +6,8 @@ enum Polytempo_EventType
 {
     eventType_None = 0,
         
+    eventType_Comment,
+    
     eventType_Open,
     
     eventType_Tick,
@@ -42,6 +44,8 @@ enum Polytempo_EventType
 /* ------------------------------------------------------
    type strings as used in human readable scores
    and in OSC communication */
+
+#define eventTypeString_Comment         "#"
 
 #define eventTypeString_Open            "open"
 
@@ -188,7 +192,11 @@ public:
             Polytempo_EventType type1 = e1->getType();
             Polytempo_EventType type2 = e2->getType();
             
-            // markers first
+            // comments first
+            if(type1 == eventType_Comment && type2 != eventType_Comment) return -1;
+            if(type1 != eventType_Comment && type2 == eventType_Comment) return 1;
+
+            // then markers
             if(type1 == eventType_Marker && type2 != eventType_Marker) return -1;
             if(type1 != eventType_Marker && type2 == eventType_Marker) return 1;
 

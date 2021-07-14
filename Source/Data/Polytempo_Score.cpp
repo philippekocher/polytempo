@@ -400,8 +400,8 @@ String Polytempo_Score::getJsonString()
             
             jsonEvent->setProperty(event->getTypeString(), jsonEventProperties);
             
-            if(jsonStringInTwoBlocks &&
-               (event->getType() == eventType_Beat || event->getType() == eventType_Marker))
+            if(jsonStringInTwoBlocks && i != -1 &&
+               (event->getType() == eventType_Beat || event->getType() == eventType_Marker || event->getType() == eventType_Comment))
                 jsonSection2.append(jsonEvent);
             else
                 jsonSection1.append(jsonEvent);
@@ -452,7 +452,6 @@ bool Polytempo_Score::setJsonString(String jsonString)
     setDirty();
     return true;
 }
-
 
 void Polytempo_Score::parse(File& file, Polytempo_Score **scoreFile)
 {
@@ -515,15 +514,20 @@ void Polytempo_Score::parseVar(var jsonVar)
                 
                 if(event->getType() != eventType_None)
                 {
-                    if(properties.getValueAt(k).getDynamicObject() == nullptr) continue;
-                    
-                    NamedValueSet tempProps = properties.getValueAt(k).getDynamicObject()->getProperties();
-                    for(int l=0;l < tempProps.size(); l++)
+                    if (properties.getValueAt(k).isString())
                     {
-                        event->setProperty(tempProps.getName(l).toString(), tempProps.getValueAt(l));
+                        event->setProperty(eventPropertyString_Value, properties.getValueAt(k).toString());
+                        addEvent(event, addToInit);
                     }
-                    
-                    addEvent(event, addToInit);
+                    else if (properties.getValueAt(k).getDynamicObject() != nullptr)
+                    {
+                        NamedValueSet tempProps = properties.getValueAt(k).getDynamicObject()->getProperties();
+                        for(int l=0;l < tempProps.size(); l++)
+                        {
+                            event->setProperty(tempProps.getName(l).toString(), tempProps.getValueAt(l));
+                        }
+                        addEvent(event, addToInit);
+                    }
                 }
             }
         }

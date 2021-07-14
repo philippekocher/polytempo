@@ -234,6 +234,8 @@ void Polytempo_Event::setType(String typeString)
 {
     if (typeString == eventTypeString_Open) type = eventType_Open;
 
+    else if (typeString == eventTypeString_Comment) type = eventType_Comment;
+
     else if (typeString == eventTypeString_Start) type = eventType_Start;
     else if (typeString == eventTypeString_Stop) type = eventType_Stop;
     else if (typeString == eventTypeString_Pause) type = eventType_Pause;
@@ -281,6 +283,9 @@ String Polytempo_Event::getTypeString()
         return String();
         // these events have no string equivalent
 
+    case eventType_Comment:
+        return eventTypeString_Comment;
+            
     case eventType_Open:
         return eventTypeString_Open;
 
