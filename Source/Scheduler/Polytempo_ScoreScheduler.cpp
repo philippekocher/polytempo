@@ -27,7 +27,7 @@ void Polytempo_ScoreScheduler::setEngine(Polytempo_ScoreSchedulerEngine* theEngi
 
 bool Polytempo_ScoreScheduler::isRunning()
 {
-    return engine->isRunning() && !engine->isPausing();
+    return engine->isRunning();
 }
 
 // ----------------------------------------------------
@@ -49,7 +49,7 @@ void Polytempo_ScoreScheduler::eventNotification(Polytempo_Event* event)
 
 void Polytempo_ScoreScheduler::startStop()
 {
-    if (isRunning())
+    if (isRunning() && !engine->isPausing())
         Polytempo_EventDispatcher::getInstance()->broadcastEvent(Polytempo_Event::makeEvent(eventType_Stop));
     else
         Polytempo_EventDispatcher::getInstance()->broadcastEvent(Polytempo_Event::makeEvent(eventType_Start));
