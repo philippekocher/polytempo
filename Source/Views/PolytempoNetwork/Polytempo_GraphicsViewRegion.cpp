@@ -209,13 +209,13 @@ void Polytempo_GraphicsViewRegion::setText(String text_)
     resized();
 }
 
-void Polytempo_GraphicsViewRegion::setProgressbar(String txt, float time, float duration)
+void Polytempo_GraphicsViewRegion::setProgressbar(String txt, int time, float duration)
 {
     clear();
     contentType = contentType_Progressbar;
     progressbar.reset(new Polytempo_Progressbar());
     progressbar->setText(txt);
-    progressbar->setTime(int(time));
+    progressbar->setTime(time);
     progressbar->setDuration(duration);
 
     progressbar->setBounds(getLocalBounds().reduced(15, 10)); // inset rect

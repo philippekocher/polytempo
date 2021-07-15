@@ -163,7 +163,7 @@ void Polytempo_GraphicsView::displayProgessbar(Polytempo_Event* event)
     annotationLayer->requireUpdate();
 
     Polytempo_GraphicsViewRegion* region = regionsMap[event->getProperty(eventPropertyString_RegionID)];
-    float time = event->hasDefinedTime() ? event->getTime() : Polytempo_ScoreScheduler::getInstance()->getScoreTime();
+    int time = event->hasDefinedTime() ? event->getTime() : Polytempo_ScoreScheduler::getInstance()->getScoreTime();
     region->setProgressbar(String(event->getValue().toString()), time, event->getProperty("duration"));
     region->setVisible(true);
     region->repaint();
