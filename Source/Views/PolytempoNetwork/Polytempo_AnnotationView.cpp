@@ -86,6 +86,16 @@ void Polytempo_AnnotationView::comboBoxChanged(ComboBox* comboBoxThatHasChanged)
 
 void Polytempo_AnnotationView::changeListenerCallback(ChangeBroadcaster* /*source*/)
 {
+    if (!Polytempo_GraphicsAnnotationManager::getInstance()->currentDirectoryExists())
+    {
+        annotationMasterToggle->setEnabled(false);
+        annotationMasterToggle->setToggleState(false, sendNotification);
+    }
+    else
+        annotationMasterToggle->setEnabled(true);
+
+        
+    
     displayMode();
 }
 

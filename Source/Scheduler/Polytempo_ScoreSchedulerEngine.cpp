@@ -3,6 +3,7 @@
 #include "../Data/Polytempo_Composition.h"
 #include "Polytempo_EventScheduler.h"
 #include "../Network/Polytempo_TimeProvider.h"
+#include "../Application/PolytempoNetwork/Polytempo_NetworkApplication.h"
 #include "../Application/PolytempoComposer/Polytempo_ComposerApplication.h"
 
 
@@ -175,5 +176,8 @@ void Polytempo_NetworkEngine::run()
        has finished.
     */
     if (!killed) scoreScheduler->gotoTime(lastDownbeat);
+
+    Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
+    if (app->quitApplication) app->applicationShouldQuit();
 }
 #endif

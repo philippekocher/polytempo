@@ -4,12 +4,13 @@
 Polytempo_GraphicsViewRegion::Polytempo_GraphicsViewRegion(var id)
 {
     setOpaque(true);
-    borderSize = 0;
     setBufferedToImage(true);
 
     regionID = id;
     contentType = contentType_Empty;
     contentLayout = contentLayout_Row;
+    contentXAlignment = contentXAlignment_Left;
+    contentYAlignment = contentYAlignment_Center;
     allowAnnotations = false;
 
     Polytempo_GraphicsAnnotationManager::getInstance()->addChangeListener(this);
@@ -54,12 +55,6 @@ void Polytempo_GraphicsViewRegion::paint(Graphics& g)
                          5,
                          0.00001f);
     }
-    else if (contentType == contentType_Progressbar)
-    {
-        g.fillAll(Colours::black.withAlpha(0.1f));
-    }
-
-    if (borderSize > 0.0) g.drawRect(getLocalBounds());
 }
 
 void Polytempo_GraphicsViewRegion::resized()
@@ -103,14 +98,40 @@ void Polytempo_GraphicsViewRegion::resized()
 
         if (imageZoom == INFINITY) imageZoom = 1;
 
-        float x = 0, y;
+        float x = 0, y = 0;
+
         if (contentLayout == contentLayout_Row)
-            y = (getHeight() - (maxHeight * imageZoom)) * 0.5f;
+        {
+            if (contentXAlignment == contentXAlignment_Center)
+                x = (getWidth() - (totalWidth * imageZoom)) * 0.5f;
+            else if (contentXAlignment == contentXAlignment_Right)
+                x = getWidth() - (totalWidth * imageZoom);
+        }
         else
-            y = (getHeight() - (totalHeight * imageZoom)) * 0.5f;
+        {
+            if (contentYAlignment == contentYAlignment_Center)
+                y = (getHeight() - (totalHeight * imageZoom)) * 0.5f;
+            else if (contentYAlignment == contentYAlignment_Bottom)
+                y = getHeight() - (totalHeight * imageZoom);
+        }
 
         for (displayedImage &img : displayedImages)
         {
+            if (contentLayout == contentLayout_Column)
+            {
+                if (contentXAlignment == contentXAlignment_Center)
+                    x = (getWidth() - (img.imageRect.getWidth() * imageZoom)) * 0.5f;
+                else if (contentXAlignment == contentXAlignment_Right)
+                    x = (getWidth() - (img.imageRect.getWidth() * imageZoom));
+            }
+            else
+            {
+                if (contentYAlignment == contentYAlignment_Center)
+                    y = (getHeight() - (img.imageRect.getHeight() * imageZoom)) * 0.5f;
+                else if (contentYAlignment == contentYAlignment_Bottom)
+                    y = getHeight() - (img.imageRect.getHeight() * imageZoom);
+            }
+            
             img.targetArea = Rectangle<int>(int(x), int(y), int(img.imageRect.getWidth() * imageZoom), int(img.imageRect.getHeight() * imageZoom));
             
             img.screenToImage = AffineTransform::translation(-float(getX() + img.targetArea.getX()), -float(getY() + img.targetArea.getY()));
@@ -127,7 +148,7 @@ void Polytempo_GraphicsViewRegion::resized()
     }
     else if (contentType == contentType_Progressbar)
     {
-        progressbar->setBounds(getLocalBounds().reduced(15, 10)); // inset rect
+        progressbar->setBounds(getLocalBounds());
     }
 
     if (displayedImages.size() == 0)
@@ -141,20 +162,22 @@ void Polytempo_GraphicsViewRegion::setRelativeBounds(const Rectangle<float>& new
     relativeBounds = newBounds;
 }
 
-void Polytempo_GraphicsViewRegion::clear()
+void Polytempo_GraphicsViewRegion::clear(bool keepImages)
 {
     contentType = contentType_Empty;
-
-    text = nullptr;
-    progressbar = nullptr;
-
+    
+    // call on the message thread
+    auto aProgressbar = progressbar.get();
+    MessageManager::callAsync([this, aProgressbar]() { removeChildComponent(aProgressbar); });
+    
+    if (!keepImages) displayedImages.clear();
     setVisible(false);
 }
 
 void Polytempo_GraphicsViewRegion::setImage(Image* img, var rect, String imageId, bool append)
 {
+    clear(append);
     contentType = contentType_Image;
-    if (!append) displayedImages.clear();
 
     Array<var> r = *rect.getArray();
 
@@ -179,18 +202,20 @@ void Polytempo_GraphicsViewRegion::setImage(Image* img, var rect, String imageId
 
 void Polytempo_GraphicsViewRegion::setText(String text_)
 {
+    clear();
     contentType = contentType_Text;
     text.reset(new String(text_));
 
     resized();
 }
 
-void Polytempo_GraphicsViewRegion::setProgressbar(String txt, float time, float duration)
+void Polytempo_GraphicsViewRegion::setProgressbar(String txt, int time, float duration)
 {
+    clear();
     contentType = contentType_Progressbar;
     progressbar.reset(new Polytempo_Progressbar());
     progressbar->setText(txt);
-    progressbar->setTime(int(time));
+    progressbar->setTime(time);
     progressbar->setDuration(duration);
 
     progressbar->setBounds(getLocalBounds().reduced(15, 10)); // inset rect
@@ -208,8 +233,19 @@ void Polytempo_GraphicsViewRegion::setMaxImageZoom(float maxZoom)
 
 void Polytempo_GraphicsViewRegion::setLayout(String layout)
 {
-    if(layout == "column")   contentLayout = contentLayout_Column;
-    else if(layout == "row") contentLayout = contentLayout_Row;
+    if (layout == contentLayoutString_Row)         contentLayout = contentLayout_Row;
+    else if (layout == contentLayoutString_Column) contentLayout = contentLayout_Column;
+}
+
+void Polytempo_GraphicsViewRegion::setAlignment(String xAlignment, String yAlignment)
+{
+    if (xAlignment == contentXAlignmentString_Left)        contentXAlignment = contentXAlignment_Left;
+    else if (xAlignment == contentXAlignmentString_Center) contentXAlignment = contentXAlignment_Center;
+    else if (xAlignment == contentXAlignmentString_Right)  contentXAlignment = contentXAlignment_Right;
+
+    if (yAlignment == contentYAlignmentString_Top)         contentYAlignment = contentYAlignment_Top;
+    else if (yAlignment == contentYAlignmentString_Center) contentYAlignment = contentYAlignment_Center;
+    else if (yAlignment == contentYAlignmentString_Bottom) contentYAlignment = contentYAlignment_Bottom;
 }
 
 Polytempo_ViewContentType Polytempo_GraphicsViewRegion::getContentType() { return contentType; }

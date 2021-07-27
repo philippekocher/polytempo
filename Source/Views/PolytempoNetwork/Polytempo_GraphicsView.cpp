@@ -1,5 +1,6 @@
 #include "Polytempo_GraphicsView.h"
 #include "Polytempo_ImageManager.h"
+#include "../../Scheduler/Polytempo_ScoreScheduler.h"
 #include "../../Preferences/Polytempo_StoredPreferences.h"
 
 Polytempo_GraphicsView::Polytempo_GraphicsView()
@@ -82,6 +83,7 @@ void Polytempo_GraphicsView::addRegion(Polytempo_Event* event)
     region->setMaxImageZoom(event->getProperty(eventPropertyString_MaxZoom));
     
     region->setLayout(event->getProperty(eventPropertyString_Layout));
+    region->setAlignment(event->getProperty(eventPropertyString_XAlignment), event->getProperty(eventPropertyString_YAlignment));
 
     region->repaint();
     annotationLayer->requireUpdate();
@@ -95,18 +97,15 @@ void Polytempo_GraphicsView::addSection(Polytempo_Event* event)
 
 void Polytempo_GraphicsView::displayImage(Polytempo_Event* event)
 {
-    Polytempo_GraphicsViewRegion* region = nullptr;
+    if (!regionsMap.contains(event->getProperty(eventPropertyString_RegionID)))
+        return; // invalid region id
+
+    annotationLayer->requireUpdate();
+
+    Polytempo_GraphicsViewRegion* region = regionsMap[event->getProperty(eventPropertyString_RegionID)];
     Image* image = nullptr;
     var rect;
     var imageId;
-
-    if (regionsMap.contains(event->getProperty(eventPropertyString_RegionID)))
-    {
-        region = regionsMap[event->getProperty(eventPropertyString_RegionID)];
-    }
-
-    if (region == nullptr) // invalid region ID
-        return;
 
     if (!event->getProperty(eventPropertyString_SectionID).isVoid()) // a section ID is given
     {
@@ -120,37 +119,40 @@ void Polytempo_GraphicsView::displayImage(Polytempo_Event* event)
         image = Polytempo_ImageManager::getInstance()->getImage(imageId);
         rect = event->getProperty(eventPropertyString_Rect);
     }
+    else
+    {
+        region->clear();
+        return;
+    }
 
     if (rect == var()) rect = Polytempo_Event::defaultRectangle();
 
     region->setImage(image, rect, imageId, event->getType() == eventType_AppendImage);
     region->setVisible(true);
     region->repaint();
-    annotationLayer->requireUpdate();
 }
 
 void Polytempo_GraphicsView::displayText(Polytempo_Event* event)
 {
-    Polytempo_GraphicsViewRegion* region = nullptr;
+    if (!regionsMap.contains(event->getProperty(eventPropertyString_RegionID)))
+        return; // invalid region id
 
-    if (regionsMap.contains(event->getProperty(eventPropertyString_RegionID)))
-    {
-        region = regionsMap[event->getProperty(eventPropertyString_RegionID)];
-    }
-    else return; // invalid region id
+    annotationLayer->requireUpdate();
+
+    Polytempo_GraphicsViewRegion* region = regionsMap[event->getProperty(eventPropertyString_RegionID)];
 
     if (event->getProperty("value").isVoid()) // no text given
     {
-        if (region) region->setVisible(false);
+        region->clear();
         return;
     }
 
-    if (region)
-    {
+    if (event->getValue().isDouble())
+        region->setText(String((double)event->getProperty("value"),0));
+    else
         region->setText(String(event->getProperty("value").toString()));
-        region->setVisible(true);
-        region->repaint();
-    }
+    region->setVisible(true);
+    region->repaint();
 }
 
 void Polytempo_GraphicsView::displayProgessbar(Polytempo_Event* event)
@@ -158,8 +160,11 @@ void Polytempo_GraphicsView::displayProgessbar(Polytempo_Event* event)
     if (!regionsMap.contains(event->getProperty(eventPropertyString_RegionID)))
         return; // invalid region id
 
+    annotationLayer->requireUpdate();
+
     Polytempo_GraphicsViewRegion* region = regionsMap[event->getProperty(eventPropertyString_RegionID)];
-    region->setProgressbar(String(event->getValue().toString()), float(event->getTime()), event->getProperty("duration"));
+    int time = event->hasDefinedTime() ? event->getTime() : Polytempo_ScoreScheduler::getInstance()->getScoreTime();
+    region->setProgressbar(String(event->getValue().toString()), time, event->getProperty("duration"));
     region->setVisible(true);
     region->repaint();
 }
