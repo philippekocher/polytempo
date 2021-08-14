@@ -2,9 +2,16 @@
 #include "Polytempo_EventScheduler.h"
 #include "Polytempo_EventDispatcher.h"
 #include "../Network/Polytempo_InterprocessCommunication.h"
+#include "../Application/PolytempoNetwork/Polytempo_NetworkApplication.h"
+#include "../Application/PolytempoNetwork/Polytempo_NetworkWindow.h"
 
 Polytempo_ScoreScheduler::Polytempo_ScoreScheduler()
 {
+    Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
+    Polytempo_NetworkWindow* window = app->getMainWindow();
+
+    loadStatusWindow = new AlertWindow("Loading...", String(), AlertWindow::NoIcon);
+    window->getContentComponent()->addChildComponent(loadStatusWindow);
 }
 
 Polytempo_ScoreScheduler::~Polytempo_ScoreScheduler()
@@ -41,8 +48,20 @@ void Polytempo_ScoreScheduler::eventNotification(Polytempo_Event* event)
     else if (event->getType() == eventType_GotoMarker) gotoMarker(event);
     else if (event->getType() == eventType_GotoTime) gotoTime(event);
     else if (event->getType() == eventType_TempoFactor) setTempoFactor(event);
+    else if (event->getType() == eventType_LoadImage)
+    {
+        if(loadStatusWindow != nullptr)
+        {
+            MessageManager::callAsync([this, event]() { loadStatusWindow->setMessage(event->getProperty(eventPropertyString_URL)); });
+        }
+    }
     else if(event->getType() == eventType_Ready)
     {
+        if(loadStatusWindow != nullptr)
+        {
+            loadStatusWindow->setVisible(false);
+            loadStatusWindow->exitModalState(0);
+        }
         score->setReady();
         // goto beginning of score (only local);
         int time = score->getFirstEvent() != nullptr ? score->getFirstEvent()->getTime() : 0;
@@ -193,7 +212,14 @@ void Polytempo_ScoreScheduler::executeInit()
     OwnedArray<Polytempo_Event>* initEvents = score->getInitEvents();
     if (initEvents != nullptr)
     {
-        for (int i = 0; i < initEvents->size(); i++)
+        int size = initEvents->size();
+        
+        if (size != 0)
+        {
+            loadStatusWindow->setMessage(String());
+            loadStatusWindow->enterModalState(false);
+        }
+        for (int i = 0; i < size; i++)
         {
             Polytempo_EventScheduler::getInstance()->scheduleInitEvent(initEvents->getUnchecked(i));
         }
