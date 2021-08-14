@@ -324,6 +324,12 @@ void Polytempo_NetworkApplication::openScoreFile(File aFile)
         return;
     }
 
+    if (score && !score->isReady())
+    {
+        DBG("Can't open file, still loading the previous one...");
+        return;
+    }
+
     Polytempo_StoredPreferences::getInstance()->getProps().setValue("scoreFileDirectory", newScoreFile.getParentDirectory().getFullPathName());
 
     Polytempo_Score* newScore = nullptr;

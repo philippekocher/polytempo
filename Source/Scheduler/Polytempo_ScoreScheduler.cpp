@@ -41,6 +41,14 @@ void Polytempo_ScoreScheduler::eventNotification(Polytempo_Event* event)
     else if (event->getType() == eventType_GotoMarker) gotoMarker(event);
     else if (event->getType() == eventType_GotoTime) gotoTime(event);
     else if (event->getType() == eventType_TempoFactor) setTempoFactor(event);
+    else if(event->getType() == eventType_Ready)
+    {
+        score->setReady();
+        // goto beginning of score (only local);
+        int time = score->getFirstEvent() != nullptr ? score->getFirstEvent()->getTime() : 0;
+        storeLocator(time);
+        gotoTime(time);
+    }
 }
 
 // ----------------------------------------------------
@@ -187,8 +195,9 @@ void Polytempo_ScoreScheduler::executeInit()
     {
         for (int i = 0; i < initEvents->size(); i++)
         {
-            Polytempo_EventScheduler::getInstance()->scheduleScoreEvent(initEvents->getUnchecked(i));
+            Polytempo_EventScheduler::getInstance()->scheduleInitEvent(initEvents->getUnchecked(i));
         }
+        Polytempo_EventScheduler::getInstance()->scheduleInitEvent(Polytempo_Event::makeEvent(eventType_Ready));
     }
 }
 
@@ -207,19 +216,6 @@ void Polytempo_ScoreScheduler::setScore(Polytempo_Score* theScore)
 
     // set default section
     score->selectSection();
-    Polytempo_EventScheduler::getInstance()->scheduleEvent(Polytempo_Event::makeEvent(eventType_Ready));
-
-    // goto beginning of score (only local);
-    if (score->getFirstEvent())
-    {
-        storeLocator(score->getFirstEvent()->getTime());
-        gotoTime(score->getFirstEvent()->getTime());
-    }
-    else
-    {
-        storeLocator(0);
-        gotoTime(0);
-    }
 }
 
 int Polytempo_ScoreScheduler::getScoreTime()

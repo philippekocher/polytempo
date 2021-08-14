@@ -13,6 +13,7 @@ public:
     /* schedule events
      --------------------------------------- */
 
+    void scheduleInitEvent(Polytempo_Event* event);
     void scheduleScoreEvent(Polytempo_Event* event);
     void deletePendingEvents();
 
