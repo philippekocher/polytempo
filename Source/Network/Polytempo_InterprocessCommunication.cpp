@@ -73,6 +73,7 @@ void Ipc::messageReceived(const MemoryBlock& message)
                         // call on the message thread
                         MessageManager::callAsync([app, filePath]() { app->openScoreFilePath(filePath); });
                     }
+                    return;
                 }
             }
 #endif
