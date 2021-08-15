@@ -276,6 +276,7 @@ void Polytempo_InterprocessCommunication::getClientsInfo(OwnedArray<Polytempo_Pe
     {
         if (currentTime - serverConnections[i]->getLastHeartBeat() > REMOVE_INVALID_CONNECTIONS_TIMEOUT)
         {
+            serverConnections[i]->disconnect();
             serverConnections.remove(i);
             i--;
         }
