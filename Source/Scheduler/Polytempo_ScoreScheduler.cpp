@@ -7,11 +7,13 @@
 
 Polytempo_ScoreScheduler::Polytempo_ScoreScheduler()
 {
+#ifdef POLYTEMPO_NETWORK
     Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
     Polytempo_NetworkWindow* window = app->getMainWindow();
 
     loadStatusWindow = new AlertWindow("Loading...", String(), AlertWindow::NoIcon);
     window->getContentComponent()->addChildComponent(loadStatusWindow);
+#endif
 }
 
 Polytempo_ScoreScheduler::~Polytempo_ScoreScheduler()
