@@ -61,6 +61,7 @@ void Polytempo_ScoreScheduler::eventNotification(Polytempo_Event* event)
     {
         if(loadStatusWindow != nullptr)
         {
+            loadStatusWindow->setMessage(String());
             loadStatusWindow->setVisible(false);
             loadStatusWindow->exitModalState(0);
         }
@@ -212,21 +213,19 @@ void Polytempo_ScoreScheduler::executeInit()
     if (!score) return;
 
     OwnedArray<Polytempo_Event>* initEvents = score->getInitEvents();
-    if (initEvents != nullptr)
+    if (initEvents != nullptr && !initEvents->isEmpty())
     {
+        score->setReady(false);
+        loadStatusWindow->setMessage(" "); // force layout update
+        loadStatusWindow->enterModalState(true);
+
         int size = initEvents->size();
-        
-        if (size != 0)
-        {
-            loadStatusWindow->setMessage(String());
-            loadStatusWindow->enterModalState(false);
-        }
         for (int i = 0; i < size; i++)
         {
             Polytempo_EventScheduler::getInstance()->scheduleInitEvent(initEvents->getUnchecked(i));
         }
-        Polytempo_EventScheduler::getInstance()->scheduleInitEvent(Polytempo_Event::makeEvent(eventType_Ready));
     }
+    Polytempo_EventScheduler::getInstance()->scheduleInitEvent(Polytempo_Event::makeEvent(eventType_Ready));
 }
 
 void Polytempo_ScoreScheduler::setScore(Polytempo_Score* theScore)

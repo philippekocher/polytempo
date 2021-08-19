@@ -64,6 +64,6 @@ private:
     int  nextEventIndex;
     
     bool dirty = false;
-    bool ready = false;
+    bool ready = true;
     bool jsonStringInTwoBlocks = true;
 };
