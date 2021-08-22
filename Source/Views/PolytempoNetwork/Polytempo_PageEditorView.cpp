@@ -596,7 +596,12 @@ void Polytempo_PageEditorView::labelTextChanged(Label* label)
     }
     else if(label == xTextbox || label == yTextbox || label == wTextbox || label == hTextbox)
     {
-        Array < var > r = *selectedAddSectionEvent->getProperty(eventPropertyString_Rect).getArray();
+        Array<var> r;
+        if (selectedAddSectionEvent->hasProperty(eventPropertyString_Rect))
+            r = *selectedAddSectionEvent->getProperty(eventPropertyString_Rect).getArray();
+        else
+            r = Polytempo_Event::defaultRectangle();
+        
         pageEditorViewport->getComponent()->setSectionRect(Rectangle<float>(r[0],r[1],r[2],r[3]));
         float num = label->getText().getFloatValue();
         num = num < 0.0f ? 0.0f : num > 1.0f ? 1.0f : num;

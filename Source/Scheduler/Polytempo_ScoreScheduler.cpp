@@ -2,9 +2,18 @@
 #include "Polytempo_EventScheduler.h"
 #include "Polytempo_EventDispatcher.h"
 #include "../Network/Polytempo_InterprocessCommunication.h"
+#include "../Application/PolytempoNetwork/Polytempo_NetworkApplication.h"
+#include "../Application/PolytempoNetwork/Polytempo_NetworkWindow.h"
 
 Polytempo_ScoreScheduler::Polytempo_ScoreScheduler()
 {
+#ifdef POLYTEMPO_NETWORK
+    Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
+    Polytempo_NetworkWindow* window = app->getMainWindow();
+
+    loadStatusWindow = new AlertWindow("Loading...", String(), AlertWindow::NoIcon);
+    window->getContentComponent()->addChildComponent(loadStatusWindow);
+#endif
 }
 
 Polytempo_ScoreScheduler::~Polytempo_ScoreScheduler()
@@ -41,6 +50,27 @@ void Polytempo_ScoreScheduler::eventNotification(Polytempo_Event* event)
     else if (event->getType() == eventType_GotoMarker) gotoMarker(event);
     else if (event->getType() == eventType_GotoTime) gotoTime(event);
     else if (event->getType() == eventType_TempoFactor) setTempoFactor(event);
+    else if (event->getType() == eventType_LoadImage)
+    {
+        if(loadStatusWindow != nullptr)
+        {
+            MessageManager::callAsync([this, event]() { loadStatusWindow->setMessage(event->getProperty(eventPropertyString_URL)); });
+        }
+    }
+    else if(event->getType() == eventType_Ready)
+    {
+        if(loadStatusWindow != nullptr)
+        {
+            loadStatusWindow->setMessage(String());
+            loadStatusWindow->setVisible(false);
+            loadStatusWindow->exitModalState(0);
+        }
+        score->setReady();
+        // goto beginning of score (only local);
+        int time = score->getFirstEvent() != nullptr ? score->getFirstEvent()->getTime() : 0;
+        storeLocator(time);
+        gotoTime(time);
+    }
 }
 
 // ----------------------------------------------------
@@ -183,13 +213,19 @@ void Polytempo_ScoreScheduler::executeInit()
     if (!score) return;
 
     OwnedArray<Polytempo_Event>* initEvents = score->getInitEvents();
-    if (initEvents != nullptr)
+    if (initEvents != nullptr && !initEvents->isEmpty())
     {
-        for (int i = 0; i < initEvents->size(); i++)
+        score->setReady(false);
+        loadStatusWindow->setMessage(" "); // force layout update
+        loadStatusWindow->enterModalState(true);
+
+        int size = initEvents->size();
+        for (int i = 0; i < size; i++)
         {
-            Polytempo_EventScheduler::getInstance()->scheduleScoreEvent(initEvents->getUnchecked(i));
+            Polytempo_EventScheduler::getInstance()->scheduleInitEvent(initEvents->getUnchecked(i));
         }
     }
+    Polytempo_EventScheduler::getInstance()->scheduleInitEvent(Polytempo_Event::makeEvent(eventType_Ready));
 }
 
 void Polytempo_ScoreScheduler::setScore(Polytempo_Score* theScore)
@@ -207,19 +243,6 @@ void Polytempo_ScoreScheduler::setScore(Polytempo_Score* theScore)
 
     // set default section
     score->selectSection();
-    Polytempo_EventScheduler::getInstance()->scheduleEvent(Polytempo_Event::makeEvent(eventType_Ready));
-
-    // goto beginning of score (only local);
-    if (score->getFirstEvent())
-    {
-        storeLocator(score->getFirstEvent()->getTime());
-        gotoTime(score->getFirstEvent()->getTime());
-    }
-    else
-    {
-        storeLocator(0);
-        gotoTime(0);
-    }
 }
 
 int Polytempo_ScoreScheduler::getScoreTime()

@@ -37,6 +37,16 @@ bool Polytempo_Score::isDirty()
     return dirty;
 }
 
+void Polytempo_Score::setReady(bool flag)
+{
+    ready = flag;
+}
+
+bool Polytempo_Score::isReady()
+{
+    return ready;
+}
+
 void Polytempo_Score::clear(bool clearInit)
 {
     sections.clear();

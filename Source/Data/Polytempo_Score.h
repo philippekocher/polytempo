@@ -18,6 +18,9 @@ public:
     void setDirty(bool flag = true);
     bool isDirty();
     
+    void setReady(bool flag = true);
+    bool isReady();
+    
     void clear(bool clearInit = false);
 
     void addEvent(Polytempo_Event*, bool addToInit = false);
@@ -61,5 +64,6 @@ private:
     int  nextEventIndex;
     
     bool dirty = false;
+    bool ready = true;
     bool jsonStringInTwoBlocks = true;
 };

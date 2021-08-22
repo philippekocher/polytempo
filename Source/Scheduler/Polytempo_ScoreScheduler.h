@@ -50,4 +50,6 @@ private:
     int storedLocator = 0; // milliseconds
 
     Polytempo_Score* score = nullptr;
+    
+    AlertWindow* loadStatusWindow = nullptr;
 };

@@ -73,6 +73,7 @@ void Ipc::messageReceived(const MemoryBlock& message)
                         // call on the message thread
                         MessageManager::callAsync([app, filePath]() { app->openScoreFilePath(filePath); });
                     }
+                    return;
                 }
             }
 #endif
@@ -275,6 +276,7 @@ void Polytempo_InterprocessCommunication::getClientsInfo(OwnedArray<Polytempo_Pe
     {
         if (currentTime - serverConnections[i]->getLastHeartBeat() > REMOVE_INVALID_CONNECTIONS_TIMEOUT)
         {
+            serverConnections[i]->disconnect();
             serverConnections.remove(i);
             i--;
         }

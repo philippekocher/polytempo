@@ -19,6 +19,14 @@ juce_ImplementSingleton(Polytempo_EventScheduler)
 #pragma mark -
 #pragma mark schedule events
 
+void Polytempo_EventScheduler::scheduleInitEvent(Polytempo_Event* event)
+{
+    if (event == nullptr) return;
+    if (event->getType() == eventType_None) return;
+
+    scheduledScoreEvents.add(event);
+}
+
 void Polytempo_EventScheduler::scheduleScoreEvent(Polytempo_Event* event)
 {
     if (event == nullptr) return;
