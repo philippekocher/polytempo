@@ -3,3 +3,7 @@ build/
 
 # Exclude OS X folder attributes
 .DS_Store
+
+# Exclude Projucer Build and Library folders
+**/Builds/**
+**/JuceLibraryCode/**
