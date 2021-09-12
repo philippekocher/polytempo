@@ -1,10 +1,13 @@
 #include "Polytempo_NetworkSupervisor.h"
 #include "Polytempo_IPAddress.h"
-#include "../Preferences/Polytempo_StoredPreferences.h"
 #include "Polytempo_NetworkInterfaceManager.h"
 #include "Polytempo_TimeProvider.h"
+
+#ifdef POLYTEMPO_NETWORK
+#include "../Preferences/Polytempo_StoredPreferences.h"
 #include "../Misc/Polytempo_Alerts.h"
 #include "../Application/PolytempoNetwork/Polytempo_NetworkApplication.h"
+#endif
 
 Polytempo_NetworkSupervisor::Polytempo_NetworkSupervisor()
 {
@@ -65,8 +68,10 @@ Uuid Polytempo_NetworkSupervisor::getUniqueId()
     return uniqueId;
 }
 
-void Polytempo_NetworkSupervisor::unicastFlood(Polytempo_IPAddress ownIp)
+bool Polytempo_NetworkSupervisor::unicastFlood(Polytempo_IPAddress ownIp)
 {
+    // returns true if successful
+
     OSCSender localSender;
     localSender.connect(ownIp.m_ipAddress.toString(), 0);
     std::unique_ptr<OSCMessage> msg = this->createAdvertiseMessage(ownIp.m_ipAddress.toString());
@@ -79,8 +84,10 @@ void Polytempo_NetworkSupervisor::unicastFlood(Polytempo_IPAddress ownIp)
         bool ok = localSender.sendToIPAddress(currentIp.toString(), currentPort, *msg);
         if (!ok)
         {
+#ifdef POLYTEMPO_NETWORK
             Polytempo_Alert::show("Error", "Error sending node information to " + currentIp.toString());
-            return;
+#endif
+            return false;
         }
         // proceed to next address
         if (currentIp.address[3] == 255)
@@ -103,6 +110,8 @@ void Polytempo_NetworkSupervisor::unicastFlood(Polytempo_IPAddress ownIp)
         else
             currentIp.address[3]++;
     }
+
+    return true;
 }
 
 String Polytempo_NetworkSupervisor::getDescription() const
@@ -118,7 +127,11 @@ String Polytempo_NetworkSupervisor::getScoreName() const
 
 String Polytempo_NetworkSupervisor::getPeerName() const
 {
+#ifdef POLYTEMPO_NETWORK
     return String(Polytempo_StoredPreferences::getInstance()->getProps().getValue("instanceName"));
+#else
+    return "External Client";
+#endif
 }
 
 void Polytempo_NetworkSupervisor::createSender(int port)
@@ -135,6 +148,7 @@ void Polytempo_NetworkSupervisor::setComponent(Component* aComponent)
 
 void Polytempo_NetworkSupervisor::eventNotification(Polytempo_Event* event)
 {
+#ifdef POLYTEMPO_NETWORK
     if (event->getType() == eventType_Open)
     {
         const MessageManagerLock mml(Thread::getCurrentThread());
@@ -186,4 +200,5 @@ void Polytempo_NetworkSupervisor::eventNotification(Polytempo_Event* event)
         Polytempo_NetworkWindow* window = app->getMainWindow();
         window->setBrightness(1.0f);
     }
+#endif
 }

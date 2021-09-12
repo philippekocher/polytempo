@@ -40,7 +40,7 @@ public:
 
     Polytempo_InterprocessCommunication();
     ~Polytempo_InterprocessCommunication();
-    void reset(bool isMaster);
+    bool reset(bool isMaster);
     bool connectToMaster(String ip);
     void registerNewServerConnection(Ipc* connection);
     void notifyAllClients(MemoryBlock m, String namePattern = String());

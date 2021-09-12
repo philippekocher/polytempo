@@ -1,5 +1,4 @@
 #include "Polytempo_NetworkInterfaceManager.h"
-#include "../Preferences/Polytempo_StoredPreferences.h"
 
 Polytempo_NetworkInterfaceManager::Polytempo_NetworkInterfaceManager()
 {

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="zAoeAP" name="TimeSyncApp" projectType="guiapp" useAppConfig="0"
+              addUsingNamespaceToJuceHeader="1" displaySplashScreen="1" jucerFormatVersion="1"
+              defines="POLYTEMPO_LIB=1">
+  <MAINGROUP id="IDTBcy" name="TimeSyncApp">
+    <GROUP id="{60AADD0E-5E82-C549-27E5-28960AAA2608}" name="Polytempo">
+      <FILE id="xGsJzl" name="Polytempo_Event.cpp" compile="1" resource="0"
+            file="../../Source/Scheduler/Polytempo_Event.cpp"/>
+      <FILE id="N8Ic2v" name="Polytempo_Event.h" compile="0" resource="0"
+            file="../../Source/Scheduler/Polytempo_Event.h"/>
+      <FILE id="m77c6B" name="Polytempo_EventObserver.cpp" compile="1" resource="0"
+            file="../../Source/Scheduler/Polytempo_EventObserver.cpp"/>
+      <FILE id="vdKnMT" name="Polytempo_EventObserver.h" compile="0" resource="0"
+            file="../../Source/Scheduler/Polytempo_EventObserver.h"/>
+      <FILE id="dcq00Q" name="Polytempo_InterprocessCommunication.cpp" compile="1"
+            resource="0" file="../../Source/Network/Polytempo_InterprocessCommunication.cpp"/>
+      <FILE id="FCRR1V" name="Polytempo_InterprocessCommunication.h" compile="0"
+            resource="0" file="../../Source/Network/Polytempo_InterprocessCommunication.h"/>
+      <FILE id="XsbiJb" name="Polytempo_IPAddress.cpp" compile="1" resource="0"
+            file="../../Source/Network/Polytempo_IPAddress.cpp"/>
+      <FILE id="iHtJYK" name="Polytempo_IPAddress.h" compile="0" resource="0"
+            file="../../Source/Network/Polytempo_IPAddress.h"/>
+      <FILE id="pOytGc" name="Polytempo_LibEventHandler.cpp" compile="1"
+            resource="0" file="../../Source/Library/Polytempo_LibEventHandler.cpp"/>
+      <FILE id="ShlxPG" name="Polytempo_LibEventHandler.h" compile="0" resource="0"
+            file="../../Source/Library/Polytempo_LibEventHandler.h"/>
+      <FILE id="E9d4CF" name="Polytempo_LibMain.cpp" compile="1" resource="0"
+            file="../../Source/Library/Polytempo_LibMain.cpp"/>
+      <FILE id="McLdK7" name="Polytempo_LibMain.h" compile="0" resource="0"
+            file="../../Source/Library/Polytempo_LibMain.h"/>
+      <FILE id="QwkKwR" name="Polytempo_NetworkInterfaceManager.cpp" compile="1"
+            resource="0" file="../../Source/Network/Polytempo_NetworkInterfaceManager.cpp"/>
+      <FILE id="UdATlK" name="Polytempo_NetworkInterfaceManager.h" compile="0"
+            resource="0" file="../../Source/Network/Polytempo_NetworkInterfaceManager.h"/>
+      <FILE id="Av2ca5" name="Polytempo_NetworkSupervisor.cpp" compile="1"
+            resource="0" file="../../Source/Network/Polytempo_NetworkSupervisor.cpp"/>
+      <FILE id="hBqIcI" name="Polytempo_NetworkSupervisor.h" compile="0"
+            resource="0" file="../../Source/Network/Polytempo_NetworkSupervisor.h"/>
+      <FILE id="IzL8sD" name="Polytempo_OSCListener.cpp" compile="1" resource="0"
+            file="../../Source/Network/Polytempo_OSCListener.cpp"/>
+      <FILE id="xVfjsO" name="Polytempo_OSCListener.h" compile="0" resource="0"
+            file="../../Source/Network/Polytempo_OSCListener.h"/>
+      <FILE id="QERLbX" name="Polytempo_PeerInfo.h" compile="0" resource="0"
+            file="../../Source/Network/Polytempo_PeerInfo.h"/>
+      <FILE id="fpxO6n" name="Polytempo_TimeProvider.cpp" compile="1" resource="0"
+            file="../../Source/Network/Polytempo_TimeProvider.cpp"/>
+      <FILE id="WvPwBE" name="Polytempo_TimeProvider.h" compile="0" resource="0"
+            file="../../Source/Network/Polytempo_TimeProvider.h"/>
+      <FILE id="mMzFRr" name="Rational.h" compile="0" resource="0" file="../../Source/Misc/Rational.h"/>
+    </GROUP>
+    <GROUP id="{5F36E60D-462A-21B1-5C89-1A2891F98BE7}" name="Source">
+      <FILE id="VEPRAs" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
+      <FILE id="sP5hHq" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
+      <FILE id="wWQ9qR" name="MainComponent.cpp" compile="1" resource="0"
+            file="Source/MainComponent.cpp"/>
+    </GROUP>
+  </MAINGROUP>
+  <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1"/>
+  <EXPORTFORMATS>
+    <VS2019 targetFolder="Builds/VisualStudio2019" extraCompilerFlags="/wd4068">
+      <CONFIGURATIONS>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="TimeSyncApp"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="TimeSyncApp"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_core" path="../../../../Code/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../../Code/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../../../Code/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../../Code/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../../Code/JUCE/modules"/>
+        <MODULEPATH id="juce_osc" path="../../../../Code/JUCE/modules"/>
+      </MODULEPATHS>
+    </VS2019>
+  </EXPORTFORMATS>
+  <MODULES>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+    <MODULE id="juce_osc" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>
+  </MODULES>
+</JUCERPROJECT>

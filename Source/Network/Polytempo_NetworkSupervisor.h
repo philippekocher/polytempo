@@ -26,7 +26,7 @@ public:
 
     void eventNotification(Polytempo_Event* event) override;
     Uuid getUniqueId();
-    void unicastFlood(Polytempo_IPAddress ownIp);
+    bool unicastFlood(Polytempo_IPAddress ownIp);
 
 private:
     std::unique_ptr<OSCMessage> createAdvertiseMessage(String ownIp);

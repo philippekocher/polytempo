@@ -1,6 +1,6 @@
 #include "Polytempo_TimeProvider.h"
 #include "Polytempo_InterprocessCommunication.h"
-#ifdef POLYTEMPO_NETWORK
+#if defined(POLYTEMPO_NETWORK) || defined(POLYTEMPO_LIB)
 #include "Polytempo_NetworkSupervisor.h"
 #endif
 
@@ -8,6 +8,8 @@ Polytempo_TimeProvider::Polytempo_TimeProvider(): relativeMsToMaster(0), maxRoun
 {
 #ifdef POLYTEMPO_NETWORK
     pTimeSyncControl = nullptr;
+#endif
+#if defined(POLYTEMPO_NETWORK) || defined(POLYTEMPO_LIB)
     toggleMaster(false);
 #endif
 }
@@ -88,16 +90,20 @@ void Polytempo_TimeProvider::createTimeIndex(int* pIndex, uint32* pTimestamp)
     *pTimestamp = lastSentTimestamp;
 }
 
-#ifdef POLYTEMPO_NETWORK
-void Polytempo_TimeProvider::toggleMaster(bool master)
+#if defined(POLYTEMPO_NETWORK) || defined(POLYTEMPO_LIB)
+bool Polytempo_TimeProvider::toggleMaster(bool master)
 {
+    // returns true if successful
+
     stopTimer();
     masterFlag = master;
-    Polytempo_InterprocessCommunication::getInstance()->reset(master);
+    bool ok = Polytempo_InterprocessCommunication::getInstance()->reset(master);
     resetTimeSync();
-
+    
     if (!masterFlag)
         startTimer(TIME_SYNC_INTERVAL_MS);
+
+    return ok;
 }
 
 uint32 Polytempo_TimeProvider::getDelaySafeTimestamp()
@@ -136,10 +142,6 @@ void Polytempo_TimeProvider::setRemoteMasterPeer(String ip, Uuid id)
     lastMasterID = id;
 }
 
-void Polytempo_TimeProvider::registerUserInterface(Polytempo_TimeSyncControl* pControl)
-{
-    pTimeSyncControl = pControl;
-}
 
 void Polytempo_TimeProvider::handleMessage(XmlElement message, Ipc* sender)
 {
@@ -200,9 +202,16 @@ void Polytempo_TimeProvider::handleMessage(XmlElement message, Ipc* sender)
 }
 #endif
 
+#ifdef POLYTEMPO_NETWORK
+void Polytempo_TimeProvider::registerUserInterface(Polytempo_TimeSyncControl* pControl)
+{
+    pTimeSyncControl = pControl;
+}
+#endif
+
 void Polytempo_TimeProvider::timerCallback()
 {
-#ifdef POLYTEMPO_NETWORK
+#if defined(POLYTEMPO_NETWORK) || defined(POLYTEMPO_LIB)
     if (!Polytempo_InterprocessCommunication::getInstance()->isClientConnected())
     {
         displayMessage("No master detected", MessageType_Error);

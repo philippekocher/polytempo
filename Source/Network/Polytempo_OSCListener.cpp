@@ -1,9 +1,15 @@
 #include "Polytempo_OSCListener.h"
 #include "Polytempo_NetworkSupervisor.h"
+#ifdef POLYTEMPO_NETWORK
 #include "../Scheduler/Polytempo_ScoreScheduler.h"
 #include "../Scheduler/Polytempo_EventScheduler.h"
 #include "../Misc/Polytempo_Alerts.h"
 #include "../Application/PolytempoNetwork/Polytempo_NetworkApplication.h"
+#endif
+#ifdef POLYTEMPO_LIB
+#include "../Library/Polytempo_LibEventHandler.h"
+#endif
+
 #include "Polytempo_TimeProvider.h"
 
 Polytempo_OSCListener::Polytempo_OSCListener(int port) : m_Port(port)
@@ -11,8 +17,11 @@ Polytempo_OSCListener::Polytempo_OSCListener(int port) : m_Port(port)
     oscReceiver.reset(new OSCReceiver());
 
     if (!oscReceiver->connect(m_Port))
+#ifdef POLYTEMPO_NETWORK
         Polytempo_Alert::show("Error", "Can't bind to port: " + String(m_Port) + "\nProbably there is another socket already bound to this port");
-
+#else
+        DBG("Error initializing OSC listener"); // TODO!!!
+#endif
     oscReceiver->addListener(this);
 }
 
@@ -94,6 +103,7 @@ void Polytempo_OSCListener::oscMessageReceived(const OSCMessage& message)
             Polytempo_TimeProvider::getInstance()->getSyncTime(&syncTime);
         }
 
+#ifdef POLYTEMPO_NETWORK
         if (event->hasProperty(eventPropertyString_Time))
         {
             Polytempo_ScoreScheduler* scoreScheduler = Polytempo_ScoreScheduler::getInstance();
@@ -103,12 +113,17 @@ void Polytempo_OSCListener::oscMessageReceived(const OSCMessage& message)
 
             syncTime += uint32(event->getTime() - scoreScheduler->getScoreTime());
         }
+#endif
 
         if (event->hasProperty(eventPropertyString_Defer))
             syncTime += uint32(float(event->getProperty(eventPropertyString_Defer)) * 1000.0f);
 
         event->setSyncTime(syncTime);
 
+#ifdef POLYTEMPO_NETWORK
         Polytempo_EventScheduler::getInstance()->scheduleEvent(event);
+#else
+        Polytempo_LibEventHandler::getInstance()->handleEvent(event);
+#endif
     }
 }

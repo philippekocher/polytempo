@@ -1,8 +1,11 @@
 #pragma once
 
 #include "JuceHeader.h"
-#ifdef POLYTEMPO_NETWORK
+
+#if defined(POLYTEMPO_NETWORK) || defined(POLYTEMPO_LIB)
 #include "Polytempo_InterprocessCommunication.h"
+#endif
+#ifdef POLYTEMPO_NETWORK
 #include "../Views/PolytempoNetwork/Polytempo_TimeSyncControl.h"
 #endif
 
@@ -22,12 +25,14 @@ public:
     bool getSyncTime(uint32* pTime);
     uint32 getMRT() const;
 
-#ifdef POLYTEMPO_NETWORK
-    void toggleMaster(bool master);
+#if defined(POLYTEMPO_NETWORK) || defined(POLYTEMPO_LIB)
+    bool toggleMaster(bool master);
     uint32 getDelaySafeTimestamp();
     bool isMaster() const;
     void setRemoteMasterPeer(String ip, Uuid id);
     void handleMessage(XmlElement message, Ipc* sender);
+#endif
+    #ifdef POLYTEMPO_NETWORK
     void registerUserInterface(Polytempo_TimeSyncControl* pControl);
 #endif
     enum MessageType
@@ -53,7 +58,7 @@ private:
     uint32 maxRoundTrip;
 
     int32 timeDiffHistory[TIME_DIFF_HISTORY_SIZE];
-#ifdef POLYTEMPO_NETWORK
+#if defined(POLYTEMPO_NETWORK) || defined(POLYTEMPO_LIB)
     uint32 roundTripTime[ROUND_TRIP_HISTORY_SIZE];
 #endif
     int timeDiffHistorySize;
