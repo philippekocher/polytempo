@@ -36,10 +36,57 @@ int Polytempo_LibMain::sendEvent(std::string command, std::string payload, std::
 {
     Polytempo_Event* e = Polytempo_Event::makeEvent(command);
     e->setType(command);
+
+    // parse payload
+    String payloadString(payload);
+    auto tokens = StringArray::fromTokens(payloadString, " ", "\"");
+
+    if(tokens.size() == 1)
+    {
+        e->setValue(tokens[0]);
+    }
+    else {
+        for (int i = 0; i < tokens.size() / 2; i++)
+        {
+            e->setProperty(tokens[i * 2], tokens[i * 2 + 1]);
+        }
+    }
+
     Polytempo_InterprocessCommunication::getInstance()->distributeEvent(e, destinationNamePattern);
     delete e;
 
-    return true;
+    return 0;
+}
+
+int Polytempo_LibMain::sendEvent(std::string fullEventString)
+{
+    String str(fullEventString);
+    String commandAndPayload;
+    String command, payload;
+    String addressPattern = "*";
+    if(str.matchesWildcard("/*/*", true))
+    {
+        addressPattern = str.upToLastOccurrenceOf("/", false, true).trimCharactersAtStart("/");
+        commandAndPayload = str.fromLastOccurrenceOf("/", false, true);
+    }
+    else
+    {
+        commandAndPayload = str.trimCharactersAtStart("/");
+    }
+
+    if(commandAndPayload.contains(" "))
+    {
+        command = commandAndPayload.upToFirstOccurrenceOf(" ", false, true);
+        payload = commandAndPayload.fromFirstOccurrenceOf(" ", false, true);
+    }
+    else
+    {
+        command = commandAndPayload;
+    }
+
+    sendEvent(command.toStdString(), payload.toStdString(), addressPattern.toStdString());
+
+    return 0;
 }
 
 Polytempo_LibMain::~Polytempo_LibMain()

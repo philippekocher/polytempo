@@ -52,6 +52,7 @@ void MainComponent::buttonClicked(Button* btn)
     }
     else if(btn == sendCommand.get())
     {
-        Polytempo_LibMain::current()->sendEvent(textCommand->getText().toStdString(), "");
+        Polytempo_LibMain::current()->sendEvent(textCommand->getText().toStdString());
+        //Polytempo_LibMain::current()->sendEvent(textCommand->getText().toStdString(), "");
     }
 }

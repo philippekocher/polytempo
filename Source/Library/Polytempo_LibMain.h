@@ -14,6 +14,7 @@ public:
     int initialize(int port, bool masterFlag);
     int toggleMaster(bool masterFlag);
     int sendEvent(std::string command, std::string payload, std::string destinationNamePattern = "*");
+    int sendEvent(std::string fullEventString);
 
     typedef ReferenceCountedObjectPtr<Polytempo_LibMain> Ptr;
     static Ptr current();
