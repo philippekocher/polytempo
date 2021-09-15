@@ -25,6 +25,10 @@
             resource="0" file="../../Source/Library/Polytempo_LibEventHandler.cpp"/>
       <FILE id="ShlxPG" name="Polytempo_LibEventHandler.h" compile="0" resource="0"
             file="../../Source/Library/Polytempo_LibEventHandler.h"/>
+      <FILE id="pPth1E" name="Polytempo_LibEventObserver.cpp" compile="1"
+            resource="0" file="../../Source/Scheduler/Polytempo_LibEventObserver.cpp"/>
+      <FILE id="Zr2xPG" name="Polytempo_LibEventObserver.h" compile="0" resource="0"
+            file="../../Source/Scheduler/Polytempo_LibEventObserver.h"/>
       <FILE id="E9d4CF" name="Polytempo_LibMain.cpp" compile="1" resource="0"
             file="../../Source/Library/Polytempo_LibMain.cpp"/>
       <FILE id="McLdK7" name="Polytempo_LibMain.h" compile="0" resource="0"

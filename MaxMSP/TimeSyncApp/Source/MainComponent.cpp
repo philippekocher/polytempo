@@ -22,6 +22,7 @@ MainComponent::MainComponent()
     setSize (600, 400);
 
     Polytempo_LibMain::current()->initialize(47522, false);
+    Polytempo_LibMain::current()->registerEventCallback(&eventCallback);
 }
 
 MainComponent::~MainComponent()
@@ -53,6 +54,10 @@ void MainComponent::buttonClicked(Button* btn)
     else if(btn == sendCommand.get())
     {
         Polytempo_LibMain::current()->sendEvent(textCommand->getText().toStdString());
-        //Polytempo_LibMain::current()->sendEvent(textCommand->getText().toStdString(), "");
     }
+}
+
+void MainComponent::eventCallback(std::string eventAsString)
+{
+    DBG(eventAsString);
 }

@@ -19,9 +19,7 @@ Polytempo_EventObserver::Polytempo_EventObserver()
 
 Polytempo_EventObserver::~Polytempo_EventObserver()
 {
-#ifdef POLYTEMPO_LIB
-    Polytempo_LibEventHandler::getInstance()->removeObserver(this); 
-#else
+#ifndef POLYTEMPO_LIB
     Polytempo_EventScheduler::getInstance()->removeObserver(this);
 #endif
 }

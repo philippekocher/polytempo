@@ -24,5 +24,8 @@ private:
     std::unique_ptr<TextEditor> textCommand;
     std::unique_ptr<TextButton> sendCommand;
     std::unique_ptr<TextEditor> textLog;
+
+    static void eventCallback(std::string eventAsString);
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };

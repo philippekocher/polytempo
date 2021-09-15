@@ -9,11 +9,9 @@
 
 Polytempo_LibMain::Ptr Polytempo_LibMain::current_;
 
-Polytempo_LibMain::Polytempo_LibMain()
+Polytempo_LibMain::Polytempo_LibMain() : isInit(false), eventCallback(nullptr)
 {
-    // initialize event handler
-    Polytempo_LibEventHandler::getInstance();
-    isInit = false;
+    eventObserver.reset(new Polytempo_LibEventObserver(this));
 }
 
 int Polytempo_LibMain::initialize(int port, bool masterFlag)
@@ -89,12 +87,18 @@ int Polytempo_LibMain::sendEvent(std::string fullEventString)
     return 0;
 }
 
+void Polytempo_LibMain::registerEventCallback(void(* event_callback)(std::string))
+{
+    eventCallback = event_callback;
+}
+
 Polytempo_LibMain::~Polytempo_LibMain()
 {
     Polytempo_NetworkSupervisor::deleteInstance();
     Polytempo_TimeProvider::deleteInstance();
     Polytempo_InterprocessCommunication::deleteInstance();
     Polytempo_LibEventHandler::deleteInstance();
+    eventObserver = nullptr;
 }
 
 Polytempo_LibMain::Ptr Polytempo_LibMain::current()
@@ -109,4 +113,12 @@ Polytempo_LibMain::Ptr Polytempo_LibMain::current()
 void Polytempo_LibMain::release()
 {
     current_ = nullptr;
+}
+
+void Polytempo_LibMain::actionListenerCallback(const String& message)
+{
+    if (eventCallback != nullptr)
+    {
+        eventCallback(message.toStdString());
+    }
 }
