@@ -9,7 +9,7 @@
 
 Polytempo_LibMain::Ptr Polytempo_LibMain::current_;
 
-Polytempo_LibMain::Polytempo_LibMain() : isInit(false), eventCallback(nullptr)
+Polytempo_LibMain::Polytempo_LibMain() : isInit(false), pEventCallback(nullptr)
 {
     eventObserver.reset(new Polytempo_LibEventObserver(this));
 }
@@ -87,9 +87,19 @@ int Polytempo_LibMain::sendEvent(std::string fullEventString)
     return 0;
 }
 
-void Polytempo_LibMain::registerEventCallback(void(* event_callback)(std::string))
+void Polytempo_LibMain::registerEventCallback(EventCallbackHandler* pHandler)
 {
-    eventCallback = event_callback;
+    pEventCallback = pHandler;
+}
+
+void Polytempo_LibMain::setClientName(std::string name)
+{
+    Polytempo_NetworkSupervisor::getInstance()->setScoreName(String(name));
+}
+
+int Polytempo_LibMain::getTime(uint32_t* pTime)
+{
+    return Polytempo_TimeProvider::getInstance()->getSyncTime(pTime) ? TIME_SYNC_OK : TIME_SYNC_NOK;
 }
 
 Polytempo_LibMain::~Polytempo_LibMain()
@@ -117,8 +127,8 @@ void Polytempo_LibMain::release()
 
 void Polytempo_LibMain::actionListenerCallback(const String& message)
 {
-    if (eventCallback != nullptr)
+    if (pEventCallback != nullptr)
     {
-        eventCallback(message.toStdString());
+        pEventCallback->processEvent(message.toStdString());
     }
 }

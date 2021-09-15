@@ -21,6 +21,10 @@ public:
     String getScoreName() const;
     String getPeerName() const;
 
+#ifdef POLYTEMPO_LIB
+    void setScoreName(String name);
+#endif
+
     void createSender(int port);
     void setComponent(Component* aComponent);
 

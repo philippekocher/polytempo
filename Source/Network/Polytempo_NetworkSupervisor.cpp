@@ -130,9 +130,16 @@ String Polytempo_NetworkSupervisor::getPeerName() const
 #ifdef POLYTEMPO_NETWORK
     return String(Polytempo_StoredPreferences::getInstance()->getProps().getValue("instanceName"));
 #else
-    return "External Client";
+    return "Ext. Client";
 #endif
 }
+
+#ifdef POLYTEMPO_LIB
+void Polytempo_NetworkSupervisor::setScoreName(String name)
+{
+    localName.reset(new String(name));
+}
+#endif
 
 void Polytempo_NetworkSupervisor::createSender(int port)
 {

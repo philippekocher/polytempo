@@ -3,13 +3,23 @@
 
 
 #include "../Network/Polytempo_OSCListener.h"
-#include "../Scheduler/Polytempo_EventObserver.h"
 #include "../Scheduler/Polytempo_LibEventObserver.h"
+
+#define TIME_SYNC_OK 0
+#define TIME_SYNC_NOK -1
 
 class Polytempo_LibMain : public ReferenceCountedObject, ActionListener
 {
 private:
     Polytempo_LibMain();
+
+public:
+    class EventCallbackHandler
+    {
+    public:
+        virtual ~EventCallbackHandler() {}
+        virtual void processEvent(std::string const& message) = 0;
+    };
 
 public:
     virtual ~Polytempo_LibMain();
@@ -18,15 +28,19 @@ public:
     int toggleMaster(bool masterFlag);
     int sendEvent(std::string command, std::string payload, std::string destinationNamePattern = "*");
     int sendEvent(std::string fullEventString);
-    void registerEventCallback(void(*event_callback)(std::string));
+    void registerEventCallback(EventCallbackHandler* pHandler);
+    void setClientName(std::string name);
+    int getTime(uint32_t* pTime);
 
     typedef ReferenceCountedObjectPtr<Polytempo_LibMain> Ptr;
     static Ptr current();
     static void release();
 
+    
 private:
     void actionListenerCallback(const String& message) override;
-    void (*eventCallback)(std::string);
+    EventCallbackHandler* pEventCallback;
+
     static Ptr current_;
     std::unique_ptr<Polytempo_OSCListener> oscListener;
     std::unique_ptr<Polytempo_LibEventObserver> eventObserver;

@@ -2,12 +2,14 @@
 
 #include <JuceHeader.h>
 
+#include "../../../Source/Library/Polytempo_LibMain.h"
+
 //==============================================================================
 /*
     This component lives inside our window, and this is where you should put all
     your controls and content.
 */
-class MainComponent  : public juce::Component, ToggleButton::Listener
+class MainComponent  : public juce::Component, ToggleButton::Listener, Polytempo_LibMain::EventCallbackHandler, Timer
 {
 public:
     //==============================================================================
@@ -19,13 +21,32 @@ public:
     void resized() override;
 
 private:
+    void timerCallback() override;
     void buttonClicked(Button*) override;
-    std::unique_ptr<ToggleButton> toggle;
+    void processEvent(std::string const& message) override;
+
+    std::unique_ptr<GroupComponent> groupIn;
+    std::unique_ptr<ToggleButton> toggleMaster;
+
+    std::unique_ptr<Label> labelClientName;
+    std::unique_ptr<TextEditor> textClientName;
+    std::unique_ptr<TextButton> btnSetClientName;
+
+    std::unique_ptr<Label> labelCommand;
     std::unique_ptr<TextEditor> textCommand;
-    std::unique_ptr<TextButton> sendCommand;
-    std::unique_ptr<TextEditor> textLog;
+    std::unique_ptr<TextButton> btnSendCommand;
 
-    static void eventCallback(std::string eventAsString);
+    std::unique_ptr<GroupComponent> groupOut;
+    std::unique_ptr<Label> labelNetworkStatus;
+    std::unique_ptr<TextEditor> textNetworkStatus;
 
+    std::unique_ptr<ToggleButton> toggleConnectedToMaster;
+
+    std::unique_ptr<Label> labelTime;
+    std::unique_ptr<TextEditor> textTime;
+
+    std::unique_ptr<Label> labelReceivedCommands;
+    std::unique_ptr<TextEditor> textReceivedCommmands;
+    
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };
