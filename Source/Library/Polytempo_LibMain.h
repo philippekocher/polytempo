@@ -4,6 +4,7 @@
 
 #include "../Network/Polytempo_OSCListener.h"
 #include "../Scheduler/Polytempo_LibEventObserver.h"
+#include "Polytempo_LibCallbackHandler.h"
 
 #define TIME_SYNC_OK 0
 #define TIME_SYNC_NOK -1
@@ -12,14 +13,6 @@ class Polytempo_LibMain : public ReferenceCountedObject, ActionListener
 {
 private:
     Polytempo_LibMain();
-
-public:
-    class EventCallbackHandler
-    {
-    public:
-        virtual ~EventCallbackHandler() {}
-        virtual void processEvent(std::string const& message) = 0;
-    };
 
 public:
     virtual ~Polytempo_LibMain();

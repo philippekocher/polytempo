@@ -12,7 +12,9 @@
 Polytempo_NetworkSupervisor::Polytempo_NetworkSupervisor()
 {
     oscSender = nullptr;
+#ifndef POLYTEMPO_LIB
     component = nullptr;
+#endif
 
     nodeName.reset(new String(SystemStats::getFullUserName()));
 
@@ -57,7 +59,9 @@ void Polytempo_NetworkSupervisor::timerCallback()
         oscSender->sendToIPAddress(localIpAddress.getBroadcastAddress().toString(), currentPort, *msg);
     }
 
+#ifndef POLYTEMPO_LIB
     if (component) component->repaint();
+#endif
 }
 
 Uuid Polytempo_NetworkSupervisor::getUniqueId()
@@ -148,10 +152,12 @@ void Polytempo_NetworkSupervisor::createSender(int port)
     oscSender->connect("255.255.255.255", currentPort);
 }
 
+#ifndef POLYTEMPO_LIB
 void Polytempo_NetworkSupervisor::setComponent(Component* aComponent)
 {
     component = aComponent;
 }
+#endif
 
 void Polytempo_NetworkSupervisor::eventNotification(Polytempo_Event* event)
 {

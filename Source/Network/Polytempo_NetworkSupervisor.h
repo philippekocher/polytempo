@@ -26,7 +26,10 @@ public:
 #endif
 
     void createSender(int port);
+
+#ifndef POLYTEMPO_LIB
     void setComponent(Component* aComponent);
+#endif
 
     void eventNotification(Polytempo_Event* event) override;
     Uuid getUniqueId();
@@ -37,7 +40,10 @@ private:
 
     Uuid uniqueId = nullptr;
     std::unique_ptr<OSCSender> oscSender;
+
+#ifndef POLYTEMPO_LIB
     Component* component;
+#endif
 
     std::unique_ptr<String> localName;
     std::unique_ptr<String> nodeName;
