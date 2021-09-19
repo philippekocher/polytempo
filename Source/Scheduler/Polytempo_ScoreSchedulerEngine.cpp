@@ -1,11 +1,13 @@
 #include "Polytempo_ScoreSchedulerEngine.h"
 #include "Polytempo_Event.h"
-#include "../Data/Polytempo_Composition.h"
 #include "Polytempo_EventScheduler.h"
 #include "../Network/Polytempo_TimeProvider.h"
+#ifdef POLYTEMPO_NETWORK
 #include "../Application/PolytempoNetwork/Polytempo_NetworkApplication.h"
+#endif
+#ifdef POLYTEMPO_COMPOSER
 #include "../Application/PolytempoComposer/Polytempo_ComposerApplication.h"
-
+#endif
 
 #ifdef POLYTEMPO_COMPOSER
 void Polytempo_ComposerEngine::setScoreTime(int time)
@@ -179,5 +181,56 @@ void Polytempo_NetworkEngine::run()
 
     Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
     if (app->quitApplication) app->applicationShouldQuit();
+}
+#endif
+
+#ifdef POLYTEMPO_LIB
+void Polytempo_NetworkEngine::setScoreTime(int time)
+{
+    scoreTime = time;
+
+    Polytempo_EventScheduler* scheduler = Polytempo_EventScheduler::getInstance();
+    std::unique_ptr<Polytempo_Event> clearAllEvent = std::unique_ptr<Polytempo_Event>(Polytempo_Event::makeEvent(eventType_ClearAll));
+    scheduler->executeEvent(clearAllEvent.get());
+
+    lastDownbeat = time;
+}
+
+void Polytempo_NetworkEngine::run()
+{
+    int interval = 200;
+    
+    Polytempo_Event* schedulerTick = Polytempo_Event::makeEvent(eventType_Tick);
+
+    schedulerTick->setOwned(true);
+
+    scoreTimeIncrement(); // reset timer
+    killed = false;
+    shouldStop = false;
+    pausing = false;
+
+    while (!threadShouldExit() && !shouldStop)
+    {
+        scoreTime += int(double(scoreTimeIncrement()) * tempoFactor);
+
+        schedulerTick->setValue(scoreTime * 0.001f);
+        Polytempo_EventScheduler::getInstance()->scheduleScoreEvent(schedulerTick);
+
+        wait(interval);
+    }
+
+    delete schedulerTick;
+
+    /*
+       return to beginning of the current bar (last downbeat)
+       this must be called here to make sure that the engine thread really
+       has finished.
+    */
+    if (!killed) scoreScheduler->gotoTime(lastDownbeat);
+
+#ifdef POLYTEMPO_NETWORK
+    Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
+    if (app->quitApplication) app->applicationShouldQuit();
+#endif
 }
 #endif

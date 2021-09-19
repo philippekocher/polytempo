@@ -1,8 +1,9 @@
 #include "Polytempo_OSCListener.h"
 #include "Polytempo_NetworkSupervisor.h"
 #include "../Scheduler/Polytempo_EventScheduler.h"
-#ifdef POLYTEMPO_NETWORK
 #include "../Scheduler/Polytempo_ScoreScheduler.h"
+
+#ifdef POLYTEMPO_NETWORK
 #include "../Misc/Polytempo_Alerts.h"
 #include "../Application/PolytempoNetwork/Polytempo_NetworkApplication.h"
 #endif
@@ -100,7 +101,6 @@ void Polytempo_OSCListener::oscMessageReceived(const OSCMessage& message)
             Polytempo_TimeProvider::getInstance()->getSyncTime(&syncTime);
         }
 
-#ifdef POLYTEMPO_NETWORK
         if (event->hasProperty(eventPropertyString_Time))
         {
             Polytempo_ScoreScheduler* scoreScheduler = Polytempo_ScoreScheduler::getInstance();
@@ -110,7 +110,6 @@ void Polytempo_OSCListener::oscMessageReceived(const OSCMessage& message)
 
             syncTime += uint32(event->getTime() - scoreScheduler->getScoreTime());
         }
-#endif
 
         if (event->hasProperty(eventPropertyString_Defer))
             syncTime += uint32(float(event->getProperty(eventPropertyString_Defer)) * 1000.0f);

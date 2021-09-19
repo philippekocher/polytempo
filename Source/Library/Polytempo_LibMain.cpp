@@ -3,11 +3,13 @@
 #include "../Network/Polytempo_NetworkSupervisor.h"
 #include "../Network/Polytempo_OSCListener.h"
 #include "../Network/Polytempo_TimeProvider.h"
+#include "../Scheduler/Polytempo_EventDispatcher.h"
 #include "../Scheduler/Polytempo_EventScheduler.h"
+#include "../Scheduler/Polytempo_ScoreSchedulerEngine.h"
 
 Polytempo_LibMain::Ptr Polytempo_LibMain::current_;
 
-Polytempo_LibMain::Polytempo_LibMain() : isInit(false), pEventCallback(nullptr)
+Polytempo_LibMain::Polytempo_LibMain() : isInit(false), pEventCallback(nullptr), pTickCallback(nullptr)
 {
 
 }
@@ -16,13 +18,16 @@ Polytempo_LibMain::Polytempo_LibMain() : isInit(false), pEventCallback(nullptr)
 Polytempo_LibMain::~Polytempo_LibMain()
 {
     Polytempo_NetworkSupervisor::deleteInstance();
+    Polytempo_ScoreScheduler::deleteInstance();
     Polytempo_EventScheduler::deleteInstance();
     Polytempo_TimeProvider::deleteInstance();
+    Polytempo_EventDispatcher::deleteInstance();
     Polytempo_InterprocessCommunication::deleteInstance();
 }
 
 int Polytempo_LibMain::initialize(int port, bool masterFlag)
 {
+    Polytempo_ScoreScheduler::getInstance()->setEngine(new Polytempo_NetworkEngine());
     Polytempo_EventScheduler::getInstance()->startThread(5); // priority between 0 and 10
 
     oscListener.reset(new Polytempo_OSCListener(port));
@@ -101,6 +106,11 @@ void Polytempo_LibMain::registerEventCallback(EventCallbackHandler* pHandler)
     pEventCallback = pHandler;
 }
 
+void Polytempo_LibMain::registerTickCallback(TickCallbackHandler* pHandler)
+{
+    pTickCallback = pHandler;
+}
+
 void Polytempo_LibMain::setClientName(std::string name)
 {
     Polytempo_NetworkSupervisor::getInstance()->setScoreName(String(name));
@@ -127,9 +137,19 @@ void Polytempo_LibMain::release()
 
 void Polytempo_LibMain::eventNotification(Polytempo_Event* event)
 {
-    if (pEventCallback != nullptr)
+    if (event->getType() == eventType_Tick)
     {
-        // TODO serialize event
-        pEventCallback->processEvent(event->getTypeString().toStdString());
+        if (pTickCallback != nullptr)
+        {
+            pTickCallback->processTick(event->getValue());
+        }
+    }
+    else
+    {
+        if (pEventCallback != nullptr)
+        {
+            // TODO serialize event
+            pEventCallback->processEvent(event->getTypeString().toStdString());
+        }
     }
 }

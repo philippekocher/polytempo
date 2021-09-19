@@ -1,7 +1,9 @@
 #pragma once
 
-#include "../Data/Polytempo_Score.h"
 #include "Polytempo_ScoreSchedulerEngine.h"
+#ifdef USING_SCORE
+#include "../Data/Polytempo_Score.h"
+#endif
 #include "../Scheduler/Polytempo_EventObserver.h"
 
 class Polytempo_ScoreSchedulerEngine;
@@ -40,7 +42,9 @@ public:
 
     /* accessors
      --------------------------------------- */
+#ifdef USING_SCORE
     void setScore(Polytempo_Score* score_);
+#endif
     int getScoreTime();
 
 private:
@@ -49,7 +53,8 @@ private:
 
     int storedLocator = 0; // milliseconds
 
+#ifdef USING_SCORE
     Polytempo_Score* score = nullptr;
-    
     AlertWindow* loadStatusWindow = nullptr;
+#endif
 };

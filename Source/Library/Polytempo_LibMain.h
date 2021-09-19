@@ -22,6 +22,7 @@ public:
     int sendEvent(std::string command, std::string payload, std::string destinationNamePattern = "*");
     int sendEvent(std::string fullEventString);
     void registerEventCallback(EventCallbackHandler* pHandler);
+    void registerTickCallback(TickCallbackHandler* pHandler);
     void setClientName(std::string name);
     int getTime(uint32_t* pTime);
 
@@ -34,6 +35,7 @@ private:
     void eventNotification(Polytempo_Event* event) override;
 private:
     EventCallbackHandler* pEventCallback;
+    TickCallbackHandler* pTickCallback;
 
     static Ptr current_;
     std::unique_ptr<Polytempo_OSCListener> oscListener;

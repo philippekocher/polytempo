@@ -1,6 +1,14 @@
 #pragma once
+#include "JuceHeader.h"
 
+#if defined(POLYTEMPO_NETWORK) || defined(POLYTEMPO_COMPOSER)
+#define USING_SCORE
+#endif
+
+#ifdef USING_SCORE
 #include "../Data/Polytempo_Score.h"
+#endif
+
 #include "Polytempo_ScoreScheduler.h"
 
 class Polytempo_ScoreScheduler;
@@ -8,7 +16,10 @@ class Polytempo_ScoreScheduler;
 class Polytempo_ScoreSchedulerEngine : public Thread
 {
 public:
-    Polytempo_ScoreSchedulerEngine() : Thread("Polytempo_ScoreScheduler_Thread"), score(nullptr),
+    Polytempo_ScoreSchedulerEngine() : Thread("Polytempo_ScoreScheduler_Thread"),
+#ifdef USING_SCORE
+                                       score(nullptr),
+#endif
                                        scoreScheduler(nullptr), scoreTime(0),
                                        killed(false),
                                        shouldStop(true),
@@ -29,10 +40,12 @@ public:
         scoreScheduler = theScheduler;
     }
 
+#ifdef USING_SCORE
     void setScore(Polytempo_Score* theScore)
     {
         score = theScore;
     }
+#endif
 
     void stop()
     {
@@ -75,7 +88,10 @@ protected:
         return increment;
     }
 
+#ifdef USING_SCORE
     Polytempo_Score* score;
+#endif
+
     Polytempo_ScoreScheduler* scoreScheduler;
     int scoreTime; // the current time in the score
     double tempoFactor = 1;

@@ -9,6 +9,10 @@
             file="../../Source/Scheduler/Polytempo_Event.cpp"/>
       <FILE id="N8Ic2v" name="Polytempo_Event.h" compile="0" resource="0"
             file="../../Source/Scheduler/Polytempo_Event.h"/>
+      <FILE id="wvPynA" name="Polytempo_EventDispatcher.cpp" compile="1"
+            resource="0" file="../../Source/Scheduler/Polytempo_EventDispatcher.cpp"/>
+      <FILE id="ihAEgo" name="Polytempo_EventDispatcher.h" compile="0" resource="0"
+            file="../../Source/Scheduler/Polytempo_EventDispatcher.h"/>
       <FILE id="m77c6B" name="Polytempo_EventObserver.cpp" compile="1" resource="0"
             file="../../Source/Scheduler/Polytempo_EventObserver.cpp"/>
       <FILE id="vdKnMT" name="Polytempo_EventObserver.h" compile="0" resource="0"
@@ -47,6 +51,14 @@
             file="../../Source/Network/Polytempo_OSCListener.h"/>
       <FILE id="QERLbX" name="Polytempo_PeerInfo.h" compile="0" resource="0"
             file="../../Source/Network/Polytempo_PeerInfo.h"/>
+      <FILE id="RusVaq" name="Polytempo_ScoreScheduler.cpp" compile="1" resource="0"
+            file="../../Source/Scheduler/Polytempo_ScoreScheduler.cpp"/>
+      <FILE id="VKAwbd" name="Polytempo_ScoreScheduler.h" compile="0" resource="0"
+            file="../../Source/Scheduler/Polytempo_ScoreScheduler.h"/>
+      <FILE id="G4PyLx" name="Polytempo_ScoreSchedulerEngine.cpp" compile="1"
+            resource="0" file="../../Source/Scheduler/Polytempo_ScoreSchedulerEngine.cpp"/>
+      <FILE id="xpluBD" name="Polytempo_ScoreSchedulerEngine.h" compile="0"
+            resource="0" file="../../Source/Scheduler/Polytempo_ScoreSchedulerEngine.h"/>
       <FILE id="fpxO6n" name="Polytempo_TimeProvider.cpp" compile="1" resource="0"
             file="../../Source/Network/Polytempo_TimeProvider.cpp"/>
       <FILE id="WvPwBE" name="Polytempo_TimeProvider.h" compile="0" resource="0"

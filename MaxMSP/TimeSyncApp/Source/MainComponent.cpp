@@ -66,6 +66,13 @@ MainComponent::MainComponent()
     textTime->setReadOnly(true);
     addAndMakeVisible(textTime.get());
 
+    labelScoreTime.reset(new Label("ScoreTime", "Score Time"));
+    addAndMakeVisible(labelScoreTime.get());
+
+    textScoreTime.reset(new TextEditor());
+    textScoreTime->setReadOnly(true);
+    addAndMakeVisible(textScoreTime.get());
+
     labelReceivedCommands.reset(new Label("ReceivedCommands", "Received Commands"));
     addAndMakeVisible(labelReceivedCommands.get());
 
@@ -79,6 +86,7 @@ MainComponent::MainComponent()
     POLYTEMPOCALL(initialize(47522, false));
     POLYTEMPOCALL(setClientName(applicationName));
     POLYTEMPOCALL(registerEventCallback(this));
+    POLYTEMPOCALL(registerTickCallback(this));
 
     startTimerHz(5);
 }
@@ -122,8 +130,11 @@ void MainComponent::resized()
     labelTime->setBounds(groupOut->getX() + border, groupOut->getY() + 3 * border + 2 * rowHeight, labelWidth, rowHeight);
     textTime->setBounds(groupOut->getX() + labelWidth + 2 * border, groupOut->getY() + 3 * border + 2 * rowHeight, groupOut->getWidth() - labelWidth - 3 * border, rowHeight);
 
-    labelReceivedCommands->setBounds(groupOut->getX() + border, groupOut->getY() + 4 * border + 3 * rowHeight, groupOut->getWidth() - 2 * border, rowHeight);
-    textReceivedCommmands->setBounds(groupOut->getX() + border, groupOut->getY() + 5 * border + 4 * rowHeight, groupOut->getWidth() - 2 * border, groupOut->getHeight() - 6 * border - 4 * rowHeight);
+    labelScoreTime->setBounds(groupOut->getX() + border, groupOut->getY() + 4 * border + 3 * rowHeight, labelWidth, rowHeight);
+    textScoreTime->setBounds(groupOut->getX() + labelWidth + 2 * border, groupOut->getY() + 4 * border + 3 * rowHeight, groupOut->getWidth() - labelWidth - 3 * border, rowHeight);
+
+    labelReceivedCommands->setBounds(groupOut->getX() + border, groupOut->getY() + 5 * border + 4 * rowHeight, groupOut->getWidth() - 2 * border, rowHeight);
+    textReceivedCommmands->setBounds(groupOut->getX() + border, groupOut->getY() + 5 * border + 5 * rowHeight, groupOut->getWidth() - 2 * border, groupOut->getHeight() - 6 * border - 5 * rowHeight);
 }
 
 void MainComponent::timerCallback()
@@ -159,4 +170,9 @@ void MainComponent::processEvent(std::string const& message)
 
     textReceivedCommmands->moveCaretToEnd();
     textReceivedCommmands->insertTextAtCaret(timeString + "\t " + message + NewLine::getDefault());
+}
+
+void MainComponent::processTick(double tick)
+{
+    textScoreTime->setText(String(tick, 3));
 }

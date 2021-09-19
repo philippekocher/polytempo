@@ -1,9 +1,9 @@
 #include "Polytempo_InterprocessCommunication.h"
 #include "Polytempo_TimeProvider.h"
 #include "../Scheduler/Polytempo_EventScheduler.h"
+#include "../Scheduler/Polytempo_ScoreScheduler.h"
 
 #ifdef POLYTEMPO_NETWORK
-#include "../Scheduler/Polytempo_ScoreScheduler.h"
 #include "../Misc/Polytempo_Alerts.h"
 #include "../Application/PolytempoNetwork/Polytempo_NetworkApplication.h"
 #endif
@@ -92,7 +92,6 @@ void Ipc::messageReceived(const MemoryBlock& message)
                 Polytempo_TimeProvider::getInstance()->getSyncTime(&syncTime);
             }
 
-#ifdef POLYTEMPO_NETWORK
             if (e->hasProperty(eventPropertyString_Time))
             {
                 Polytempo_ScoreScheduler* scoreScheduler = Polytempo_ScoreScheduler::getInstance();
@@ -102,7 +101,6 @@ void Ipc::messageReceived(const MemoryBlock& message)
 
                 syncTime += uint32(e->getTime() - scoreScheduler->getScoreTime());
             }
-#endif
 
             if (e->hasProperty(eventPropertyString_Defer))
                 syncTime += uint32(float(e->getProperty(eventPropertyString_Defer)) * 1000.0f);
