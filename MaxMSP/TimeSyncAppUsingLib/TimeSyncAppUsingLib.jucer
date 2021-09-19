@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="zAoeAP" name="TimeSyncAppUsingLib" projectType="guiapp" useAppConfig="0"
-              addUsingNamespaceToJuceHeader="1" displaySplashScreen="1" jucerFormatVersion="1">
+              addUsingNamespaceToJuceHeader="1" displaySplashScreen="1" jucerFormatVersion="1"
+              defines="STATIC_LIBRARY_MODE=1">
   <MAINGROUP id="IDTBcy" name="TimeSyncAppUsingLib">
     <GROUP id="{5F36E60D-462A-21B1-5C89-1A2891F98BE7}" name="Source">
+      <FILE id="zzf3UJ" name="Main.cpp" compile="1" resource="0" file="../TimeSyncApp/Source/Main.cpp"/>
+      <FILE id="NXgtbK" name="MainComponent.cpp" compile="1" resource="0"
+            file="../TimeSyncApp/Source/MainComponent.cpp"/>
+      <FILE id="WqhrOZ" name="MainComponent.h" compile="0" resource="0" file="../TimeSyncApp/Source/MainComponent.h"/>
       <FILE id="CHhXeG" name="Polytempo_LibApi.h" compile="0" resource="0"
             file="../../Source/Library/Polytempo_LibApi.h"/>
-      <FILE id="VEPRAs" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
-      <FILE id="sP5hHq" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
-      <FILE id="wWQ9qR" name="MainComponent.cpp" compile="1" resource="0"
-            file="Source/MainComponent.cpp"/>
     </GROUP>
   </MAINGROUP>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1"/>

@@ -1,6 +1,14 @@
 #include "MainComponent.h"
 
+#ifdef STATIC_LIBRARY_MODE
+#include "../../../Source/Library/Polytempo_LibApi.h"
+#define POLYTEMPOCALL(x) polytempo_##x
+#define POLYTEMPO_RELEASE polytempo_release()
+#else
 #include "../../../Source/Library/Polytempo_LibMain.h"
+#define POLYTEMPOCALL(x) Polytempo_LibMain::current()->x
+#define POLYTEMPO_RELEASE Polytempo_LibMain::release()
+#endif
 
 //==============================================================================
 MainComponent::MainComponent()
@@ -65,15 +73,16 @@ MainComponent::MainComponent()
 
     setSize (600, 400);
 
-    Polytempo_LibMain::current()->initialize(47522, false);
-    Polytempo_LibMain::current()->registerEventCallback(this);
+    POLYTEMPOCALL(initialize(47522, false));
+    POLYTEMPOCALL(setClientName(JUCEApplication::getInstance()->getApplicationName().toStdString()));
+    POLYTEMPOCALL(registerEventCallback(this));
 
     startTimerHz(5);
 }
 
 MainComponent::~MainComponent()
 {
-    Polytempo_LibMain::release();
+    POLYTEMPO_RELEASE;
 }
 
 //==============================================================================
@@ -117,7 +126,7 @@ void MainComponent::resized()
 void MainComponent::timerCallback()
 {
     uint32_t t;
-    bool ok = Polytempo_LibMain::current()->getTime(&t) == TIME_SYNC_OK;
+    bool ok = POLYTEMPOCALL(getTime(&t) == TIME_SYNC_OK);
     textTime->setText(ok ? String(t * 0.001, 3) : "-");
     textTime->setColour(TextEditor::backgroundColourId, ok ? Colours::darkgreen : Colours::darkred);
 }
@@ -126,15 +135,15 @@ void MainComponent::buttonClicked(Button* btn)
 {
     if (btn == toggleMaster.get())
     {
-        Polytempo_LibMain::current()->toggleMaster(toggleMaster->getToggleState());
+        POLYTEMPOCALL(toggleMaster(toggleMaster->getToggleState()));
     }
     else if(btn == btnSetClientName.get())
     {
-        Polytempo_LibMain::current()->setClientName(textClientName->getText().toStdString());
+        POLYTEMPOCALL(setClientName(textClientName->getText().toStdString()));
     }
     else if(btn == btnSendCommand.get())
     {
-        Polytempo_LibMain::current()->sendEvent(textCommand->getText().toStdString());
+        POLYTEMPOCALL(sendEvent(textCommand->getText().toStdString()));
     }
 }
 
@@ -143,7 +152,7 @@ void MainComponent::processEvent(std::string const& message)
     const MessageManagerLock mmLock;
 
     uint32_t t;
-    const String timeString = (Polytempo_LibMain::current()->getTime(&t) == TIME_SYNC_OK) ? String(t * 0.001, 3) : "-";
+    const String timeString = (POLYTEMPOCALL(getTime(&t)) == TIME_SYNC_OK) ? String(t * 0.001, 3) : "-";
 
     textReceivedCommmands->moveCaretToEnd();
     textReceivedCommmands->insertTextAtCaret(timeString + "\t " + message + NewLine::getDefault());
