@@ -9,7 +9,7 @@
 #define TIME_SYNC_OK 0
 #define TIME_SYNC_NOK -1
 
-class Polytempo_LibMain : public ReferenceCountedObject, ActionListener, Polytempo_EventObserver
+class Polytempo_LibMain : public ReferenceCountedObject, Polytempo_EventObserver
 {
 private:
     Polytempo_LibMain();
@@ -31,7 +31,6 @@ public:
 
     
 private:
-    void actionListenerCallback(const String& message) override;
     void eventNotification(Polytempo_Event* event) override;
 private:
     EventCallbackHandler* pEventCallback;

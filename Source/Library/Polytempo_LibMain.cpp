@@ -125,11 +125,6 @@ void Polytempo_LibMain::release()
     current_ = nullptr;
 }
 
-void Polytempo_LibMain::actionListenerCallback(const String& message)
-{
-    
-}
-
 void Polytempo_LibMain::eventNotification(Polytempo_Event* event)
 {
     if (pEventCallback != nullptr)
