@@ -1,21 +1,30 @@
 #include "Polytempo_LibMain.h"
 
-
-
-#include "Polytempo_LibEventHandler.h"
 #include "../Network/Polytempo_NetworkSupervisor.h"
 #include "../Network/Polytempo_OSCListener.h"
 #include "../Network/Polytempo_TimeProvider.h"
+#include "../Scheduler/Polytempo_EventScheduler.h"
 
 Polytempo_LibMain::Ptr Polytempo_LibMain::current_;
 
 Polytempo_LibMain::Polytempo_LibMain() : isInit(false), pEventCallback(nullptr)
 {
-    eventObserver.reset(new Polytempo_LibEventObserver(this));
+
+}
+
+
+Polytempo_LibMain::~Polytempo_LibMain()
+{
+    Polytempo_NetworkSupervisor::deleteInstance();
+    Polytempo_EventScheduler::deleteInstance();
+    Polytempo_TimeProvider::deleteInstance();
+    Polytempo_InterprocessCommunication::deleteInstance();
 }
 
 int Polytempo_LibMain::initialize(int port, bool masterFlag)
 {
+    Polytempo_EventScheduler::getInstance()->startThread(5); // priority between 0 and 10
+
     oscListener.reset(new Polytempo_OSCListener(port));
     Polytempo_NetworkSupervisor::getInstance()->createSender(port);
     bool ok = Polytempo_TimeProvider::getInstance()->toggleMaster(masterFlag);
@@ -102,15 +111,6 @@ int Polytempo_LibMain::getTime(uint32_t* pTime)
     return Polytempo_TimeProvider::getInstance()->getSyncTime(pTime) ? TIME_SYNC_OK : TIME_SYNC_NOK;
 }
 
-Polytempo_LibMain::~Polytempo_LibMain()
-{
-    Polytempo_NetworkSupervisor::deleteInstance();
-    Polytempo_TimeProvider::deleteInstance();
-    Polytempo_InterprocessCommunication::deleteInstance();
-    Polytempo_LibEventHandler::deleteInstance();
-    eventObserver = nullptr;
-}
-
 Polytempo_LibMain::Ptr Polytempo_LibMain::current()
 {
     if (!current_)
@@ -127,8 +127,14 @@ void Polytempo_LibMain::release()
 
 void Polytempo_LibMain::actionListenerCallback(const String& message)
 {
+    
+}
+
+void Polytempo_LibMain::eventNotification(Polytempo_Event* event)
+{
     if (pEventCallback != nullptr)
     {
-        pEventCallback->processEvent(message.toStdString());
+        // TODO serialize event
+        pEventCallback->processEvent(event->getTypeString().toStdString());
     }
 }

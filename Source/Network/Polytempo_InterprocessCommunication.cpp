@@ -1,15 +1,11 @@
 #include "Polytempo_InterprocessCommunication.h"
 #include "Polytempo_TimeProvider.h"
+#include "../Scheduler/Polytempo_EventScheduler.h"
 
 #ifdef POLYTEMPO_NETWORK
 #include "../Scheduler/Polytempo_ScoreScheduler.h"
-#include "../Scheduler/Polytempo_EventScheduler.h"
 #include "../Misc/Polytempo_Alerts.h"
 #include "../Application/PolytempoNetwork/Polytempo_NetworkApplication.h"
-#endif
-
-#ifdef POLYTEMPO_LIB
-#include "../Library/Polytempo_LibEventHandler.h"
 #endif
 
 #include "Polytempo_NetworkSupervisor.h"
@@ -113,11 +109,7 @@ void Ipc::messageReceived(const MemoryBlock& message)
 
             e->setSyncTime(syncTime);
 
-#ifdef POLYTEMPO_NETWORK
             Polytempo_EventScheduler::getInstance()->scheduleEvent(e);
-#else
-            Polytempo_LibEventHandler::getInstance()->handleEvent(e);
-#endif
         }
     }
     else
@@ -319,7 +311,7 @@ void Polytempo_InterprocessCommunication::distributeEvent(Polytempo_Event* pEven
 
     XmlElement eventAsXml = pEvent->getXml();
 
-    #ifdef POLYTEMPO_NETWORK
+#if defined(POLYTEMPO_NETWORK) || defined(POLYTEMPO_LIB)
     if (localScoreName.matchesWildcard(namePattern, true) || localInstanceName.matchesWildcard(namePattern, true))
     {
         if (pEvent->hasProperty(eventPropertyString_Defer))

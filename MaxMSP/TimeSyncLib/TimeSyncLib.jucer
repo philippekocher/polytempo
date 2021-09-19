@@ -13,6 +13,10 @@
             file="../../Source/Scheduler/Polytempo_EventObserver.cpp"/>
       <FILE id="DfK6J4" name="Polytempo_EventObserver.h" compile="0" resource="0"
             file="../../Source/Scheduler/Polytempo_EventObserver.h"/>
+      <FILE id="b4CzBk" name="Polytempo_EventScheduler.cpp" compile="1" resource="0"
+            file="../../Source/Scheduler/Polytempo_EventScheduler.cpp"/>
+      <FILE id="iLp9fg" name="Polytempo_EventScheduler.h" compile="0" resource="0"
+            file="../../Source/Scheduler/Polytempo_EventScheduler.h"/>
       <FILE id="JULiWO" name="Polytempo_InterprocessCommunication.cpp" compile="1"
             resource="0" file="../../Source/Network/Polytempo_InterprocessCommunication.cpp"/>
       <FILE id="dO2ywp" name="Polytempo_InterprocessCommunication.h" compile="0"
@@ -21,10 +25,6 @@
             file="../../Source/Network/Polytempo_IPAddress.cpp"/>
       <FILE id="LZRRUG" name="Polytempo_IPAddress.h" compile="0" resource="0"
             file="../../Source/Network/Polytempo_IPAddress.h"/>
-      <FILE id="IVoyXe" name="Polytempo_LibEventHandler.cpp" compile="1"
-            resource="0" file="../../Source/Library/Polytempo_LibEventHandler.cpp"/>
-      <FILE id="yRzSjC" name="Polytempo_LibEventHandler.h" compile="0" resource="0"
-            file="../../Source/Library/Polytempo_LibEventHandler.h"/>
       <FILE id="T6rSO3" name="Polytempo_LibEventObserver.cpp" compile="1"
             resource="0" file="../../Source/Scheduler/Polytempo_LibEventObserver.cpp"/>
       <FILE id="QNwyG0" name="Polytempo_LibEventObserver.h" compile="0" resource="0"

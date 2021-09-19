@@ -13,6 +13,8 @@
 //==============================================================================
 MainComponent::MainComponent()
 {
+    auto applicationName = JUCEApplication::getInstance()->getApplicationName().toStdString();
+
     // In
     groupIn.reset(new GroupComponent("In", "In"));
     addAndMakeVisible(groupIn.get());
@@ -25,6 +27,7 @@ MainComponent::MainComponent()
     addAndMakeVisible(labelClientName.get());
 
     textClientName.reset(new TextEditor());
+    textClientName->setText(applicationName);
     addAndMakeVisible(textClientName.get());
 
     btnSetClientName.reset(new TextButton("Set"));
@@ -74,7 +77,7 @@ MainComponent::MainComponent()
     setSize (600, 400);
 
     POLYTEMPOCALL(initialize(47522, false));
-    POLYTEMPOCALL(setClientName(JUCEApplication::getInstance()->getApplicationName().toStdString()));
+    POLYTEMPOCALL(setClientName(applicationName));
     POLYTEMPOCALL(registerEventCallback(this));
 
     startTimerHz(5);

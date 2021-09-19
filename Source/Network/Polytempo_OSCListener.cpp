@@ -1,13 +1,10 @@
 #include "Polytempo_OSCListener.h"
 #include "Polytempo_NetworkSupervisor.h"
+#include "../Scheduler/Polytempo_EventScheduler.h"
 #ifdef POLYTEMPO_NETWORK
 #include "../Scheduler/Polytempo_ScoreScheduler.h"
-#include "../Scheduler/Polytempo_EventScheduler.h"
 #include "../Misc/Polytempo_Alerts.h"
 #include "../Application/PolytempoNetwork/Polytempo_NetworkApplication.h"
-#endif
-#ifdef POLYTEMPO_LIB
-#include "../Library/Polytempo_LibEventHandler.h"
 #endif
 
 #include "Polytempo_TimeProvider.h"
@@ -72,7 +69,7 @@ void Polytempo_OSCListener::oscMessageReceived(const OSCMessage& message)
         Polytempo_TimeProvider::getInstance()->setRemoteMasterPeer(argIp, senderId);
     }
 
-#ifdef POLYTEMPO_NETWORK
+#if defined(POLYTEMPO_NETWORK) || defined(POLYTEMPO_LIB)
     else if (addressPattern.matchesWildcard("/*/*", true) && Polytempo_TimeProvider::getInstance()->isMaster())
     {
         // parse pattern
@@ -120,10 +117,6 @@ void Polytempo_OSCListener::oscMessageReceived(const OSCMessage& message)
 
         event->setSyncTime(syncTime);
 
-#ifdef POLYTEMPO_NETWORK
         Polytempo_EventScheduler::getInstance()->scheduleEvent(event);
-#else
-        Polytempo_LibEventHandler::getInstance()->handleEvent(event);
-#endif
     }
 }
