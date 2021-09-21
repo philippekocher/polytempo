@@ -48,9 +48,9 @@ MainComponent::MainComponent()
     groupOut.reset(new GroupComponent("Out", "Out"));
     addAndMakeVisible(groupOut.get());
 
-    toggleConnectedToMaster.reset(new ToggleButton("Connected to Master"));
-    toggleConnectedToMaster->setEnabled(false);
-    addAndMakeVisible(toggleConnectedToMaster.get());
+    toggleConnected.reset(new ToggleButton("Connected"));
+    toggleConnected->setEnabled(false);
+    addAndMakeVisible(toggleConnected.get());
 
     labelNetworkStatus.reset(new Label("Network Status", "Network Status"));
     addAndMakeVisible(labelNetworkStatus.get());
@@ -87,12 +87,15 @@ MainComponent::MainComponent()
     POLYTEMPOCALL(setClientName(applicationName));
     POLYTEMPOCALL(registerEventCallback(this));
     POLYTEMPOCALL(registerTickCallback(this));
+    POLYTEMPOCALL(registerStateCallback(this));
 
     startTimerHz(5);
 }
 
 MainComponent::~MainComponent()
 {
+    stopTimer();
+
     POLYTEMPO_RELEASE;
 }
 
@@ -111,18 +114,18 @@ void MainComponent::resized()
     const int buttonWidth = 80;
 
     groupIn->setBounds(0, 0, getWidth(), 3 * rowHeight + 4 * border);
-    toggleMaster->setBounds(groupIn->getX() + border, groupIn->getY() + border, groupIn->getWidth() - 2 * border, rowHeight);
+    toggleMaster->setBounds(groupIn->getX() + border, groupIn->getY() +  2 * border, groupIn->getWidth() - 2 * border, rowHeight);
 
     labelClientName->setBounds(groupIn->getX() + border, groupIn->getY() + 2 * border + rowHeight, labelWidth, rowHeight);
     textClientName->setBounds(groupIn->getX() + labelWidth + 2 * border, groupIn->getY() + 2 * border + rowHeight, groupIn->getWidth() - labelWidth - 4 * border - buttonWidth, rowHeight);
-    btnSetClientName->setBounds(groupIn->getRight() - 2 * border - buttonWidth, groupIn->getY() + 2 * border + rowHeight, buttonWidth, rowHeight);
+    btnSetClientName->setBounds(groupIn->getRight() - border - buttonWidth, groupIn->getY() + 2 * border + rowHeight, buttonWidth, rowHeight);
 
     labelCommand->setBounds(groupIn->getX() + border, groupIn->getY() + 3 * border + 2 * rowHeight, labelWidth, rowHeight);
     textCommand->setBounds(groupIn->getX() + labelWidth + 2 * border, groupIn->getY() + 3 * border + 2 * rowHeight, groupIn->getWidth() - labelWidth - 4 * border - buttonWidth, rowHeight);
-    btnSendCommand->setBounds(groupIn->getRight() - 2 * border - buttonWidth, groupIn->getY() + 3 * border + 2 * rowHeight, buttonWidth, rowHeight);
+    btnSendCommand->setBounds(groupIn->getRight() - border - buttonWidth, groupIn->getY() + 3 * border + 2 * rowHeight, buttonWidth, rowHeight);
 
     groupOut->setBounds(0, groupIn->getBottom(), getWidth(), getHeight() - groupIn->getBottom());
-    toggleConnectedToMaster->setBounds(groupOut->getX() + border, groupOut->getY() + border, groupOut->getWidth() - 2 * border, rowHeight);
+    toggleConnected->setBounds(groupOut->getX() + border, groupOut->getY() + 2 * border, groupOut->getWidth() - 2 * border, rowHeight);
 
     labelNetworkStatus->setBounds(groupOut->getX() + border, groupOut->getY() + 2 * border + rowHeight, labelWidth, rowHeight);
     textNetworkStatus->setBounds(groupOut->getX() + labelWidth + 2 * border, groupOut->getY() + 2 * border + rowHeight, groupOut->getWidth() - labelWidth - 3 * border, rowHeight);
@@ -174,5 +177,30 @@ void MainComponent::processEvent(std::string const& message)
 
 void MainComponent::processTick(double tick)
 {
+    const MessageManagerLock mmLock;
+
     textScoreTime->setText(String(tick, 3));
+}
+
+void MainComponent::processState(int state, std::string message)
+{
+    const MessageManagerLock mmLock;
+
+    // TODO: defines
+    Colour c;
+    switch (state)
+    {
+    case 0: c = Colours::darkgreen;
+        break;
+    case 1: c = Colours::orange;
+        break;
+    case 2: c = Colours::darkred;
+        break;
+    default: c = Colours::grey;
+    }
+
+    textNetworkStatus->setText(message);
+    textNetworkStatus->setColour(TextEditor::backgroundColourId, c);
+
+    toggleConnected->setToggleState(state == 0, dontSendNotification);
 }

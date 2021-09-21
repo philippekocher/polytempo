@@ -28,13 +28,25 @@ void Polytempo_TimeSyncControl::resized()
     infoField->setBounds(0, 24, getWidth(), 22);
 }
 
-void Polytempo_TimeSyncControl::showInfoMessage(String message, Colour color)
+void Polytempo_TimeSyncControl::showInfoMessage(int messageType, String message)
 {
     stopTimer(TIMER_ID_DURATION);
     stopTimer(TIMER_ID_DELAY);
 
+    Colour c;
+    switch (messageType)
+    {
+    case Polytempo_TimeProvider::MessageType_Info: c = Colours::lightgreen;
+        break;
+    case Polytempo_TimeProvider::MessageType_Warning: c = Colours::yellow;
+        break;
+    case Polytempo_TimeProvider::MessageType_Error: c = Colours::orangered;
+        break;
+    default: c = Colours::grey;
+    }
+
     newString = message;
-    newColor = color;
+    newColor = c;
 
     startTimer(TIMER_ID_DELAY, DISPLAY_DELAY);
 }

@@ -26,6 +26,11 @@ EXPORT_VOID polytempo_registerTickCallback(TickCallbackHandler* pHandler)
     Polytempo_LibMain::current()->registerTickCallback(pHandler);
 }
 
+EXPORT_VOID polytempo_registerStateCallback(StateCallbackHandler* pHandler)
+{
+    Polytempo_LibMain::current()->registerStateCallback(pHandler);
+}
+
 EXPORT_VOID polytempo_setClientName(std::string name)
 {
     Polytempo_LibMain::current()->setClientName(name);

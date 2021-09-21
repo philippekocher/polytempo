@@ -32,6 +32,7 @@ int Polytempo_LibMain::initialize(int port, bool masterFlag)
 
     oscListener.reset(new Polytempo_OSCListener(port));
     Polytempo_NetworkSupervisor::getInstance()->createSender(port);
+    Polytempo_TimeProvider::getInstance()->registerUserInterface(this);
     bool ok = Polytempo_TimeProvider::getInstance()->toggleMaster(masterFlag);
     isInit = ok;
 
@@ -111,6 +112,11 @@ void Polytempo_LibMain::registerTickCallback(TickCallbackHandler* pHandler)
     pTickCallback = pHandler;
 }
 
+void Polytempo_LibMain::registerStateCallback(StateCallbackHandler* pHandler)
+{
+    pStateCallback = pHandler;
+}
+
 void Polytempo_LibMain::setClientName(std::string name)
 {
     Polytempo_NetworkSupervisor::getInstance()->setScoreName(String(name));
@@ -151,5 +157,13 @@ void Polytempo_LibMain::eventNotification(Polytempo_Event* event)
             // TODO serialize event
             pEventCallback->processEvent(event->getTypeString().toStdString());
         }
+    }
+}
+
+void Polytempo_LibMain::showInfoMessage(int messageType, String message)
+{
+    if (pStateCallback != nullptr)
+    {
+        pStateCallback->processState(messageType, message.toStdString());
     }
 }

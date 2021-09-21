@@ -63,6 +63,8 @@
             file="../../Source/Network/Polytempo_TimeProvider.cpp"/>
       <FILE id="qQ6ysH" name="Polytempo_TimeProvider.h" compile="0" resource="0"
             file="../../Source/Network/Polytempo_TimeProvider.h"/>
+      <FILE id="eZbA4P" name="Polytempo_TimeSyncInfoInterface.h" compile="0"
+            resource="0" file="../../Source/Network/Polytempo_TimeSyncInfoInterface.h"/>
       <FILE id="rjYsQU" name="Rational.h" compile="0" resource="0" file="../../Source/Misc/Rational.h"/>
     </GROUP>
     <GROUP id="{1325D348-CCEA-5571-9C43-53BC4E73203D}" name="Source">

@@ -9,7 +9,7 @@
     This component lives inside our window, and this is where you should put all
     your controls and content.
 */
-class MainComponent  : public juce::Component, ToggleButton::Listener, EventCallbackHandler, TickCallbackHandler, Timer
+class MainComponent  : public juce::Component, ToggleButton::Listener, Timer, EventCallbackHandler, TickCallbackHandler, StateCallbackHandler
 {
 public:
     //==============================================================================
@@ -25,6 +25,7 @@ private:
     void buttonClicked(Button*) override;
     void processEvent(std::string const& message) override;
     void processTick(double tick) override;
+    void processState(int state, std::string message) override;
 
     std::unique_ptr<GroupComponent> groupIn;
     std::unique_ptr<ToggleButton> toggleMaster;
@@ -41,7 +42,7 @@ private:
     std::unique_ptr<Label> labelNetworkStatus;
     std::unique_ptr<TextEditor> textNetworkStatus;
 
-    std::unique_ptr<ToggleButton> toggleConnectedToMaster;
+    std::unique_ptr<ToggleButton> toggleConnected;
 
     std::unique_ptr<Label> labelTime;
     std::unique_ptr<TextEditor> textTime;

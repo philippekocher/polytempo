@@ -6,9 +6,7 @@
 
 Polytempo_TimeProvider::Polytempo_TimeProvider(): relativeMsToMaster(0), maxRoundTrip(0), timeDiffHistorySize(0), timeDiffHistoryWritePosition(0), roundTripHistorySize(0), roundTripHistoryWritePosition(0), masterFlag(false), sync(false), lastSentTimeIndex(0), lastSentTimestamp(0), lastReceivedTimestamp(0), lastRoundTrip(0)
 {
-#ifdef POLYTEMPO_NETWORK
     pTimeSyncControl = nullptr;
-#endif
 #if defined(POLYTEMPO_NETWORK) || defined(POLYTEMPO_LIB)
     toggleMaster(false);
 #endif
@@ -202,12 +200,10 @@ void Polytempo_TimeProvider::handleMessage(XmlElement message, Ipc* sender)
 }
 #endif
 
-#ifdef POLYTEMPO_NETWORK
-void Polytempo_TimeProvider::registerUserInterface(Polytempo_TimeSyncControl* pControl)
+void Polytempo_TimeProvider::registerUserInterface(Polytempo_TimeSyncInfoInterface* pControl)
 {
     pTimeSyncControl = pControl;
 }
-#endif
 
 void Polytempo_TimeProvider::timerCallback()
 {
@@ -237,23 +233,12 @@ void Polytempo_TimeProvider::timerCallback()
 #endif
 }
 
-#ifdef POLYTEMPO_NETWORK
+#if defined(POLYTEMPO_NETWORK) || defined(POLYTEMPO_LIB)
 void Polytempo_TimeProvider::displayMessage(String message, MessageType messageType) const
 {
     if (pTimeSyncControl != nullptr)
     {
-        Colour c;
-        switch (messageType)
-        {
-        case MessageType_Info: c = Colours::lightgreen;
-            break;
-        case MessageType_Warning: c = Colours::yellow;
-            break;
-        case MessageType_Error: c = Colours::orangered;
-            break;
-        default: c = Colours::grey;
-        }
-        pTimeSyncControl->showInfoMessage(message, c);
+        pTimeSyncControl->showInfoMessage(messageType, message);
         return;
     }
     DBG(message);

@@ -5,9 +5,7 @@
 #if defined(POLYTEMPO_NETWORK) || defined(POLYTEMPO_LIB)
 #include "Polytempo_InterprocessCommunication.h"
 #endif
-#ifdef POLYTEMPO_NETWORK
-#include "../Views/PolytempoNetwork/Polytempo_TimeSyncControl.h"
-#endif
+#include "Polytempo_TimeSyncInfoInterface.h"
 
 #define TIME_DIFF_HISTORY_SIZE		10
 #define	ROUND_TRIP_HISTORY_SIZE		20
@@ -32,10 +30,9 @@ public:
     void setRemoteMasterPeer(String ip, Uuid id);
     void handleMessage(XmlElement message, Ipc* sender);
 #endif
-    #ifdef POLYTEMPO_NETWORK
-    void registerUserInterface(Polytempo_TimeSyncControl* pControl);
-#endif
-    enum MessageType
+    void registerUserInterface(Polytempo_TimeSyncInfoInterface* pControl);
+
+  enum MessageType
     {
         MessageType_Info,
         MessageType_Warning,
@@ -50,9 +47,7 @@ private:
     void resetTimeSync();
 
 private:
-#ifdef POLYTEMPO_NETWORK
-    Polytempo_TimeSyncControl* pTimeSyncControl;
-#endif
+    Polytempo_TimeSyncInfoInterface* pTimeSyncControl;
 
     int32 relativeMsToMaster;
     uint32 maxRoundTrip;
