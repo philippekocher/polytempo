@@ -65,9 +65,20 @@ int Polytempo_LibMain::sendEvent(std::string command, std::string payload, std::
         }
     }
 
-    Polytempo_InterprocessCommunication::getInstance()->distributeEvent(e, destinationNamePattern);
-    delete e;
-
+    if (e->getType() == eventType_Start 
+        || e->getType() == eventType_Stop
+        || e->getType() == eventType_Pause
+        || e->getType() == eventType_GotoTime 
+        || e->getType() == eventType_TempoFactor)
+    {
+        Polytempo_EventDispatcher::getInstance()->broadcastEvent(e);
+    }
+    else
+    {
+        Polytempo_InterprocessCommunication::getInstance()->distributeEvent(e, destinationNamePattern);
+        delete e;
+    }
+    
     return 0;
 }
 
