@@ -37,12 +37,12 @@ private:
     void eventNotification(Polytempo_Event* event) override;
     void showInfoMessage(int messageType, String message) override;
 
-    private:
+private:
+    bool isInit;
     EventCallbackHandler* pEventCallback;
     TickCallbackHandler* pTickCallback;
     StateCallbackHandler* pStateCallback;
 
     static Ptr current_;
     std::unique_ptr<Polytempo_OSCListener> oscListener;
-    bool isInit;
 };
