@@ -166,26 +166,21 @@ void MainComponent::buttonClicked(Button* btn)
 
 void MainComponent::processEvent(std::string const& message)
 {
-    const MessageManagerLock mmLock;
-
     uint32_t t;
     const String timeString = (POLYTEMPOCALL(getTime(&t)) == TIME_SYNC_OK) ? String(t * 0.001, 3) : "-";
 
-    textReceivedCommmands->moveCaretToEnd();
-    textReceivedCommmands->insertTextAtCaret(timeString + "\t " + message + NewLine::getDefault());
+    textToAppend.add(new String(timeString + "\t " + message + NewLine::getDefault()));
+    triggerAsyncUpdate();
 }
 
 void MainComponent::processTick(double tick)
 {
-    const MessageManagerLock mmLock;
-
-    textScoreTime->setText(String(tick, 3));
+    timeString = String(tick, 3);
+    triggerAsyncUpdate();
 }
 
 void MainComponent::processState(int state, std::string message)
 {
-    const MessageManagerLock mmLock;
-
     // TODO: defines
     Colour c;
     switch (state)
@@ -199,8 +194,24 @@ void MainComponent::processState(int state, std::string message)
     default: c = Colours::grey;
     }
 
+    const MessageManagerLock mmLock;
+
     textNetworkStatus->setText(message);
     textNetworkStatus->setColour(TextEditor::backgroundColourId, c);
 
     toggleConnected->setToggleState(state == 0, dontSendNotification);
+}
+
+void MainComponent::handleAsyncUpdate()
+{
+    if(textScoreTime->getText() != timeString)
+        textScoreTime->setText(timeString);
+    
+    while(textToAppend.size() > 0)
+    {
+        String* str = textToAppend.removeAndReturn(0);
+        textReceivedCommmands->moveCaretToEnd();
+        textReceivedCommmands->insertTextAtCaret(*str);
+        delete str;
+    }
 }

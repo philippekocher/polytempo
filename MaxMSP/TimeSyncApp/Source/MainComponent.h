@@ -9,7 +9,7 @@
     This component lives inside our window, and this is where you should put all
     your controls and content.
 */
-class MainComponent  : public juce::Component, ToggleButton::Listener, Timer, EventCallbackHandler, TickCallbackHandler, StateCallbackHandler
+class MainComponent  : public juce::Component, ToggleButton::Listener, Timer, EventCallbackHandler, TickCallbackHandler, StateCallbackHandler, AsyncUpdater
 {
 public:
     //==============================================================================
@@ -26,7 +26,8 @@ private:
     void processEvent(std::string const& message) override;
     void processTick(double tick) override;
     void processState(int state, std::string message) override;
-
+    void handleAsyncUpdate() override;
+    
     std::unique_ptr<GroupComponent> groupIn;
     std::unique_ptr<ToggleButton> toggleMaster;
 
@@ -52,6 +53,9 @@ private:
 
     std::unique_ptr<Label> labelReceivedCommands;
     std::unique_ptr<TextEditor> textReceivedCommmands;
+    
+    String timeString;
+    OwnedArray<String, CriticalSection> textToAppend;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };
