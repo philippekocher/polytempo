@@ -167,9 +167,9 @@ void MainComponent::buttonClicked(Button* btn)
 void MainComponent::processEvent(std::string const& message)
 {
     uint32_t t;
-    const String timeString = (POLYTEMPOCALL(getTime(&t)) == TIME_SYNC_OK) ? String(t * 0.001, 3) : "-";
+    const String str = (POLYTEMPOCALL(getTime(&t)) == TIME_SYNC_OK) ? String(t * 0.001, 3) : "-";
 
-    textToAppend.add(new String(timeString + "\t " + message + NewLine::getDefault()));
+    textToAppend.add(new String(str + "\t " + message + NewLine::getDefault()));
     triggerAsyncUpdate();
 }
 
