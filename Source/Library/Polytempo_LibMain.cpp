@@ -9,7 +9,7 @@
 
 Polytempo_LibMain::Ptr Polytempo_LibMain::current_;
 
-Polytempo_LibMain::Polytempo_LibMain() : isInit(false), pEventCallback(nullptr), pTickCallback(nullptr)
+Polytempo_LibMain::Polytempo_LibMain() : isInit(false), pEventCallback(nullptr), pTickCallback(nullptr), pStateCallback(nullptr)
 {
 
 }
