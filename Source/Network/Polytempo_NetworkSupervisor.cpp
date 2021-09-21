@@ -222,5 +222,7 @@ void Polytempo_NetworkSupervisor::eventNotification(Polytempo_Event* event)
 #endif
         }
         break;
+    default:
+        break;
     }
 }
