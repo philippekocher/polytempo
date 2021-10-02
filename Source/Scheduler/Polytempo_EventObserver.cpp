@@ -11,5 +11,6 @@ Polytempo_EventObserver::Polytempo_EventObserver()
 
 Polytempo_EventObserver::~Polytempo_EventObserver()
 {
-    Polytempo_EventScheduler::getInstance()->removeObserver(this);
+    if(Polytempo_EventScheduler::getInstanceWithoutCreating()!= nullptr)
+        Polytempo_EventScheduler::getInstance()->removeObserver(this);
 }
