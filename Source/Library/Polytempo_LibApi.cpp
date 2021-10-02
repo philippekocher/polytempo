@@ -36,11 +36,6 @@ EXPORT_VOID polytempo_setClientName(std::string name)
     Polytempo_LibMain::current()->setClientName(name);
 }
 
-EXPORT_INT polytempo_getTime(uint32_t* pTime)
-{
-    return Polytempo_LibMain::current()->getTime(pTime);
-}
-
 EXPORT_VOID polytempo_release()
 {
     Polytempo_LibMain::release();

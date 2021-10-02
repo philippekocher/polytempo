@@ -133,11 +133,6 @@ void Polytempo_LibMain::setClientName(std::string name)
     Polytempo_NetworkSupervisor::getInstance()->setScoreName(String(name));
 }
 
-int Polytempo_LibMain::getTime(uint32_t* pTime)
-{
-    return Polytempo_TimeProvider::getInstance()->getSyncTime(pTime) ? TIME_SYNC_OK : TIME_SYNC_NOK;
-}
-
 Polytempo_LibMain::Ptr Polytempo_LibMain::current()
 {
     if (!current_)

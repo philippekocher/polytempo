@@ -29,6 +29,5 @@ extern "C"
     EXPORT_VOID polytempo_registerTickCallback(TickCallbackHandler* pHandler);
     EXPORT_VOID polytempo_registerStateCallback(StateCallbackHandler* pHandler);
     EXPORT_VOID polytempo_setClientName(std::string name);
-    EXPORT_INT polytempo_getTime(uint32_t* pTime);
     EXPORT_VOID polytempo_release();
 }

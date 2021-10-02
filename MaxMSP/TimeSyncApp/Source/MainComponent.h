@@ -9,7 +9,7 @@
     This component lives inside our window, and this is where you should put all
     your controls and content.
 */
-class MainComponent  : public juce::Component, ToggleButton::Listener, Timer, EventCallbackHandler, TickCallbackHandler, StateCallbackHandler, AsyncUpdater
+class MainComponent  : public juce::Component, ToggleButton::Listener, EventCallbackHandler, TickCallbackHandler, StateCallbackHandler, AsyncUpdater
 {
 public:
     //==============================================================================
@@ -21,7 +21,6 @@ public:
     void resized() override;
 
 private:
-    void timerCallback() override;
     void buttonClicked(Button*) override;
     void processEvent(std::string const& message) override;
     void processTick(double tick) override;

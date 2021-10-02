@@ -60,10 +60,12 @@ MainComponent::MainComponent()
     addAndMakeVisible(textNetworkStatus.get());
 
     labelTime.reset(new Label("SyncTime", "Sync Time"));
+    labelTime->setEnabled(false);
     addAndMakeVisible(labelTime.get());
 
     textTime.reset(new TextEditor());
     textTime->setReadOnly(true);
+    textTime->setEnabled(false);
     addAndMakeVisible(textTime.get());
 
     labelScoreTime.reset(new Label("ScoreTime", "Score Time"));
@@ -88,14 +90,10 @@ MainComponent::MainComponent()
     POLYTEMPOCALL(registerEventCallback(this));
     POLYTEMPOCALL(registerTickCallback(this));
     POLYTEMPOCALL(registerStateCallback(this));
-
-    startTimerHz(5);
 }
 
 MainComponent::~MainComponent()
 {
-    stopTimer();
-
     POLYTEMPO_RELEASE;
 }
 
@@ -140,14 +138,6 @@ void MainComponent::resized()
     textReceivedCommmands->setBounds(groupOut->getX() + border, groupOut->getY() + 5 * border + 5 * rowHeight, groupOut->getWidth() - 2 * border, groupOut->getHeight() - 6 * border - 5 * rowHeight);
 }
 
-void MainComponent::timerCallback()
-{
-    uint32_t t;
-    bool ok = POLYTEMPOCALL(getTime(&t) == TIME_SYNC_OK);
-    textTime->setText(ok ? String(t * 0.001, 3) : "-");
-    textTime->setColour(TextEditor::backgroundColourId, ok ? Colours::darkgreen : Colours::darkred);
-}
-
 void MainComponent::buttonClicked(Button* btn)
 {
     if (btn == toggleMaster.get())
@@ -166,10 +156,7 @@ void MainComponent::buttonClicked(Button* btn)
 
 void MainComponent::processEvent(std::string const& message)
 {
-    uint32_t t;
-    const String str = (POLYTEMPOCALL(getTime(&t)) == TIME_SYNC_OK) ? String(t * 0.001, 3) : "-";
-
-    textToAppend.add(new String(str + "\t " + message + NewLine::getDefault()));
+    textToAppend.add(new String(message + NewLine::getDefault()));
     triggerAsyncUpdate();
 }
 
