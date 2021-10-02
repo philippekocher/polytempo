@@ -13,8 +13,6 @@
 //==============================================================================
 MainComponent::MainComponent()
 {
-    auto applicationName = JUCEApplication::getInstance()->getApplicationName().toStdString();
-
     // In
     groupIn.reset(new GroupComponent("In", "In"));
     addAndMakeVisible(groupIn.get());
@@ -27,7 +25,6 @@ MainComponent::MainComponent()
     addAndMakeVisible(labelClientName.get());
 
     textClientName.reset(new TextEditor());
-    textClientName->setText(applicationName);
     addAndMakeVisible(textClientName.get());
 
     btnSetClientName.reset(new TextButton("Set"));
@@ -86,10 +83,11 @@ MainComponent::MainComponent()
     setSize (600, 400);
 
     POLYTEMPOCALL(initialize(47522, false));
-    POLYTEMPOCALL(setClientName(applicationName));
     POLYTEMPOCALL(registerEventCallback(this));
     POLYTEMPOCALL(registerTickCallback(this));
     POLYTEMPOCALL(registerStateCallback(this));
+    const auto applicationName = JUCEApplication::getInstance()->getApplicationName().toStdString();
+    POLYTEMPOCALL(sendEvent("settings name " + applicationName));
 }
 
 MainComponent::~MainComponent()
@@ -146,7 +144,7 @@ void MainComponent::buttonClicked(Button* btn)
     }
     else if(btn == btnSetClientName.get())
     {
-        POLYTEMPOCALL(setClientName(textClientName->getText().toStdString()));
+        POLYTEMPOCALL(sendEvent(NAME_EVENT_STRING + textClientName->getText().toStdString()));
     }
     else if(btn == btnSendCommand.get())
     {
@@ -156,7 +154,17 @@ void MainComponent::buttonClicked(Button* btn)
 
 void MainComponent::processEvent(std::string const& message)
 {
-    textToAppend.add(new String(message + NewLine::getDefault()));
+    
+    String msg(message);
+    if(msg.startsWith(NAME_EVENT_STRING))
+    {
+        newClientName = msg.substring(String(NAME_EVENT_STRING).length()).upToFirstOccurrenceOf(" ", false, true);
+    }
+    else
+    {
+        textToAppend.add(new String(msg + NewLine::getDefault()));
+    }
+
     triggerAsyncUpdate();
 }
 
@@ -193,7 +201,10 @@ void MainComponent::handleAsyncUpdate()
 {
     if(textScoreTime->getText() != timeString)
         textScoreTime->setText(timeString);
-    
+
+    if (textClientName->getText() != newClientName)
+        textClientName->setText(newClientName);
+
     while(textToAppend.size() > 0)
     {
         String* str = textToAppend.removeAndReturn(0);

@@ -21,10 +21,6 @@ public:
     String getScoreName() const;
     String getPeerName() const;
 
-#ifdef POLYTEMPO_LIB
-    void setScoreName(String name);
-#endif
-
     void createSender(int port);
 
 #ifndef POLYTEMPO_LIB

@@ -138,13 +138,6 @@ String Polytempo_NetworkSupervisor::getPeerName() const
 #endif
 }
 
-#ifdef POLYTEMPO_LIB
-void Polytempo_NetworkSupervisor::setScoreName(String name)
-{
-    localName.reset(new String(name));
-}
-#endif
-
 void Polytempo_NetworkSupervisor::createSender(int port)
 {
     currentPort = port;

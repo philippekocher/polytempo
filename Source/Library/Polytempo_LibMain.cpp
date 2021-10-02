@@ -75,8 +75,15 @@ int Polytempo_LibMain::sendEvent(std::string command, std::string payload, std::
     }
     else
     {
-        Polytempo_InterprocessCommunication::getInstance()->distributeEvent(e, destinationNamePattern);
-        delete e;
+        if (e->getType() == eventType_Settings && (destinationNamePattern.empty() || destinationNamePattern == "*"))
+        {
+            Polytempo_EventScheduler::getInstance()->scheduleEvent(e);
+        }
+        else
+        {
+            Polytempo_InterprocessCommunication::getInstance()->distributeEvent(e, destinationNamePattern);
+            delete e;
+        }
     }
     
     return 0;
@@ -128,11 +135,6 @@ void Polytempo_LibMain::registerStateCallback(StateCallbackHandler* pHandler)
     pStateCallback = pHandler;
 }
 
-void Polytempo_LibMain::setClientName(std::string name)
-{
-    Polytempo_NetworkSupervisor::getInstance()->setScoreName(String(name));
-}
-
 Polytempo_LibMain::Ptr Polytempo_LibMain::current()
 {
     if (!current_)
@@ -162,9 +164,13 @@ void Polytempo_LibMain::eventNotification(Polytempo_Event* event)
         {
             String str = event->getTypeString() + " ";
             const auto props = event->getProperties();
-            for (auto& e : *props)
-                str.append(e.name + " " + e.value + " ", 100);
-            pEventCallback->processEvent(str.toStdString());
+            if(!props->isEmpty())
+            {
+                for (auto& e : *props)
+                    str.append(e.name + " " + e.value + " ", 100);
+            }
+            
+            pEventCallback->processEvent(str.trimCharactersAtEnd(" ").toStdString());
         }
     }
 }

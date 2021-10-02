@@ -3,6 +3,7 @@
 #include <JuceHeader.h>
 
 #include "../../../Source/Library/Polytempo_LibCallbackHandler.h"
+#define NAME_EVENT_STRING "settings name "
 
 //==============================================================================
 /*
@@ -55,6 +56,7 @@ private:
     
     String timeString;
     OwnedArray<String, CriticalSection> textToAppend;
+    String newClientName;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };

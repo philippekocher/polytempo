@@ -25,7 +25,6 @@ public:
     void registerEventCallback(EventCallbackHandler* pHandler);
     void registerTickCallback(TickCallbackHandler* pHandler);
     void registerStateCallback(StateCallbackHandler* pHandler);
-    void setClientName(std::string name);
     
     typedef ReferenceCountedObjectPtr<Polytempo_LibMain> Ptr;
     static Ptr current();
