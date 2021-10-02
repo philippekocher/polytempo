@@ -160,8 +160,11 @@ void Polytempo_LibMain::eventNotification(Polytempo_Event* event)
     {
         if (pEventCallback != nullptr)
         {
-            // TODO serialize event
-            pEventCallback->processEvent(event->getTypeString().toStdString());
+            String str = event->getTypeString() + " ";
+            const auto props = event->getProperties();
+            for (auto& e : *props)
+                str.append(e.name + " " + e.value + " ", 100);
+            pEventCallback->processEvent(str.toStdString());
         }
     }
 }
