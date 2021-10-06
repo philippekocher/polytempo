@@ -16,10 +16,10 @@
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1"/>
   <EXPORTFORMATS>
     <VS2019 targetFolder="Builds/VisualStudio2019" extraCompilerFlags="/wd4068"
-            externalLibraries="../../../TimeSyncLib\Builds\VisualStudio2019\x64\Debug\Static Library/TimeSyncLib.lib">
+            externalLibraries="../../../libs/Static Library/TimeSyncLib.lib">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" targetName="TimeSyncApp"/>
-        <CONFIGURATION isDebug="0" name="Release" targetName="TimeSyncApp"/>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="TimeSyncApp" useRuntimeLibDLL="0"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="TimeSyncApp" useRuntimeLibDLL="0"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../../../../Code/JUCE/modules"/>

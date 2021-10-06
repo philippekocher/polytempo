@@ -78,8 +78,9 @@
   <EXPORTFORMATS>
     <VS2019 targetFolder="Builds/VisualStudio2019" extraCompilerFlags="/wd4068">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" targetName="TimeSyncLib"/>
-        <CONFIGURATION isDebug="0" name="Release" targetName="TimeSyncLib"/>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="TimeSyncLib" useRuntimeLibDLL="0"
+                       binaryPath="../libs"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="TimeSyncLib" useRuntimeLibDLL="0"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../../../../Code/JUCE/modules"/>
