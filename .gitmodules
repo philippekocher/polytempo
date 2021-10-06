@@ -1,3 +1,9 @@
 [submodule "JUCE"]
 	path = JUCE
 	url = https://github.com/juce-framework/JUCE
+[submodule "MaxMSP/mxe/source/min-api"]
+	path = MaxMSP/mxe/source/min-api
+	url = https://github.com/Cycling74/min-api.git
+[submodule "MaxMSP/mxe/source/min-lib"]
+	path = MaxMSP/mxe/source/min-lib
+	url = https://github.com/Cycling74/min-lib.git
