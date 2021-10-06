@@ -1,7 +1,7 @@
 #pragma once
 
-#include "JuceHeader.h"
 #include "Polytempo_LibCallbackHandler.h"
+#include <string>
 
 #ifndef TIME_SYNC_OK
 #define TIME_SYNC_OK 0
