@@ -44,3 +44,4 @@ private:
     static Ptr current_;
     std::unique_ptr<Polytempo_OSCListener> oscListener;
 };
+

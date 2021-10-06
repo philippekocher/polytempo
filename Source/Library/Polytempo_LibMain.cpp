@@ -11,12 +11,13 @@ Polytempo_LibMain::Ptr Polytempo_LibMain::current_;
 
 Polytempo_LibMain::Polytempo_LibMain() : isInit(false), pEventCallback(nullptr), pTickCallback(nullptr), pStateCallback(nullptr)
 {
-
+    MessageManager::getInstance();
 }
 
 
 Polytempo_LibMain::~Polytempo_LibMain()
 {
+    oscListener = nullptr;
     Polytempo_NetworkSupervisor::deleteInstance();
     Polytempo_ScoreScheduler::deleteInstance();
     Polytempo_EventScheduler::deleteInstance();
@@ -155,6 +156,7 @@ void Polytempo_LibMain::eventNotification(Polytempo_Event* event)
     {
         if (pTickCallback != nullptr)
         {
+            //MessageManager::callAsync([this, event]{ pTickCallback->processTick(event->getValue()); });
             pTickCallback->processTick(event->getValue());
         }
     }
@@ -163,13 +165,14 @@ void Polytempo_LibMain::eventNotification(Polytempo_Event* event)
         if (pEventCallback != nullptr)
         {
             String str = event->getTypeString() + " ";
-            const auto props = event->getProperties();
+            const NamedValueSet* props = event->getProperties();
             if(!props->isEmpty())
             {
                 for (auto& e : *props)
                     str.append(e.name + " " + e.value + " ", 100);
             }
-            
+
+            //MessageManager::callAsync([this, str] { pEventCallback->processEvent(str.trimCharactersAtEnd(" ").toStdString()); });
             pEventCallback->processEvent(str.trimCharactersAtEnd(" ").toStdString());
         }
     }
