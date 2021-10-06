@@ -30,10 +30,10 @@ add_library(
 
 include(${C74_MIN_API_DIR}/script/min-posttarget.cmake)
 
-target_link_libraries(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/TimeSyncLib/libs/TimeSyncLib.lib)
+target_link_libraries(${PROJECT_NAME} PUBLIC "${CMAKE_SOURCE_DIR}/../libs/Static Library/TimeSyncLib.lib")
 
 #############################################################
 # UNIT TEST
 #############################################################
 
-include(${C74_MIN_API_DIR}/test/min-object-unittest.cmake)
+#include(${C74_MIN_API_DIR}/test/min-object-unittest.cmake)

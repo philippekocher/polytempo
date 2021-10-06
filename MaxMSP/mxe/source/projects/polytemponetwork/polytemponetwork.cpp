@@ -1,10 +1,6 @@
-/// @file
-///	@ingroup 	minexamples
-///	@copyright	Copyright 2018 The Min-DevKit Authors. All rights reserved.
-///	@license	Use of this source code is governed by the MIT License found in the License.md file.
-#define JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED
+//#define JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED
 #include "c74_min.h"
-#include "../../../../TimeSyncLib/include/Polytempo_LibApi.h"
+#include "../../../../../Source/Library/Polytempo_LibApi.h"
 
 using namespace c74::min;
 
@@ -31,7 +27,8 @@ void MyHandler::processState(int state, std::string message)
     std::cout << "State: " << state << ": " << message << std::endl;
 }
 
-class hello_world : public object<hello_world> {
+class polytemponetwork : public object<polytemponetwork> {
+public:
     MIN_DESCRIPTION	{"Post to the Max Console."};
     MIN_TAGS		{"utilities"};
     MIN_AUTHOR		{"Cycling '74"};
@@ -80,8 +77,8 @@ class hello_world : public object<hello_world> {
             //polytempo_registerEventCallback(&handler);
             //cout << "register state callback" << endl;
             //polytempo_registerStateCallback(this);
-            cout << "register tick callback" << endl;
-            polytempo_registerTickCallback(&handler);
+            //cout << "register tick callback" << endl;
+            //polytempo_registerTickCallback(&handler);
             polytempo_sendEvent("settings name MaxExternal");
             return {};
         }
@@ -89,4 +86,4 @@ class hello_world : public object<hello_world> {
 };
 
 
-MIN_EXTERNAL(hello_world);
+MIN_EXTERNAL(polytemponetwork);

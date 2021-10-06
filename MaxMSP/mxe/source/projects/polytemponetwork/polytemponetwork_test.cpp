@@ -4,7 +4,7 @@
 ///	@license	Use of this source code is governed by the MIT License found in the License.md file.
 
 #include "c74_min_unittest.h"     // required unit test header
-#include "mxe-test.hello-world.cpp"    // need the source of our object so that we can access it
+#include "polytemponetwork.cpp"    // need the source of our object so that we can access it
 
 // Unit tests are written using the Catch framework as described at
 // https://github.com/philsquared/Catch/blob/master/docs/tutorial.md
@@ -14,7 +14,7 @@ SCENARIO("object produces correct output") {
 
     GIVEN("An instance of our object") {
 
-        test_wrapper<hello_world> an_instance;
+        test_wrapper<polytemponetwork> an_instance;
         hello_world&              my_object = an_instance;
 
         // check that default attr values are correct
