@@ -169,7 +169,7 @@ void Polytempo_LibMain::eventNotification(Polytempo_Event* event)
             if(!props->isEmpty())
             {
                 for (auto& e : *props)
-                    str.append(e.name + " " + e.value + " ", 100);
+                    str.append(e.name.toString() + " " + e.value.toString() + " ", 100);
             }
 
             //MessageManager::callAsync([this, str] { pEventCallback->processEvent(str.trimCharactersAtEnd(" ").toStdString()); });
