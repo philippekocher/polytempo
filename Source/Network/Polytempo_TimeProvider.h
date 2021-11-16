@@ -15,7 +15,7 @@
 class Polytempo_TimeProvider : Timer
 {
 public:
-    juce_DeclareSingleton(Polytempo_TimeProvider, true)
+    juce_DeclareSingleton(Polytempo_TimeProvider, false)
 
     Polytempo_TimeProvider();
     ~Polytempo_TimeProvider() override;
