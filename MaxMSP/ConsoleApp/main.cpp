@@ -1,6 +1,11 @@
 #include <iostream>
-#include <conio.h>
+#include <thread>         // std::this_thread::sleep_for
+#include <chrono>         // std::chrono::seconds
 #include "../../Source/Library/Polytempo_LibApi.h"
+
+#ifdef WIN32
+#include <conio.h>
+#endif
 
 class MyHandler : public EventCallbackHandler, public TickCallbackHandler, public StateCallbackHandler
 {
@@ -42,9 +47,12 @@ int main()
         std::cout << "press esc to exit! " << std::endl;
         while (true)
         {
-            c = _getch();
+#ifdef WIN32
+            c = getch();
+#endif
             if (c == 27)
                 break;
+            std::this_thread::sleep_for (std::chrono::milliseconds(10));
         }
     }
     catch (...)
