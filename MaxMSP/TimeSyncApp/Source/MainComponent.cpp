@@ -13,6 +13,10 @@
 //==============================================================================
 MainComponent::MainComponent()
 {
+    toggleOn.reset(new ToggleButton("On"));
+    toggleOn->addListener(this);
+    addAndMakeVisible(toggleOn.get());
+    
     // In
     groupIn.reset(new GroupComponent("In", "In"));
     addAndMakeVisible(groupIn.get());
@@ -82,19 +86,30 @@ MainComponent::MainComponent()
 
     setSize (600, 400);
 
-    POLYTEMPOCALL(initialize(47522, false));
-    POLYTEMPOCALL(registerEventCallback(this));
-    POLYTEMPOCALL(registerTickCallback(this));
-    POLYTEMPOCALL(registerStateCallback(this));
-    const auto applicationName = JUCEApplication::getInstance()->getApplicationName().toStdString();
-    POLYTEMPOCALL(sendEvent("settings name " + applicationName));
+    setOnOff(true);
 }
 
 MainComponent::~MainComponent()
 {
-    POLYTEMPO_RELEASE;
+    setOnOff(false);
 }
 
+void MainComponent::setOnOff(bool on)
+{
+    if(on)
+    {
+        POLYTEMPOCALL(initialize(47522, false));
+        POLYTEMPOCALL(registerEventCallback(this));
+        POLYTEMPOCALL(registerTickCallback(this));
+        POLYTEMPOCALL(registerStateCallback(this));
+        const auto applicationName = JUCEApplication::getInstance()->getApplicationName().toStdString();
+        POLYTEMPOCALL(sendEvent("settings name " + applicationName));
+    }
+    else
+    {
+        POLYTEMPO_RELEASE;
+    }
+}
 //==============================================================================
 void MainComponent::paint (juce::Graphics& g)
 {
@@ -109,7 +124,9 @@ void MainComponent::resized()
     const int labelWidth = 100;
     const int buttonWidth = 80;
 
-    groupIn->setBounds(0, 0, getWidth(), 3 * rowHeight + 4 * border);
+    toggleOn->setBounds(0, 0, getWidth(), rowHeight);
+    
+    groupIn->setBounds(0, rowHeight, getWidth(), 3 * rowHeight + 4 * border);
     toggleMaster->setBounds(groupIn->getX() + border, groupIn->getY() +  2 * border, groupIn->getWidth() - 2 * border, rowHeight);
 
     labelClientName->setBounds(groupIn->getX() + border, groupIn->getY() + 2 * border + rowHeight, labelWidth, rowHeight);
@@ -138,7 +155,11 @@ void MainComponent::resized()
 
 void MainComponent::buttonClicked(Button* btn)
 {
-    if (btn == toggleMaster.get())
+    if(btn == toggleOn.get())
+    {
+        setOnOff(btn->getToggleState());
+    }
+    else if (btn == toggleMaster.get())
     {
         POLYTEMPOCALL(toggleMaster(toggleMaster->getToggleState()));
     }

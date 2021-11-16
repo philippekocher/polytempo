@@ -27,6 +27,9 @@ private:
     void processTick(double tick) override;
     void processState(int state, std::string message) override;
     void handleAsyncUpdate() override;
+    void setOnOff(bool on);
+    
+    std::unique_ptr<ToggleButton> toggleOn;
     
     std::unique_ptr<GroupComponent> groupIn;
     std::unique_ptr<ToggleButton> toggleMaster;
