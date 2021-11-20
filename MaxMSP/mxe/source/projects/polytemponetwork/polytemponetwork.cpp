@@ -36,7 +36,7 @@ public:
 
     polytemponetwork(const atoms& args = {})
     {
-        m_Port = args.size() > 0 ? args[0] : 47522;
+        m_Port = (args.size() > 0 ? (int)args[0] : 47522);
         m_InstanceName = "MaxExternal";
     }
     
@@ -189,7 +189,7 @@ public:
             {
                 if (args[0] == "name")
                 {
-                    m_InstanceName = args[1];
+                    m_InstanceName = (string)args[1];
                     setInstanceName();
                 }
                 else

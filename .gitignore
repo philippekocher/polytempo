@@ -9,3 +9,4 @@ build/
 **/JuceLibraryCode/**
 *.lib
 *.pdb
+*.a
