@@ -26,7 +26,7 @@ public:
 
     inlet<>  input	{ this, "(int) toggle client on/off\n(master) toggle master on/off" };
     outlet<thread_check::scheduler, thread_action::fifo> eventOutput	{ this, "(anything) output of received polytempo events" };
-    outlet<thread_check::scheduler, thread_action::fifo> tickOutput{ this, "(float) tick information" };
+    outlet<thread_check::scheduler, thread_action::fifo> tickOutput{ this, "(anything) tick information" };
     outlet<thread_check::scheduler, thread_action::fifo> networkStateOutput{this, "(anything) output of network state information" };
 
     MyHandler* pHandler;
@@ -191,6 +191,20 @@ public:
                 {
                     m_InstanceName = args[1];
                     setInstanceName();
+                }
+                else
+                {
+                    string message = "settings";
+                    for(auto m : args)
+                    {
+                        string addMessage = m;
+                        message = message + " " + addMessage;
+                    }
+
+                    if(polytempo_sendEvent(message) != 0)
+                    {
+                        cout << "unable to send settings command: " << message << endl;
+                    }
                 }
             }
 
