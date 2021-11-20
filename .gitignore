@@ -7,3 +7,5 @@ build/
 # Exclude Projucer Build and Library folders
 **/Builds/**
 **/JuceLibraryCode/**
+*.lib
+*.pdb

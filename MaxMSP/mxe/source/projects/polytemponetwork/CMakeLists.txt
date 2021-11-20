@@ -38,9 +38,15 @@ IF(APPLE)
    FIND_LIBRARY(COCOA_LIBRARY Cocoa)
    MARK_AS_ADVANCED (CARBON_LIBRARY COCOA_LIBRARY)
    SET(EXTRA_LIBS ${CARBON_LIBRARY} ${COCOA_LIBRARY})
+
+   link_directories("${CMAKE_CURRENT_SOURCE_DIR}/../../../../libs")
 ENDIF (APPLE)
 
-target_link_libraries(${PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/../../../../libs/libTimeSyncLib.a" ${EXTRA_LIBS})
+IF(MSVC)
+   link_directories("${CMAKE_CURRENT_SOURCE_DIR}/../../../../libs/Static Library")
+ENDIF(MSVC)
+
+target_link_libraries(${PROJECT_NAME} PUBLIC TimeSyncLib ${EXTRA_LIBS})
 
 #############################################################
 # UNIT TEST

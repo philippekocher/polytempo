@@ -17,9 +17,14 @@ IF(APPLE)
    FIND_LIBRARY(COCOA_LIBRARY Cocoa)
    MARK_AS_ADVANCED (CARBON_LIBRARY COCOA_LIBRARY)
    SET(EXTRA_LIBS ${CARBON_LIBRARY} ${COCOA_LIBRARY})
+   link_directories("${CMAKE_SOURCE_DIR}/../libs")
 ENDIF (APPLE)
+
+IF(MSVC)
+   link_directories("${CMAKE_SOURCE_DIR}/../libs/Static Library")
+ENDIF(MSVC)
 
 # add the executable
 add_executable(TimeSyncLibConsoleApp main.cpp)
 
-target_link_libraries(TimeSyncLibConsoleApp PUBLIC "${CMAKE_SOURCE_DIR}/../libs/libTimeSyncLib.a" ${EXTRA_LIBS})
+target_link_libraries(TimeSyncLibConsoleApp PUBLIC TimeSyncLib ${EXTRA_LIBS})
