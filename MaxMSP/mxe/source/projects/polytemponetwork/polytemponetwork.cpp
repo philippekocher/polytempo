@@ -26,13 +26,21 @@ public:
 
     inlet<>  input	{ this, "(int) toggle client on/off\n(master) toggle master on/off" };
     outlet<thread_check::scheduler, thread_action::fifo> eventOutput	{ this, "(anything) output of received polytempo events" };
-    outlet<thread_check::scheduler, thread_action::fifo> tickOutput{ this, "(anything) tick information" };
+    outlet<> tickOutput{ this, "(float) tick information", "float" };
     outlet<thread_check::scheduler, thread_action::fifo> networkStateOutput{this, "(anything) output of network state information" };
 
+    timer<> tickDeliverer { this,
+        MIN_FUNCTION {
+            tickOutput.send(m_Tick);
+            return {};
+        }
+    };
+    
     MyHandler* pHandler;
     string m_InstanceName;
     bool m_initialized { false };
     int m_Port;
+    double m_Tick;
 
     polytemponetwork(const atoms& args = {})
     {
@@ -69,7 +77,7 @@ public:
                 polytempo_release();
             }
 
-            int ret = polytempo_initialize(m_Port, isMaster);
+            int ret = polytempo_initialize(m_Port, master);
             if (ret == 0)
             {
                 pHandler = new MyHandler(this);
@@ -100,7 +108,7 @@ public:
         }
     }
 
-    void setMaster()
+    void setMaster(bool isMaster)
     {
         if (m_initialized)
         {
@@ -127,39 +135,17 @@ public:
         }}
     };
 
-    attribute<bool> isMaster{ this, "isMaster", false,
+    attribute<bool> master{ this, "master", false,
         description {"Turn on/off master."},
         setter { MIN_FUNCTION {
+            setMaster(args[0]);
             return args;
         }}
     };
-
-    // define an optional argument for setting the message
-    argument<symbol> greeting_arg { this, "greeting", "Initial value for the greeting attribute.",
-        MIN_ARGUMENT_FUNCTION {
-            greeting = arg;
-        }
-    };
-
-
-    // the actual attribute for the message
-    attribute<symbol> greeting { this, "greeting", "hello world",
-        description {
-            "Greeting to be posted. "
-            "The greeting will be posted to the Max console when a bang is received."
-            
-        }
-    };
-
     
     // respond to the bang message to do something
-    message<> bang { this, "bang", "Post the greeting.",
+    message<> bang { this, "bang", "Bang, currently unused",
         MIN_FUNCTION {
-            symbol the_greeting = greeting;    // fetch the symbol itself from the attribute named greeting
-
-            cout << the_greeting << endl;    // post to the max console
-
-            //polytempo_sendEvent("start");
             return {};
         }
     };
@@ -167,18 +153,6 @@ public:
     message<> number{ this, "int", "On/off toggle",
         MIN_FUNCTION {
             on = args[0] == 1;
-            return {};
-        }
-    };
-
-    message<threadsafe::yes> masterSwitch { this, "master", "Master switch",
-        MIN_FUNCTION {
-            if (m_initialized)
-            {
-                isMaster = (args[0] == 1);
-                setMaster();
-            }
-
             return {};
         }
     };
@@ -233,13 +207,13 @@ public:
             if (!dummy() && on)
             {
                 setActive(true);
-                setMaster();
             }
 
             return {};
         }
     };
-            
+         
+    
 };
 
 MyHandler::MyHandler(polytemponetwork* pExternal)
@@ -256,14 +230,12 @@ void MyHandler::processEvent(std::string const& message)
 
 void MyHandler::processTick(double tick)
 {
-    std::cout << "Tick: " << tick << std::endl;
-    m_pExternal->logMessage("Tick: " + std::to_string(tick));
-    m_pExternal->tickOutput.send(std::to_string(tick));
+    m_pExternal->m_Tick = tick;
+    m_pExternal->tickDeliverer.delay(0);
 }
 
 void MyHandler::processState(int state, std::string message)
 {
-    std::cout << "State: " << state << ": " << message << std::endl;
     string msg = "State: " + std::to_string(state) + " " + message;
     m_pExternal->networkStateOutput.send(msg);
 }
