@@ -47,29 +47,8 @@ public:
     {
         m_Port = (args.size() > 0 ? (int)args[0] : Polytempo_PortDefinition::PolytempoNetworkMax);
         m_InstanceName = "MaxExternal";
-    }
-    
-    ~polytemponetwork()
-    {
+        
         if (!dummy())
-        {
-            setActive(false);
-        }
-    }
-    
-    void logMessage(string msg)
-    {
-        cout << msg << endl;
-    }
-
-    void setInstanceName()
-    {
-        polytempo_sendEvent("settings name " + m_InstanceName);
-    }
-
-    void setActive(bool on)
-    {
-        if(on)
         {
             cout << "init" << endl;
             if (m_initialized)
@@ -98,15 +77,26 @@ public:
                 cout << "error initializing polytempo lib" << endl;
             }
         }
-        else 
+    }
+    
+    ~polytemponetwork()
+    {
+        if (!dummy() && m_initialized)
         {
-            if (m_initialized)
-            {
-                cout << "deinit" << endl;
-                m_initialized = false;
-                polytempo_release();
-            }
+            cout << "deinit" << endl;
+            m_initialized = false;
+            polytempo_release();
         }
+    }
+    
+    void logMessage(string msg)
+    {
+        cout << msg << endl;
+    }
+
+    void setInstanceName()
+    {
+        polytempo_sendEvent("settings name " + m_InstanceName);
     }
 
     void setMaster(bool isMaster)
@@ -128,14 +118,6 @@ public:
         }
     }
 
-    attribute<bool> on{ this, "on", false,
-        description {"Turn on/off the network client."},
-        setter { MIN_FUNCTION {
-            setActive(args[0] == true);
-            return args;
-        }}
-    };
-
     attribute<bool> master{ this, "master", false,
         description {"Turn on/off master."},
         setter { MIN_FUNCTION {
@@ -147,13 +129,6 @@ public:
     // respond to the bang message to do something
     message<> bang { this, "bang", "Bang, currently unused",
         MIN_FUNCTION {
-            return {};
-        }
-    };
-
-    message<> number{ this, "int", "On/off toggle",
-        MIN_FUNCTION {
-            on = args[0] == 1;
             return {};
         }
     };
@@ -204,11 +179,6 @@ public:
     // post to max window == but only when the class is loaded the first time
     message<> maxclass_setup { this, "maxclass_setup",
         MIN_FUNCTION {
-
-            if (!dummy() && on)
-            {
-                setActive(true);
-            }
 
             return {};
         }
