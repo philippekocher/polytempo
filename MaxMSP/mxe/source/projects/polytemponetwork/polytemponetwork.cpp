@@ -187,7 +187,7 @@ public:
         }
     };
 
-    message<threadsafe::yes> command { this, "event", "Generic Events",
+    message<threadsafe::yes> command { this, "anything", "Generic Events",
         MIN_FUNCTION {
             if (m_initialized)
             {
