@@ -1,5 +1,6 @@
 #include "c74_min.h"
 #include "../../../../../Source/Library/Polytempo_LibApi.h"
+#include "../../../../../Source/Network/Polytempo_PortDefinition.h"
 
 using namespace c74::min;
 
@@ -44,7 +45,7 @@ public:
 
     polytemponetwork(const atoms& args = {})
     {
-        m_Port = (args.size() > 0 ? (int)args[0] : 47522);
+        m_Port = (args.size() > 0 ? (int)args[0] : Polytempo_PortDefinition::PolytempoNetworkMax);
         m_InstanceName = "MaxExternal";
     }
     

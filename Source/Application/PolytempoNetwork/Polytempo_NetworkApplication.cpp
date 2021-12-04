@@ -11,6 +11,7 @@
 #include "../../Views/PolytempoNetwork/Polytempo_GraphicsAnnotationManager.h"
 #include "../../Network/Polytempo_TimeProvider.h"
 #include "../../Network/Polytempo_InterprocessCommunication.h"
+#include "../../Network/Polytempo_PortDefinition.h"
 
 Polytempo_NetworkApplication::Polytempo_NetworkApplication()
 {
@@ -39,8 +40,8 @@ void Polytempo_NetworkApplication::initialise(const String& commandLine)
     Polytempo_EventScheduler::getInstance()->startThread(5); // priority between 0 and 10
 
     // create network connection
-    oscListener.reset(new Polytempo_OSCListener(OSC_PORT_COMMUNICATION));
-    Polytempo_NetworkSupervisor::getInstance()->createSender(OSC_PORT_COMMUNICATION);
+    oscListener.reset(new Polytempo_OSCListener(Polytempo_PortDefinition::PolytempoNetworkApp));
+    Polytempo_NetworkSupervisor::getInstance()->createSender(Polytempo_PortDefinition::AdvertisePortCount, Polytempo_PortDefinition::AdvertisePorts);
     oscSender.reset(new Polytempo_OSCSender());
 
     // audio and midi

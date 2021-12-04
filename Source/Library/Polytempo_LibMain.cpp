@@ -3,6 +3,7 @@
 #include "../Network/Polytempo_NetworkSupervisor.h"
 #include "../Network/Polytempo_OSCListener.h"
 #include "../Network/Polytempo_TimeProvider.h"
+#include "../Network/Polytempo_PortDefinition.h"
 #include "../Scheduler/Polytempo_EventDispatcher.h"
 #include "../Scheduler/Polytempo_EventScheduler.h"
 #include "../Scheduler/Polytempo_ScoreSchedulerEngine.h"
@@ -32,7 +33,7 @@ int Polytempo_LibMain::initialize(int port, bool masterFlag)
     Polytempo_EventScheduler::getInstance()->startThread(5); // priority between 0 and 10
 
     oscListener.reset(new Polytempo_OSCListener(port));
-    Polytempo_NetworkSupervisor::getInstance()->createSender(port);
+    Polytempo_NetworkSupervisor::getInstance()->createSender(Polytempo_PortDefinition::AdvertisePortCount, Polytempo_PortDefinition::AdvertisePorts);
     Polytempo_TimeProvider::getInstance()->registerUserInterface(this);
     bool ok = Polytempo_TimeProvider::getInstance()->toggleMaster(masterFlag);
     isInit = ok;

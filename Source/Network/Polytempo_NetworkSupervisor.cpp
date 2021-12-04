@@ -56,7 +56,10 @@ void Polytempo_NetworkSupervisor::timerCallback()
     for (Polytempo_IPAddress localIpAddress : localIpAddresses)
     {
         std::unique_ptr<OSCMessage> msg = createAdvertiseMessage(localIpAddress.m_ipAddress.toString());
-        oscSender->sendToIPAddress(localIpAddress.getBroadcastAddress().toString(), currentPort, *msg);
+        for(auto p : currentPorts)
+        {
+            oscSender->sendToIPAddress(localIpAddress.getBroadcastAddress().toString(), p, *msg);
+        }
     }
 
 #ifndef POLYTEMPO_LIB
@@ -85,14 +88,18 @@ bool Polytempo_NetworkSupervisor::unicastFlood(Polytempo_IPAddress ownIp)
     while (currentIp <= lastIp)
     {
         Logger::writeToLog("Sending node information to " + currentIp.toString());
-        bool ok = localSender.sendToIPAddress(currentIp.toString(), currentPort, *msg);
-        if (!ok)
+        for(auto p : currentPorts)
         {
+            bool ok = localSender.sendToIPAddress(currentIp.toString(), p, *msg);
+            if (!ok)
+            {
 #ifdef POLYTEMPO_NETWORK
-            Polytempo_Alert::show("Error", "Error sending node information to " + currentIp.toString());
+                Polytempo_Alert::show("Error", "Error sending node information to " + currentIp.toString());
 #endif
-            return false;
+                return false;
+            }
         }
+        
         // proceed to next address
         if (currentIp.address[3] == 255)
         {
@@ -138,11 +145,16 @@ String Polytempo_NetworkSupervisor::getPeerName() const
 #endif
 }
 
-void Polytempo_NetworkSupervisor::createSender(int port)
+void Polytempo_NetworkSupervisor::createSender(int portCount, const int* ports)
 {
-    currentPort = port;
+    currentPorts.clear();
+    for(int i = 0; i < portCount; i++)
+    {
+        currentPorts.add(ports[i]);
+    }
+    
     oscSender.reset(new OSCSender());
-    oscSender->connect("255.255.255.255", currentPort);
+    oscSender->connect("255.255.255.255", currentPorts[0]);
 }
 
 #ifndef POLYTEMPO_LIB

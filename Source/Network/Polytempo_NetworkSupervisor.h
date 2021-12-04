@@ -1,5 +1,4 @@
 #pragma once
-
 #include "../Scheduler/Polytempo_EventObserver.h"
 #include "Polytempo_PeerInfo.h"
 #include "Polytempo_IPAddress.h"
@@ -21,7 +20,7 @@ public:
     String getScoreName() const;
     String getPeerName() const;
 
-    void createSender(int port);
+    void createSender(int portCount, const int* ports);
 
 #ifndef POLYTEMPO_LIB
     void setComponent(Component* aComponent);
@@ -44,5 +43,5 @@ private:
     std::unique_ptr<String> localName;
     std::unique_ptr<String> nodeName;
 
-    int currentPort;
+    Array<int> currentPorts;
 };

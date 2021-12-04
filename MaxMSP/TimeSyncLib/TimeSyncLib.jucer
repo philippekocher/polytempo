@@ -51,6 +51,10 @@
             file="../../Source/Network/Polytempo_OSCListener.h"/>
       <FILE id="Uf0bpN" name="Polytempo_PeerInfo.h" compile="0" resource="0"
             file="../../Source/Network/Polytempo_PeerInfo.h"/>
+      <FILE id="K7v6ez" name="Polytempo_PortDefinition.cpp" compile="1" resource="0"
+            file="../../Source/Network/Polytempo_PortDefinition.cpp"/>
+      <FILE id="EhXFmA" name="Polytempo_PortDefinition.h" compile="0" resource="0"
+            file="../../Source/Network/Polytempo_PortDefinition.h"/>
       <FILE id="dvG0Hu" name="Polytempo_ScoreScheduler.cpp" compile="1" resource="0"
             file="../../Source/Scheduler/Polytempo_ScoreScheduler.cpp"/>
       <FILE id="y2WoS6" name="Polytempo_ScoreScheduler.h" compile="0" resource="0"
