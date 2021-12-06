@@ -196,7 +196,15 @@ void MyHandler::processEvent(std::string const& message)
 {
     std::cout << "Event: " << message << std::endl;
     m_pExternal->logMessage(message);
-    m_pExternal->eventOutput.send(message);
+    
+    // split and fill into a list of atoms
+    atoms a;
+    std::istringstream iss(message);
+    std::vector<std::string> results(std::istream_iterator<std::string>{iss}, std::istream_iterator<std::string>());
+    for(auto s : results)
+        a.push_back(s);
+    
+    m_pExternal->eventOutput.send(a);
 }
 
 void MyHandler::processTick(double tick)
@@ -207,8 +215,10 @@ void MyHandler::processTick(double tick)
 
 void MyHandler::processState(int state, std::string message)
 {
-    string msg = "State: " + std::to_string(state) + " " + message;
-    m_pExternal->networkStateOutput.send(msg);
+    atoms a;
+    a.push_back(state);
+    a.push_back(message);
+    m_pExternal->networkStateOutput.send(a);
 }
 
 
