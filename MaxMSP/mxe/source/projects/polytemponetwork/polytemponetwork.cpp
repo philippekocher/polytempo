@@ -25,11 +25,32 @@ public:
     MIN_AUTHOR		{"ICST @ ZHdK"};
     MIN_RELATED		{"print"};
 
-    inlet<>  input	{ this, "(int) toggle client on/off\n(master) toggle master on/off" };
-    outlet<thread_check::scheduler, thread_action::fifo> eventOutput	{ this, "(anything) output of received polytempo events" };
-    outlet<> tickOutput{ this, "(float) tick information", "float" };
-    outlet<thread_check::scheduler, thread_action::fifo> networkStateOutput{this, "(anything) output of network state information" };
-    outlet<thread_check::scheduler, thread_action::fifo> connectedPeersOutput{this, "(anything) output of connected peers" };
+    inlet<>  input
+    {
+        this,
+        "master 0/1: toggle master on/off; other input will be interpreted as polytempo event"
+    };
+    
+    outlet<thread_check::scheduler, thread_action::fifo> eventOutput
+    {
+        this,
+        "output of received polytempo events"
+    };
+    
+    outlet<> tickOutput{
+        this,
+        "(float) tick information", "float"
+    };
+    
+    outlet<thread_check::scheduler, thread_action::fifo> networkStateOutput{
+        this,
+        "output of network state information"
+    };
+    
+    outlet<thread_check::scheduler, thread_action::fifo> connectedPeersOutput{
+        this,
+        "output of connected peers"
+    };
 
     timer<> tickDeliverer { this,
         MIN_FUNCTION {
