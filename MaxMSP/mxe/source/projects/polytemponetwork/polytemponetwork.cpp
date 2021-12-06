@@ -4,21 +4,7 @@
 
 using namespace c74::min;
 
-class polytemponetwork;
-
-class MyHandler : public EventCallbackHandler, public TickCallbackHandler, public StateCallbackHandler
-{
-public:
-    MyHandler(polytemponetwork* pExternal);
-    void processEvent(std::string const& message) override;
-    void processTick(double tick) override;
-    void processState(int state, std::string message, std::vector<std::string> peers) override;
-    
-private:
-    polytemponetwork* m_pExternal;
-};
-
-class polytemponetwork : public object<polytemponetwork> {
+class polytemponetwork : public object<polytemponetwork>, public EventCallbackHandler, public TickCallbackHandler, public StateCallbackHandler {
 public:
     MIN_DESCRIPTION	{"Polytempo Network client for Max MSP."};
     MIN_TAGS		{"utilities"};
@@ -59,7 +45,6 @@ public:
         }
     };
     
-    MyHandler* pHandler;
     string m_InstanceName;
     bool m_initialized { false };
     int m_Port;
@@ -82,14 +67,12 @@ public:
             int ret = polytempo_initialize(m_Port, master);
             if (ret == 0)
             {
-                pHandler = new MyHandler(this);
-
                 cout << "register event callback" << endl;
-                polytempo_registerEventCallback(pHandler);
+                polytempo_registerEventCallback(this);
                 cout << "register tick callback" << endl;
-                polytempo_registerTickCallback(pHandler);
+                polytempo_registerTickCallback(this);
                 cout << "register state callback" << endl;
-                polytempo_registerStateCallback(pHandler);
+                polytempo_registerStateCallback(this);
 
                 m_initialized = true;
                 setInstanceName();
@@ -213,55 +196,48 @@ public:
         }
     };
          
-    
+    void processEvent(std::string const& message) override
+    {
+        std::cout << "Event: " << message << std::endl;
+        logMessage(message);
+        
+        // split and fill into a list of atoms
+        atoms a;
+        std::istringstream iss(message);
+        std::vector<std::string> results(std::istream_iterator<std::string>{iss}, std::istream_iterator<std::string>());
+        for(auto s : results)
+            a.push_back(s);
+        
+        eventOutput.send(a);
+    }
+
+    void processTick(double tick) override
+    {
+        m_Tick = tick;
+        tickDeliverer.delay(0);
+    }
+
+    void processState(int state, std::string message, std::vector<std::string> peers) override
+    {
+        atoms a;
+        a.push_back(state);
+        a.push_back(message);
+        networkStateOutput.send(a);
+
+        atoms peerAtoms;
+        for(auto p : peers)
+        {
+            peerAtoms.push_back(p);
+        }
+
+        if(peers.size() <= 0)
+        {
+            peerAtoms.push_back(0);
+        }
+                            
+        connectedPeersOutput.send(peerAtoms);
+    }
 };
-
-MyHandler::MyHandler(polytemponetwork* pExternal)
-{
-    m_pExternal = pExternal;
-}
-
-void MyHandler::processEvent(std::string const& message)
-{
-    std::cout << "Event: " << message << std::endl;
-    m_pExternal->logMessage(message);
-    
-    // split and fill into a list of atoms
-    atoms a;
-    std::istringstream iss(message);
-    std::vector<std::string> results(std::istream_iterator<std::string>{iss}, std::istream_iterator<std::string>());
-    for(auto s : results)
-        a.push_back(s);
-    
-    m_pExternal->eventOutput.send(a);
-}
-
-void MyHandler::processTick(double tick)
-{
-    m_pExternal->m_Tick = tick;
-    m_pExternal->tickDeliverer.delay(0);
-}
-
-void MyHandler::processState(int state, std::string message, std::vector<std::string> peers)
-{
-    atoms a;
-    a.push_back(state);
-    a.push_back(message);
-    m_pExternal->networkStateOutput.send(a);
-
-    atoms peerAtoms;
-    for(auto p : peers)
-    {
-        peerAtoms.push_back(p);
-    }
-
-    if(peers.size() <= 0)
-    {
-        peerAtoms.push_back(0);
-    }
-                        
-    m_pExternal->connectedPeersOutput.send(peerAtoms);
-}
 
 
 MIN_EXTERNAL(polytemponetwork);
