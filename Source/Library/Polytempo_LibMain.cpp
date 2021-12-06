@@ -183,6 +183,29 @@ void Polytempo_LibMain::showInfoMessage(int messageType, String message)
 {
     if (pStateCallback != nullptr)
     {
-        pStateCallback->processState(messageType, message.toStdString());
+        // build connected peers list
+        OwnedArray<Polytempo_PeerInfo> peers;
+        std::vector<std::string> peerString;
+        
+        if(Polytempo_TimeProvider::getInstance()->isMaster())
+        {
+            Polytempo_InterprocessCommunication::getInstance()->getClientsInfo(&peers);
+        }
+        else
+        {
+            auto info = Polytempo_InterprocessCommunication::getInstance()->getMasterInfo();
+            if(info != nullptr)
+            {
+                peers.add(info);
+            }
+        }
+        
+        for (Polytempo_PeerInfo* peer : peers)
+        {
+            String name = peer->scoreName + " (" + (peer->peerName.isNotEmpty() ? peer->peerName : "-") + ")";
+            peerString.push_back(name.toStdString());
+        }
+        
+        pStateCallback->processState(messageType, message.toStdString(), peerString);
     }
 }

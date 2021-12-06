@@ -188,11 +188,6 @@ void Polytempo_NetworkEngine::run()
 void Polytempo_NetworkEngine::setScoreTime(int time)
 {
     scoreTime = time;
-
-    Polytempo_EventScheduler* scheduler = Polytempo_EventScheduler::getInstance();
-    std::unique_ptr<Polytempo_Event> clearAllEvent = std::unique_ptr<Polytempo_Event>(Polytempo_Event::makeEvent(eventType_ClearAll));
-    scheduler->executeEvent(clearAllEvent.get());
-
     lastDownbeat = time;
 }
 

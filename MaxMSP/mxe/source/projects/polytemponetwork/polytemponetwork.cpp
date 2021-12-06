@@ -12,7 +12,7 @@ public:
     MyHandler(polytemponetwork* pExternal);
     void processEvent(std::string const& message) override;
     void processTick(double tick) override;
-    void processState(int state, std::string message) override;
+    void processState(int state, std::string message, std::vector<std::string> peers) override;
     
 private:
     polytemponetwork* m_pExternal;
@@ -29,6 +29,7 @@ public:
     outlet<thread_check::scheduler, thread_action::fifo> eventOutput	{ this, "(anything) output of received polytempo events" };
     outlet<> tickOutput{ this, "(float) tick information", "float" };
     outlet<thread_check::scheduler, thread_action::fifo> networkStateOutput{this, "(anything) output of network state information" };
+    outlet<thread_check::scheduler, thread_action::fifo> connectedPeersOutput{this, "(anything) output of connected peers" };
 
     timer<> tickDeliverer { this,
         MIN_FUNCTION {
@@ -166,9 +167,17 @@ public:
         MIN_FUNCTION {
             if (m_initialized)
             {
-                if(polytempo_sendEvent(args[0]) != 0)
+                std::string command;
+                        
+                for(int i = 0; i < args.size(); i++)
                 {
-                    cout << "unable to send event: " << args[0] << endl;
+                    std::string argString = args[i];
+                    command = command + argString + ((i < args.size() - 1) ? " " : "");
+                }
+                
+                if(polytempo_sendEvent(command) != 0)
+                {
+                    cout << "unable to send event: " << command << endl;
                 }
             }
 
@@ -179,7 +188,6 @@ public:
     // post to max window == but only when the class is loaded the first time
     message<> maxclass_setup { this, "maxclass_setup",
         MIN_FUNCTION {
-
             return {};
         }
     };
@@ -213,12 +221,25 @@ void MyHandler::processTick(double tick)
     m_pExternal->tickDeliverer.delay(0);
 }
 
-void MyHandler::processState(int state, std::string message)
+void MyHandler::processState(int state, std::string message, std::vector<std::string> peers)
 {
     atoms a;
     a.push_back(state);
     a.push_back(message);
     m_pExternal->networkStateOutput.send(a);
+
+    atoms peerAtoms;
+    for(auto p : peers)
+    {
+        peerAtoms.push_back(p);
+    }
+
+    if(peers.size() <= 0)
+    {
+        peerAtoms.push_back(0);
+    }
+                        
+    m_pExternal->connectedPeersOutput.send(peerAtoms);
 }
 
 

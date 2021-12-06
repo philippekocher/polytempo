@@ -19,5 +19,5 @@ class StateCallbackHandler
 {
 public:
     virtual ~StateCallbackHandler() {};
-    virtual void processState(int state, std::string message) = 0;
+    virtual void processState(int state, std::string message, std::vector<std::string> peers) = 0;
 };
