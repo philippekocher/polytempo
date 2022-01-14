@@ -18,13 +18,17 @@ private:
 public:
     virtual ~Polytempo_LibMain();
 
-    int initialize(int port, bool masterFlag);
+    int initialize(int port, bool masterFlag, std::string instanceName);
+    bool isInitialized();
     int toggleMaster(bool masterFlag);
     int sendEvent(std::string command, std::string payload, std::string destinationNamePattern = "*");
     int sendEvent(std::string fullEventString);
-    void registerEventCallback(EventCallbackHandler* pHandler);
-    void registerTickCallback(TickCallbackHandler* pHandler);
-    void registerStateCallback(StateCallbackHandler* pHandler);
+    void registerEventCallback(EventCallbackHandler* pHandler, EventCallbackOptions options);
+    void registerTickCallback(TickCallbackHandler* pHandler, TickCallbackOptions options);
+    void registerStateCallback(StateCallbackHandler* pHandler, StateCallbackOptions options);
+    void unregisterEventCallback(EventCallbackHandler* pHandler);
+    void unregisterTickCallback(TickCallbackHandler* pHandler);
+    void unregisterStateCallback(StateCallbackHandler* pHandler);
     
     typedef ReferenceCountedObjectPtr<Polytempo_LibMain> Ptr;
     static Ptr current();
@@ -37,9 +41,10 @@ private:
 
 private:
     bool isInit;
-    EventCallbackHandler* pEventCallback;
-    TickCallbackHandler* pTickCallback;
-    StateCallbackHandler* pStateCallback;
+    HashMap<EventCallbackHandler*, EventCallbackOptions> eventCallbacks;
+    HashMap<TickCallbackHandler*, TickCallbackOptions> tickCallbacks;
+    HashMap<StateCallbackHandler*, StateCallbackOptions> stateCallbacks;
+    std::string lastStatusInfo;
 
     static Ptr current_;
     std::unique_ptr<Polytempo_OSCListener> oscListener;

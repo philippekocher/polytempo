@@ -19,6 +19,7 @@ public:
     String getDescription() const;
     String getScoreName() const;
     String getPeerName() const;
+    void setManualPeerName(String name);
 
     void createSender(int portCount, const int* ports);
 
@@ -42,6 +43,7 @@ private:
 
     std::unique_ptr<String> localName;
     std::unique_ptr<String> nodeName;
+    std::unique_ptr<String> manualPeerName;
 
     Array<int> currentPorts;
 };

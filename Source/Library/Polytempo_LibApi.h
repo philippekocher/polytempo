@@ -22,11 +22,15 @@
 
 extern "C"
 {
-    EXPORT_INT polytempo_initialize(int port, bool masterFlag);
+    EXPORT_INT polytempo_initialize(int port, bool masterFlag, std::string instanceName);
+    EXPORT_INT polytempo_isInitialized();
     EXPORT_INT polytempo_toggleMaster(bool masterFlag);
     EXPORT_INT polytempo_sendEvent(std::string fullEventString);
-    EXPORT_VOID polytempo_registerEventCallback(EventCallbackHandler* pHandler);
-    EXPORT_VOID polytempo_registerTickCallback(TickCallbackHandler* pHandler);
-    EXPORT_VOID polytempo_registerStateCallback(StateCallbackHandler* pHandler);
+    EXPORT_VOID polytempo_registerEventCallback(EventCallbackHandler* pHandler, EventCallbackOptions options);
+    EXPORT_VOID polytempo_registerTickCallback(TickCallbackHandler* pHandler, TickCallbackOptions options);
+    EXPORT_VOID polytempo_registerStateCallback(StateCallbackHandler* pHandler, StateCallbackOptions options);
+    EXPORT_VOID polytempo_unregisterEventCallback(EventCallbackHandler* pHandler);
+    EXPORT_VOID polytempo_unregisterTickCallback(TickCallbackHandler* pHandler);
+    EXPORT_VOID polytempo_unregisterStateCallback(StateCallbackHandler* pHandler);
     EXPORT_VOID polytempo_release();
 }

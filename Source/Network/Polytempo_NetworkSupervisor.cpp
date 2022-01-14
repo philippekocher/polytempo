@@ -136,12 +136,20 @@ String Polytempo_NetworkSupervisor::getScoreName() const
     return String(localName == nullptr ? "Untitled" : *localName);
 }
 
+void Polytempo_NetworkSupervisor::setManualPeerName(String name)
+{
+    manualPeerName.reset(new String(name));
+}
+
 String Polytempo_NetworkSupervisor::getPeerName() const
 {
+    if(manualPeerName != nullptr)
+        return String(*manualPeerName);
+    
 #ifdef POLYTEMPO_NETWORK
     return String(Polytempo_StoredPreferences::getInstance()->getProps().getValue("instanceName"));
 #else
-    return "Ext. Client";
+    return "Unknown";
 #endif
 }
 

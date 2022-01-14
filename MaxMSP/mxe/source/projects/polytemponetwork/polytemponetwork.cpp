@@ -1,6 +1,7 @@
 #include "c74_min.h"
 #include "../../../../../Source/Library/Polytempo_LibApi.h"
 #include "../../../../../Source/Network/Polytempo_PortDefinition.h"
+//#define VERBOSE
 
 using namespace c74::min;
 
@@ -20,7 +21,7 @@ public:
     outlet<thread_check::scheduler, thread_action::fifo> eventOutput
     {
         this,
-        "output of received polytempo events"
+        "received polytempo events"
     };
     
     outlet<> tickOutput{
@@ -30,12 +31,12 @@ public:
     
     outlet<thread_check::scheduler, thread_action::fifo> networkStateOutput{
         this,
-        "output of network state information"
+        "network state information"
     };
     
     outlet<thread_check::scheduler, thread_action::fifo> connectedPeersOutput{
         this,
-        "output of connected peers"
+        "connected peers"
     };
 
     timer<> tickDeliverer { this,
@@ -53,33 +54,46 @@ public:
     polytemponetwork(const atoms& args = {})
     {
         m_Port = (args.size() > 0 ? (int)args[0] : Polytempo_PortDefinition::PolytempoNetworkMax);
-        m_InstanceName = "MaxExternal";
+        m_InstanceName = "Untitled";
         
         if (!dummy())
         {
-            cout << "init" << endl;
+            logMessage("--- polytempo network ---");
+            logMessage("© 2022 Zurich University of the Arts");
+            logDebugMessage("init");
+            
+            // TODO: might be removed
             if (m_initialized)
             {
-                cout << "deinit" << endl;
+                logDebugMessage("deinit");
+                polytempo_unregisterEventCallback(this);
+                polytempo_unregisterTickCallback(this);
+                polytempo_unregisterStateCallback(this);
                 polytempo_release();
             }
 
-            int ret = polytempo_initialize(m_Port, master);
-            if (ret == 0)
+            if (polytempo_isInitialized() || polytempo_initialize(m_Port, master, "MaxExternal") == 0)
             {
-                cout << "register event callback" << endl;
-                polytempo_registerEventCallback(this);
-                cout << "register tick callback" << endl;
-                polytempo_registerTickCallback(this);
-                cout << "register state callback" << endl;
-                polytempo_registerStateCallback(this);
+                logDebugMessage("register event callback");
+                EventCallbackOptions eventOptions;
+                eventOptions.ignoreTimeTag = true;
+                polytempo_registerEventCallback(this, eventOptions);
+                
+                logDebugMessage("register tick callback");
+                TickCallbackOptions tickOptions;
+                polytempo_registerTickCallback(this, tickOptions);
+                
+                logDebugMessage("register state callback");
+                StateCallbackOptions stateOptions;
+                stateOptions.callOnChangeOnly = true;
+                polytempo_registerStateCallback(this, stateOptions);
 
                 m_initialized = true;
                 setInstanceName();
             }
             else
             {
-                cout << "error initializing polytempo lib" << endl;
+                logMessage("error initializing polytempo lib");
             }
         }
     }
@@ -88,8 +102,11 @@ public:
     {
         if (!dummy() && m_initialized)
         {
-            cout << "deinit" << endl;
+            logDebugMessage("deinit");
             m_initialized = false;
+            polytempo_unregisterEventCallback(this);
+            polytempo_unregisterTickCallback(this);
+            polytempo_unregisterStateCallback(this);
             polytempo_release();
         }
     }
@@ -97,6 +114,13 @@ public:
     void logMessage(string msg)
     {
         cout << msg << endl;
+    }
+    
+    inline void logDebugMessage(string msg)
+    {
+#ifdef VERBOSE
+        cout << msg << endl;
+#endif
     }
 
     void setInstanceName()
@@ -110,13 +134,13 @@ public:
         {
             if (isMaster)
             {
-                cout << "Switch master ON" << endl;
+                logDebugMessage("Switch master ON");
                 polytempo_toggleMaster(true);
 
             }
             else
             {
-                cout << "Switch master OFF" << endl;
+                logDebugMessage("Switch master OFF");
                 polytempo_toggleMaster(false);
 
             }
@@ -142,7 +166,7 @@ public:
         MIN_FUNCTION {
             if (m_initialized)
             {
-                if (args[0] == "name")
+                if (args[0] == "name" && args.size() > 1)
                 {
                     m_InstanceName = (string)args[1];
                     setInstanceName();
@@ -158,7 +182,7 @@ public:
 
                     if(polytempo_sendEvent(message) != 0)
                     {
-                        cout << "unable to send settings command: " << message << endl;
+                        logMessage("unable to send settings command: " + message);
                     }
                 }
             }
@@ -181,7 +205,7 @@ public:
                 
                 if(polytempo_sendEvent(command) != 0)
                 {
-                    cout << "unable to send event: " << command << endl;
+                    logMessage("unable to send event: " + command);
                 }
             }
 
@@ -198,8 +222,7 @@ public:
          
     void processEvent(std::string const& message) override
     {
-        std::cout << "Event: " << message << std::endl;
-        logMessage(message);
+        logDebugMessage(message);
         
         // split and fill into a list of atoms
         atoms a;

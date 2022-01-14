@@ -10,11 +10,10 @@
 
 Polytempo_LibMain::Ptr Polytempo_LibMain::current_;
 
-Polytempo_LibMain::Polytempo_LibMain() : isInit(false), pEventCallback(nullptr), pTickCallback(nullptr), pStateCallback(nullptr)
+Polytempo_LibMain::Polytempo_LibMain() : isInit(false)
 {
     MessageManager::getInstance();
 }
-
 
 Polytempo_LibMain::~Polytempo_LibMain()
 {
@@ -27,18 +26,24 @@ Polytempo_LibMain::~Polytempo_LibMain()
     Polytempo_InterprocessCommunication::deleteInstance();
 }
 
-int Polytempo_LibMain::initialize(int port, bool masterFlag)
+int Polytempo_LibMain::initialize(int port, bool masterFlag, std::string instanceName)
 {
     Polytempo_ScoreScheduler::getInstance()->setEngine(new Polytempo_NetworkEngine());
     Polytempo_EventScheduler::getInstance()->startThread(5); // priority between 0 and 10
 
     oscListener.reset(new Polytempo_OSCListener(port));
     Polytempo_NetworkSupervisor::getInstance()->createSender(Polytempo_PortDefinition::AdvertisePortCount, Polytempo_PortDefinition::AdvertisePorts);
+    Polytempo_NetworkSupervisor::getInstance()->setManualPeerName(instanceName);
     Polytempo_TimeProvider::getInstance()->registerUserInterface(this);
     bool ok = Polytempo_TimeProvider::getInstance()->toggleMaster(masterFlag);
     isInit = ok;
 
     return ok ? 0 : -1;
+}
+
+bool Polytempo_LibMain::isInitialized()
+{
+    return current_ != nullptr && isInit;
 }
 
 int Polytempo_LibMain::toggleMaster(bool masterFlag)
@@ -122,19 +127,34 @@ int Polytempo_LibMain::sendEvent(std::string fullEventString)
     return 0;
 }
 
-void Polytempo_LibMain::registerEventCallback(EventCallbackHandler* pHandler)
+void Polytempo_LibMain::registerEventCallback(EventCallbackHandler* pHandler, EventCallbackOptions options)
 {
-    pEventCallback = pHandler;
+    eventCallbacks.set(pHandler, options);
 }
 
-void Polytempo_LibMain::registerTickCallback(TickCallbackHandler* pHandler)
+void Polytempo_LibMain::registerTickCallback(TickCallbackHandler* pHandler, TickCallbackOptions options)
 {
-    pTickCallback = pHandler;
+    tickCallbacks.set(pHandler, options);
 }
 
-void Polytempo_LibMain::registerStateCallback(StateCallbackHandler* pHandler)
+void Polytempo_LibMain::registerStateCallback(StateCallbackHandler* pHandler, StateCallbackOptions options)
 {
-    pStateCallback = pHandler;
+    stateCallbacks.set(pHandler, options);
+}
+
+void Polytempo_LibMain::unregisterEventCallback(EventCallbackHandler *pHandler)
+{
+    eventCallbacks.remove(pHandler);
+}
+
+void Polytempo_LibMain::unregisterTickCallback(TickCallbackHandler *pHandler)
+{
+    tickCallbacks.remove(pHandler);
+}
+
+void Polytempo_LibMain::unregisterStateCallback(StateCallbackHandler *pHandler)
+{
+    stateCallbacks.remove(pHandler);
 }
 
 Polytempo_LibMain::Ptr Polytempo_LibMain::current()
@@ -148,6 +168,10 @@ Polytempo_LibMain::Ptr Polytempo_LibMain::current()
 
 void Polytempo_LibMain::release()
 {
+    if(current_ != nullptr
+       && current_->eventCallbacks.size() == 0
+       && current_->stateCallbacks.size() == 0
+       && current_->tickCallbacks.size() == 0)
     current_ = nullptr;
 }
 
@@ -155,57 +179,65 @@ void Polytempo_LibMain::eventNotification(Polytempo_Event* event)
 {
     if (event->getType() == eventType_Tick)
     {
-        if (pTickCallback != nullptr)
-        {
-            //MessageManager::callAsync([this, event]{ pTickCallback->processTick(event->getValue()); });
-            pTickCallback->processTick(event->getValue());
+        for (HashMap<TickCallbackHandler*, TickCallbackOptions>::Iterator i (tickCallbacks); i.next();) {
+            i.getKey()->processTick(event->getValue());
         }
     }
     else
     {
-        if (pEventCallback != nullptr)
-        {
+        for (HashMap<EventCallbackHandler*, EventCallbackOptions>::Iterator i (eventCallbacks); i.next();) {
             String str = event->getTypeString() + " ";
             const NamedValueSet* props = event->getProperties();
             if(!props->isEmpty())
             {
-                for (auto& e : *props)
+                for (auto& e : *props) {
+                    if(i.getValue().ignoreTimeTag && e.name == Identifier("timeTag"))
+                        continue;
                     str.append(e.name.toString() + " " + e.value.toString() + " ", 100);
+                }
             }
 
-            //MessageManager::callAsync([this, str] { pEventCallback->processEvent(str.trimCharactersAtEnd(" ").toStdString()); });
-            pEventCallback->processEvent(str.trimCharactersAtEnd(" ").toStdString());
+            i.getKey()->processEvent(str.trimCharactersAtEnd(" ").toStdString());
         }
     }
 }
 
 void Polytempo_LibMain::showInfoMessage(int messageType, String message)
 {
-    if (pStateCallback != nullptr)
+    // build connected peers list
+    OwnedArray<Polytempo_PeerInfo> peers;
+    std::vector<std::string> peerString;
+    
+    if(Polytempo_TimeProvider::getInstance()->isMaster())
     {
-        // build connected peers list
-        OwnedArray<Polytempo_PeerInfo> peers;
-        std::vector<std::string> peerString;
-        
-        if(Polytempo_TimeProvider::getInstance()->isMaster())
-        {
-            Polytempo_InterprocessCommunication::getInstance()->getClientsInfo(&peers);
-        }
-        else
-        {
-            auto info = Polytempo_InterprocessCommunication::getInstance()->getMasterInfo();
-            if(info != nullptr)
-            {
-                peers.add(info);
-            }
-        }
-        
-        for (Polytempo_PeerInfo* peer : peers)
-        {
-            String name = peer->scoreName + " (" + (peer->peerName.isNotEmpty() ? peer->peerName : "-") + ")";
-            peerString.push_back(name.toStdString());
-        }
-        
-        pStateCallback->processState(messageType, message.toStdString(), peerString);
+        Polytempo_InterprocessCommunication::getInstance()->getClientsInfo(&peers);
     }
+    else
+    {
+        auto info = Polytempo_InterprocessCommunication::getInstance()->getMasterInfo();
+        if(info != nullptr)
+        {
+            peers.add(info);
+        }
+    }
+    
+    for (Polytempo_PeerInfo* peer : peers)
+    {
+        String name = peer->scoreName + " (" + (peer->peerName.isNotEmpty() ? peer->peerName : "-") + ")";
+        peerString.push_back(name.toStdString());
+    }
+    
+    std::string currentFullString = message.toStdString();
+    for(auto s : peerString) {
+        currentFullString += (" " + s);
+    }
+    
+    for (HashMap<StateCallbackHandler*, StateCallbackOptions>::Iterator i (stateCallbacks); i.next();) {
+        if(i.getValue().callOnChangeOnly && currentFullString == lastStatusInfo)
+            continue;
+        
+        i.getKey()->processState(messageType, message.toStdString(), peerString);
+    }
+    
+    lastStatusInfo = currentFullString;
 }
