@@ -25,7 +25,7 @@ private:
     void buttonClicked(Button*) override;
     void processEvent(std::string const& message) override;
     void processTick(double tick) override;
-    void processState(int state, std::string message) override;
+    void processState(int state, std::string message, std::vector<std::string> peers) override;
     void handleAsyncUpdate() override;
     void setOnOff(bool on);
     

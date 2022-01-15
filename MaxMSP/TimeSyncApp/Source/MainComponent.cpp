@@ -98,15 +98,24 @@ void MainComponent::setOnOff(bool on)
 {
     if(on)
     {
-        POLYTEMPOCALL(initialize(47522, false));
-        POLYTEMPOCALL(registerEventCallback(this));
-        POLYTEMPOCALL(registerTickCallback(this));
-        POLYTEMPOCALL(registerStateCallback(this));
+        EventCallbackOptions eventOptions;
+        eventOptions.ignoreTimeTag = true;
+        TickCallbackOptions tickOptions;
+        StateCallbackOptions stateOptions;
+        stateOptions.callOnChangeOnly = true;
+        
+        POLYTEMPOCALL(initialize(47523, false, "TsAppLib"));
+        POLYTEMPOCALL(registerEventCallback(this, eventOptions));
+        POLYTEMPOCALL(registerTickCallback(this, tickOptions));
+        POLYTEMPOCALL(registerStateCallback(this, stateOptions));
         const auto applicationName = JUCEApplication::getInstance()->getApplicationName().toStdString();
         POLYTEMPOCALL(sendEvent("settings name " + applicationName));
     }
     else
     {
+        POLYTEMPOCALL(unregisterEventCallback(this));
+        POLYTEMPOCALL(unregisterTickCallback(this));
+        POLYTEMPOCALL(unregisterStateCallback(this));
         POLYTEMPO_RELEASE;
     }
 }
@@ -195,7 +204,7 @@ void MainComponent::processTick(double tick)
     triggerAsyncUpdate();
 }
 
-void MainComponent::processState(int state, std::string message)
+void MainComponent::processState(int state, std::string message, std::vector<std::string> peers)
 {
     // TODO: defines
     Colour c;
