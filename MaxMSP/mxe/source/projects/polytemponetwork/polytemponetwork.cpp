@@ -1,7 +1,6 @@
 #include "c74_min.h"
 #include "../../../../../Source/Library/Polytempo_LibApi.h"
 #include "../../../../../Source/Network/Polytempo_PortDefinition.h"
-//#define VERBOSE
 
 using namespace c74::min;
 
@@ -118,9 +117,8 @@ public:
     
     inline void logDebugMessage(string msg)
     {
-#ifdef VERBOSE
-        cout << msg << endl;
-#endif
+        if(verbose)
+            cout << msg << endl;
     }
 
     void setInstanceName()
@@ -153,6 +151,10 @@ public:
             setMaster(args[0]);
             return args;
         }}
+    };
+    
+    attribute<bool> verbose{ this, "verbose", false,
+        description {"Turn on/off verbose mode."}
     };
     
     // respond to the bang message to do something
