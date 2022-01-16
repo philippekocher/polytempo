@@ -15,6 +15,7 @@ MainComponent::MainComponent()
 {
     toggleOn.reset(new ToggleButton("On"));
     toggleOn->addListener(this);
+    toggleOn->setToggleState(true, dontSendNotification);
     addAndMakeVisible(toggleOn.get());
     
     // In
@@ -104,7 +105,7 @@ void MainComponent::setOnOff(bool on)
         StateCallbackOptions stateOptions;
         stateOptions.callOnChangeOnly = true;
         
-        POLYTEMPOCALL(initialize(47523, false, "TsAppLib"));
+        POLYTEMPOCALL(initialize(47523, toggleMaster->getToggleState(), "TsAppLib"));
         POLYTEMPOCALL(registerEventCallback(this, eventOptions));
         POLYTEMPOCALL(registerTickCallback(this, tickOptions));
         POLYTEMPOCALL(registerStateCallback(this, stateOptions));
