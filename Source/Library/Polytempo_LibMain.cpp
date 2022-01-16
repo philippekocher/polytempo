@@ -72,25 +72,14 @@ int Polytempo_LibMain::sendEvent(std::string command, std::string payload, std::
         }
     }
 
-    if (e->getType() == eventType_Start 
-        || e->getType() == eventType_Stop
-        || e->getType() == eventType_Pause
-        || e->getType() == eventType_GotoTime 
-        || e->getType() == eventType_TempoFactor)
+    if(Polytempo_TimeProvider::getInstance()->isMaster() && !destinationNamePattern.empty())
     {
-        Polytempo_EventDispatcher::getInstance()->broadcastEvent(e);
+        Polytempo_InterprocessCommunication::getInstance()->distributeEvent(e, destinationNamePattern);
     }
-    else
+    else if(destinationNamePattern.empty() || Polytempo_NetworkSupervisor::getInstance()->getScoreName().matchesWildcard(destinationNamePattern, true))
     {
-        if (e->getType() == eventType_Settings && (destinationNamePattern.empty() || destinationNamePattern == "*"))
-        {
-            Polytempo_EventScheduler::getInstance()->scheduleEvent(e);
-        }
-        else
-        {
-            Polytempo_InterprocessCommunication::getInstance()->distributeEvent(e, destinationNamePattern);
-            delete e;
-        }
+        e->setSyncTime(Polytempo_TimeProvider::getInstance()->getDelaySafeTimestamp());
+        Polytempo_EventScheduler::getInstance()->scheduleEvent(e);
     }
     
     return 0;
@@ -101,7 +90,7 @@ int Polytempo_LibMain::sendEvent(std::string fullEventString)
     String str(fullEventString);
     String commandAndPayload;
     String command, payload;
-    String addressPattern = "*";
+    String addressPattern = "";
     if(str.matchesWildcard("/*/*", true))
     {
         addressPattern = str.upToLastOccurrenceOf("/", false, true).trimCharactersAtStart("/");
