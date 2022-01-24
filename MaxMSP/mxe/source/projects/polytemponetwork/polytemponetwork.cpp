@@ -57,8 +57,6 @@ public:
         
         if (!dummy())
         {
-            logMessage("--- polytempo network ---");
-            logMessage("© 2022 Zurich University of the Arts");
             logDebugMessage("init");
             
             // TODO: might be removed
@@ -218,10 +216,12 @@ public:
     // post to max window == but only when the class is loaded the first time
     message<> maxclass_setup { this, "maxclass_setup",
         MIN_FUNCTION {
+            cout << "--- polytempo network ---" << endl;
+            cout << "© 2022 Zurich University of the Arts" << endl;
             return {};
         }
     };
-         
+    
     void processEvent(std::string const& message) override
     {
         logDebugMessage(message);
@@ -261,6 +261,14 @@ public:
         }
                             
         connectedPeersOutput.send(peerAtoms);
+    }
+            
+    void processMasterChanged(bool isMaster) override
+    {
+        if(master != isMaster)
+        {
+            master = isMaster;
+        }
     }
 };
 

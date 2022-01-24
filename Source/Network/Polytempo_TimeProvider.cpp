@@ -98,8 +98,7 @@ bool Polytempo_TimeProvider::toggleMaster(bool master)
     bool ok = Polytempo_InterprocessCommunication::getInstance()->reset(master);
     resetTimeSync();
     
-    if (!masterFlag)
-        startTimer(TIME_SYNC_INTERVAL_MS);
+    startTimer(TIME_SYNC_INTERVAL_MS);
 
     return ok;
 }
@@ -208,27 +207,36 @@ void Polytempo_TimeProvider::registerUserInterface(Polytempo_TimeSyncInfoInterfa
 void Polytempo_TimeProvider::timerCallback()
 {
 #if defined(POLYTEMPO_NETWORK) || defined(POLYTEMPO_LIB)
-    if (!Polytempo_InterprocessCommunication::getInstance()->isClientConnected())
+    if(Polytempo_TimeProvider::getInstance()->isMaster())
     {
-        displayMessage("No master detected", MessageType_Error);
+        OwnedArray<Polytempo_PeerInfo> peers;
+        Polytempo_InterprocessCommunication::getInstance()->getClientsInfo(&peers);
+        if(peers.size() < 1)
+            displayMessage("No client connected", MessageType_Warning);
     }
-    else
-    {
-        int index;
-        uint32 timestamp;
-        createTimeIndex(&index, &timestamp);
+    else {
+        if (!Polytempo_InterprocessCommunication::getInstance()->isClientConnected())
+        {
+            displayMessage("No master detected", MessageType_Error);
+        }
+        else
+        {
+            int index;
+            uint32 timestamp;
+            createTimeIndex(&index, &timestamp);
 
-        NamedValueSet syncParams;
-        syncParams.set("Id", Polytempo_NetworkSupervisor::getInstance()->getUniqueId().toString());
-        syncParams.set("ScoreName", Polytempo_NetworkSupervisor::getInstance()->getScoreName());
-        syncParams.set("PeerName", Polytempo_NetworkSupervisor::getInstance()->getPeerName());
-        syncParams.set("Index", index);
-        syncParams.set("LastRT", int32(lastRoundTrip));
-        XmlElement xml = XmlElement("TimeSyncRequest");
-        syncParams.copyToXmlAttributes(xml);
-        bool ok = Polytempo_InterprocessCommunication::getInstance()->notifyServer(xml);
-        if (!ok)
-            displayMessage("No connection to master", MessageType_Error);
+            NamedValueSet syncParams;
+            syncParams.set("Id", Polytempo_NetworkSupervisor::getInstance()->getUniqueId().toString());
+            syncParams.set("ScoreName", Polytempo_NetworkSupervisor::getInstance()->getScoreName());
+            syncParams.set("PeerName", Polytempo_NetworkSupervisor::getInstance()->getPeerName());
+            syncParams.set("Index", index);
+            syncParams.set("LastRT", int32(lastRoundTrip));
+            XmlElement xml = XmlElement("TimeSyncRequest");
+            syncParams.copyToXmlAttributes(xml);
+            bool ok = Polytempo_InterprocessCommunication::getInstance()->notifyServer(xml);
+            if (!ok)
+                displayMessage("No connection to master", MessageType_Error);
+        }
     }
 #endif
 }

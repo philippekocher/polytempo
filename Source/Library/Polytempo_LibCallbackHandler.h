@@ -32,6 +32,7 @@ class StateCallbackHandler
 public:
     virtual ~StateCallbackHandler() {};
     virtual void processState(int state, std::string message, std::vector<std::string> peers) = 0;
+    virtual void processMasterChanged(bool isMaster) = 0;
 };
 
 struct StateCallbackOptions

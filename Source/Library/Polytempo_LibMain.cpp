@@ -48,7 +48,15 @@ bool Polytempo_LibMain::isInitialized()
 
 int Polytempo_LibMain::toggleMaster(bool masterFlag)
 {
+    bool wasMaster = Polytempo_TimeProvider::getInstance()->isMaster();
     bool ok = Polytempo_TimeProvider::getInstance()->toggleMaster(masterFlag);
+    bool isMaster = Polytempo_TimeProvider::getInstance()->isMaster();
+    if(isMaster != wasMaster)
+    {
+        for (HashMap<StateCallbackHandler*, StateCallbackOptions>::Iterator i (stateCallbacks); i.next();) {
+            i.getKey()->processMasterChanged(isMaster);
+        }
+    }
     return ok ? 0 : -1;
 }
 
