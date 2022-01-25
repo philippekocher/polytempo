@@ -4,7 +4,7 @@
 
 using namespace c74::min;
 
-class polytemponetwork : public object<polytemponetwork>, public EventCallbackHandler, public TickCallbackHandler, public StateCallbackHandler {
+class polytemponetwork : public object<polytemponetwork>, public PolytempoDetailedEventCallbackHandler, public PolytempoTickCallbackHandler, public PolytempoStateCallbackHandler {
 public:
     MIN_DESCRIPTION	{"Polytempo Network client for Max MSP."};
     MIN_TAGS		{"utilities"};
@@ -63,7 +63,7 @@ public:
             if (m_initialized)
             {
                 logDebugMessage("deinit");
-                polytempo_unregisterEventCallback(this);
+                polytempo_unregisterDetailedEventCallback(this);
                 polytempo_unregisterTickCallback(this);
                 polytempo_unregisterStateCallback(this);
                 polytempo_release();
@@ -72,16 +72,16 @@ public:
             if (polytempo_isInitialized() || polytempo_initialize(m_Port, master, "MaxExternal") == 0)
             {
                 logDebugMessage("register event callback");
-                EventCallbackOptions eventOptions;
+                PolytempoEventCallbackOptions eventOptions;
                 eventOptions.ignoreTimeTag = true;
-                polytempo_registerEventCallback(this, eventOptions);
+                polytempo_registerDetailedEventCallback(this, eventOptions);
                 
                 logDebugMessage("register tick callback");
-                TickCallbackOptions tickOptions;
+                PolytempoTickCallbackOptions tickOptions;
                 polytempo_registerTickCallback(this, tickOptions);
                 
                 logDebugMessage("register state callback");
-                StateCallbackOptions stateOptions;
+                PolytempoStateCallbackOptions stateOptions;
                 stateOptions.callOnChangeOnly = true;
                 polytempo_registerStateCallback(this, stateOptions);
 
@@ -101,7 +101,7 @@ public:
         {
             logDebugMessage("deinit");
             m_initialized = false;
-            polytempo_unregisterEventCallback(this);
+            polytempo_unregisterDetailedEventCallback(this);
             polytempo_unregisterTickCallback(this);
             polytempo_unregisterStateCallback(this);
             polytempo_release();
@@ -222,20 +222,38 @@ public:
         }
     };
     
-    void processEvent(std::string const& message) override
+    void processEvent(PolytempoDetailedEventCallbackObject const& object) override
     {
-        logDebugMessage(message);
+        logDebugMessage(object.command);
         
         // split and fill into a list of atoms
         atoms a;
-        std::istringstream iss(message);
-        std::vector<std::string> results(std::istream_iterator<std::string>{iss}, std::istream_iterator<std::string>());
-        for(auto s : results)
-            a.push_back(s);
+        a.push_back(object.command);
+            
+        for(auto arg : object.arguments) {
+            a.push_back(arg.name);
+            switch(arg.eValueType)
+            {
+            case PolytempoEventArgument::Value_Int:
+                a.push_back(std::stoi(arg.valueString));
+                break;
+            case PolytempoEventArgument::Value_Double:
+                a.push_back(std::stod(arg.valueString));
+                break;
+            case PolytempoEventArgument::Value_String:
+                a.push_back(arg.valueString);
+                break;
+            case PolytempoEventArgument::Value_Int64:
+                a.push_back(std::stol(arg.valueString));
+                break;
+            default:
+                logMessage("Polytempo event with unknown argument type");
+            }
+        }
         
         eventOutput.send(a);
     }
-
+            
     void processTick(double tick) override
     {
         m_Tick = tick;
@@ -257,9 +275,9 @@ public:
 
         if(peers.size() <= 0)
         {
-            peerAtoms.push_back(0);
+            peerAtoms.push_back("-");
         }
-                            
+        
         connectedPeersOutput.send(peerAtoms);
     }
             
