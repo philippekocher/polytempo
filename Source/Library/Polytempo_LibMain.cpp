@@ -53,7 +53,7 @@ int Polytempo_LibMain::toggleMaster(bool masterFlag)
     bool isMaster = Polytempo_TimeProvider::getInstance()->isMaster();
     if(isMaster != wasMaster)
     {
-        for (HashMap<StateCallbackHandler*, StateCallbackOptions>::Iterator i (stateCallbacks); i.next();) {
+        for (HashMap<PolytempoStateCallbackHandler*, PolytempoStateCallbackOptions>::Iterator i (stateCallbacks); i.next();) {
             i.getKey()->processMasterChanged(isMaster);
         }
     }
@@ -124,32 +124,45 @@ int Polytempo_LibMain::sendEvent(std::string fullEventString)
     return 0;
 }
 
-void Polytempo_LibMain::registerEventCallback(EventCallbackHandler* pHandler, EventCallbackOptions options)
+void Polytempo_LibMain::registerEventCallback(PolytempoEventCallbackHandler* pHandler, PolytempoEventCallbackOptions options)
 {
     eventCallbacks.set(pHandler, options);
 }
 
-void Polytempo_LibMain::registerTickCallback(TickCallbackHandler* pHandler, TickCallbackOptions options)
+void Polytempo_LibMain::registerDetailedEventCallback(PolytempoDetailedEventCallbackHandler* pHandler, PolytempoEventCallbackOptions options)
+{
+    detailedEventCallbacks.set(pHandler, options);
+}
+
+void Polytempo_LibMain::registerTickCallback(PolytempoTickCallbackHandler* pHandler, PolytempoTickCallbackOptions options)
 {
     tickCallbacks.set(pHandler, options);
+    pHandler->processTick(0.0);
 }
 
-void Polytempo_LibMain::registerStateCallback(StateCallbackHandler* pHandler, StateCallbackOptions options)
+void Polytempo_LibMain::registerStateCallback(PolytempoStateCallbackHandler* pHandler, PolytempoStateCallbackOptions options)
 {
     stateCallbacks.set(pHandler, options);
+    pHandler->processMasterChanged(Polytempo_TimeProvider::getInstance()->isMaster());
+    pHandler->processState(0, "Initializing", std::vector<std::string>({"-"}));
 }
 
-void Polytempo_LibMain::unregisterEventCallback(EventCallbackHandler *pHandler)
+void Polytempo_LibMain::unregisterEventCallback(PolytempoEventCallbackHandler *pHandler)
 {
     eventCallbacks.remove(pHandler);
 }
 
-void Polytempo_LibMain::unregisterTickCallback(TickCallbackHandler *pHandler)
+void Polytempo_LibMain::unregisterDetailedEventCallback(PolytempoDetailedEventCallbackHandler *pHandler)
+{
+    detailedEventCallbacks.remove(pHandler);
+}
+
+void Polytempo_LibMain::unregisterTickCallback(PolytempoTickCallbackHandler *pHandler)
 {
     tickCallbacks.remove(pHandler);
 }
 
-void Polytempo_LibMain::unregisterStateCallback(StateCallbackHandler *pHandler)
+void Polytempo_LibMain::unregisterStateCallback(PolytempoStateCallbackHandler *pHandler)
 {
     stateCallbacks.remove(pHandler);
 }
@@ -176,13 +189,13 @@ void Polytempo_LibMain::eventNotification(Polytempo_Event* event)
 {
     if (event->getType() == eventType_Tick)
     {
-        for (HashMap<TickCallbackHandler*, TickCallbackOptions>::Iterator i (tickCallbacks); i.next();) {
+        for (HashMap<PolytempoTickCallbackHandler*, PolytempoTickCallbackOptions>::Iterator i (tickCallbacks); i.next();) {
             i.getKey()->processTick(event->getValue());
         }
     }
     else
     {
-        for (HashMap<EventCallbackHandler*, EventCallbackOptions>::Iterator i (eventCallbacks); i.next();) {
+        for (HashMap<PolytempoEventCallbackHandler*, PolytempoEventCallbackOptions>::Iterator i (eventCallbacks); i.next();) {
             String str = event->getTypeString() + " ";
             const NamedValueSet* props = event->getProperties();
             if(!props->isEmpty())
@@ -195,6 +208,36 @@ void Polytempo_LibMain::eventNotification(Polytempo_Event* event)
             }
 
             i.getKey()->processEvent(str.trimCharactersAtEnd(" ").toStdString());
+        }
+        
+        // detailed event callbacks
+        for (HashMap<PolytempoDetailedEventCallbackHandler*, PolytempoEventCallbackOptions>::Iterator i (detailedEventCallbacks); i.next();) {
+            
+            PolytempoDetailedEventCallbackObject o;
+            o.command = event->getTypeString().toStdString();
+            const NamedValueSet* props = event->getProperties();
+            if(!props->isEmpty())
+            {
+                for (auto& e : *props) {
+                    if(i.getValue().ignoreTimeTag && e.name == Identifier("timeTag"))
+                        continue;
+                    PolytempoEventArgument a;
+                    a.name = e.name.toString().toStdString();
+                    
+                    if(e.value.isInt() || e.value.isBool())
+                        a.eValueType = PolytempoEventArgument::EValueType::Value_Int;
+                    else if(e.value.isDouble())
+                        a.eValueType = PolytempoEventArgument::EValueType::Value_Double;
+                    else if(e.value.isInt64())
+                        a.eValueType = PolytempoEventArgument::EValueType::Value_Int64;
+                    else // everything else is considered as string
+                        a.eValueType = PolytempoEventArgument::EValueType::Value_String;
+                    a.valueString = e.value.toString().toStdString();
+                    o.arguments.push_back(a);
+                }
+            }
+
+            i.getKey()->processEvent(o);
         }
     }
 }
@@ -229,7 +272,7 @@ void Polytempo_LibMain::showInfoMessage(int messageType, String message)
         currentFullString += (" " + s);
     }
     
-    for (HashMap<StateCallbackHandler*, StateCallbackOptions>::Iterator i (stateCallbacks); i.next();) {
+    for (HashMap<PolytempoStateCallbackHandler*, PolytempoStateCallbackOptions>::Iterator i (stateCallbacks); i.next();) {
         if(i.getValue().callOnChangeOnly && currentFullString == lastStatusInfo)
             continue;
         

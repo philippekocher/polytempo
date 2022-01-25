@@ -23,12 +23,14 @@ public:
     int toggleMaster(bool masterFlag);
     int sendEvent(std::string command, std::string payload, std::string destinationNamePattern = "*");
     int sendEvent(std::string fullEventString);
-    void registerEventCallback(EventCallbackHandler* pHandler, EventCallbackOptions options);
-    void registerTickCallback(TickCallbackHandler* pHandler, TickCallbackOptions options);
-    void registerStateCallback(StateCallbackHandler* pHandler, StateCallbackOptions options);
-    void unregisterEventCallback(EventCallbackHandler* pHandler);
-    void unregisterTickCallback(TickCallbackHandler* pHandler);
-    void unregisterStateCallback(StateCallbackHandler* pHandler);
+    void registerEventCallback(PolytempoEventCallbackHandler* pHandler, PolytempoEventCallbackOptions options);
+    void registerDetailedEventCallback(PolytempoDetailedEventCallbackHandler* pHandler, PolytempoEventCallbackOptions options);
+    void registerTickCallback(PolytempoTickCallbackHandler* pHandler, PolytempoTickCallbackOptions options);
+    void registerStateCallback(PolytempoStateCallbackHandler* pHandler, PolytempoStateCallbackOptions options);
+    void unregisterEventCallback(PolytempoEventCallbackHandler* pHandler);
+    void unregisterDetailedEventCallback(PolytempoDetailedEventCallbackHandler* pHandler);
+    void unregisterTickCallback(PolytempoTickCallbackHandler* pHandler);
+    void unregisterStateCallback(PolytempoStateCallbackHandler* pHandler);
     
     typedef ReferenceCountedObjectPtr<Polytempo_LibMain> Ptr;
     static Ptr current();
@@ -41,9 +43,10 @@ private:
 
 private:
     bool isInit;
-    HashMap<EventCallbackHandler*, EventCallbackOptions> eventCallbacks;
-    HashMap<TickCallbackHandler*, TickCallbackOptions> tickCallbacks;
-    HashMap<StateCallbackHandler*, StateCallbackOptions> stateCallbacks;
+    HashMap<PolytempoEventCallbackHandler*, PolytempoEventCallbackOptions> eventCallbacks;
+    HashMap<PolytempoDetailedEventCallbackHandler*, PolytempoEventCallbackOptions> detailedEventCallbacks;
+    HashMap<PolytempoTickCallbackHandler*, PolytempoTickCallbackOptions> tickCallbacks;
+    HashMap<PolytempoStateCallbackHandler*, PolytempoStateCallbackOptions> stateCallbacks;
     std::string lastStatusInfo;
 
     static Ptr current_;

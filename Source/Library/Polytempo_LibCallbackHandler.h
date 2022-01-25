@@ -2,40 +2,61 @@
 #include <string>
 #include <vector>
 
-class EventCallbackHandler
+class PolytempoEventCallbackHandler
 {
 public:
-    virtual ~EventCallbackHandler() {}
+    virtual ~PolytempoEventCallbackHandler() {}
     virtual void processEvent(std::string const& message) = 0;
 };
 
-struct EventCallbackOptions
+struct PolytempoEventCallbackOptions
 {
 public:
     bool ignoreTimeTag = true;
 };
 
-class TickCallbackHandler
+struct PolytempoEventArgument
+{
+    std::string name;
+    std::string valueString;
+    enum EValueType { Value_Int, Value_Double, Value_String, Value_Int64 } eValueType;
+};
+
+struct PolytempoDetailedEventCallbackObject
 {
 public:
-    virtual ~TickCallbackHandler() {};
+    std::string command;
+    std::vector<PolytempoEventArgument> arguments;
+};
+
+class PolytempoDetailedEventCallbackHandler
+{
+public:
+    virtual ~PolytempoDetailedEventCallbackHandler() {}
+    virtual void processEvent(PolytempoDetailedEventCallbackObject const& object) = 0;
+};
+
+class PolytempoTickCallbackHandler
+{
+public:
+    virtual ~PolytempoTickCallbackHandler() {};
     virtual void processTick(double tick) = 0;
 };
 
-struct TickCallbackOptions
+struct PolytempoTickCallbackOptions
 {
 public:
 };
 
-class StateCallbackHandler
+class PolytempoStateCallbackHandler
 {
 public:
-    virtual ~StateCallbackHandler() {};
+    virtual ~PolytempoStateCallbackHandler() {};
     virtual void processState(int state, std::string message, std::vector<std::string> peers) = 0;
     virtual void processMasterChanged(bool isMaster) = 0;
 };
 
-struct StateCallbackOptions
+struct PolytempoStateCallbackOptions
 {
 public:
     bool callOnChangeOnly = true;
