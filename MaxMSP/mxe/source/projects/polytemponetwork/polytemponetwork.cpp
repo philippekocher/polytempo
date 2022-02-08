@@ -4,7 +4,7 @@
 
 using namespace c74::min;
 
-class polytemponetwork : public object<polytemponetwork>, public PolytempoDetailedEventCallbackHandler, public PolytempoTickCallbackHandler, public PolytempoStateCallbackHandler {
+class polytemponetwork : public object<polytemponetwork>, public PolytempoEventCallbackHandler, public PolytempoTickCallbackHandler, public PolytempoStateCallbackHandler {
 public:
     MIN_DESCRIPTION	{"Polytempo Network client for Max MSP."};
     MIN_TAGS		{"utilities"};
@@ -63,7 +63,7 @@ public:
             if (m_initialized)
             {
                 logDebugMessage("deinit");
-                polytempo_unregisterDetailedEventCallback(this);
+                polytempo_unregisterEventCallback(this);
                 polytempo_unregisterTickCallback(this);
                 polytempo_unregisterStateCallback(this);
                 polytempo_release();
@@ -74,7 +74,7 @@ public:
                 logDebugMessage("register event callback");
                 PolytempoEventCallbackOptions eventOptions;
                 eventOptions.ignoreTimeTag = true;
-                polytempo_registerDetailedEventCallback(this, eventOptions);
+                polytempo_registerEventCallback(this, eventOptions);
                 
                 logDebugMessage("register tick callback");
                 PolytempoTickCallbackOptions tickOptions;
@@ -101,7 +101,7 @@ public:
         {
             logDebugMessage("deinit");
             m_initialized = false;
-            polytempo_unregisterDetailedEventCallback(this);
+            polytempo_unregisterEventCallback(this);
             polytempo_unregisterTickCallback(this);
             polytempo_unregisterStateCallback(this);
             polytempo_release();
@@ -121,7 +121,15 @@ public:
 
     void setInstanceName()
     {
-        polytempo_sendEvent("settings name " + m_InstanceName);
+        PolytempoEventArgument arg;
+        arg.name = "name";
+        arg.eValueType = PolytempoEventArgument::Value_String;
+        arg.valueString = m_InstanceName;
+        
+        PolytempoEventDto dto;
+        dto.command = "settings";
+        dto.arguments.push_back(arg);
+        polytempo_sendEvent(dto);
     }
 
     void setMaster(bool isMaster)
@@ -162,6 +170,60 @@ public:
         }
     };
 
+    PolytempoEventArgument::EValueType atomTypeToArgType(atom a)
+    {
+        if(a.type() == message_type::int_argument)
+            return PolytempoEventArgument::Value_Int;
+        if(a.type() == message_type::float_argument)
+            return PolytempoEventArgument::Value_Double;
+        return PolytempoEventArgument::Value_String;
+    }
+    
+    PolytempoEventDto buildEventDto(std::string cmd, const c74::min::atoms& args)
+    {
+        PolytempoEventDto dto;
+        int index = 0;
+        
+        if(cmd.empty())
+        {
+            dto.command = (std::string)args[0];
+            index++;
+        }
+        else
+        {
+            dto.command = cmd;
+        }
+        
+        if(args.size() == index + 1) // means only one argument
+        {
+            PolytempoEventArgument a;
+            a.name = "";
+            a.valueString = (std::string)args[index];
+            a.eValueType = atomTypeToArgType(args[index]);
+            dto.arguments.push_back(a);
+            return dto;
+        }
+        
+        while(index < args.size())
+        {
+            PolytempoEventArgument a;
+            a.name = (std::string)args[index];
+            index++;
+            if(index < args.size())
+            {
+                a.valueString = (std::string)args[index];
+                a.eValueType = atomTypeToArgType(args[index]);
+                dto.arguments.push_back(a);
+            }
+            else
+            {
+                logMessage("invalid command");
+            }
+        }
+        
+        return dto;
+    }
+    
     message<threadsafe::yes> name { this, "settings", "Change instance name",
         MIN_FUNCTION {
             if (m_initialized)
@@ -173,16 +235,10 @@ public:
                 }
                 else
                 {
-                    string message = "settings";
-                    for(auto m : args)
+                    PolytempoEventDto dto = buildEventDto("settings", args);
+                    if(polytempo_sendEvent(dto) != 0)
                     {
-                        string addMessage = m;
-                        message = message + " " + addMessage;
-                    }
-
-                    if(polytempo_sendEvent(message) != 0)
-                    {
-                        logMessage("unable to send settings command: " + message);
+                        logMessage("unable to send settings command: " + dto.command);
                     }
                 }
             }
@@ -193,19 +249,13 @@ public:
 
     message<threadsafe::yes> command { this, "anything", "Generic Events",
         MIN_FUNCTION {
-            if (m_initialized)
+            if (m_initialized && args.size() > 0)
             {
-                std::string command;
-                        
-                for(int i = 0; i < args.size(); i++)
-                {
-                    std::string argString = args[i];
-                    command = command + argString + ((i < args.size() - 1) ? " " : "");
-                }
+                PolytempoEventDto dto = buildEventDto("", args);
                 
-                if(polytempo_sendEvent(command) != 0)
+                if(polytempo_sendEvent(dto) != 0)
                 {
-                    logMessage("unable to send event: " + command);
+                    logMessage("unable to send event: " + dto.command);
                 }
             }
 
@@ -222,7 +272,7 @@ public:
         }
     };
     
-    void processEvent(PolytempoDetailedEventCallbackObject const& object) override
+    void processEvent(PolytempoEventDto const& object) override
     {
         logDebugMessage(object.command);
         

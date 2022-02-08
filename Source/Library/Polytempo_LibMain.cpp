@@ -60,7 +60,7 @@ int Polytempo_LibMain::toggleMaster(bool masterFlag)
     return ok ? 0 : -1;
 }
 
-int Polytempo_LibMain::sendEvent(std::string command, std::string payload, std::string destinationNamePattern)
+int Polytempo_LibMain::sendSimpleEvent(std::string command, std::string payload, std::string destinationNamePattern)
 {
     Polytempo_Event* e = Polytempo_Event::makeEvent(command);
     e->setType(command);
@@ -93,7 +93,7 @@ int Polytempo_LibMain::sendEvent(std::string command, std::string payload, std::
     return 0;
 }
 
-int Polytempo_LibMain::sendEvent(std::string fullEventString)
+int Polytempo_LibMain::sendSimpleEvent(std::string fullEventString)
 {
     String str(fullEventString);
     String commandAndPayload;
@@ -119,19 +119,83 @@ int Polytempo_LibMain::sendEvent(std::string fullEventString)
         command = commandAndPayload;
     }
 
-    sendEvent(command.toStdString(), payload.toStdString(), addressPattern.toStdString());
+    sendSimpleEvent(command.toStdString(), payload.toStdString(), addressPattern.toStdString());
 
     return 0;
+}
+
+int Polytempo_LibMain::sendEvent(PolytempoEventDto dto)
+{
+    String str(dto.command);
+    String command;
+    String addressPattern = "";
+    if(str.matchesWildcard("/*/*", true))
+    {
+        addressPattern = str.upToLastOccurrenceOf("/", false, true).trimCharactersAtStart("/");
+        command = str.fromLastOccurrenceOf("/", false, true);
+    }
+    else
+    {
+        command = str.trimCharactersAtStart("/");
+    }
+
+    Polytempo_Event* e = Polytempo_Event::makeEvent(command);
+    e->setType(command);
+
+    // parse payload
+    for (int i = 0; i < dto.arguments.size(); i++)
+        {
+            var value;
+            switch(dto.arguments[i].eValueType)
+            {
+                case PolytempoEventArgument::Value_Int:
+                    value = std::stoi(dto.arguments[i].valueString);
+                    break;
+                case PolytempoEventArgument::Value_Int64:
+                    value = (int64)std::stol(dto.arguments[i].valueString);
+                    break;
+                case PolytempoEventArgument::Value_Double:
+                    value = std::stod(dto.arguments[i].valueString);
+                    break;
+                case PolytempoEventArgument::Value_String:
+                    value = dto.arguments[i].valueString;
+                    break;
+                default:
+                    continue;
+            }
+                    
+            if(!dto.arguments[i].name.empty())
+            {
+                e->setProperty(dto.arguments[i].name, value);
+            }
+            else
+            {
+                e->setValue(value);
+            }
+        }
+    
+
+    if(Polytempo_TimeProvider::getInstance()->isMaster() && !addressPattern.isEmpty())
+    {
+        Polytempo_InterprocessCommunication::getInstance()->distributeEvent(e, addressPattern);
+    }
+    else if(addressPattern.isEmpty() || Polytempo_NetworkSupervisor::getInstance()->getScoreName().matchesWildcard(addressPattern, true))
+    {
+        e->setSyncTime(Polytempo_TimeProvider::getInstance()->getDelaySafeTimestamp());
+        Polytempo_EventScheduler::getInstance()->scheduleEvent(e);
+    }
+    
+    return 0;
+}
+
+void Polytempo_LibMain::registerSimpleEventCallback(PolytempoSimpleEventCallbackHandler* pHandler, PolytempoEventCallbackOptions options)
+{
+    eventSimpleCallbacks.set(pHandler, options);
 }
 
 void Polytempo_LibMain::registerEventCallback(PolytempoEventCallbackHandler* pHandler, PolytempoEventCallbackOptions options)
 {
     eventCallbacks.set(pHandler, options);
-}
-
-void Polytempo_LibMain::registerDetailedEventCallback(PolytempoDetailedEventCallbackHandler* pHandler, PolytempoEventCallbackOptions options)
-{
-    detailedEventCallbacks.set(pHandler, options);
 }
 
 void Polytempo_LibMain::registerTickCallback(PolytempoTickCallbackHandler* pHandler, PolytempoTickCallbackOptions options)
@@ -147,14 +211,14 @@ void Polytempo_LibMain::registerStateCallback(PolytempoStateCallbackHandler* pHa
     pHandler->processState(0, "Initializing", std::vector<std::string>({"-"}));
 }
 
+void Polytempo_LibMain::unregisterSimpleEventCallback(PolytempoSimpleEventCallbackHandler *pHandler)
+{
+    eventSimpleCallbacks.remove(pHandler);
+}
+
 void Polytempo_LibMain::unregisterEventCallback(PolytempoEventCallbackHandler *pHandler)
 {
     eventCallbacks.remove(pHandler);
-}
-
-void Polytempo_LibMain::unregisterDetailedEventCallback(PolytempoDetailedEventCallbackHandler *pHandler)
-{
-    detailedEventCallbacks.remove(pHandler);
 }
 
 void Polytempo_LibMain::unregisterTickCallback(PolytempoTickCallbackHandler *pHandler)
@@ -179,7 +243,7 @@ Polytempo_LibMain::Ptr Polytempo_LibMain::current()
 void Polytempo_LibMain::release()
 {
     if(current_ != nullptr
-       && current_->eventCallbacks.size() == 0
+       && current_->eventSimpleCallbacks.size() == 0
        && current_->stateCallbacks.size() == 0
        && current_->tickCallbacks.size() == 0)
     current_ = nullptr;
@@ -195,7 +259,8 @@ void Polytempo_LibMain::eventNotification(Polytempo_Event* event)
     }
     else
     {
-        for (HashMap<PolytempoEventCallbackHandler*, PolytempoEventCallbackOptions>::Iterator i (eventCallbacks); i.next();) {
+        // simple event callbacks
+        for (HashMap<PolytempoSimpleEventCallbackHandler*, PolytempoEventCallbackOptions>::Iterator i (eventSimpleCallbacks); i.next();) {
             String str = event->getTypeString() + " ";
             const NamedValueSet* props = event->getProperties();
             if(!props->isEmpty())
@@ -211,9 +276,9 @@ void Polytempo_LibMain::eventNotification(Polytempo_Event* event)
         }
         
         // detailed event callbacks
-        for (HashMap<PolytempoDetailedEventCallbackHandler*, PolytempoEventCallbackOptions>::Iterator i (detailedEventCallbacks); i.next();) {
+        for (HashMap<PolytempoEventCallbackHandler*, PolytempoEventCallbackOptions>::Iterator i (eventCallbacks); i.next();) {
             
-            PolytempoDetailedEventCallbackObject o;
+            PolytempoEventDto o;
             o.command = event->getTypeString().toStdString();
             const NamedValueSet* props = event->getProperties();
             if(!props->isEmpty())

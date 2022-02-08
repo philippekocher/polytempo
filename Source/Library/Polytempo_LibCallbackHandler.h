@@ -2,10 +2,10 @@
 #include <string>
 #include <vector>
 
-class PolytempoEventCallbackHandler
+class PolytempoSimpleEventCallbackHandler
 {
 public:
-    virtual ~PolytempoEventCallbackHandler() {}
+    virtual ~PolytempoSimpleEventCallbackHandler() {}
     virtual void processEvent(std::string const& message) = 0;
 };
 
@@ -22,18 +22,18 @@ struct PolytempoEventArgument
     enum EValueType { Value_Int, Value_Double, Value_String, Value_Int64 } eValueType;
 };
 
-struct PolytempoDetailedEventCallbackObject
+struct PolytempoEventDto
 {
 public:
     std::string command;
     std::vector<PolytempoEventArgument> arguments;
 };
 
-class PolytempoDetailedEventCallbackHandler
+class PolytempoEventCallbackHandler
 {
 public:
-    virtual ~PolytempoDetailedEventCallbackHandler() {}
-    virtual void processEvent(PolytempoDetailedEventCallbackObject const& object) = 0;
+    virtual ~PolytempoEventCallbackHandler() {}
+    virtual void processEvent(PolytempoEventDto const& object) = 0;
 };
 
 class PolytempoTickCallbackHandler

@@ -25,15 +25,16 @@ extern "C"
     EXPORT_INT polytempo_initialize(int port, bool masterFlag, std::string instanceName);
     EXPORT_INT polytempo_isInitialized();
     EXPORT_INT polytempo_toggleMaster(bool masterFlag);
-    EXPORT_INT polytempo_sendEvent(std::string fullEventString);
+    EXPORT_INT polytempo_sendSimpleEvent(std::string fullEventString);
+    EXPORT_INT polytempo_sendEvent(PolytempoEventDto dto);
 
+    EXPORT_VOID polytempo_registerSimpleEventCallback(PolytempoSimpleEventCallbackHandler* pHandler, PolytempoEventCallbackOptions options);
     EXPORT_VOID polytempo_registerEventCallback(PolytempoEventCallbackHandler* pHandler, PolytempoEventCallbackOptions options);
-    EXPORT_VOID polytempo_registerDetailedEventCallback(PolytempoDetailedEventCallbackHandler* pHandler, PolytempoEventCallbackOptions options);
     EXPORT_VOID polytempo_registerTickCallback(PolytempoTickCallbackHandler* pHandler, PolytempoTickCallbackOptions options);
     EXPORT_VOID polytempo_registerStateCallback(PolytempoStateCallbackHandler* pHandler, PolytempoStateCallbackOptions options);
 
+    EXPORT_VOID polytempo_unregisterSimpleEventCallback(PolytempoSimpleEventCallbackHandler* pHandler);
     EXPORT_VOID polytempo_unregisterEventCallback(PolytempoEventCallbackHandler* pHandler);
-    EXPORT_VOID polytempo_unregisterDetailedEventCallback(PolytempoDetailedEventCallbackHandler* pHandler);
     EXPORT_VOID polytempo_unregisterTickCallback(PolytempoTickCallbackHandler* pHandler);
     EXPORT_VOID polytempo_unregisterStateCallback(PolytempoStateCallbackHandler* pHandler);
 

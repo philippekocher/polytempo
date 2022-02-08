@@ -21,14 +21,17 @@ public:
     int initialize(int port, bool masterFlag, std::string instanceName);
     bool isInitialized();
     int toggleMaster(bool masterFlag);
-    int sendEvent(std::string command, std::string payload, std::string destinationNamePattern = "*");
-    int sendEvent(std::string fullEventString);
+    
+    int sendSimpleEvent(std::string command, std::string payload, std::string destinationNamePattern = "*");
+    int sendSimpleEvent(std::string fullEventString);
+    int sendEvent(PolytempoEventDto dto);
+    
+    void registerSimpleEventCallback(PolytempoSimpleEventCallbackHandler* pHandler, PolytempoEventCallbackOptions options);
     void registerEventCallback(PolytempoEventCallbackHandler* pHandler, PolytempoEventCallbackOptions options);
-    void registerDetailedEventCallback(PolytempoDetailedEventCallbackHandler* pHandler, PolytempoEventCallbackOptions options);
     void registerTickCallback(PolytempoTickCallbackHandler* pHandler, PolytempoTickCallbackOptions options);
     void registerStateCallback(PolytempoStateCallbackHandler* pHandler, PolytempoStateCallbackOptions options);
+    void unregisterSimpleEventCallback(PolytempoSimpleEventCallbackHandler* pHandler);
     void unregisterEventCallback(PolytempoEventCallbackHandler* pHandler);
-    void unregisterDetailedEventCallback(PolytempoDetailedEventCallbackHandler* pHandler);
     void unregisterTickCallback(PolytempoTickCallbackHandler* pHandler);
     void unregisterStateCallback(PolytempoStateCallbackHandler* pHandler);
     
@@ -43,8 +46,8 @@ private:
 
 private:
     bool isInit;
+    HashMap<PolytempoSimpleEventCallbackHandler*, PolytempoEventCallbackOptions> eventSimpleCallbacks;
     HashMap<PolytempoEventCallbackHandler*, PolytempoEventCallbackOptions> eventCallbacks;
-    HashMap<PolytempoDetailedEventCallbackHandler*, PolytempoEventCallbackOptions> detailedEventCallbacks;
     HashMap<PolytempoTickCallbackHandler*, PolytempoTickCallbackOptions> tickCallbacks;
     HashMap<PolytempoStateCallbackHandler*, PolytempoStateCallbackOptions> stateCallbacks;
     std::string lastStatusInfo;
