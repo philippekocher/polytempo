@@ -25,7 +25,7 @@ public:
     
     outlet<> tickOutput{
         this,
-        "(float) tick information", "float"
+        "(float) current time", "float"
     };
     
     outlet<thread_check::scheduler, thread_action::fifo> networkStateOutput{
