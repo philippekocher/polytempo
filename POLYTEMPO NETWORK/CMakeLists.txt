@@ -48,7 +48,6 @@ target_sources(PolytempoNetwork PRIVATE
     ../Source/Network/Polytempo_TimeProvider.h
     ../Source/Network/Polytempo_TimeProvider.cpp
     ../Source/Network/Polytempo_PortDefinition.h
-    ../Source/Network/Polytempo_PortDefinition.cpp
     ../Source/Preferences/Polytempo_DefaultPreferences.h
     ../Source/Preferences/Polytempo_DefaultPreferences.cpp
     ../Source/Preferences/Polytempo_NetworkPreferencesPanel.h

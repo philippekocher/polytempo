@@ -52,7 +52,7 @@ public:
 
     polytemponetwork(const atoms& args = {})
     {
-        m_Port = (args.size() > 0 ? (int)args[0] : Polytempo_PortDefinition::PolytempoNetworkMax);
+        m_Port = (args.size() > 0 ? (int)args[0] : POLYTEMPO_NETWORK_PORT_MAX);
         m_InstanceName = "Untitled";
         
         if (!dummy())

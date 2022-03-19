@@ -1,12 +1,13 @@
 #pragma once
 
-class Polytempo_PortDefinition
-{
-public:
-    const static int PolytempoNetworkApp = 47522;
-    const static int PolytempoNetworkMax = 47523;
+#define POLYTEMPO_NETWORK_PORT_SERVER   47521
+#define POLYTEMPO_NETWORK_PORT_APP      47522
+#define POLYTEMPO_NETWORK_PORT_MAX      47523
+#define POLYTEMPO_IPC_PORT              47524
 
-    const static int AdvertisePortCount = 2;
-    const static int AdvertisePorts[];
+const int Polytempo_AdvertisePortCount = 3;
+const int Polytempo_AdvertisePorts[Polytempo_AdvertisePortCount] = {
+    POLYTEMPO_NETWORK_PORT_SERVER,
+    POLYTEMPO_NETWORK_PORT_APP,
+    POLYTEMPO_NETWORK_PORT_MAX
 };
-

@@ -32,7 +32,7 @@ int Polytempo_LibMain::initialize(int port, bool masterFlag, std::string instanc
     Polytempo_EventScheduler::getInstance()->startThread(5); // priority between 0 and 10
 
     oscListener.reset(new Polytempo_OSCListener(port));
-    Polytempo_NetworkSupervisor::getInstance()->createSender(Polytempo_PortDefinition::AdvertisePortCount, Polytempo_PortDefinition::AdvertisePorts);
+    Polytempo_NetworkSupervisor::getInstance()->createSender(Polytempo_AdvertisePortCount, Polytempo_AdvertisePorts);
     Polytempo_NetworkSupervisor::getInstance()->setManualPeerName(instanceName);
     Polytempo_TimeProvider::getInstance()->registerUserInterface(this);
     bool ok = Polytempo_TimeProvider::getInstance()->toggleMaster(masterFlag);
