@@ -130,7 +130,7 @@ void Polytempo_TimeProvider::setRemoteMasterPeer(String ip, Uuid id)
     if (lastMasterID != id || !Polytempo_InterprocessCommunication::getInstance()->isClientConnected())
     {
         resetTimeSync();
-        displayMessage("Master changed", MessageType_Warning);
+        displayMessage("Synchronising...", MessageType_Warning);
         bool ok = Polytempo_InterprocessCommunication::getInstance()->connectToMaster(ip);
         if (!ok)
             displayMessage("Connecting to master " + ip + " failed!", MessageType_Error);
