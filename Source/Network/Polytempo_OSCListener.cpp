@@ -57,9 +57,23 @@ Polytempo_Event* Polytempo_OSCListener::oscToEvent(const OSCMessage& message, St
 void Polytempo_OSCListener::oscMessageReceived(const OSCMessage& message)
 {
     String addressPattern = message.getAddressPattern().toString();
+    String nodeNamePattern = "";
+    String messagePattern;
     const OSCArgument* argumentIterator = message.begin();
-
-    if (addressPattern == "/masteradvertise")
+    
+    if(addressPattern.matchesWildcard("/*/*", true))
+    {
+        // parse pattern
+        addressPattern = addressPattern.substring(1);
+        nodeNamePattern = addressPattern.upToFirstOccurrenceOf("/", false, false);
+        messagePattern = addressPattern.substring(nodeNamePattern.length());
+    }
+    else
+    {
+        messagePattern = addressPattern;
+    }
+    
+    if (messagePattern == "/masteradvertise")
     {
         Uuid senderId = Uuid((argumentIterator++)->getString());
         if (senderId == Polytempo_NetworkSupervisor::getInstance()->getUniqueId())
@@ -71,18 +85,18 @@ void Polytempo_OSCListener::oscMessageReceived(const OSCMessage& message)
     }
 
 #if defined(POLYTEMPO_NETWORK) || defined(POLYTEMPO_LIB)
-    else if (addressPattern.matchesWildcard("/*/*", true) && Polytempo_TimeProvider::getInstance()->isMaster())
+    else if (!nodeNamePattern.isEmpty() && Polytempo_TimeProvider::getInstance()->isMaster())
     {
-        // parse pattern
-        addressPattern = addressPattern.substring(1);
-        String nodeNamePattern = addressPattern.upToFirstOccurrenceOf("/", false, false);
-        String messagePattern = addressPattern.substring(nodeNamePattern.length());
+        
         Polytempo_InterprocessCommunication::getInstance()->distributeEvent(oscToEvent(message, messagePattern), nodeNamePattern);
     }
 #endif
-    else
+    else if (nodeNamePattern.isEmpty()
+             || Polytempo_NetworkSupervisor::getInstance()->getScoreName().matchesWildcard(nodeNamePattern, true)
+             || Polytempo_NetworkSupervisor::getInstance()->getPeerName().matchesWildcard(nodeNamePattern, true)
+             )
     {
-        Polytempo_Event* event = oscToEvent(message, addressPattern);
+        Polytempo_Event* event = oscToEvent(message, messagePattern);
 
         if (event->getType() == eventType_None)
         {
