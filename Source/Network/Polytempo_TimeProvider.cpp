@@ -1,5 +1,6 @@
 #include "Polytempo_TimeProvider.h"
 #include "Polytempo_InterprocessCommunication.h"
+#include "../Scheduler/Polytempo_ScoreScheduler.h"
 #if defined(POLYTEMPO_NETWORK) || defined(POLYTEMPO_LIB)
 #include "Polytempo_NetworkSupervisor.h"
 #endif
@@ -157,15 +158,17 @@ void Polytempo_TimeProvider::handleMessage(XmlElement message, Ipc* sender)
         if (masterFlag)
         {
             uint32 ts = Time::getMillisecondCounter();
-            NamedValueSet replayParams;
-            replayParams.set("Id", Polytempo_NetworkSupervisor::getInstance()->getUniqueId().toString());
-            replayParams.set("ScoreName", Polytempo_NetworkSupervisor::getInstance()->getScoreName());
-            replayParams.set("PeerName", Polytempo_NetworkSupervisor::getInstance()->getPeerName());
-            replayParams.set("Timestamp", int32(ts));
-            replayParams.set("Index", timeIndex);
-            replayParams.set("MaxRT", int32(maxRoundTrip));
+            NamedValueSet replyParams;
+            replyParams.set("Id", Polytempo_NetworkSupervisor::getInstance()->getUniqueId().toString());
+            replyParams.set("ScoreName", Polytempo_NetworkSupervisor::getInstance()->getScoreName());
+            replyParams.set("PeerName", Polytempo_NetworkSupervisor::getInstance()->getPeerName());
+            replyParams.set("Timestamp", int32(ts));
+            replyParams.set("Index", timeIndex);
+            replyParams.set("MaxRT", int32(maxRoundTrip));
+            replyParams.set("IsRunning", Polytempo_ScoreScheduler::getInstance()->isRunning());
+            replyParams.set("ScoreTime", Polytempo_ScoreScheduler::getInstance()->getScoreTime());
             XmlElement xml = XmlElement("TimeSyncReply");
-            replayParams.copyToXmlAttributes(xml);
+            replyParams.copyToXmlAttributes(xml);
             bool ok = sender->sendMessage(Polytempo_InterprocessCommunication::xmlToMemoryBlock(xml));
             displayMessage(ok ? "Mastertime sent" : "Fail", ok ? MessageType_Info : MessageType_Error);
 
@@ -192,6 +195,11 @@ void Polytempo_TimeProvider::handleMessage(XmlElement message, Ipc* sender)
         uint32 argMasterTime = uint32(int32(syncParams.getWithDefault("Timestamp", 0)));
         int timeIndex = syncParams.getWithDefault("Index", 0);
         uint32 maxRoundTripFromMaster = uint32(int32(syncParams.getWithDefault("MaxRT", 0)));
+        
+        // not yet used params:
+        bool isRunning = bool(syncParams.getWithDefault("IsRunning", false));
+        int scoreTime = int(syncParams.getWithDefault("ScoreTime", 0.0));
+        
         sender->setRemoteNames(senderScoreName, senderPeerName);
 
         handleTimeSyncMessage(senderId, argMasterTime, timeIndex, maxRoundTripFromMaster);
