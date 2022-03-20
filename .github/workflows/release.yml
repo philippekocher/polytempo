@@ -59,12 +59,12 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        os: [windows-latest, ubuntu-latest, macos-latest]
+        os: [windows-2019, ubuntu-latest, macos-latest]
         include:
         - os: ubuntu-latest
           artifact: Linux
           extension: ''
-        - os: windows-latest
+        - os: windows-2019
           artifact: Windows
           extension: '.exe'
         - os: macos-latest
