@@ -16,7 +16,7 @@
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1"/>
   <EXPORTFORMATS>
     <VS2019 targetFolder="Builds/VisualStudio2019" extraCompilerFlags="/wd4068"
-            externalLibraries="../../bin/Static Library/TimeSyncLib.lib">
+            externalLibraries="../../../bin/Static Library/TimeSyncLib.lib">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" useRuntimeLibDLL="0"/>
         <CONFIGURATION isDebug="0" name="Release" useRuntimeLibDLL="0"/>
@@ -33,7 +33,7 @@
     <XCODE_MAC targetFolder="Builds/MacOSX" externalLibraries="TimeSyncLib">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" libraryPath="../../../bin"/>
-        <CONFIGURATION isDebug="0" name="Release" libraryPath="../../bin/Release"/>
+        <CONFIGURATION isDebug="0" name="Release" libraryPath="../../../bin/Release"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_osc" path="../../juce"/>
