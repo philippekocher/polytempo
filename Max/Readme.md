@@ -19,4 +19,9 @@ Using CMake, the external can be compiled as follows:
 As default, the architecture (Intel or ARM) of the build machine is used. If your build system allows cross-compilation, you can build a fat binary using the following CMake command (instead of cmake ..):
 
     cmake .. -DCMAKE_OSX_ARCHITECTURES="x86_64;arm64"
- 
+
+### Additional Information for Windows
+
+For the Windows build, it is required to set the package version, instead of "cmake ..", use:
+
+    cmake .. -DPACKAGE_VERSION=1 
