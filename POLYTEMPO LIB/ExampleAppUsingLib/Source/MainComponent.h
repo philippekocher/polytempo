@@ -3,14 +3,13 @@
 #include <JuceHeader.h>
 
 #include "../../../Source/Library/Polytempo_LibCallbackHandler.h"
-#define NAME_EVENT_STRING "settings name "
 
 //==============================================================================
 /*
     This component lives inside our window, and this is where you should put all
     your controls and content.
 */
-class MainComponent  : public juce::Component, ToggleButton::Listener, EventCallbackHandler, TickCallbackHandler, StateCallbackHandler, AsyncUpdater
+class MainComponent  : public juce::Component, ToggleButton::Listener, PolytempoSimpleEventCallbackHandler, PolytempoTickCallbackHandler, PolytempoStateCallbackHandler, AsyncUpdater
 {
 public:
     //==============================================================================
@@ -26,6 +25,7 @@ private:
     void processEvent(std::string const& message) override;
     void processTick(double tick) override;
     void processState(int state, std::string message, std::vector<std::string> peers) override;
+    void processMasterChanged(bool isMaster) override;
     void handleAsyncUpdate() override;
     void setOnOff(bool on);
     

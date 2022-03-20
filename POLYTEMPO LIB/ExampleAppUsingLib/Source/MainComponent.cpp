@@ -1,14 +1,7 @@
 #include "MainComponent.h"
-
-#ifdef STATIC_LIBRARY_MODE
 #include "../../../Source/Library/Polytempo_LibApi.h"
-#define POLYTEMPOCALL(x) polytempo_##x
-#define POLYTEMPO_RELEASE polytempo_release()
-#else
-#include "../../../Source/Library/Polytempo_LibMain.h"
-#define POLYTEMPOCALL(x) Polytempo_LibMain::current()->x
-#define POLYTEMPO_RELEASE Polytempo_LibMain::release()
-#endif
+#include "../../../Source/Network/Polytempo_PortDefinition.h"
+#define NAME_EVENT_STRING "settings name "
 
 //==============================================================================
 MainComponent::MainComponent()
@@ -30,6 +23,7 @@ MainComponent::MainComponent()
     addAndMakeVisible(labelClientName.get());
 
     textClientName.reset(new TextEditor());
+    textClientName->setText("DemoApp");
     addAndMakeVisible(textClientName.get());
 
     btnSetClientName.reset(new TextButton("Set"));
@@ -99,25 +93,27 @@ void MainComponent::setOnOff(bool on)
 {
     if(on)
     {
-        EventCallbackOptions eventOptions;
+        PolytempoEventCallbackOptions eventOptions;
         eventOptions.ignoreTimeTag = true;
-        TickCallbackOptions tickOptions;
-        StateCallbackOptions stateOptions;
+        PolytempoTickCallbackOptions tickOptions;
+        PolytempoStateCallbackOptions stateOptions;
         stateOptions.callOnChangeOnly = true;
         
-        POLYTEMPOCALL(initialize(47523, toggleMaster->getToggleState(), "TsAppLib"));
-        POLYTEMPOCALL(registerEventCallback(this, eventOptions));
-        POLYTEMPOCALL(registerTickCallback(this, tickOptions));
-        POLYTEMPOCALL(registerStateCallback(this, stateOptions));
         const auto applicationName = JUCEApplication::getInstance()->getApplicationName().toStdString();
-        POLYTEMPOCALL(sendEvent("settings name " + applicationName));
+        
+        // This Example uses the POLYTEMPO SERVER port, means it can not be used in connection with the real polytempo server, since every advertise port can only be used once
+        polytempo_initialize(POLYTEMPO_NETWORK_PORT_SERVER, toggleMaster->getToggleState(), applicationName);
+        polytempo_registerSimpleEventCallback(this, eventOptions);
+        polytempo_registerTickCallback(this, tickOptions);
+        polytempo_registerStateCallback(this, stateOptions);
+        polytempo_sendSimpleEvent(NAME_EVENT_STRING + textClientName->getText().toStdString());
     }
     else
     {
-        POLYTEMPOCALL(unregisterEventCallback(this));
-        POLYTEMPOCALL(unregisterTickCallback(this));
-        POLYTEMPOCALL(unregisterStateCallback(this));
-        POLYTEMPO_RELEASE;
+        polytempo_unregisterSimpleEventCallback(this);
+        polytempo_unregisterTickCallback(this);
+        polytempo_unregisterStateCallback(this);
+        polytempo_release();
     }
 }
 //==============================================================================
@@ -171,15 +167,15 @@ void MainComponent::buttonClicked(Button* btn)
     }
     else if (btn == toggleMaster.get())
     {
-        POLYTEMPOCALL(toggleMaster(toggleMaster->getToggleState()));
+        polytempo_toggleMaster(toggleMaster->getToggleState());
     }
     else if(btn == btnSetClientName.get())
     {
-        POLYTEMPOCALL(sendEvent(NAME_EVENT_STRING + textClientName->getText().toStdString()));
+        polytempo_sendSimpleEvent(NAME_EVENT_STRING + textClientName->getText().toStdString());
     }
     else if(btn == btnSendCommand.get())
     {
-        POLYTEMPOCALL(sendEvent(textCommand->getText().toStdString()));
+        polytempo_sendSimpleEvent(textCommand->getText().toStdString());
     }
 }
 
@@ -226,6 +222,11 @@ void MainComponent::processState(int state, std::string message, std::vector<std
     textNetworkStatus->setColour(TextEditor::backgroundColourId, c);
 
     toggleConnected->setToggleState(state == 0, dontSendNotification);
+}
+
+void MainComponent::processMasterChanged(bool isMaster)
+{
+    toggleMaster->setToggleState(isMaster, dontSendNotification);
 }
 
 void MainComponent::handleAsyncUpdate()

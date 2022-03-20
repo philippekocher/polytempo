@@ -40,15 +40,15 @@ IF(APPLE)
    SET(EXTRA_LIBS ${CARBON_LIBRARY} ${COCOA_LIBRARY})
 
    target_link_libraries(${PROJECT_NAME} 
-     PUBLIC debug "${CMAKE_CURRENT_SOURCE_DIR}/../../../../libs/libTimeSyncLib.a" ${EXTRA_LIBS} 
-     PUBLIC optimized "${CMAKE_CURRENT_SOURCE_DIR}/../../../../libs/Release/libTimeSyncLib.a" ${EXTRA_LIBS}
+     PUBLIC debug "${CMAKE_CURRENT_SOURCE_DIR}/../../../../POLYTEMPO LIB/bin/libTimeSyncLib.a" ${EXTRA_LIBS} 
+     PUBLIC optimized "${CMAKE_CURRENT_SOURCE_DIR}/../../../../POLYTEMPO LIB/bin/Release/libTimeSyncLib.a" ${EXTRA_LIBS}
    )
 ENDIF (APPLE)
 
 IF(MSVC)
    target_link_libraries(${PROJECT_NAME} 
-     PUBLIC debug "${CMAKE_CURRENT_SOURCE_DIR}/../../../../libs/Static Library/TimeSyncLib.lib"
-     PUBLIC optimized "${CMAKE_CURRENT_SOURCE_DIR}/../../../../libs/Release/Static Library/TimeSyncLib.lib"
+     PUBLIC debug "${CMAKE_CURRENT_SOURCE_DIR}/../../../../POLYTEMPO LIB/bin/Static Library/TimeSyncLib.lib"
+     PUBLIC optimized "${CMAKE_CURRENT_SOURCE_DIR}/../../../../POLYTEMPO LIB/bin/Release/Static Library/TimeSyncLib.lib"
    )
 ENDIF(MSVC)
 

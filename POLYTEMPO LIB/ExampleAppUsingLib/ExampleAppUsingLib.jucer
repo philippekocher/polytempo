@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="zAoeAP" name="TimeSyncAppUsingLib" projectType="guiapp" useAppConfig="0"
+<JUCERPROJECT id="zAoeAP" name="ExampleAppUsingLib" projectType="guiapp" useAppConfig="0"
               addUsingNamespaceToJuceHeader="1" displaySplashScreen="1" jucerFormatVersion="1"
               defines="STATIC_LIBRARY_MODE=1">
-  <MAINGROUP id="IDTBcy" name="TimeSyncAppUsingLib">
+  <MAINGROUP id="IDTBcy" name="ExampleAppUsingLib">
     <GROUP id="{5F36E60D-462A-21B1-5C89-1A2891F98BE7}" name="Source">
-      <FILE id="zzf3UJ" name="Main.cpp" compile="1" resource="0" file="../TimeSyncApp/Source/Main.cpp"/>
+      <FILE id="zzf3UJ" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
       <FILE id="NXgtbK" name="MainComponent.cpp" compile="1" resource="0"
-            file="../TimeSyncApp/Source/MainComponent.cpp"/>
-      <FILE id="WqhrOZ" name="MainComponent.h" compile="0" resource="0" file="../TimeSyncApp/Source/MainComponent.h"/>
+            file="Source/MainComponent.cpp"/>
+      <FILE id="WqhrOZ" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
       <FILE id="CHhXeG" name="Polytempo_LibApi.h" compile="0" resource="0"
             file="../../Source/Library/Polytempo_LibApi.h"/>
     </GROUP>
@@ -16,10 +16,10 @@
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1"/>
   <EXPORTFORMATS>
     <VS2019 targetFolder="Builds/VisualStudio2019" extraCompilerFlags="/wd4068"
-            externalLibraries="../../../libs/Static Library/TimeSyncLib.lib">
+            externalLibraries="../../bin/Static Library/TimeSyncLib.lib">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" targetName="TimeSyncApp" useRuntimeLibDLL="0"/>
-        <CONFIGURATION isDebug="0" name="Release" targetName="TimeSyncApp" useRuntimeLibDLL="0"/>
+        <CONFIGURATION isDebug="1" name="Debug" useRuntimeLibDLL="0"/>
+        <CONFIGURATION isDebug="0" name="Release" useRuntimeLibDLL="0"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_core" path="../../../../Code/JUCE/modules"/>
@@ -32,8 +32,8 @@
     </VS2019>
     <XCODE_MAC targetFolder="Builds/MacOSX" externalLibraries="TimeSyncLib">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" libraryPath="../../../libs"/>
-        <CONFIGURATION isDebug="0" name="Release" libraryPath="../../../libs"/>
+        <CONFIGURATION isDebug="1" name="Debug" libraryPath="../../../bin"/>
+        <CONFIGURATION isDebug="0" name="Release" libraryPath="../../bin/Release"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_osc" path="../../juce"/>
