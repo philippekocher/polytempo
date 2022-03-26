@@ -21,7 +21,7 @@ class Polytempo_ListComponent : public Component,
                                 public TableListBoxModel
 {
 public:
-    Polytempo_ListComponent() { setFocusContainer(true); }
+    Polytempo_ListComponent() { setFocusContainerType(FocusContainerType::keyboardFocusContainer); }
     //~Polytempo_ListComponent();
     
     void resized();

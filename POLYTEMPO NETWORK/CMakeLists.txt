@@ -47,6 +47,7 @@ target_sources(PolytempoNetwork PRIVATE
     ../Source/Network/Polytempo_OSCListener.cpp
     ../Source/Network/Polytempo_TimeProvider.h
     ../Source/Network/Polytempo_TimeProvider.cpp
+    ../Source/Network/Polytempo_PortDefinition.h
     ../Source/Preferences/Polytempo_DefaultPreferences.h
     ../Source/Preferences/Polytempo_DefaultPreferences.cpp
     ../Source/Preferences/Polytempo_NetworkPreferencesPanel.h
@@ -115,6 +116,7 @@ target_compile_definitions(PolytempoNetwork PRIVATE
     JUCE_STRICT_REFCOUNTEDPOINTER=1
     JUCE_USE_CURL=0
     JUCE_WEB_BROWSER=0
+    JUCE_MODAL_LOOPS_PERMITTED=1
     POLYTEMPO_NETWORK=1)
 
 

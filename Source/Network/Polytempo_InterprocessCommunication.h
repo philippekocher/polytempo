@@ -3,8 +3,8 @@
 #include "JuceHeader.h"
 #include "Polytempo_PeerInfo.h"
 #include "../Scheduler/Polytempo_Event.h"
+#include "Polytempo_PortDefinition.h"
 
-#define POLYTEMPO_IPC_PORT	47524
 #define REMOVE_INVALID_CONNECTIONS_TIMEOUT	10000
 
 class Ipc : public InterprocessConnection
@@ -40,7 +40,7 @@ public:
 
     Polytempo_InterprocessCommunication();
     ~Polytempo_InterprocessCommunication();
-    void reset(bool isMaster);
+    bool reset(bool isMaster);
     bool connectToMaster(String ip);
     void registerNewServerConnection(Ipc* connection);
     void notifyAllClients(MemoryBlock m, String namePattern = String());

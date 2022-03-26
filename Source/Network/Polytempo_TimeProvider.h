@@ -1,10 +1,11 @@
 #pragma once
 
 #include "JuceHeader.h"
-#ifdef POLYTEMPO_NETWORK
+
+#if defined(POLYTEMPO_NETWORK) || defined(POLYTEMPO_LIB)
 #include "Polytempo_InterprocessCommunication.h"
-#include "../Views/PolytempoNetwork/Polytempo_TimeSyncControl.h"
 #endif
+#include "Polytempo_TimeSyncInfoInterface.h"
 
 #define TIME_DIFF_HISTORY_SIZE		10
 #define	ROUND_TRIP_HISTORY_SIZE		20
@@ -14,7 +15,7 @@
 class Polytempo_TimeProvider : Timer
 {
 public:
-    juce_DeclareSingleton(Polytempo_TimeProvider, true)
+    juce_DeclareSingleton(Polytempo_TimeProvider, false)
 
     Polytempo_TimeProvider();
     ~Polytempo_TimeProvider() override;
@@ -22,15 +23,16 @@ public:
     bool getSyncTime(uint32* pTime);
     uint32 getMRT() const;
 
-#ifdef POLYTEMPO_NETWORK
-    void toggleMaster(bool master);
+#if defined(POLYTEMPO_NETWORK) || defined(POLYTEMPO_LIB)
+    bool toggleMaster(bool master);
     uint32 getDelaySafeTimestamp();
     bool isMaster() const;
     void setRemoteMasterPeer(String ip, Uuid id);
     void handleMessage(XmlElement message, Ipc* sender);
-    void registerUserInterface(Polytempo_TimeSyncControl* pControl);
 #endif
-    enum MessageType
+    void registerUserInterface(Polytempo_TimeSyncInfoInterface* pControl);
+
+  enum MessageType
     {
         MessageType_Info,
         MessageType_Warning,
@@ -45,15 +47,13 @@ private:
     void resetTimeSync();
 
 private:
-#ifdef POLYTEMPO_NETWORK
-    Polytempo_TimeSyncControl* pTimeSyncControl;
-#endif
+    Polytempo_TimeSyncInfoInterface* pTimeSyncControl;
 
     int32 relativeMsToMaster;
     uint32 maxRoundTrip;
 
     int32 timeDiffHistory[TIME_DIFF_HISTORY_SIZE];
-#ifdef POLYTEMPO_NETWORK
+#if defined(POLYTEMPO_NETWORK) || defined(POLYTEMPO_LIB)
     uint32 roundTripTime[ROUND_TRIP_HISTORY_SIZE];
 #endif
     int timeDiffHistorySize;

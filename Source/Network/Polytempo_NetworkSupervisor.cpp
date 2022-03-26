@@ -1,15 +1,20 @@
 #include "Polytempo_NetworkSupervisor.h"
 #include "Polytempo_IPAddress.h"
-#include "../Preferences/Polytempo_StoredPreferences.h"
 #include "Polytempo_NetworkInterfaceManager.h"
 #include "Polytempo_TimeProvider.h"
+
+#ifdef POLYTEMPO_NETWORK
+#include "../Preferences/Polytempo_StoredPreferences.h"
 #include "../Misc/Polytempo_Alerts.h"
 #include "../Application/PolytempoNetwork/Polytempo_NetworkApplication.h"
+#endif
 
 Polytempo_NetworkSupervisor::Polytempo_NetworkSupervisor()
 {
     oscSender = nullptr;
+#ifndef POLYTEMPO_LIB
     component = nullptr;
+#endif
 
     nodeName.reset(new String(SystemStats::getFullUserName()));
 
@@ -51,10 +56,15 @@ void Polytempo_NetworkSupervisor::timerCallback()
     for (Polytempo_IPAddress localIpAddress : localIpAddresses)
     {
         std::unique_ptr<OSCMessage> msg = createAdvertiseMessage(localIpAddress.m_ipAddress.toString());
-        oscSender->sendToIPAddress(localIpAddress.getBroadcastAddress().toString(), currentPort, *msg);
+        for(auto p : currentPorts)
+        {
+            oscSender->sendToIPAddress(localIpAddress.getBroadcastAddress().toString(), p, *msg);
+        }
     }
 
+#ifndef POLYTEMPO_LIB
     if (component) component->repaint();
+#endif
 }
 
 Uuid Polytempo_NetworkSupervisor::getUniqueId()
@@ -65,8 +75,10 @@ Uuid Polytempo_NetworkSupervisor::getUniqueId()
     return uniqueId;
 }
 
-void Polytempo_NetworkSupervisor::unicastFlood(Polytempo_IPAddress ownIp)
+bool Polytempo_NetworkSupervisor::unicastFlood(Polytempo_IPAddress ownIp)
 {
+    // returns true if successful
+
     OSCSender localSender;
     localSender.connect(ownIp.m_ipAddress.toString(), 0);
     std::unique_ptr<OSCMessage> msg = this->createAdvertiseMessage(ownIp.m_ipAddress.toString());
@@ -76,12 +88,18 @@ void Polytempo_NetworkSupervisor::unicastFlood(Polytempo_IPAddress ownIp)
     while (currentIp <= lastIp)
     {
         Logger::writeToLog("Sending node information to " + currentIp.toString());
-        bool ok = localSender.sendToIPAddress(currentIp.toString(), currentPort, *msg);
-        if (!ok)
+        for(auto p : currentPorts)
         {
-            Polytempo_Alert::show("Error", "Error sending node information to " + currentIp.toString());
-            return;
+            bool ok = localSender.sendToIPAddress(currentIp.toString(), p, *msg);
+            if (!ok)
+            {
+#ifdef POLYTEMPO_NETWORK
+                Polytempo_Alert::show("Error", "Error sending node information to " + currentIp.toString());
+#endif
+                return false;
+            }
         }
+        
         // proceed to next address
         if (currentIp.address[3] == 255)
         {
@@ -103,6 +121,8 @@ void Polytempo_NetworkSupervisor::unicastFlood(Polytempo_IPAddress ownIp)
         else
             currentIp.address[3]++;
     }
+
+    return true;
 }
 
 String Polytempo_NetworkSupervisor::getDescription() const
@@ -116,74 +136,106 @@ String Polytempo_NetworkSupervisor::getScoreName() const
     return String(localName == nullptr ? "Untitled" : *localName);
 }
 
+void Polytempo_NetworkSupervisor::setManualPeerName(String name)
+{
+    manualPeerName.reset(new String(name));
+}
+
 String Polytempo_NetworkSupervisor::getPeerName() const
 {
+    if(manualPeerName != nullptr)
+        return String(*manualPeerName);
+    
+#ifdef POLYTEMPO_NETWORK
     return String(Polytempo_StoredPreferences::getInstance()->getProps().getValue("instanceName"));
+#else
+    return "Unknown";
+#endif
 }
 
-void Polytempo_NetworkSupervisor::createSender(int port)
+void Polytempo_NetworkSupervisor::createSender(int portCount, const int* ports)
 {
-    currentPort = port;
+    currentPorts.clear();
+    for(int i = 0; i < portCount; i++)
+    {
+        currentPorts.add(ports[i]);
+    }
+    
     oscSender.reset(new OSCSender());
-    oscSender->connect("255.255.255.255", currentPort);
+    oscSender->connect("255.255.255.255", currentPorts[0]);
 }
 
+#ifndef POLYTEMPO_LIB
 void Polytempo_NetworkSupervisor::setComponent(Component* aComponent)
 {
     component = aComponent;
 }
+#endif
 
 void Polytempo_NetworkSupervisor::eventNotification(Polytempo_Event* event)
 {
-    if (event->getType() == eventType_Open)
+    switch (event->getType())
     {
-        const MessageManagerLock mml(Thread::getCurrentThread());
-
-        Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
-        if (event->hasProperty(eventPropertyString_URL) || event->hasProperty(eventPropertyString_Value))
+#ifdef POLYTEMPO_NETWORK
+    case eventType_Open:
         {
-            String filePath(event->getProperty(eventPropertyString_URL).toString());
-            if(filePath.isEmpty()) filePath = event->getProperty(eventPropertyString_Value).toString();
-            File file(filePath);
-            if (file.existsAsFile())
+            const MessageManagerLock mml(Thread::getCurrentThread());
+
+            Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
+            if (event->hasProperty(eventPropertyString_URL) || event->hasProperty(eventPropertyString_Value))
             {
-                // call on the message thread
-                MessageManager::callAsync([app, filePath]() { app->openScoreFilePath(filePath); });
+                String filePath(event->getProperty(eventPropertyString_URL).toString());
+                if (filePath.isEmpty()) filePath = event->getProperty(eventPropertyString_Value).toString();
+                File file(filePath);
+                if (file.existsAsFile())
+                {
+                    // call on the message thread
+                    MessageManager::callAsync([app, filePath]() { app->openScoreFilePath(filePath); });
+                }
             }
         }
-    }
-    else if (event->getType() == eventType_Settings)
-    {
-        if (event->hasProperty("name"))
-            localName.reset(new String(event->getProperty("name").toString()));
-        if (event->hasProperty("brightness"))
+        break;
+#endif
+    case eventType_Settings:
         {
-            Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
-            Polytempo_NetworkWindow* window = app->getMainWindow();
-            window->setBrightness(float(event->getProperty("brightness")));
-        }
-        if (event->hasProperty("fullScreen"))
-        {
-            bool fullScreen = int(event->getProperty("fullScreen")) != 0;
-            
-            // call on the message thread
-            MessageManager::callAsync ([fullScreen]() {
-                
+            if (event->hasProperty("name"))
+                localName.reset(new String(event->getProperty("name").toString()));
+#ifdef POLYTEMPO_NETWORK
+            if (event->hasProperty("brightness"))
+            {
                 Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
                 Polytempo_NetworkWindow* window = app->getMainWindow();
+                window->setBrightness(float(event->getProperty("brightness")));
+            }
+            if (event->hasProperty("fullScreen"))
+            {
+                bool fullScreen = int(event->getProperty("fullScreen")) != 0;
 
-                window->setFullScreen(fullScreen);
-            });
+                // call on the message thread
+                MessageManager::callAsync([fullScreen]() {
+
+                    Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
+                    Polytempo_NetworkWindow* window = app->getMainWindow();
+
+                    window->setFullScreen(fullScreen);
+                    });
+            }
+#endif
         }
-    }
-    else if (event->getType() == eventType_DeleteAll)
-    {
-        // reset name
-        localName.reset(nullptr);
-
-        // reset brightness
-        Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
-        Polytempo_NetworkWindow* window = app->getMainWindow();
-        window->setBrightness(1.0f);
+        break;
+    case eventType_DeleteAll:
+        {
+            // reset name
+            localName.reset(nullptr);
+#ifdef POLYTEMPO_NETWORK
+            // reset brightness
+            Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
+            Polytempo_NetworkWindow* window = app->getMainWindow();
+            window->setBrightness(1.0f);
+#endif
+        }
+        break;
+    default:
+        break;
     }
 }

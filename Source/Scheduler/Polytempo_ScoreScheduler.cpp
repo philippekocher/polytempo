@@ -2,8 +2,10 @@
 #include "Polytempo_EventScheduler.h"
 #include "Polytempo_EventDispatcher.h"
 #include "../Network/Polytempo_InterprocessCommunication.h"
+#ifdef POLYTEMPO_NETWORK
 #include "../Application/PolytempoNetwork/Polytempo_NetworkApplication.h"
 #include "../Application/PolytempoNetwork/Polytempo_NetworkWindow.h"
+#endif
 
 Polytempo_ScoreScheduler::Polytempo_ScoreScheduler()
 {
@@ -52,13 +54,16 @@ void Polytempo_ScoreScheduler::eventNotification(Polytempo_Event* event)
     else if (event->getType() == eventType_TempoFactor) setTempoFactor(event);
     else if (event->getType() == eventType_LoadImage)
     {
+#ifdef USING_SCORE
         if(loadStatusWindow != nullptr)
         {
             MessageManager::callAsync([this, event]() { loadStatusWindow->setMessage(event->getProperty(eventPropertyString_URL)); });
         }
+#endif
     }
     else if(event->getType() == eventType_Ready)
     {
+#ifdef USING_SCORE
         if(loadStatusWindow != nullptr)
         {
             loadStatusWindow->setMessage(String());
@@ -70,6 +75,9 @@ void Polytempo_ScoreScheduler::eventNotification(Polytempo_Event* event)
         int time = score->getFirstEvent() != nullptr ? score->getFirstEvent()->getTime() : 0;
         storeLocator(time);
         gotoTime(time);
+#else
+        gotoTime((0));
+#endif
     }
 }
 
@@ -92,7 +100,9 @@ void Polytempo_ScoreScheduler::broadcastStop()
 
 void Polytempo_ScoreScheduler::start()
 {
+#ifdef USING_SCORE
     if (!score) return;
+#endif
     if (engine->isRunning() &&
         !engine->isPausing())
         return;
@@ -123,23 +133,29 @@ void Polytempo_ScoreScheduler::kill()
 
 void Polytempo_ScoreScheduler::returnToLocator()
 {
+#ifdef USING_SCORE
     if (!score) return;
+#endif
 
     Polytempo_EventDispatcher::getInstance()->broadcastEvent(Polytempo_Event::makeEvent(eventType_GotoTime, var(storedLocator * 0.001f)));
 }
 
 void Polytempo_ScoreScheduler::returnToBeginning()
 {
+#ifdef USING_SCORE
     if (!score) return;
 
     Polytempo_Event* first_Event = score->getFirstEvent();
 
     if (first_Event) storedLocator = first_Event->getTime();
     else storedLocator = 0;
-
+#else
+    storedLocator = 0;
+#endif
     Polytempo_EventDispatcher::getInstance()->broadcastEvent(Polytempo_Event::makeEvent(eventType_GotoTime, var(storedLocator * 0.001f)));
 }
 
+#ifdef USING_SCORE
 void Polytempo_ScoreScheduler::skipToEvent(Polytempo_EventType type, bool backwards)
 {
     if (!score) return;
@@ -153,12 +169,16 @@ void Polytempo_ScoreScheduler::skipToEvent(Polytempo_EventType type, bool backwa
         Polytempo_EventDispatcher::getInstance()->broadcastEvent(Polytempo_Event::makeEvent(eventType_GotoTime, storedLocator * 0.001f));
     }
 }
+#else
+void Polytempo_ScoreScheduler::skipToEvent(Polytempo_EventType, bool) {}
+#endif
 
 bool Polytempo_ScoreScheduler::gotoMarker(Polytempo_Event* event, bool storeLocator)
 {
     return gotoMarker(event->getProperty(eventPropertyString_Value), storeLocator);
 }
 
+#ifdef USING_SCORE
 bool Polytempo_ScoreScheduler::gotoMarker(String marker, bool storeLocator)
 {
     if (!score) return false;
@@ -179,6 +199,9 @@ bool Polytempo_ScoreScheduler::gotoMarker(String marker, bool storeLocator)
 
     return false;
 }
+#else
+bool Polytempo_ScoreScheduler::gotoMarker(String, bool) { return false; }
+#endif
 
 void Polytempo_ScoreScheduler::gotoTime(Polytempo_Event* event)
 {
@@ -187,7 +210,9 @@ void Polytempo_ScoreScheduler::gotoTime(Polytempo_Event* event)
 
 void Polytempo_ScoreScheduler::gotoTime(int time)
 {
+#ifdef USING_SCORE
     if (!score) return;
+#endif
     if (engine->isRunning() && !engine->isPausing()) stop();
 
     engine->setScoreTime(time);
@@ -210,6 +235,7 @@ void Polytempo_ScoreScheduler::setTempoFactor(Polytempo_Event* event)
 
 void Polytempo_ScoreScheduler::executeInit()
 {
+#ifdef USING_SCORE
     if (!score) return;
 
     OwnedArray<Polytempo_Event>* initEvents = score->getInitEvents();
@@ -225,9 +251,11 @@ void Polytempo_ScoreScheduler::executeInit()
             Polytempo_EventScheduler::getInstance()->scheduleInitEvent(initEvents->getUnchecked(i));
         }
     }
+#endif
     Polytempo_EventScheduler::getInstance()->scheduleInitEvent(Polytempo_Event::makeEvent(eventType_Ready));
 }
 
+#ifdef USING_SCORE
 void Polytempo_ScoreScheduler::setScore(Polytempo_Score* theScore)
 {
     // reset / delete everything that belongs to an old score
@@ -244,6 +272,7 @@ void Polytempo_ScoreScheduler::setScore(Polytempo_Score* theScore)
     // set default section
     score->selectSection();
 }
+#endif
 
 int Polytempo_ScoreScheduler::getScoreTime()
 {

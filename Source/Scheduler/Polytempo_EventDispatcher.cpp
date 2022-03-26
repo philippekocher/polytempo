@@ -6,7 +6,7 @@ juce_ImplementSingleton(Polytempo_EventDispatcher)
 
 void Polytempo_EventDispatcher::broadcastEvent(Polytempo_Event* event)
 {
-#ifdef POLYTEMPO_NETWORK
+#if defined(POLYTEMPO_NETWORK) || defined(POLYTEMPO_LIB)
     // network broadcast
     if (Polytempo_TimeProvider::getInstance()->isMaster())
     {

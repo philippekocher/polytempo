@@ -1,13 +1,14 @@
 #include "Polytempo_TimeProvider.h"
 #include "Polytempo_InterprocessCommunication.h"
-#ifdef POLYTEMPO_NETWORK
+#include "../Scheduler/Polytempo_ScoreScheduler.h"
+#if defined(POLYTEMPO_NETWORK) || defined(POLYTEMPO_LIB)
 #include "Polytempo_NetworkSupervisor.h"
 #endif
 
 Polytempo_TimeProvider::Polytempo_TimeProvider(): relativeMsToMaster(0), maxRoundTrip(0), timeDiffHistorySize(0), timeDiffHistoryWritePosition(0), roundTripHistorySize(0), roundTripHistoryWritePosition(0), masterFlag(false), sync(false), lastSentTimeIndex(0), lastSentTimestamp(0), lastReceivedTimestamp(0), lastRoundTrip(0)
 {
-#ifdef POLYTEMPO_NETWORK
     pTimeSyncControl = nullptr;
+#if defined(POLYTEMPO_NETWORK) || defined(POLYTEMPO_LIB)
     toggleMaster(false);
 #endif
 }
@@ -88,16 +89,19 @@ void Polytempo_TimeProvider::createTimeIndex(int* pIndex, uint32* pTimestamp)
     *pTimestamp = lastSentTimestamp;
 }
 
-#ifdef POLYTEMPO_NETWORK
-void Polytempo_TimeProvider::toggleMaster(bool master)
+#if defined(POLYTEMPO_NETWORK) || defined(POLYTEMPO_LIB)
+bool Polytempo_TimeProvider::toggleMaster(bool master)
 {
+    // returns true if successful
+
     stopTimer();
     masterFlag = master;
-    Polytempo_InterprocessCommunication::getInstance()->reset(master);
+    bool ok = Polytempo_InterprocessCommunication::getInstance()->reset(master);
     resetTimeSync();
+    
+    startTimer(TIME_SYNC_INTERVAL_MS);
 
-    if (!masterFlag)
-        startTimer(TIME_SYNC_INTERVAL_MS);
+    return ok;
 }
 
 uint32 Polytempo_TimeProvider::getDelaySafeTimestamp()
@@ -127,7 +131,7 @@ void Polytempo_TimeProvider::setRemoteMasterPeer(String ip, Uuid id)
     if (lastMasterID != id || !Polytempo_InterprocessCommunication::getInstance()->isClientConnected())
     {
         resetTimeSync();
-        displayMessage("Master changed", MessageType_Warning);
+        displayMessage("Synchronising...", MessageType_Warning);
         bool ok = Polytempo_InterprocessCommunication::getInstance()->connectToMaster(ip);
         if (!ok)
             displayMessage("Connecting to master " + ip + " failed!", MessageType_Error);
@@ -136,10 +140,6 @@ void Polytempo_TimeProvider::setRemoteMasterPeer(String ip, Uuid id)
     lastMasterID = id;
 }
 
-void Polytempo_TimeProvider::registerUserInterface(Polytempo_TimeSyncControl* pControl)
-{
-    pTimeSyncControl = pControl;
-}
 
 void Polytempo_TimeProvider::handleMessage(XmlElement message, Ipc* sender)
 {
@@ -158,15 +158,17 @@ void Polytempo_TimeProvider::handleMessage(XmlElement message, Ipc* sender)
         if (masterFlag)
         {
             uint32 ts = Time::getMillisecondCounter();
-            NamedValueSet replayParams;
-            replayParams.set("Id", Polytempo_NetworkSupervisor::getInstance()->getUniqueId().toString());
-            replayParams.set("ScoreName", Polytempo_NetworkSupervisor::getInstance()->getScoreName());
-            replayParams.set("PeerName", Polytempo_NetworkSupervisor::getInstance()->getPeerName());
-            replayParams.set("Timestamp", int32(ts));
-            replayParams.set("Index", timeIndex);
-            replayParams.set("MaxRT", int32(maxRoundTrip));
+            NamedValueSet replyParams;
+            replyParams.set("Id", Polytempo_NetworkSupervisor::getInstance()->getUniqueId().toString());
+            replyParams.set("ScoreName", Polytempo_NetworkSupervisor::getInstance()->getScoreName());
+            replyParams.set("PeerName", Polytempo_NetworkSupervisor::getInstance()->getPeerName());
+            replyParams.set("Timestamp", int32(ts));
+            replyParams.set("Index", timeIndex);
+            replyParams.set("MaxRT", int32(maxRoundTrip));
+            replyParams.set("IsRunning", Polytempo_ScoreScheduler::getInstance()->isRunning());
+            replyParams.set("ScoreTime", Polytempo_ScoreScheduler::getInstance()->getScoreTime());
             XmlElement xml = XmlElement("TimeSyncReply");
-            replayParams.copyToXmlAttributes(xml);
+            replyParams.copyToXmlAttributes(xml);
             bool ok = sender->sendMessage(Polytempo_InterprocessCommunication::xmlToMemoryBlock(xml));
             displayMessage(ok ? "Mastertime sent" : "Fail", ok ? MessageType_Info : MessageType_Error);
 
@@ -193,6 +195,11 @@ void Polytempo_TimeProvider::handleMessage(XmlElement message, Ipc* sender)
         uint32 argMasterTime = uint32(int32(syncParams.getWithDefault("Timestamp", 0)));
         int timeIndex = syncParams.getWithDefault("Index", 0);
         uint32 maxRoundTripFromMaster = uint32(int32(syncParams.getWithDefault("MaxRT", 0)));
+        
+        // not yet used params:
+        bool isRunning = bool(syncParams.getWithDefault("IsRunning", false));
+        int scoreTime = int(syncParams.getWithDefault("ScoreTime", 0.0));
+        
         sender->setRemoteNames(senderScoreName, senderPeerName);
 
         handleTimeSyncMessage(senderId, argMasterTime, timeIndex, maxRoundTripFromMaster);
@@ -200,51 +207,54 @@ void Polytempo_TimeProvider::handleMessage(XmlElement message, Ipc* sender)
 }
 #endif
 
+void Polytempo_TimeProvider::registerUserInterface(Polytempo_TimeSyncInfoInterface* pControl)
+{
+    pTimeSyncControl = pControl;
+}
+
 void Polytempo_TimeProvider::timerCallback()
 {
-#ifdef POLYTEMPO_NETWORK
-    if (!Polytempo_InterprocessCommunication::getInstance()->isClientConnected())
+#if defined(POLYTEMPO_NETWORK) || defined(POLYTEMPO_LIB)
+    if(Polytempo_TimeProvider::getInstance()->isMaster())
     {
-        displayMessage("No master detected", MessageType_Error);
+        OwnedArray<Polytempo_PeerInfo> peers;
+        Polytempo_InterprocessCommunication::getInstance()->getClientsInfo(&peers);
+        if(peers.size() < 1)
+            displayMessage("No client connected", MessageType_Warning);
     }
-    else
-    {
-        int index;
-        uint32 timestamp;
-        createTimeIndex(&index, &timestamp);
+    else {
+        if (!Polytempo_InterprocessCommunication::getInstance()->isClientConnected())
+        {
+            displayMessage("No master detected", MessageType_Error);
+        }
+        else
+        {
+            int index;
+            uint32 timestamp;
+            createTimeIndex(&index, &timestamp);
 
-        NamedValueSet syncParams;
-        syncParams.set("Id", Polytempo_NetworkSupervisor::getInstance()->getUniqueId().toString());
-        syncParams.set("ScoreName", Polytempo_NetworkSupervisor::getInstance()->getScoreName());
-        syncParams.set("PeerName", Polytempo_NetworkSupervisor::getInstance()->getPeerName());
-        syncParams.set("Index", index);
-        syncParams.set("LastRT", int32(lastRoundTrip));
-        XmlElement xml = XmlElement("TimeSyncRequest");
-        syncParams.copyToXmlAttributes(xml);
-        bool ok = Polytempo_InterprocessCommunication::getInstance()->notifyServer(xml);
-        if (!ok)
-            displayMessage("No connection to master", MessageType_Error);
+            NamedValueSet syncParams;
+            syncParams.set("Id", Polytempo_NetworkSupervisor::getInstance()->getUniqueId().toString());
+            syncParams.set("ScoreName", Polytempo_NetworkSupervisor::getInstance()->getScoreName());
+            syncParams.set("PeerName", Polytempo_NetworkSupervisor::getInstance()->getPeerName());
+            syncParams.set("Index", index);
+            syncParams.set("LastRT", int32(lastRoundTrip));
+            XmlElement xml = XmlElement("TimeSyncRequest");
+            syncParams.copyToXmlAttributes(xml);
+            bool ok = Polytempo_InterprocessCommunication::getInstance()->notifyServer(xml);
+            if (!ok)
+                displayMessage("No connection to master", MessageType_Error);
+        }
     }
 #endif
 }
 
-#ifdef POLYTEMPO_NETWORK
+#if defined(POLYTEMPO_NETWORK) || defined(POLYTEMPO_LIB)
 void Polytempo_TimeProvider::displayMessage(String message, MessageType messageType) const
 {
     if (pTimeSyncControl != nullptr)
     {
-        Colour c;
-        switch (messageType)
-        {
-        case MessageType_Info: c = Colours::lightgreen;
-            break;
-        case MessageType_Warning: c = Colours::yellow;
-            break;
-        case MessageType_Error: c = Colours::orangered;
-            break;
-        default: c = Colours::grey;
-        }
-        pTimeSyncControl->showInfoMessage(message, c);
+        pTimeSyncControl->showInfoMessage(messageType, message);
         return;
     }
     DBG(message);

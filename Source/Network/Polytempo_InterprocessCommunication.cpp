@@ -1,10 +1,14 @@
 #include "Polytempo_InterprocessCommunication.h"
 #include "Polytempo_TimeProvider.h"
-#include "../Scheduler/Polytempo_ScoreScheduler.h"
 #include "../Scheduler/Polytempo_EventScheduler.h"
+#include "../Scheduler/Polytempo_ScoreScheduler.h"
+
+#ifdef POLYTEMPO_NETWORK
 #include "../Misc/Polytempo_Alerts.h"
-#include "Polytempo_NetworkSupervisor.h"
 #include "../Application/PolytempoNetwork/Polytempo_NetworkApplication.h"
+#endif
+
+#include "Polytempo_NetworkSupervisor.h"
 
 Ipc::Ipc() : InterprocessConnection(false), lastHeartBeat(0)
 {
@@ -102,7 +106,7 @@ void Ipc::messageReceived(const MemoryBlock& message)
                 syncTime += uint32(float(e->getProperty(eventPropertyString_Defer)) * 1000.0f);
 
             e->setSyncTime(syncTime);
-            
+
             Polytempo_EventScheduler::getInstance()->scheduleEvent(e);
         }
     }
@@ -180,8 +184,10 @@ void Polytempo_InterprocessCommunication::cleanUpClient()
     }
 }
 
-void Polytempo_InterprocessCommunication::reset(bool isMaster)
+bool Polytempo_InterprocessCommunication::reset(bool isMaster)
 {
+    // returns true if successful
+
     cleanUpClient();
     cleanUpServerConnections();
 
@@ -189,12 +195,19 @@ void Polytempo_InterprocessCommunication::reset(bool isMaster)
     {
         bool ok = server->beginWaitingForSocket(POLYTEMPO_IPC_PORT, String());
         if (!ok)
+        {
+#ifdef POLYTEMPO_NETWORK
             Polytempo_Alert::show("TCP-Server", "Error starting TCP server");
+#endif
+            return false;
+        }
     }
     else
     {
         server->stop();
     }
+
+    return true;
 }
 
 bool Polytempo_InterprocessCommunication::connectToMaster(String ip)
@@ -295,6 +308,8 @@ void Polytempo_InterprocessCommunication::distributeEvent(Polytempo_Event* pEven
     String localInstanceName = Polytempo_NetworkSupervisor::getInstance()->getPeerName();
 
     XmlElement eventAsXml = pEvent->getXml();
+
+#if defined(POLYTEMPO_NETWORK) || defined(POLYTEMPO_LIB)
     if (localScoreName.matchesWildcard(namePattern, true) || localInstanceName.matchesWildcard(namePattern, true))
     {
         if (pEvent->hasProperty(eventPropertyString_Defer))
@@ -302,6 +317,7 @@ void Polytempo_InterprocessCommunication::distributeEvent(Polytempo_Event* pEven
 
         Polytempo_EventScheduler::getInstance()->scheduleEvent(pEvent);
     }
+#endif
 
     notifyAllClients(eventAsXml, namePattern);
 }

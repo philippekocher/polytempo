@@ -1,5 +1,4 @@
 #pragma once
-
 #include "../Scheduler/Polytempo_EventObserver.h"
 #include "Polytempo_PeerInfo.h"
 #include "Polytempo_IPAddress.h"
@@ -20,23 +19,31 @@ public:
     String getDescription() const;
     String getScoreName() const;
     String getPeerName() const;
+    void setManualPeerName(String name);
 
-    void createSender(int port);
+    void createSender(int portCount, const int* ports);
+
+#ifndef POLYTEMPO_LIB
     void setComponent(Component* aComponent);
+#endif
 
     void eventNotification(Polytempo_Event* event) override;
     Uuid getUniqueId();
-    void unicastFlood(Polytempo_IPAddress ownIp);
+    bool unicastFlood(Polytempo_IPAddress ownIp);
 
 private:
     std::unique_ptr<OSCMessage> createAdvertiseMessage(String ownIp);
 
     Uuid uniqueId = nullptr;
     std::unique_ptr<OSCSender> oscSender;
+
+#ifndef POLYTEMPO_LIB
     Component* component;
+#endif
 
     std::unique_ptr<String> localName;
     std::unique_ptr<String> nodeName;
+    std::unique_ptr<String> manualPeerName;
 
-    int currentPort;
+    Array<int> currentPorts;
 };
