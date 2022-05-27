@@ -233,7 +233,7 @@ void Polytempo_Composition::findCoincidingControlPoints()
 static void unsavedChangesCallback(int modalResult, Polytempo_YesNoCancelAlert::callbackTag tag)
 {
     if(modalResult == 0)      return;                                                   // cancel
-    else if(modalResult == 1) Polytempo_Composition::getInstance()->saveToFile();       // yes
+    else if(modalResult == 1) Polytempo_Composition::getInstance()->saveToFile(false);       // yes
     else if(modalResult == 2) Polytempo_Composition::getInstance()->setDirty(false);    // no
     
     if(tag == Polytempo_YesNoCancelAlert::applicationQuitTag) dynamic_cast<Polytempo_ComposerApplication*>(JUCEApplication::getInstance())->applicationShouldQuit();
@@ -305,9 +305,9 @@ void Polytempo_Composition::openFile(File file)
 }
 
 
-void Polytempo_Composition::saveToFile()
+void Polytempo_Composition::saveToFile(bool showFileDialog)
 {
-    if(!compositionFile.existsAsFile())
+    if(!compositionFile.existsAsFile() || showFileDialog)
     {
         File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("compositionFileDirectory"));
         FileChooser fileChooser("Save Composition", directory, "*.ptcom", true);
@@ -323,7 +323,8 @@ void Polytempo_Composition::saveToFile()
             compositionFile = file;
             mainWindow->setName(compositionFile.getFileNameWithoutExtension());
             Polytempo_StoredPreferences::getInstance()->getProps().setValue("compositionFileDirectory", compositionFile.getParentDirectory().getFullPathName());
-        }
+            Polytempo_StoredPreferences::getInstance()->recentFiles.addFile(compositionFile);
+       }
     }
     else
     {

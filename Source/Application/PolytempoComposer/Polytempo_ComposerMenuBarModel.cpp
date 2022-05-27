@@ -88,6 +88,8 @@ PopupMenu Polytempo_ComposerMenuBarModel::getMenuForIndex (int /*menuIndex*/, co
         menu.addSubMenu("Open Recent", recentFilesMenu);
         menu.addSeparator();
         menu.addCommandItem (commandManager, Polytempo_CommandIDs::save);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::saveAs);
+        menu.addSeparator();
         menu.addCommandItem (commandManager, Polytempo_CommandIDs::exportSelected);
         menu.addCommandItem (commandManager, Polytempo_CommandIDs::exportAll);
         menu.addSeparator();
@@ -180,6 +182,7 @@ void Polytempo_ComposerMenuBarModel::getAllCommands (Array <CommandID>& commands
         Polytempo_CommandIDs::clearOpenRecent,
         Polytempo_CommandIDs::close,
         Polytempo_CommandIDs::save,
+        Polytempo_CommandIDs::saveAs,
         Polytempo_CommandIDs::exportSelected,
         Polytempo_CommandIDs::exportAll,
 
@@ -268,6 +271,11 @@ void Polytempo_ComposerMenuBarModel::getCommandInfo(CommandID commandID, Applica
         case Polytempo_CommandIDs::save:
             result.setInfo("Save", String(), infoCategory, 0);
             result.addDefaultKeypress('s', ModifierKeys::commandModifier);
+            break;
+
+        case Polytempo_CommandIDs::saveAs:
+            result.setInfo("Save As...", String(), infoCategory, 0);
+            result.addDefaultKeypress('s', ModifierKeys::shiftModifier | ModifierKeys::commandModifier);
             break;
 
         case Polytempo_CommandIDs::exportSelected:
@@ -491,7 +499,11 @@ bool Polytempo_ComposerMenuBarModel::perform (const InvocationInfo& info)
             break;
 
         case Polytempo_CommandIDs::save:
-            composition->saveToFile();
+            composition->saveToFile(false);
+            break;
+
+        case Polytempo_CommandIDs::saveAs:
+            composition->saveToFile(true);
             break;
 
         case Polytempo_CommandIDs::exportSelected:
