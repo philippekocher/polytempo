@@ -101,8 +101,6 @@ void Polytempo_GraphicExportView::update()
 
         for(Polytempo_Event *event : sequence->getEvents())
         {
-            if(!event->hasDefinedTime()) continue;
-            
             posX = int(event->getTime() * timeFactor * 0.1 - (pageIndex * systemsPerPage + systemIndex%systemsPerPage) * systemWidth);
             posY = marginTop + systemIndex % systemsPerPage * systemHeight + staveOffset;
             
