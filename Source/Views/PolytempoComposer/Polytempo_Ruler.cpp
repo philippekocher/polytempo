@@ -163,8 +163,17 @@ void Polytempo_PositionRulerComponent::paint(Graphics& g)
     g.setColour(sequence->getColour());
     g.fillRect(0,0,10,getHeight());
     
+    if(sequence->getSelectedBeatPatternIndex() > -1)
+    {
+        Polytempo_BeatPattern* bp = sequence->getSelectedBeatPattern();
+        g.setColour(LookAndFeel::getDefaultLookAndFeel().findColour(0x1001600).withAlpha(0.1f));
+        g.fillRect(11,
+                   int(getHeight() - TIMEMAP_OFFSET - (bp->getStartPosition() + bp->getLength()) * zoomY),
+                   getWidth(),
+                   int(bp->getLength() * zoomY));
+    }
+
     g.setFont(12);
-    
     g.setColour(Colour(50,50,50));
     Polytempo_Event* event;
     Rational pos, labelPos = 0;

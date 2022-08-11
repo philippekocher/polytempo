@@ -102,7 +102,8 @@ int Polytempo_BeatPatternListComponent::getNumRows()
 
 void Polytempo_BeatPatternListComponent::selectedRowsChanged(int index)
 {
-    Polytempo_Composition::getInstance()->getSelectedSequence()->setSelectedBeatPattern(index);
+    Polytempo_Composition::getInstance()->getSelectedSequence()->setSelectedBeatPatternIndex(index);
+    Polytempo_ComposerApplication::getMainView().repaint();
 }
 
 void Polytempo_BeatPatternListComponent::paintCell(Graphics& /*g*/, int /*rowNumber*/, int /*columnId*/, int /*width*/, int /*height*/, bool /*rowIsSelected*/)
@@ -146,7 +147,7 @@ void Polytempo_BeatPatternListComponent::setSequence()
     sequence->setBeatPatternListComponent(this);
     
     table.deselectAllRows();
-    sequence->setSelectedBeatPattern(-1);
+    sequence->setSelectedBeatPatternIndex(-1);
     
     if(getNumRows() == 0) focusRow = 0; // ensure focus when a first beat pattern is added
     else                  focusRow = -1;

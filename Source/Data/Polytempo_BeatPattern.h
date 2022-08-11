@@ -32,6 +32,8 @@ public:
     // pattern expansion
     void setCurrentCounter(int);
     int getCurrentCounter();
+    void setStartPosition(Rational pos);
+    Rational getStartPosition();
     Array<Polytempo_Event *> getEvents(Rational pos);
     
     // serialisation
@@ -44,6 +46,7 @@ private:
     String marker;
     String counterString;
     int    currentCounter = 0;
+    Rational startPosition;
     
     OwnedArray<Rational> pattern;
 };

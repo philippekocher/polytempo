@@ -339,14 +339,19 @@ void Polytempo_Sequence::addControlPoint(float t, Rational pos, float tin, float
     Polytempo_Composition::getInstance()->clearSelectedControlPointIndices();
 }
 
-int Polytempo_Sequence::getSelectedBeatPattern()
+Polytempo_BeatPattern* Polytempo_Sequence::getSelectedBeatPattern()
 {
-    return selectedBeatPattern;
+    return beatPatterns[selectedBeatPatternIndex];
 }
 
-void Polytempo_Sequence::setSelectedBeatPattern(int index)
+int Polytempo_Sequence::getSelectedBeatPatternIndex()
 {
-    selectedBeatPattern = index;
+    return selectedBeatPatternIndex;
+}
+
+void Polytempo_Sequence::setSelectedBeatPatternIndex(int index)
+{
+    selectedBeatPatternIndex = index;
 }
 
 void Polytempo_Sequence::addBeatPattern()
@@ -366,7 +371,7 @@ void Polytempo_Sequence::insertBeatPattern()
     StringArray tokens;
     tokens.addTokens(defaultBeatPattern, false);
 
-    insertBeatPatternAtIndex(selectedBeatPattern, tokens[0], tokens[1].getIntValue(), "+", "");
+    insertBeatPatternAtIndex(selectedBeatPatternIndex, tokens[0], tokens[1].getIntValue(), "+", "");
 }
 
 void Polytempo_Sequence::insertBeatPatternAtIndex(int index, const String& pattern, int repeats, const String& counter, const String& marker)
@@ -387,7 +392,7 @@ void Polytempo_Sequence::insertBeatPatternAtIndex(int index, const String& patte
 
 void Polytempo_Sequence::removeSelectedBeatPattern()
 {
-    beatPatterns.remove(selectedBeatPattern);
+    beatPatterns.remove(selectedBeatPatternIndex);
     
     buildBeatPattern();
     Polytempo_Composition::getInstance()->setDirty(true);
@@ -409,6 +414,7 @@ void Polytempo_Sequence::buildBeatPattern()
     for(int i=0;i<beatPatterns.size();i++)
     {
         beatPatterns[i]->setCurrentCounter(currentCounter);
+        beatPatterns[i]->setStartPosition(position);
         events.addArray(beatPatterns[i]->getEvents(position));
         currentCounter = beatPatterns[i]->getCurrentCounter();
 

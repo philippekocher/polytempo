@@ -167,6 +167,16 @@ int Polytempo_BeatPattern::getCurrentCounter()
     return currentCounter;
 }
 
+void Polytempo_BeatPattern::setStartPosition(Rational pos)
+{
+    startPosition = pos;
+}
+
+Rational Polytempo_BeatPattern::getStartPosition()
+{
+    return startPosition;
+}
+
 Array<Polytempo_Event *> Polytempo_BeatPattern::getEvents(Rational pos)
 {
     Polytempo_Event* event;

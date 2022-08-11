@@ -147,7 +147,18 @@ void Polytempo_TimeMapCoordinateSystem::paint(Graphics& g)
     Polytempo_Composition* composition = Polytempo_Composition::getInstance();
     Polytempo_Sequence* sequence = Polytempo_Composition::getInstance()->getSelectedSequence();
     if(sequence == nullptr) return;
-
+    
+    // highlighted bars
+    
+    if(sequence->getSelectedBeatPatternIndex() > -1)
+    {
+        Polytempo_BeatPattern* bp = sequence->getSelectedBeatPattern();
+        g.setColour(LookAndFeel::getDefaultLookAndFeel().findColour(0x1001600).withAlpha(0.1f));
+        g.fillRect(0,
+                   int(getHeight() - TIMEMAP_OFFSET - (bp->getStartPosition() + bp->getLength()) * zoomY),
+                   getWidth(),
+                   int(bp->getLength() * zoomY));
+    }
     
     // vertical grid lines (time)
     

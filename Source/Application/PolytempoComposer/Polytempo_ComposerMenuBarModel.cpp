@@ -314,12 +314,12 @@ void Polytempo_ComposerMenuBarModel::getCommandInfo(CommandID commandID, Applica
         case Polytempo_CommandIDs::insertBeatPattern:
             result.setInfo("Insert Beat Pattern", String(), infoCategory, 0);
             result.addDefaultKeypress('b', ModifierKeys::commandModifier | ModifierKeys::altModifier);
-            result.setActive(composition->getSelectedSequence() != nullptr && composition->getSelectedSequence()->getSelectedBeatPattern() >= 0);
+            result.setActive(composition->getSelectedSequence() != nullptr && composition->getSelectedSequence()->getSelectedBeatPatternIndex() >= 0);
             break;
             
         case Polytempo_CommandIDs::removeBeatPattern:
             result.setInfo ("Remove Selected Beat Pattern", String(), infoCategory, 0);
-            result.setActive(composition->getSelectedSequence() != nullptr && composition->getSelectedSequence()->getSelectedBeatPattern() >= 0);
+            result.setActive(composition->getSelectedSequence() != nullptr && composition->getSelectedSequence()->getSelectedBeatPatternIndex() >= 0);
             break;
             
         case Polytempo_CommandIDs::insertControlPoint:

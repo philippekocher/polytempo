@@ -55,8 +55,9 @@ public:
     
     void addControlPoint(float t, Rational pos, float tin=0, float tout=0);
     
-    int getSelectedBeatPattern();
-    void setSelectedBeatPattern(int index);
+    Polytempo_BeatPattern* getSelectedBeatPattern();
+    int getSelectedBeatPatternIndex();
+    void setSelectedBeatPatternIndex(int index);
     void addBeatPattern();
     void insertBeatPattern();
     void insertBeatPatternAtIndex(int index, const String& pattern, int repeats=1, const String& counter=String(), const String& marker=String());
@@ -83,7 +84,7 @@ private:
     OwnedArray <Polytempo_ControlPoint> controlPoints;
     OwnedArray <Polytempo_ControlPoint> controlPointsBackup;
     OwnedArray <Polytempo_BeatPattern> beatPatterns;
-    int selectedBeatPattern = -1;
+    int selectedBeatPatternIndex = -1;
     OwnedArray <Polytempo_Event> events;        // events given by the beat patterns
     OwnedArray <Polytempo_Event> timedEvents;   // timed events used for playback and export
 
