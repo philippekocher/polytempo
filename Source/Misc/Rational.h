@@ -29,14 +29,14 @@ public:
         denominator = 1;
     }
     
-    Rational(const int n, const int d)
+    Rational(const int n, const int d, bool reduceRational = true)
     {
         numerator   = n;
         denominator = d;
 
         if(denominator == 0) denominator = 1;
         
-        reduce();
+        if(reduceRational) reduce();
     }
     
     Rational(float x)

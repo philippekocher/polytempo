@@ -138,7 +138,7 @@ void Polytempo_GraphicExportView::update()
                         {
                             beatPatternCounter = beatPattern->getRepeats();
                             
-                            pages[pageIndex]->drawBarline(posX, posY, sequence->numberOfStaves, sequence->secondaryStaveOffset, sequence->numberOfLines, sequence->lineOffset, beatPattern->getPattern());
+                            pages[pageIndex]->drawBarline(posX, posY, sequence->numberOfStaves, sequence->secondaryStaveOffset, sequence->numberOfLines, sequence->lineOffset, beatPattern->getPrintableTimeSignature());
                         }
                         else
                         {

@@ -21,6 +21,7 @@ public:
     Rational getLength();
     void   setPattern(String, bool allowEmptyPattern = false);
     String getPattern();
+    StringArray getPrintableTimeSignature();
     void   setRepeats(int);
     int    getRepeats();
     void   setMarker(String);

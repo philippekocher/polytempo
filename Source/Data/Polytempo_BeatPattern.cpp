@@ -61,7 +61,7 @@ void Polytempo_BeatPattern::setPattern(String string, bool allowEmptyPattern)
                 denominator = tokens2[1].getIntValue();
             }
             if(tokens2[0].getIntValue() > 0)
-                tempPattern.insert(0, new Rational(tokens2[0].getIntValue(), denominator));
+                tempPattern.insert(0, new Rational(tokens2[0].getIntValue(), denominator, false));
         }
     }
     
@@ -81,6 +81,41 @@ void Polytempo_BeatPattern::setPattern(String string, bool allowEmptyPattern)
 String Polytempo_BeatPattern::getPattern()
 {
     return patternString;
+}
+
+StringArray Polytempo_BeatPattern::getPrintableTimeSignature()
+{
+    StringArray array = StringArray();
+    int num = 0, den = 0;
+    int tempNum, tempDen;
+
+    for(Rational* p : pattern) {
+        tempNum = p->getNumerator();
+        tempDen = p->getDenominator();
+                
+        if(den == 0)
+        {
+            num = tempNum;
+            den = tempDen;
+        }
+        else if(tempNum == 1 && tempDen == den)
+        {
+            num += tempNum;
+        }
+        else
+        {
+            array.add(String(num));
+            array.add(String(den));
+            
+            num = tempNum;
+            den = tempDen;
+        }
+    }
+
+    array.add(String(num));
+    array.add(String(den));
+
+    return array;
 }
 
 void Polytempo_BeatPattern::setRepeats(int n)
