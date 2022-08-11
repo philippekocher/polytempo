@@ -777,8 +777,6 @@ void Polytempo_Sequence::setObject(DynamicObject* object)
     {
         ControlPointTimeComparator sorter;
         controlPoints.sort(sorter, true);
-
-        controlPoints.getFirst()->position = 0;
     }
 
     update();
