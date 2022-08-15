@@ -48,6 +48,7 @@ public:
     void setControlPointTempos(int index, float inTempo, float outTempo, float inTempoWeight = -1, float outTempoWeight = -1);
     void adjustTime(Array<int>* indices, bool relativeToPreviousPoint = true);
     void adjustPosition(Array<int>* indices, bool relativeToPreviousPoint = true);
+    void moveLastControlPointToEnd();
     void adjustTempo(Array<int>* indices);
     void removeControlPoints(Array<int>* indices);
     

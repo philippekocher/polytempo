@@ -285,6 +285,17 @@ void Polytempo_Sequence::adjustPosition(Array<int>* indices, bool relativeToPrev
     if(!update()) Polytempo_Alert::show("Error", "Invalid operation");
 }
 
+void Polytempo_Sequence::moveLastControlPointToEnd()
+{
+    auto lastEvent = events.getLast();
+    if(lastEvent == nullptr) return;
+    
+    int index = controlPoints.size() - 1;
+    controlPoints.getUnchecked(index)->position = lastEvent->getPosition();
+    Array<int> indexArray = Array<int>(index);
+    adjustTime(&indexArray, true);
+}
+
 void Polytempo_Sequence::adjustTempo(Array<int>* indices)
 {
     indices->sort();

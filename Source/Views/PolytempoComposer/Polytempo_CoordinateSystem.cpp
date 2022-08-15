@@ -39,6 +39,7 @@ void Polytempo_CoordinateSystem::showPopupMenu()
     m.addCommandItem(commandManager, Polytempo_CommandIDs::shiftControlPoints);
     m.addCommandItem(commandManager, Polytempo_CommandIDs::adjustControlPoints);
     m.addCommandItem(commandManager, Polytempo_CommandIDs::adjustTempo);
+    m.addCommandItem(commandManager, Polytempo_CommandIDs::moveLastControlPointToEnd);
 
     m.show();
 }

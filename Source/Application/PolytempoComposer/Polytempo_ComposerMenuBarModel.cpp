@@ -109,6 +109,7 @@ PopupMenu Polytempo_ComposerMenuBarModel::getMenuForIndex (int /*menuIndex*/, co
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::shiftControlPoints);
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::adjustControlPoints);
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::adjustTempo);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::moveLastControlPointToEnd);
     }
     else if (menuName == "View")
     {
@@ -210,7 +211,8 @@ void Polytempo_ComposerMenuBarModel::getAllCommands (Array <CommandID>& commands
         Polytempo_CommandIDs::shiftControlPoints,
         Polytempo_CommandIDs::adjustControlPoints,
         Polytempo_CommandIDs::adjustTempo,
-        
+        Polytempo_CommandIDs::moveLastControlPointToEnd,
+
         Polytempo_CommandIDs::aboutWindow,
         Polytempo_CommandIDs::checkForNewVersion,
         Polytempo_CommandIDs::preferencesWindow,
@@ -347,7 +349,13 @@ void Polytempo_ComposerMenuBarModel::getCommandInfo(CommandID commandID, Applica
             result.setActive(composition->getSelectedControlPointIndices()->size() > 1);
             break;
 
-            
+        case Polytempo_CommandIDs::moveLastControlPointToEnd:
+            result.setInfo ("Move Last Control Point to End", String(), infoCategory, 0);
+            result.setActive(composition->getSelectedSequence() &&
+                             !composition->getSelectedSequence()->getControlPoints()->isEmpty());
+            break;
+
+
         /* view menu
          ----------------------------------*/
 
@@ -561,7 +569,11 @@ bool Polytempo_ComposerMenuBarModel::perform (const InvocationInfo& info)
         case Polytempo_CommandIDs::adjustTempo:
             composition->getSelectedSequence()->adjustTempo(composition->getSelectedControlPointIndices());
             break;
-            
+
+        case Polytempo_CommandIDs::moveLastControlPointToEnd:
+            composition->getSelectedSequence()->moveLastControlPointToEnd();
+            break;
+
             
         /* view menu
          ----------------------------------*/
