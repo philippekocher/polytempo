@@ -56,6 +56,7 @@ public:
     void exportAsLispList();
     void exportAsCArray();
     void exportAsPolytempoScore();
+    void exportAsAudio();
 
 private:
     bool scoreNeedsUpdate = false;

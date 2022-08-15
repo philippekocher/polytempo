@@ -14,11 +14,14 @@ public:
 
     void setNumVoices(int num);
     void eventNotification(Polytempo_Event* event) override;
+    void writeClickforEvent(Polytempo_Event* event, AudioBuffer<float> &buffer, int channel, int sampleRate, int sampleOffset = 0);
 
     int downbeatPitch, beatPitch, cuePitch;
     float downbeatVolume, beatVolume, cueVolume;
 
 private:
+    void getAudioParameter(int* pitch, float* volume, Polytempo_Event* event);
+    
     MidiKeyboardState keyboardState;
     Synthesiser synth;
     AudioDeviceManager& audioDeviceManager;

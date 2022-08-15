@@ -375,33 +375,38 @@ namespace Polytempo_DialogWindows
     public:
         ExportSequences(int num)
         {
-            setSize(360, 200);
+            setSize(360, 220);
 
             if(num == 1) setName("Export Selected Sequence");
             else         setName("Export All Sequences");
             addOkButton("Export");
             
+            tbPolytempo = new ToggleButton(" Polytempo Score (.ptsco)");
+            tbPolytempo->setRadioGroupId(1234);
+            tbPolytempo->setBounds(20, 20, getWidth() - 40, 22);
+            tbPolytempo->setToggleState (true, dontSendNotification);
+            contentComponent->addAndMakeVisible(tbPolytempo);
+
+            tbAudio = new ToggleButton(" Audio Click Track (.wav)");
+            tbAudio->setRadioGroupId(1234);
+            tbAudio->setBounds(20, 20 + 30, getWidth() - 40, 22);
+            contentComponent->addAndMakeVisible(tbAudio);
+
             tbPlain = new ToggleButton(" 1 2 3 ... - Plain (.txt)");
             tbPlain->setRadioGroupId(1234);
-            tbPlain->setBounds(20, 20, getWidth() - 40, 22);
-            tbPlain->setToggleState (true, dontSendNotification);
+            tbPlain->setBounds(20, 20 + 60, getWidth() - 40, 22);
             tbPlain->addListener(this);
             contentComponent->addAndMakeVisible(tbPlain);
 
             tbLisp = new ToggleButton(" (1 2 3 ...) - Lisp Style (.txt)");
             tbLisp->setRadioGroupId(1234);
-            tbLisp->setBounds(20, 20 + 30, getWidth() - 40, 22);
+            tbLisp->setBounds(20, 20 + 90, getWidth() - 40, 22);
             contentComponent->addAndMakeVisible(tbLisp);
             
             tbC = new ToggleButton(" [1, 2, 3 ...] - C Style (.txt)");
             tbC->setRadioGroupId(1234);
-            tbC->setBounds(20, 20 + 60, getWidth() - 40, 22);
+            tbC->setBounds(20, 20 + 120, getWidth() - 40, 22);
             contentComponent->addAndMakeVisible(tbC);
-            
-            tbPolytempo = new ToggleButton(" Polytempo Score (.ptsco)");
-            tbPolytempo->setRadioGroupId(1234);
-            tbPolytempo->setBounds(20, 20 + 100, getWidth() - 40, 22);
-            contentComponent->addAndMakeVisible(tbPolytempo);
         }
         
         void textEditorTextChanged(TextEditor &)
@@ -419,12 +424,13 @@ namespace Polytempo_DialogWindows
                 else if(tbLisp->getToggleState() == true)      composition->exportAsLispList();
                 else if(tbC->getToggleState() == true)         composition->exportAsCArray();
                 else if(tbPolytempo->getToggleState() == true) composition->exportAsPolytempoScore();
+                else if(tbAudio->getToggleState() == true)     composition->exportAsAudio();
 
                 setVisible(false);
             }
         }
         
     private:
-        ToggleButton *tbPlain, *tbLisp, *tbC, *tbPolytempo;
+        ToggleButton *tbPlain, *tbLisp, *tbC, *tbPolytempo, *tbAudio;
     };
 }
