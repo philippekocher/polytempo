@@ -291,9 +291,12 @@ void Polytempo_Sequence::moveLastControlPointToEnd()
     if(lastEvent == nullptr) return;
     
     int index = controlPoints.size() - 1;
-    controlPoints.getUnchecked(index)->position = lastEvent->getPosition();
-    Array<int> indexArray = Array<int>(index);
-    adjustTime(&indexArray, true);
+    if(controlPoints.getUnchecked(index)->position != lastEvent->getPosition())
+    {
+        controlPoints.getUnchecked(index)->position = lastEvent->getPosition();
+        Array<int> indexArray = Array<int>(index);
+        adjustTime(&indexArray, true);
+    }
 }
 
 void Polytempo_Sequence::adjustTempo(Array<int>* indices)
