@@ -51,7 +51,8 @@ void Polytempo_PointListComponent::paint(Graphics& g)
 
 String Polytempo_PointListComponent::getText(int rowNumber, int columnId)
 {
-    Polytempo_ControlPoint* controlPoint = Polytempo_Composition::getInstance()->getSelectedSequence()->getControlPoint(rowNumber);
+    Polytempo_Sequence* sequence = Polytempo_Composition::getInstance()->getSelectedSequence();
+    Polytempo_ControlPoint* controlPoint = sequence->getControlPoint(rowNumber);
     String text;
     
     switch(columnId)
@@ -60,7 +61,7 @@ String Polytempo_PointListComponent::getText(int rowNumber, int columnId)
             text = String(controlPoint->time);
             break;
         case 2:
-            text = (controlPoint->position).toString();
+            text = controlPoint->positionString;
             break;
         case 3:
             text = String(Polytempo_TempoMeasurement::decodeTempoForUI(controlPoint->tempoIn));
@@ -92,7 +93,7 @@ void Polytempo_PointListComponent::setText(String text, int rowNumber, int colum
             sequence->update();
             break;
         case 2:
-            sequence->setControlPointPosition(rowNumber, Rational(text));
+            sequence->setControlPointPosition(rowNumber, text);
             sequence->update();
             break;
         case 3:

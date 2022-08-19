@@ -19,6 +19,7 @@ public:
         Polytempo_ControlPoint* temp = new Polytempo_ControlPoint();
         temp->time = time;
         temp->position = position;
+        temp->positionString = positionString;
         temp->tempoIn = tempoIn;
         temp->tempoOut = tempoOut;
         temp->tempoInWeight = tempoInWeight;
@@ -33,6 +34,7 @@ public:
     
     float    time; // in seconds
     Rational position = 0;
+    String   positionString;
     float    tempoIn = 0.25f; // 0.25 is crotchet = 60 bpm, better choice?
     float    tempoOut = 0.25f;
     float    tempoInWeight = 0.33f;

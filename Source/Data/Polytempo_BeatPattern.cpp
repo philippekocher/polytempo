@@ -22,7 +22,7 @@ Rational Polytempo_BeatPattern::getLength()
         length = length + *(pattern[i]);
     }
     
-    return Rational(length * float(repeats));
+    return length;
 }
 
 void Polytempo_BeatPattern::setPattern(String string, bool allowEmptyPattern)
@@ -181,9 +181,10 @@ Array<Polytempo_Event *> Polytempo_BeatPattern::getEvents(Rational pos)
 {
     Polytempo_Event* event;
     Array<Polytempo_Event *> beatEvents;
+    int counter = currentCounter;
     
     if(counterString != "+")
-        currentCounter = counterString.getIntValue();
+        counter = currentCounter = counterString.getIntValue();
     
     // marker events
     if(!marker.isEmpty())
@@ -226,11 +227,11 @@ Array<Polytempo_Event *> Polytempo_BeatPattern::getEvents(Rational pos)
                 if(i == 0 && counterString != "+")
                     event->setProperty(eventPropertyString_Value, counterString);
                 else
-                    event->setProperty(eventPropertyString_Value,currentCounter);
+                    event->setProperty(eventPropertyString_Value,counter);
 
                 beatEvents.add(event);
                 
-                currentCounter++;
+                counter++;
             }
             
             pos = pos + *(pattern[j]);

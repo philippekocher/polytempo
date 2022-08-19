@@ -41,7 +41,8 @@ public:
     
     bool validateNewControlPointPosition(float t, Rational pos);
     void setControlPointTime(int index, float t);
-    void setControlPointPosition(int index, Rational pos);
+    void setControlPointPosition(int index, String& positionString);
+    void setControlPointPosition(int index, Rational position);
     void setControlPointStart(int index, int start);
     void setControlPointCue(int index, String cue);
     void shiftControlPoints(Array<int>* indices, float deltaTime, Rational deltaPosition);
@@ -65,7 +66,7 @@ public:
     void removeSelectedBeatPattern();
     
     void buildBeatPattern();
-    bool validateControlPoints();
+    Rational getPositionForCounter(int counter, String marker = String());
     bool update();
     
     void addPlaybackPropertiesToEvent(Polytempo_Event*);
@@ -77,6 +78,8 @@ public:
     void setObject(DynamicObject* object);
 
 private:    
+    String formatPosition(Rational position);
+
     String name;
     int sequenceID;
     Colour colour = Colours::white;

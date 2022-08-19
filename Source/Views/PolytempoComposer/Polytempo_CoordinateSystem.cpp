@@ -154,11 +154,12 @@ void Polytempo_TimeMapCoordinateSystem::paint(Graphics& g)
     if(sequence->getSelectedBeatPatternIndex() > -1)
     {
         Polytempo_BeatPattern* bp = sequence->getSelectedBeatPattern();
+        Rational length = bp->getLength() * bp->getRepeats();
         g.setColour(LookAndFeel::getDefaultLookAndFeel().findColour(0x1001600).withAlpha(0.1f));
         g.fillRect(0,
-                   int(getHeight() - TIMEMAP_OFFSET - (bp->getStartPosition() + bp->getLength()) * zoomY),
+                   int(getHeight() - TIMEMAP_OFFSET - (bp->getStartPosition() + length) * zoomY),
                    getWidth(),
-                   int(bp->getLength() * zoomY));
+                   int(length * zoomY));
     }
     
     // vertical grid lines (time)
