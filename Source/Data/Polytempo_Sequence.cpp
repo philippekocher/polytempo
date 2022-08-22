@@ -207,7 +207,7 @@ void Polytempo_Sequence::setControlPointPosition(int index, Rational position)
 String Polytempo_Sequence::formatPosition(Rational position)
 {
     if(!Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("simplifiedPosition")) return position.toString();
-    if(position == events.getLast()->getPosition()) return "end";
+    if(!events.isEmpty() && position == events.getLast()->getPosition()) return "end";
     
     String beatPatternMarker;
     Rational beatPatternPosition;
@@ -544,6 +544,62 @@ Rational Polytempo_Sequence::getPositionForCounter(int counter, String marker)
     return Rational();
 }
 
+std::unique_ptr<Polytempo_ControlPoint> Polytempo_Sequence::getInterpolatedControlPoint(float time)
+{
+    if(controlPoints.isEmpty()) return nullptr;
+    
+    std::unique_ptr<Polytempo_ControlPoint> newControlPoint = std::make_unique<Polytempo_ControlPoint>();
+    newControlPoint->time = time;
+    int i;
+    for(i=0; i < controlPoints.size(); i++)
+    {
+        if (controlPoints.getUnchecked(i)->time > time)
+        break;
+    }
+    if(i == controlPoints.size())
+    {
+        // extrapolate
+        Polytempo_ControlPoint *lastControlPoint = controlPoints.getLast();
+        newControlPoint->position = Rational(lastControlPoint->position + (time - lastControlPoint->time) * lastControlPoint->tempoOut);
+        newControlPoint->tempoIn = newControlPoint->tempoOut = lastControlPoint->tempoOut;
+    }
+    else
+    {
+        // interpolate;
+        newControlPoint->position = Polytempo_TempoInterpolation::getPosition(time, controlPoints.getUnchecked(i-1), controlPoints.getUnchecked(i));
+        newControlPoint->tempoIn = newControlPoint->tempoOut = Polytempo_TempoInterpolation::getTempo(newControlPoint->position, controlPoints.getUnchecked(i-1), controlPoints.getUnchecked(i));
+    }
+    return newControlPoint;
+}
+
+std::unique_ptr<Polytempo_ControlPoint> Polytempo_Sequence::getInterpolatedControlPoint(Rational position)
+{
+    if(controlPoints.isEmpty()) return nullptr;
+
+    std::unique_ptr<Polytempo_ControlPoint> newControlPoint = std::make_unique<Polytempo_ControlPoint>();
+    newControlPoint->position = position;
+    int i;
+    for(i=0; i < controlPoints.size(); i++)
+    {
+        if (controlPoints.getUnchecked(i)->position > position)
+        break;
+    }
+    if(i == controlPoints.size())
+    {
+        // extrapolate
+        Polytempo_ControlPoint *lastControlPoint = controlPoints.getLast();
+        newControlPoint->time = lastControlPoint->time + (position - lastControlPoint->position).toFloat() / lastControlPoint->tempoOut;
+        newControlPoint->tempoIn = newControlPoint->tempoOut = lastControlPoint->tempoOut;
+    }
+    else
+    {
+        // interpolate;
+        newControlPoint->time = Polytempo_TempoInterpolation::getTime(position, controlPoints.getUnchecked(i-1), controlPoints.getUnchecked(i));
+        newControlPoint->tempoIn = newControlPoint->tempoOut = Polytempo_TempoInterpolation::getTempo(newControlPoint->position, controlPoints.getUnchecked(i-1), controlPoints.getUnchecked(i));
+    }
+    return newControlPoint;
+}
+
 bool Polytempo_Sequence::update()
 {
     //validateControlPoints
@@ -564,8 +620,13 @@ bool Polytempo_Sequence::update()
         }
     }
 
-    // verify that the first control point is always a start point
-    if(controlPoints.size() > 1) controlPoints[0]->start = true;
+    // settings for first and last points
+    if(controlPoints.size() > 0)
+    {
+        controlPoints[0]->start = true;
+        controlPoints[0]->tempoIn = controlPoints[0]->tempoOut;
+        controlPoints[controlPoints.size()-1]->tempoOut = controlPoints[controlPoints.size()-1]->tempoIn;
+    }
     
     controlPointsBackup.clearQuick(true);
     for(int i=0;i<controlPoints.size();i++)

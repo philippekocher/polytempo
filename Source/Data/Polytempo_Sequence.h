@@ -67,6 +67,8 @@ public:
     
     void buildBeatPattern();
     Rational getPositionForCounter(int counter, String marker = String());
+    std::unique_ptr<Polytempo_ControlPoint> getInterpolatedControlPoint(float time);
+    std::unique_ptr<Polytempo_ControlPoint> getInterpolatedControlPoint(Rational position);
     bool update();
     
     void addPlaybackPropertiesToEvent(Polytempo_Event*);

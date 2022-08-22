@@ -100,6 +100,7 @@ public:
     static Array < Point < float >* > getPoints(int num, Polytempo_ControlPoint* cp1, Polytempo_ControlPoint* cp2);
     static Array < float > getTempos(int num, Polytempo_ControlPoint* cp1, Polytempo_ControlPoint* cp2);
     static float getTime(Rational pos, Polytempo_ControlPoint* cp1, Polytempo_ControlPoint* cp2);
+    static Rational getPosition(float time, Polytempo_ControlPoint* cp1, Polytempo_ControlPoint* cp2);
     static float getTempo(Rational pos, Polytempo_ControlPoint* cp1, Polytempo_ControlPoint* cp2);
     static bool validateCurve(Polytempo_ControlPoint* cp1, Polytempo_ControlPoint* cp2);
 };

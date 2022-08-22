@@ -326,6 +326,7 @@ void Polytempo_ComposerMenuBarModel::getCommandInfo(CommandID commandID, Applica
             
         case Polytempo_CommandIDs::insertControlPoint:
             result.setInfo ("Insert Control Point", String(), infoCategory, 0);
+            result.addDefaultKeypress('i', ModifierKeys::commandModifier);
             result.setActive(window->getContentID() == Polytempo_ComposerWindow::mainViewID);
             break;
             
