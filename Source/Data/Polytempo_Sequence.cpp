@@ -281,8 +281,8 @@ bool Polytempo_Sequence::isTempoConstantAfterPoint(int i)
 {
     if(i == controlPoints.size() - 1) return false;
     
-    else if(controlPoints[i]->tempoOut == (controlPoints[i+1]->position - controlPoints[i]->position).toFloat() / (controlPoints[i+1]->time - controlPoints[i]->time) &&
-            controlPoints[i]->tempoOut == controlPoints[i+1]->tempoIn)
+    if(fabs(controlPoints[i]->tempoOut - (controlPoints[i+1]->position - controlPoints[i]->position).toFloat() / (controlPoints[i+1]->time - controlPoints[i]->time)) < 1e-6 &&
+       fabs(controlPoints[i]->tempoOut - controlPoints[i+1]->tempoIn) < 1e-6)
         return true;
     else
         return false;
@@ -565,7 +565,7 @@ std::unique_ptr<Polytempo_ControlPoint> Polytempo_Sequence::getInterpolatedContr
     }
     else
     {
-        // interpolate;
+        // interpolate
         newControlPoint->position = Polytempo_TempoInterpolation::getPosition(time, controlPoints.getUnchecked(i-1), controlPoints.getUnchecked(i));
         newControlPoint->tempoIn = newControlPoint->tempoOut = Polytempo_TempoInterpolation::getTempo(newControlPoint->position, controlPoints.getUnchecked(i-1), controlPoints.getUnchecked(i));
     }
@@ -593,7 +593,7 @@ std::unique_ptr<Polytempo_ControlPoint> Polytempo_Sequence::getInterpolatedContr
     }
     else
     {
-        // interpolate;
+        // interpolate
         newControlPoint->time = Polytempo_TempoInterpolation::getTime(position, controlPoints.getUnchecked(i-1), controlPoints.getUnchecked(i));
         newControlPoint->tempoIn = newControlPoint->tempoOut = Polytempo_TempoInterpolation::getTempo(newControlPoint->position, controlPoints.getUnchecked(i-1), controlPoints.getUnchecked(i));
     }

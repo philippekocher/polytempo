@@ -380,15 +380,19 @@ void Polytempo_TimeMapCoordinateSystem::mouseDown(const MouseEvent &mouseEvent)
         return;
     }
 
-    // cmd-click: add control point
+    // cmd-click: add control point / cmd-alt-click: add adjusted
     if(mouseEvent.mods.isCommandDown())
     {
-        // quantise position
         mouseRationalPos = quantiseMousePosition(mouseFloatPos);
-
-        if(sequence->validateNewControlPointPosition(mouseTime, mouseRationalPos))
+        std::unique_ptr<Polytempo_ControlPoint> cp = sequence->getInterpolatedControlPoint(mouseRationalPos);
+        
+        if(mouseEvent.mods.isAltDown())
         {
-            sequence->addControlPoint(mouseTime, mouseRationalPos);
+            sequence->addControlPoint(cp->time, cp->position, cp->tempoIn, cp->tempoOut);
+        }
+        else if(sequence->validateNewControlPointPosition(mouseTime, mouseRationalPos))
+        {
+            sequence->addControlPoint(mouseTime, mouseRationalPos, cp->tempoIn, cp->tempoOut);
             composition->updateContent();
             canDrag = true;
             return;
