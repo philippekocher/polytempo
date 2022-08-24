@@ -37,7 +37,7 @@ public:
     virtual void showPopupMenu() = 0;
     
 protected:
-    Polytempo_TableListBox table;
+    Polytempo_TableListBox *table;
     int focusRow = -1;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Polytempo_ListComponent)
