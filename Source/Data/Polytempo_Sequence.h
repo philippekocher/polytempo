@@ -26,6 +26,7 @@ public:
     OwnedArray <Polytempo_Event>& getEvents();
     Polytempo_Event* getEvent(int);
     
+    float getMinTime();
     float getMaxTime();
     Rational getMaxPosition();
     

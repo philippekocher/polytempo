@@ -80,6 +80,15 @@ Polytempo_Event* Polytempo_Sequence::getEvent(int index)
         return events[index];
 }
 
+float Polytempo_Sequence::getMinTime()
+{
+    Polytempo_ControlPoint *first = controlPoints.getFirst();
+    if(first == nullptr) return 0;
+    if(first->start && !first->cueIn.getPattern().isEmpty())
+        return first->time - first->cueIn.getLength().toFloat() / first->tempoOut;
+    return first->time;
+}
+
 float Polytempo_Sequence::getMaxTime()
 {
     return controlPoints.getLast() == nullptr ? 0 : controlPoints.getLast()->time;
@@ -731,6 +740,18 @@ bool Polytempo_Sequence::update()
                 timedEvents.add(cueInEvent);
             }
         }
+    }
+    
+    // start event (same earliest for all sequences of a composition)
+    float earliestTime = Polytempo_Composition::getInstance()->getEarliestTime();
+    if(timedEvents.size() > 0 && earliestTime < timedEvents.getFirst()->getTime())
+    {
+        Polytempo_Event* startEvent = new Polytempo_Event(eventType_Comment);
+        startEvent->setOwned(true);
+        startEvent->setProperty("~sequence", sequenceID);
+        startEvent->setProperty(eventPropertyString_Time, earliestTime);
+        startEvent->setProperty(eventPropertyString_Value, "start");
+        timedEvents.add(startEvent);
     }
     
     Polytempo_Composition::getInstance()->updateContent();

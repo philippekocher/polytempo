@@ -226,6 +226,17 @@ void Polytempo_Composition::findCoincidingControlPoints()
     }
 }
 
+float Polytempo_Composition::getEarliestTime()
+{
+    float    earliestTime = 0;
+    for(Polytempo_Sequence *seq : sequences)
+    {
+        if(seq->getMinTime() < earliestTime) earliestTime = seq->getMinTime();
+    }
+    return earliestTime;
+}
+
+
 //------------------------------------------------------------------------------
 #pragma mark -
 #pragma mark file i/o

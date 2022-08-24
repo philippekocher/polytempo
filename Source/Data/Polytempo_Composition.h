@@ -42,6 +42,7 @@ public:
 
     void updateScore();
     void findCoincidingControlPoints();
+    float getEarliestTime();
     
     void unsavedChangesAlert(Polytempo_YesNoCancelAlert::callbackTag tag);
     void newComposition();
