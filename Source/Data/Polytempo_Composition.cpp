@@ -152,6 +152,16 @@ void Polytempo_Composition::clearSelectedControlPointIndices()
     selectedControlPointIndices->clearQuick();
 }
 
+void Polytempo_Composition::selectAllControlPoints()
+{
+    selectedControlPointIndices->clearQuick();
+    for(int i=0; i< getSelectedSequence()->getControlPoints()->size(); i++)
+    {
+        selectedControlPointIndices->add(i);
+    }
+    mainWindow->repaint();
+}
+
 void Polytempo_Composition::addSelectedControlPointIndex(int i)
 {
     selectedControlPointIndices->add(i);

@@ -110,6 +110,8 @@ PopupMenu Polytempo_ComposerMenuBarModel::getMenuForIndex (int /*menuIndex*/, co
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::adjustControlPoints);
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::adjustTempo);
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::moveLastControlPointToEnd);
+        menu.addSeparator();
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::selectAll);
     }
     else if (menuName == "View")
     {
@@ -212,6 +214,7 @@ void Polytempo_ComposerMenuBarModel::getAllCommands (Array <CommandID>& commands
         Polytempo_CommandIDs::adjustControlPoints,
         Polytempo_CommandIDs::adjustTempo,
         Polytempo_CommandIDs::moveLastControlPointToEnd,
+        Polytempo_CommandIDs::selectAll,
 
         Polytempo_CommandIDs::aboutWindow,
         Polytempo_CommandIDs::checkForNewVersion,
@@ -354,6 +357,11 @@ void Polytempo_ComposerMenuBarModel::getCommandInfo(CommandID commandID, Applica
             result.setInfo ("Move Last Control Point to End", String(), infoCategory, 0);
             result.setActive(composition->getSelectedSequence() &&
                              !composition->getSelectedSequence()->getControlPoints()->isEmpty());
+            break;
+            
+        case Polytempo_CommandIDs::selectAll:
+            result.setInfo("Select All", String(), infoCategory, 0);
+            result.addDefaultKeypress('a', ModifierKeys::commandModifier);
             break;
 
 
@@ -573,6 +581,10 @@ bool Polytempo_ComposerMenuBarModel::perform (const InvocationInfo& info)
 
         case Polytempo_CommandIDs::moveLastControlPointToEnd:
             composition->getSelectedSequence()->moveLastControlPointToEnd();
+            break;
+            
+        case Polytempo_CommandIDs::selectAll:
+            composition->selectAllControlPoints();
             break;
 
             

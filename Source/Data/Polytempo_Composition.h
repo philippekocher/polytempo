@@ -34,6 +34,7 @@ public:
     int getSelectedSequenceIndex();
     
     void clearSelectedControlPointIndices();
+    void selectAllControlPoints();
     void addSelectedControlPointIndex(int);
     void removeSelectedControlPointIndex(int);
     void setSelectedControlPointIndex(int);

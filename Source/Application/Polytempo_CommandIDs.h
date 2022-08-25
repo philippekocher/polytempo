@@ -60,6 +60,7 @@ namespace Polytempo_CommandIDs
         adjustControlPoints,
         adjustTempo,
         moveLastControlPointToEnd,
+        selectAll,
 
         addBeatPattern,
         insertBeatPattern,
