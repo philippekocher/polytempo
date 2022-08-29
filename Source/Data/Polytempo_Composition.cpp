@@ -437,7 +437,7 @@ void Polytempo_Composition::exportAllSequences()
 
 void Polytempo_Composition::exportAsPlainText()
 {
-    File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("scoreFileDirectory"));
+    File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("compositionFileDirectory"));
     FileChooser fileChooser(string_ExportPlainList, directory, "*.txt", true);
     
     if(fileChooser.browseForFileToSave(true))
@@ -491,7 +491,7 @@ void Polytempo_Composition::exportAsPlainText()
 
 void Polytempo_Composition::exportAsLispList()
 {
-    File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("scoreFileDirectory"));
+    File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("compositionFileDirectory"));
     FileChooser fileChooser(string_ExportPlainList, directory, "*.txt", true);
     
     if(fileChooser.browseForFileToSave(true))
@@ -550,7 +550,7 @@ void Polytempo_Composition::exportAsLispList()
 
 void Polytempo_Composition::exportAsCArray()
 {
-    File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("scoreFileDirectory"));
+    File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("compositionFileDirectory"));
     FileChooser fileChooser(string_ExportPlainList, directory, "*.txt", true);
     
     if(fileChooser.browseForFileToSave(true))
@@ -614,7 +614,7 @@ void Polytempo_Composition::exportAsCArray()
 
 void Polytempo_Composition::exportAsPolytempoScore()
 {
-    File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("scoreFileDirectory"));
+    File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("compositionFileDirectory"));
     FileChooser fileChooser(string_ExportPTSCO, directory, "*.ptsco", true);
 
     if(fileChooser.browseForFileToSave(true))
@@ -683,7 +683,7 @@ void Polytempo_Composition::exportAsPolytempoScore()
 
 void Polytempo_Composition::exportAsAudio()
 {
-    File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("scoreFileDirectory"));
+    File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("compositionFileDirectory"));
     FileChooser fileChooser(string_ExportAudio, directory, "*.wav", true);
 
     if(fileChooser.browseForFileToSave(true))
@@ -704,6 +704,7 @@ void Polytempo_Composition::exportAsAudio()
 
         FileOutputStream* outputStream = new FileOutputStream(fileChooser.getResult());
         AudioBuffer<float> buffer = AudioBuffer<float>(ch, maxTime + minTime);
+        buffer.clear();
         
         ch = 0;
         for(Polytempo_Sequence *sequence : sequences)

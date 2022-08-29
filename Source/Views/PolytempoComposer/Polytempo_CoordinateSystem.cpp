@@ -392,7 +392,8 @@ void Polytempo_TimeMapCoordinateSystem::mouseDown(const MouseEvent &mouseEvent)
         }
         else if(sequence->validateNewControlPointPosition(mouseTime, mouseRationalPos))
         {
-            sequence->addControlPoint(mouseTime, mouseRationalPos, cp->tempoIn, cp->tempoOut);
+            if(!cp) sequence->addControlPoint(mouseTime, mouseRationalPos);
+            else    sequence->addControlPoint(mouseTime, mouseRationalPos, cp->tempoIn, cp->tempoOut);
             composition->updateContent();
             canDrag = true;
             return;
