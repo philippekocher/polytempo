@@ -381,7 +381,7 @@ void Polytempo_MenuBarModel::getCommandInfo(CommandID commandID, ApplicationComm
 #if JUCE_MAC
         result.addDefaultKeypress('f', ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
 #else
-        result.addDefaultKeypress(KeyPress::F11Key);
+        result.addDefaultKeypress(KeyPress::F11Key, 0);
 #endif
         result.setTicked(window->isFullScreen());
         break;

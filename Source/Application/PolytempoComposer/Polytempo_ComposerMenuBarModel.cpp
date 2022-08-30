@@ -438,7 +438,7 @@ void Polytempo_ComposerMenuBarModel::getCommandInfo(CommandID commandID, Applica
 #if JUCE_MAC
         result.addDefaultKeypress('f', ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
 #else
-        result.addDefaultKeypress(KeyPress::F11Key);
+        result.addDefaultKeypress(KeyPress::F11Key, 0);
 #endif
             result.setTicked (Desktop::getInstance().getKioskModeComponent() != nullptr);
             break;
