@@ -341,26 +341,26 @@ void Polytempo_MenuBarModel::getCommandInfo(CommandID commandID, ApplicationComm
          ----------------------------------*/
     case Polytempo_CommandIDs::showMainView:
         result.setInfo("Show Main View", String(), infoCategory, 0);
-        result.addDefaultKeypress('1', ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
-        result.addDefaultKeypress(KeyPress::numberPad1, ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
+        result.addDefaultKeypress('1', ModifierKeys::altModifier | ModifierKeys::commandModifier);
+        result.addDefaultKeypress(KeyPress::numberPad1, ModifierKeys::altModifier | ModifierKeys::commandModifier);
         break;
 
     case Polytempo_CommandIDs::showPageEditor:
         result.setInfo("Show Page Editor", String(), infoCategory, 0);
-        result.addDefaultKeypress('2', ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
-        result.addDefaultKeypress(KeyPress::numberPad2, ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
+        result.addDefaultKeypress('2', ModifierKeys::altModifier | ModifierKeys::commandModifier);
+        result.addDefaultKeypress(KeyPress::numberPad2, ModifierKeys::altModifier | ModifierKeys::commandModifier);
         break;
 
     case Polytempo_CommandIDs::showRegionEditor:
         result.setInfo("Show Region Editor", String(), infoCategory, 0);
-        result.addDefaultKeypress('3', ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
-        result.addDefaultKeypress(KeyPress::numberPad3, ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
+        result.addDefaultKeypress('3', ModifierKeys::altModifier | ModifierKeys::commandModifier);
+        result.addDefaultKeypress(KeyPress::numberPad3, ModifierKeys::altModifier | ModifierKeys::commandModifier);
         break;
 
     case Polytempo_CommandIDs::showScoreEditor:
         result.setInfo("Show Score Editor", String(), infoCategory, 0);
-        result.addDefaultKeypress('4', ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
-        result.addDefaultKeypress(KeyPress::numberPad4, ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
+        result.addDefaultKeypress('4', ModifierKeys::altModifier | ModifierKeys::commandModifier);
+        result.addDefaultKeypress(KeyPress::numberPad4, ModifierKeys::altModifier | ModifierKeys::commandModifier);
         break;
 
     case Polytempo_CommandIDs::zoomIn:
@@ -378,7 +378,11 @@ void Polytempo_MenuBarModel::getCommandInfo(CommandID commandID, ApplicationComm
 #if ! JUCE_LINUX
     case Polytempo_CommandIDs::fullScreen:
         result.setInfo("Show full-screen", String(), infoCategory, 0);
+#if JUCE_MAC
         result.addDefaultKeypress('f', ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
+#else
+        result.addDefaultKeypress(KeyPress::F11Key);
+#endif
         result.setTicked(window->isFullScreen());
         break;
 #endif

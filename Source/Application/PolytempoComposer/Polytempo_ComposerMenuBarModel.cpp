@@ -370,14 +370,14 @@ void Polytempo_ComposerMenuBarModel::getCommandInfo(CommandID commandID, Applica
 
         case Polytempo_CommandIDs::showMainView:
             result.setInfo ("Show Main View", String(), infoCategory, 0);
-            result.addDefaultKeypress('1', ModifierKeys::ctrlModifier |ModifierKeys::commandModifier);
-            result.addDefaultKeypress(KeyPress::numberPad1, ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
+            result.addDefaultKeypress('1', ModifierKeys::altModifier |ModifierKeys::commandModifier);
+            result.addDefaultKeypress(KeyPress::numberPad1, ModifierKeys::altModifier | ModifierKeys::commandModifier);
             break;
             
         case Polytempo_CommandIDs::showGraphicExportView:
             result.setInfo ("Show Graphic Export View", String(), infoCategory, 0);
-            result.addDefaultKeypress('2', ModifierKeys::ctrlModifier |ModifierKeys::commandModifier);
-            result.addDefaultKeypress(KeyPress::numberPad2, ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
+            result.addDefaultKeypress('2', ModifierKeys::altModifier |ModifierKeys::commandModifier);
+            result.addDefaultKeypress(KeyPress::numberPad2, ModifierKeys::altModifier | ModifierKeys::commandModifier);
             break;
             
         case Polytempo_CommandIDs::showTimeMap:
@@ -435,7 +435,11 @@ void Polytempo_ComposerMenuBarModel::getCommandInfo(CommandID commandID, Applica
 #if ! JUCE_LINUX
         case Polytempo_CommandIDs::fullScreen:
             result.setInfo ("Enter full-screen", String(), infoCategory, 0);
-            result.addDefaultKeypress ('f', ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
+#if JUCE_MAC
+        result.addDefaultKeypress('f', ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
+#else
+        result.addDefaultKeypress(KeyPress::F11Key);
+#endif
             result.setTicked (Desktop::getInstance().getKioskModeComponent() != nullptr);
             break;
 #endif
