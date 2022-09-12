@@ -26,6 +26,7 @@ public:
     OwnedArray <Polytempo_Event>& getEvents();
     Polytempo_Event* getEvent(int);
     
+    float getMinTime();
     float getMaxTime();
     Rational getMaxPosition();
     
@@ -41,13 +42,15 @@ public:
     
     bool validateNewControlPointPosition(float t, Rational pos);
     void setControlPointTime(int index, float t);
-    void setControlPointPosition(int index, Rational pos);
+    void setControlPointPosition(int index, String& positionString);
+    void setControlPointPosition(int index, Rational position);
     void setControlPointStart(int index, int start);
     void setControlPointCue(int index, String cue);
     void shiftControlPoints(Array<int>* indices, float deltaTime, Rational deltaPosition);
     void setControlPointTempos(int index, float inTempo, float outTempo, float inTempoWeight = -1, float outTempoWeight = -1);
     void adjustTime(Array<int>* indices, bool relativeToPreviousPoint = true);
     void adjustPosition(Array<int>* indices, bool relativeToPreviousPoint = true);
+    void moveLastControlPointToEnd();
     void adjustTempo(Array<int>* indices);
     void removeControlPoints(Array<int>* indices);
     
@@ -55,15 +58,18 @@ public:
     
     void addControlPoint(float t, Rational pos, float tin=0, float tout=0);
     
-    int getSelectedBeatPattern();
-    void setSelectedBeatPattern(int index);
+    Polytempo_BeatPattern* getSelectedBeatPattern();
+    int getSelectedBeatPatternIndex();
+    void setSelectedBeatPatternIndex(int index);
     void addBeatPattern();
     void insertBeatPattern();
     void insertBeatPatternAtIndex(int index, const String& pattern, int repeats=1, const String& counter=String(), const String& marker=String());
     void removeSelectedBeatPattern();
     
     void buildBeatPattern();
-    bool validateControlPoints();
+    Rational getPositionForCounter(int counter, String marker = String());
+    std::unique_ptr<Polytempo_ControlPoint> getInterpolatedControlPoint(float time);
+    std::unique_ptr<Polytempo_ControlPoint> getInterpolatedControlPoint(Rational position);
     bool update();
     
     void addPlaybackPropertiesToEvent(Polytempo_Event*);
@@ -75,6 +81,8 @@ public:
     void setObject(DynamicObject* object);
 
 private:    
+    String formatPosition(Rational position);
+
     String name;
     int sequenceID;
     Colour colour = Colours::white;
@@ -83,7 +91,7 @@ private:
     OwnedArray <Polytempo_ControlPoint> controlPoints;
     OwnedArray <Polytempo_ControlPoint> controlPointsBackup;
     OwnedArray <Polytempo_BeatPattern> beatPatterns;
-    int selectedBeatPattern = -1;
+    int selectedBeatPatternIndex = -1;
     OwnedArray <Polytempo_Event> events;        // events given by the beat patterns
     OwnedArray <Polytempo_Event> timedEvents;   // timed events used for playback and export
 

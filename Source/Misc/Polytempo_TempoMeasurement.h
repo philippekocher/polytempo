@@ -13,7 +13,10 @@ public:
         StringArray tokens;
         tokens.addTokens(defaultBeatPattern, false);
 
-        return absoluteTempo / Rational(tokens[0]).toFloat() * tokens[1].getFloatValue();
+        // round to max. 3 decimal places
+        float value = absoluteTempo / Rational(tokens[0]).toFloat() * tokens[1].getFloatValue();
+        value = int(value * 1000 + 0.5);
+        return value / 1000;
     }
 
     static float encodeTempoFromUI(float displayedTempo)

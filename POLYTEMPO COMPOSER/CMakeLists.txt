@@ -89,6 +89,7 @@ target_sources(PolytempoComposer PRIVATE
     ../Source/Views/PolytempoComposer/Polytempo_TimeMapComponent.cpp
     ../Source/Views/PolytempoComposer/Polytempo_TransportComponent.h
     ../Source/Views/PolytempoComposer/Polytempo_TransportComponent.cpp
+    ../Source/Views/PolytempoComposer/Polytempo_DialogWindows.h
     ../Source/Views/PolytempoComposer/Polytempo_GraphicExportView.h
     ../Source/Views/PolytempoComposer/Polytempo_GraphicExportView.cpp
     ../Source/Views/PolytempoComposer/Polytempo_GraphicExportPage.h

@@ -6,22 +6,23 @@
 
 Polytempo_BeatPatternListComponent::Polytempo_BeatPatternListComponent()
 {
-    addAndMakeVisible(table);
-    table.setModel(this);
+    addAndMakeVisible(table = new Polytempo_TableListBox());
+    table->setModel(this);
                                        // id, width, min, max, flags
-    table.getHeader().addColumn("Pattern", 1, 10, 70, -1, TableHeaderComponent::visible);
-    table.getHeader().addColumn("Repeats", 2, 10, -1, -1, TableHeaderComponent::visible);
-    table.getHeader().addColumn("Counter", 3, 10, -1, -1, TableHeaderComponent::visible);
-    table.getHeader().addColumn("Marker",  4, 10, -1, -1, TableHeaderComponent::visible);
+    table->getHeader().addColumn("Pattern", 1, 10, 70, -1, TableHeaderComponent::visible);
+    table->getHeader().addColumn("Repeats", 2, 10, -1, -1, TableHeaderComponent::visible);
+    table->getHeader().addColumn("Counter", 3, 10, -1, -1, TableHeaderComponent::visible);
+    table->getHeader().addColumn("Marker",  4, 10, -1, -1, TableHeaderComponent::visible);
 
-    table.getHeader().setPopupMenuActive(false);
-    table.getHeader().setStretchToFitActive(true);
+    table->getHeader().setPopupMenuActive(false);
+    table->getHeader().setStretchToFitActive(true);
     
-    table.setColour(ListBox::backgroundColourId, Colour(245,245,245));
+    table->setColour(ListBox::backgroundColourId, Colour(245,245,245));
 }
 
 Polytempo_BeatPatternListComponent::~Polytempo_BeatPatternListComponent()
 {
+    deleteAllChildren();
 }
 
 void Polytempo_BeatPatternListComponent::paint(Graphics& g)
@@ -34,7 +35,7 @@ void Polytempo_BeatPatternListComponent::paint(Graphics& g)
     g.fillAll(sequence->getColour());
 
     if(getNumCurrentlyModalComponents() == 0)
-        table.updateContent();
+        table->updateContent();
 }
 
 
@@ -68,7 +69,7 @@ void Polytempo_BeatPatternListComponent::setText(String text, int rowNumber, int
 {
     Polytempo_BeatPattern* beatPattern = Polytempo_Composition::getInstance()->getSelectedSequence()->getBeatPattern(rowNumber);
     
-    EditableTextCustomComponent* cell = (EditableTextCustomComponent*)table.getCellComponent(columnId, rowNumber);
+    EditableTextCustomComponent* cell = (EditableTextCustomComponent*)table->getCellComponent(columnId, rowNumber);
     // overwrite the value immediately with the actual value
     
     
@@ -102,7 +103,8 @@ int Polytempo_BeatPatternListComponent::getNumRows()
 
 void Polytempo_BeatPatternListComponent::selectedRowsChanged(int index)
 {
-    Polytempo_Composition::getInstance()->getSelectedSequence()->setSelectedBeatPattern(index);
+    Polytempo_Composition::getInstance()->getSelectedSequence()->setSelectedBeatPatternIndex(index);
+    Polytempo_ComposerApplication::getMainView().repaint();
 }
 
 void Polytempo_BeatPatternListComponent::paintCell(Graphics& /*g*/, int /*rowNumber*/, int /*columnId*/, int /*width*/, int /*height*/, bool /*rowIsSelected*/)
@@ -145,8 +147,8 @@ void Polytempo_BeatPatternListComponent::setSequence()
     
     sequence->setBeatPatternListComponent(this);
     
-    table.deselectAllRows();
-    sequence->setSelectedBeatPattern(-1);
+    table->deselectAllRows();
+    sequence->setSelectedBeatPatternIndex(-1);
     
     if(getNumRows() == 0) focusRow = 0; // ensure focus when a first beat pattern is added
     else                  focusRow = -1;

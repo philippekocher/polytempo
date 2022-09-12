@@ -428,11 +428,11 @@ String Polytempo_Score::getJsonString()
     var json(jsonSections); // store the outer object in a var
     
     
-    String jsonString = JSON::toString(json, true, 4);
+    String jsonString = JSON::toString(json, true);
     
     /* a semiprofessional formatter:
      not as tight as the "all on one line" option
-     not as lose as the standard layout
+     not as loose as the standard layout
      */
     
     jsonString = jsonString.replaceSection(0,1,"{\n");    // beginning of file

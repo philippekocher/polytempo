@@ -24,6 +24,8 @@ class GeneralPreferencesPage : public Component, Button::Listener, TextEditor::L
     Label      *defaultBeatPatternRepeatsLabel;
     TextEditor *defaultBeatPatternRepeats;
 
+    ToggleButton* simplifiedPositionToggle;
+
     ToggleButton* checkForNewVersionToggle;
     TextButton* checkNowButton;
 
@@ -104,6 +106,14 @@ public:
         defaultBeatPatternRepeats->addListener(this);
 
 
+        // simplified position
+        
+        addAndMakeVisible(simplifiedPositionToggle = new ToggleButton());
+        simplifiedPositionToggle->setButtonText("Simplified position display");
+        simplifiedPositionToggle->setToggleState(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("simplifiedPosition"), dontSendNotification);
+        simplifiedPositionToggle->addListener(this);
+        
+        
         // check for new version
         
         addAndMakeVisible(checkForNewVersionToggle = new ToggleButton(String()));
@@ -128,14 +138,16 @@ public:
         tempoMeasurementTimeLabel->setBounds(120, 70, 50, 24);
         tempoMeasurementTime->setBounds     (170, 70, 40, 24);
 
-        defaultBeatPatternLabel->setBounds       (18,  135, 200, 24);
-        defaultBeatPatternMetreLabel->setBounds  (20,  170, 50, 24);
-        defaultBeatPatternMetre->setBounds       (70,  170, 40, 24);
-        defaultBeatPatternRepeatsLabel->setBounds(120, 170, 50, 24);
-        defaultBeatPatternRepeats->setBounds     (170, 170, 40, 24);
+        defaultBeatPatternLabel->setBounds       (18,  125, 200, 24);
+        defaultBeatPatternMetreLabel->setBounds  (20,  160, 50, 24);
+        defaultBeatPatternMetre->setBounds       (70,  160, 40, 24);
+        defaultBeatPatternRepeatsLabel->setBounds(120, 160, 50, 24);
+        defaultBeatPatternRepeats->setBounds     (170, 160, 40, 24);
+        
+        simplifiedPositionToggle->setBounds(20, 220, 260, 24);
 
-        checkForNewVersionToggle->setBounds(20, 280, 260, 24);
-        checkNowButton->setBounds          (290, 280, 100, 24);
+        checkForNewVersionToggle->setBounds(20, 290, 260, 24);
+        checkNowButton->setBounds          (290, 290, 100, 24);
 }
     
     /* text editor & button listener
@@ -189,7 +201,12 @@ public:
     
     void buttonClicked(Button* button)
     {
-        if(button == checkForNewVersionToggle)
+        if(button == simplifiedPositionToggle)
+        {
+            Polytempo_StoredPreferences::getInstance()->getProps().setValue("simplifiedPosition", button->getToggleState());
+            Polytempo_Composition::getInstance()->getSelectedSequence()->update();
+        }
+        else if(button == checkForNewVersionToggle)
         {
             Polytempo_StoredPreferences::getInstance()->getProps().setValue("checkForNewVersion", button->getToggleState());
         }

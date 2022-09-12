@@ -8,26 +8,27 @@
 
 Polytempo_PointListComponent::Polytempo_PointListComponent()
 {
-    addAndMakeVisible(table);
-    table.setModel(this);
-    table.setMultipleSelectionEnabled(true);
+    addAndMakeVisible(table = new Polytempo_TableListBox());
+    table->setModel(this);
+    table->setMultipleSelectionEnabled(true);
     
                                         // id, width, min, max, flags
-    table.getHeader().addColumn("Time",       1, 50, 50, -1, TableHeaderComponent::visible);
-    table.getHeader().addColumn("Position",   2, 50, 50, -1, TableHeaderComponent::visible);
-    table.getHeader().addColumn("Tempo In",   3, 50, 50, -1, TableHeaderComponent::visible);
-    table.getHeader().addColumn("Tempo Out",  4, 50, 50, -1, TableHeaderComponent::visible);
-    table.getHeader().addColumn("Start",      5, 50, 40, 40, TableHeaderComponent::visible);
-    table.getHeader().addColumn("Cue In",     6, 50, 50, -1, TableHeaderComponent::visible);
+    table->getHeader().addColumn("Time",       1, 50, 50, -1, TableHeaderComponent::visible);
+    table->getHeader().addColumn("Position",   2, 50, 50, -1, TableHeaderComponent::visible);
+    table->getHeader().addColumn("Tempo In",   3, 50, 50, -1, TableHeaderComponent::visible);
+    table->getHeader().addColumn("Tempo Out",  4, 50, 50, -1, TableHeaderComponent::visible);
+    table->getHeader().addColumn("Start",      5, 50, 40, 40, TableHeaderComponent::visible);
+    table->getHeader().addColumn("Cue In",     6, 50, 50, -1, TableHeaderComponent::visible);
     
-    table.getHeader().setPopupMenuActive(false);
-    table.getHeader().setStretchToFitActive(true);
+    table->getHeader().setPopupMenuActive(false);
+    table->getHeader().setStretchToFitActive(true);
     
-    table.setColour(ListBox::backgroundColourId, Colour(245,245,245));
+    table->setColour(ListBox::backgroundColourId, Colour(245,245,245));
 }
 
 Polytempo_PointListComponent::~Polytempo_PointListComponent()
 {
+    deleteAllChildren();
 }
 
 void Polytempo_PointListComponent::paint(Graphics& g)
@@ -37,7 +38,7 @@ void Polytempo_PointListComponent::paint(Graphics& g)
     
     g.fillAll(sequence->getColour());
     
-    table.updateContent();
+    table->updateContent();
 
     Polytempo_Composition* composition = Polytempo_Composition::getInstance();
     SparseSet<int>* indices = new SparseSet<int>();
@@ -45,13 +46,14 @@ void Polytempo_PointListComponent::paint(Graphics& g)
     {
         indices->addRange(Range<int>(index,index+1));
     }
-    table.setSelectedRows(*indices, dontSendNotification);
+    table->setSelectedRows(*indices, dontSendNotification);
 }
 
 
 String Polytempo_PointListComponent::getText(int rowNumber, int columnId)
 {
-    Polytempo_ControlPoint* controlPoint = Polytempo_Composition::getInstance()->getSelectedSequence()->getControlPoint(rowNumber);
+    Polytempo_Sequence* sequence = Polytempo_Composition::getInstance()->getSelectedSequence();
+    Polytempo_ControlPoint* controlPoint = sequence->getControlPoint(rowNumber);
     String text;
     
     switch(columnId)
@@ -60,7 +62,7 @@ String Polytempo_PointListComponent::getText(int rowNumber, int columnId)
             text = String(controlPoint->time);
             break;
         case 2:
-            text = (controlPoint->position).toString();
+            text = controlPoint->positionString;
             break;
         case 3:
             text = String(Polytempo_TempoMeasurement::decodeTempoForUI(controlPoint->tempoIn));
@@ -92,7 +94,7 @@ void Polytempo_PointListComponent::setText(String text, int rowNumber, int colum
             sequence->update();
             break;
         case 2:
-            sequence->setControlPointPosition(rowNumber, Rational(text));
+            sequence->setControlPointPosition(rowNumber, text);
             sequence->update();
             break;
         case 3:
@@ -125,7 +127,7 @@ void Polytempo_PointListComponent::selectedRowsChanged(int /*lastRowSelected*/)
     Polytempo_Composition* composition = Polytempo_Composition::getInstance();
     
     composition->clearSelectedControlPointIndices();
-    SparseSet<int> indices = table.getSelectedRows();
+    SparseSet<int> indices = table->getSelectedRows();
     for(int i=0;i<indices.size();i++)
     {
         composition->addSelectedControlPointIndex(indices[i]);

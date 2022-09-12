@@ -19,6 +19,7 @@ public:
         Polytempo_ControlPoint* temp = new Polytempo_ControlPoint();
         temp->time = time;
         temp->position = position;
+        temp->positionString = positionString;
         temp->tempoIn = tempoIn;
         temp->tempoOut = tempoOut;
         temp->tempoInWeight = tempoInWeight;
@@ -33,6 +34,7 @@ public:
     
     float    time; // in seconds
     Rational position = 0;
+    String   positionString;
     float    tempoIn = 0.25f; // 0.25 is crotchet = 60 bpm, better choice?
     float    tempoOut = 0.25f;
     float    tempoInWeight = 0.33f;
@@ -98,6 +100,7 @@ public:
     static Array < Point < float >* > getPoints(int num, Polytempo_ControlPoint* cp1, Polytempo_ControlPoint* cp2);
     static Array < float > getTempos(int num, Polytempo_ControlPoint* cp1, Polytempo_ControlPoint* cp2);
     static float getTime(Rational pos, Polytempo_ControlPoint* cp1, Polytempo_ControlPoint* cp2);
+    static Rational getPosition(float time, Polytempo_ControlPoint* cp1, Polytempo_ControlPoint* cp2);
     static float getTempo(Rational pos, Polytempo_ControlPoint* cp1, Polytempo_ControlPoint* cp2);
     static bool validateCurve(Polytempo_ControlPoint* cp1, Polytempo_ControlPoint* cp2);
 };

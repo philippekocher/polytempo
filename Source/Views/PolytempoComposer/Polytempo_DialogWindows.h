@@ -108,29 +108,52 @@ namespace Polytempo_DialogWindows
     public:
         InsertControlPoint()
         {
+            setSize(360, 200);
             setName("Insert Control Point");
             addOkButton("Add");
             okButton->setEnabled(false);
             
+            contentComponent->addAndMakeVisible(adjustedLabel = new Label("adjustedLabel","Adjusted..."));
+            adjustedLabel->setBounds(16, 15, 300, 20);
+            adjustedLabel->setFont(Font(16));
+            adjustedLabel->setMinimumHorizontalScale(1.0f);
+
+            contentComponent->addAndMakeVisible(EZTimeTextbox = new Polytempo_Textbox("Time [s]"));
+            EZTimeTextbox->setBounds(20,50,80,18);
+            EZTimeTextbox->setText("0", dontSendNotification);
+            EZTimeTextbox->setInputRestrictions(0,"0123456789.");
+            EZTimeTextbox->addListener(this);
+
+            contentComponent->addAndMakeVisible(EZPositionTextbox = new Polytempo_Textbox("Position"));
+            EZPositionTextbox->setBounds(120,50,80,18);
+            EZPositionTextbox->setText("0", dontSendNotification);
+            EZPositionTextbox->setInputRestrictions(0,"0123456789.");
+            EZPositionTextbox->addListener(this);
+
+            contentComponent->addAndMakeVisible(freeLabel = new Label("freeLabel","Free..."));
+            freeLabel->setBounds(16, 90, 300, 20);
+            freeLabel->setFont(Font(16));
+            freeLabel->setMinimumHorizontalScale(1.0f);
+
             contentComponent->addAndMakeVisible(timeTextbox = new Polytempo_Textbox("Time [s]"));
-            timeTextbox->setBounds(20,25,80,18);
+            timeTextbox->setBounds(20,125,80,18);
             timeTextbox->setText("0", dontSendNotification);
             timeTextbox->setInputRestrictions(0,"0123456789.");
             timeTextbox->addListener(this);
             
             contentComponent->addAndMakeVisible(positionTextbox = new Polytempo_Textbox("Position"));
-            positionTextbox->setBounds(120,25,80,18);
+            positionTextbox->setBounds(120,125,80,18);
             positionTextbox->setText("0", dontSendNotification);
             positionTextbox->setInputRestrictions(0,"0123456789/");
             positionTextbox->addListener(this);
             
             contentComponent->addAndMakeVisible(tempoInTextbox = new Polytempo_Textbox("Tempo In"));
-            tempoInTextbox->setBounds(220,25,50,18);
+            tempoInTextbox->setBounds(220,125,50,18);
             tempoInTextbox->setText(String(Polytempo_TempoMeasurement::decodeTempoForUI(0.25)), dontSendNotification);
             tempoInTextbox->addListener(this);
 
             contentComponent->addAndMakeVisible(tempoOutTextbox = new Polytempo_Textbox("Tempo Out"));
-            tempoOutTextbox->setBounds(290,25,50,18);
+            tempoOutTextbox->setBounds(290,125,50,18);
             tempoOutTextbox->setText(String(Polytempo_TempoMeasurement::decodeTempoForUI(0.25)), dontSendNotification);
             tempoOutTextbox->addListener(this);
             
@@ -148,8 +171,35 @@ namespace Polytempo_DialogWindows
             validate();
         }
         
-        void labelTextChanged (Label* /*label*/)
+        void labelTextChanged (Label* label)
         {
+            Polytempo_Sequence* sequence = Polytempo_Composition::getInstance()->getSelectedSequence();
+            if(label == EZTimeTextbox)
+            {
+                timeTextbox->setText(label->getText(), dontSendNotification);
+                
+                float time = timeTextbox->getText().getFloatValue();
+                std::unique_ptr<Polytempo_ControlPoint> tempControlPoint = sequence->getInterpolatedControlPoint(time);
+                if(tempControlPoint == nullptr) return;
+                
+                EZPositionTextbox->setText(tempControlPoint->position.toString(), dontSendNotification);
+                positionTextbox->setText(tempControlPoint->position.toString(), dontSendNotification);
+                tempoInTextbox->setText(String(Polytempo_TempoMeasurement::decodeTempoForUI(tempControlPoint->tempoIn)), dontSendNotification);
+                tempoOutTextbox->setText(String(Polytempo_TempoMeasurement::decodeTempoForUI(tempControlPoint->tempoOut)), dontSendNotification);
+            }
+            else if(label == EZPositionTextbox)
+            {
+                positionTextbox->setText(label->getText(), dontSendNotification);
+                
+                Rational position = Rational(positionTextbox->getText());
+                std::unique_ptr<Polytempo_ControlPoint> tempControlPoint = sequence->getInterpolatedControlPoint(position);
+                if(tempControlPoint == nullptr) return;
+
+                EZTimeTextbox->setText(String(tempControlPoint->time), dontSendNotification);
+                timeTextbox->setText(String(tempControlPoint->time), dontSendNotification);
+                tempoInTextbox->setText(String(Polytempo_TempoMeasurement::decodeTempoForUI(tempControlPoint->tempoIn)), dontSendNotification);
+                tempoOutTextbox->setText(String(Polytempo_TempoMeasurement::decodeTempoForUI(tempControlPoint->tempoOut)), dontSendNotification);
+            }
             validate();
         }
  
@@ -168,6 +218,8 @@ namespace Polytempo_DialogWindows
         }
         
     private:
+        Polytempo_Textbox *EZTimeTextbox, *EZPositionTextbox;
+        Label *adjustedLabel, *freeLabel;
         Polytempo_Textbox *timeTextbox;
         Polytempo_Textbox *positionTextbox;
         Polytempo_Textbox *tempoInTextbox;
@@ -375,33 +427,38 @@ namespace Polytempo_DialogWindows
     public:
         ExportSequences(int num)
         {
-            setSize(360, 200);
+            setSize(360, 220);
 
             if(num == 1) setName("Export Selected Sequence");
             else         setName("Export All Sequences");
             addOkButton("Export");
             
+            tbPolytempo = new ToggleButton(" Polytempo Score (.ptsco)");
+            tbPolytempo->setRadioGroupId(1234);
+            tbPolytempo->setBounds(20, 20, getWidth() - 40, 22);
+            tbPolytempo->setToggleState (true, dontSendNotification);
+            contentComponent->addAndMakeVisible(tbPolytempo);
+
+            tbAudio = new ToggleButton(" Audio Click Track (.wav)");
+            tbAudio->setRadioGroupId(1234);
+            tbAudio->setBounds(20, 20 + 30, getWidth() - 40, 22);
+            contentComponent->addAndMakeVisible(tbAudio);
+
             tbPlain = new ToggleButton(" 1 2 3 ... - Plain (.txt)");
             tbPlain->setRadioGroupId(1234);
-            tbPlain->setBounds(20, 20, getWidth() - 40, 22);
-            tbPlain->setToggleState (true, dontSendNotification);
+            tbPlain->setBounds(20, 20 + 60, getWidth() - 40, 22);
             tbPlain->addListener(this);
             contentComponent->addAndMakeVisible(tbPlain);
 
             tbLisp = new ToggleButton(" (1 2 3 ...) - Lisp Style (.txt)");
             tbLisp->setRadioGroupId(1234);
-            tbLisp->setBounds(20, 20 + 30, getWidth() - 40, 22);
+            tbLisp->setBounds(20, 20 + 90, getWidth() - 40, 22);
             contentComponent->addAndMakeVisible(tbLisp);
             
             tbC = new ToggleButton(" [1, 2, 3 ...] - C Style (.txt)");
             tbC->setRadioGroupId(1234);
-            tbC->setBounds(20, 20 + 60, getWidth() - 40, 22);
+            tbC->setBounds(20, 20 + 120, getWidth() - 40, 22);
             contentComponent->addAndMakeVisible(tbC);
-            
-            tbPolytempo = new ToggleButton(" Polytempo Score (.ptsco)");
-            tbPolytempo->setRadioGroupId(1234);
-            tbPolytempo->setBounds(20, 20 + 100, getWidth() - 40, 22);
-            contentComponent->addAndMakeVisible(tbPolytempo);
         }
         
         void textEditorTextChanged(TextEditor &)
@@ -419,12 +476,13 @@ namespace Polytempo_DialogWindows
                 else if(tbLisp->getToggleState() == true)      composition->exportAsLispList();
                 else if(tbC->getToggleState() == true)         composition->exportAsCArray();
                 else if(tbPolytempo->getToggleState() == true) composition->exportAsPolytempoScore();
+                else if(tbAudio->getToggleState() == true)     composition->exportAsAudio();
 
                 setVisible(false);
             }
         }
         
     private:
-        ToggleButton *tbPlain, *tbLisp, *tbC, *tbPolytempo;
+        ToggleButton *tbPlain, *tbLisp, *tbC, *tbPolytempo, *tbAudio;
     };
 }

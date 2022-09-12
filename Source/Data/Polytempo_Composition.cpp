@@ -152,6 +152,16 @@ void Polytempo_Composition::clearSelectedControlPointIndices()
     selectedControlPointIndices->clearQuick();
 }
 
+void Polytempo_Composition::selectAllControlPoints()
+{
+    selectedControlPointIndices->clearQuick();
+    for(int i=0; i< getSelectedSequence()->getControlPoints()->size(); i++)
+    {
+        selectedControlPointIndices->add(i);
+    }
+    mainWindow->repaint();
+}
+
 void Polytempo_Composition::addSelectedControlPointIndex(int i)
 {
     selectedControlPointIndices->add(i);
@@ -226,6 +236,17 @@ void Polytempo_Composition::findCoincidingControlPoints()
     }
 }
 
+float Polytempo_Composition::getEarliestTime()
+{
+    float    earliestTime = 0;
+    for(Polytempo_Sequence *seq : sequences)
+    {
+        if(seq->getMinTime() < earliestTime) earliestTime = seq->getMinTime();
+    }
+    return earliestTime;
+}
+
+
 //------------------------------------------------------------------------------
 #pragma mark -
 #pragma mark file i/o
@@ -233,7 +254,7 @@ void Polytempo_Composition::findCoincidingControlPoints()
 static void unsavedChangesCallback(int modalResult, Polytempo_YesNoCancelAlert::callbackTag tag)
 {
     if(modalResult == 0)      return;                                                   // cancel
-    else if(modalResult == 1) Polytempo_Composition::getInstance()->saveToFile();       // yes
+    else if(modalResult == 1) Polytempo_Composition::getInstance()->saveToFile(false);       // yes
     else if(modalResult == 2) Polytempo_Composition::getInstance()->setDirty(false);    // no
     
     if(tag == Polytempo_YesNoCancelAlert::applicationQuitTag) dynamic_cast<Polytempo_ComposerApplication*>(JUCEApplication::getInstance())->applicationShouldQuit();
@@ -305,9 +326,9 @@ void Polytempo_Composition::openFile(File file)
 }
 
 
-void Polytempo_Composition::saveToFile()
+void Polytempo_Composition::saveToFile(bool showFileDialog)
 {
-    if(!compositionFile.existsAsFile())
+    if(!compositionFile.existsAsFile() || showFileDialog)
     {
         File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("compositionFileDirectory"));
         FileChooser fileChooser("Save Composition", directory, "*.ptcom", true);
@@ -323,7 +344,8 @@ void Polytempo_Composition::saveToFile()
             compositionFile = file;
             mainWindow->setName(compositionFile.getFileNameWithoutExtension());
             Polytempo_StoredPreferences::getInstance()->getProps().setValue("compositionFileDirectory", compositionFile.getParentDirectory().getFullPathName());
-        }
+            Polytempo_StoredPreferences::getInstance()->recentFiles.addFile(compositionFile);
+       }
     }
     else
     {
@@ -393,6 +415,10 @@ bool Polytempo_Composition::readJSONfromFile(File file)
 #pragma mark -
 #pragma mark export
 
+#define string_ExportPlainList "Export Composition as Plain List"
+#define string_ExportPTSCO     "Export Composition as Polytempo Score"
+#define string_ExportAudio     "Export Composition as Audio Click Track"
+
 void Polytempo_Composition::exportSelectedSequence()
 {
     if(score == nullptr) return;
@@ -411,8 +437,8 @@ void Polytempo_Composition::exportAllSequences()
 
 void Polytempo_Composition::exportAsPlainText()
 {
-    File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("scoreFileDirectory"));
-    FileChooser fileChooser("Export Composition As Plain List", directory, "*.txt", true);
+    File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("compositionFileDirectory"));
+    FileChooser fileChooser(string_ExportPlainList, directory, "*.txt", true);
     
     if(fileChooser.browseForFileToSave(true))
     {
@@ -465,8 +491,8 @@ void Polytempo_Composition::exportAsPlainText()
 
 void Polytempo_Composition::exportAsLispList()
 {
-    File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("scoreFileDirectory"));
-    FileChooser fileChooser("Export Composition As Plain List", directory, "*.txt", true);
+    File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("compositionFileDirectory"));
+    FileChooser fileChooser(string_ExportPlainList, directory, "*.txt", true);
     
     if(fileChooser.browseForFileToSave(true))
     {
@@ -524,8 +550,8 @@ void Polytempo_Composition::exportAsLispList()
 
 void Polytempo_Composition::exportAsCArray()
 {
-    File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("scoreFileDirectory"));
-    FileChooser fileChooser("Export Composition As Plain List", directory, "*.txt", true);
+    File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("compositionFileDirectory"));
+    FileChooser fileChooser(string_ExportPlainList, directory, "*.txt", true);
     
     if(fileChooser.browseForFileToSave(true))
     {
@@ -588,8 +614,8 @@ void Polytempo_Composition::exportAsCArray()
 
 void Polytempo_Composition::exportAsPolytempoScore()
 {
-    File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("scoreFileDirectory"));
-    FileChooser fileChooser("Export Composition As Polytempo Score", directory, "*.ptsco", true);
+    File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("compositionFileDirectory"));
+    FileChooser fileChooser(string_ExportPTSCO, directory, "*.ptsco", true);
 
     if(fileChooser.browseForFileToSave(true))
     {
@@ -652,5 +678,55 @@ void Polytempo_Composition::exportAsPolytempoScore()
         tempScore.writeToFile(tempFile);
         tempFile.copyFileTo(scoreFile);
         tempFile.deleteFile();
+    }
+}
+
+void Polytempo_Composition::exportAsAudio()
+{
+    File directory(Polytempo_StoredPreferences::getInstance()->getProps().getValue("compositionFileDirectory"));
+    FileChooser fileChooser(string_ExportAudio, directory, "*.wav", true);
+
+    if(fileChooser.browseForFileToSave(true))
+    {
+        int sampleRate = 44100;
+        int time, maxTime = 0, minTime = 0;
+        int ch = 0;
+
+        for(Polytempo_Sequence *sequence : sequences)
+        {
+            if(!exportAll && sequence != getSelectedSequence()) continue;
+            time = int((sequence->getTimedEvents()[0]->getTime()) * 0.001 * sampleRate);
+            minTime = abs(time) > minTime ? abs(time) : minTime;
+            time = int((sequence->getMaxTime() + 1) * sampleRate); // 1s added for the duration of the last click
+            maxTime = time > maxTime ? time : maxTime;
+            ch++;
+        }
+
+        FileOutputStream* outputStream = new FileOutputStream(fileChooser.getResult());
+        AudioBuffer<float> buffer = AudioBuffer<float>(ch, maxTime + minTime);
+        buffer.clear();
+        
+        ch = 0;
+        for(Polytempo_Sequence *sequence : sequences)
+        {
+            if(!exportAll && sequence != getSelectedSequence()) continue;
+            for(Polytempo_Event *event : sequence->getTimedEvents())
+            {
+                sequence->addPlaybackPropertiesToEvent(event);
+                Polytempo_AudioClick::getInstance()->writeClickforEvent(event, buffer, ch, 44100, minTime);
+            }
+            ch++;
+        }
+        
+        WavAudioFormat format;
+        std::unique_ptr<AudioFormatWriter> writer;
+        writer.reset(format.createWriterFor(outputStream,
+                                            44100.0,
+                                            (unsigned int)buffer.getNumChannels(),
+                                            24,
+                                            {},
+                                            0));
+        if (writer != nullptr)
+            writer->writeFromAudioSampleBuffer(buffer, 0, buffer.getNumSamples());
     }
 }

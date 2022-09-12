@@ -62,8 +62,9 @@ void Polytempo_GraphicExportPage::drawStaveBeginning(int x, int y, int numberOfS
     
 }
 
-void Polytempo_GraphicExportPage::drawBarline(int x, int y, int numberOfStaves, int secondaryStaveOffset, int numberOfLines, int linesOffset, String timeSignature)
+void Polytempo_GraphicExportPage::drawBarline(int x, int y, int numberOfStaves, int secondaryStaveOffset, int numberOfLines, int linesOffset, StringArray printableTimeSignature)
 {
+    int x1 = x;
     int y1 = y;
     int y2 = y + (numberOfStaves - 1) * secondaryStaveOffset + (numberOfLines - 1) * linesOffset + 1;
     
@@ -78,27 +79,44 @@ void Polytempo_GraphicExportPage::drawBarline(int x, int y, int numberOfStaves, 
 
     g.drawLine(float(x), float(y1), float(x), float(y2), 3.0f);
     
-    if(timeSignature.isNotEmpty())
+    if(!printableTimeSignature.isEmpty())
     {
-        int timeSignatureFontHeight = 24;
-        StringArray tokens;
-        tokens.addTokens(timeSignature, "/", "");
-        tokens.removeEmptyStrings();
-        tokens.trim();
-        
-        g.setFont(float(timeSignatureFontHeight));
-        g.drawText(tokens[0],
-                   x - 200,
-                   int(y1 - timeSignatureFontHeight * 1.75),
-                   400,
-                   timeSignatureFontHeight,
-                   Justification::horizontallyCentred, false);
-        g.drawText(tokens[1],
-                   x - 200,
-                   y1 - timeSignatureFontHeight,
-                   400,
-                   timeSignatureFontHeight,
-                   Justification::horizontallyCentred, false);
+        GlyphArrangement glyphs = GlyphArrangement();
+        GlyphArrangement tempGlyphs = GlyphArrangement();
+        float timeSignatureFontHeight = 24.0f;
+        Font font = Font(timeSignatureFontHeight);
+        float width, height;
+                
+        for(int i=0; i<int(printableTimeSignature.size()*0.5); i++)
+        {
+            if(i>0)
+            {
+                tempGlyphs.clear();
+                tempGlyphs.addLineOfText(font, "+", x1, y1 - timeSignatureFontHeight * 0.5f);
+                glyphs.addGlyphArrangement(tempGlyphs);
+                width = tempGlyphs.getBoundingBox(0,-1,true).getWidth();
+                x1 += int(width+1);
+            }
+            
+            String num = printableTimeSignature[i*2];
+            String den = printableTimeSignature[i*2+1];
+
+            tempGlyphs.clear();
+            tempGlyphs.addLineOfText(font, num, x1, 0);
+            tempGlyphs.addLineOfText(font, den, x1, 0);
+            
+            width = tempGlyphs.getBoundingBox(0,-1,true).getWidth();
+            tempGlyphs.justifyGlyphs(0, num.length(), x1, y1 - timeSignatureFontHeight * 1.25f, width, 0, Justification::horizontallyCentred);
+            tempGlyphs.justifyGlyphs(num.length(), den.length(), x1, y1 - timeSignatureFontHeight * 0.5f, width, 0, Justification::horizontallyCentred);
+
+            glyphs.addGlyphArrangement(tempGlyphs);
+            x1 += int(width+1);
+        }
+        width = glyphs.getBoundingBox(0,-1,true).getWidth();
+        height = glyphs.getBoundingBox(0,-1,true).getHeight();
+        glyphs.justifyGlyphs(0, glyphs.getNumGlyphs(), x - width * 0.5f, y1 - timeSignatureFontHeight * 1.75f, width, height, Justification::horizontallyCentred);
+
+        glyphs.draw(g);
     }
 }
 

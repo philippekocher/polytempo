@@ -186,52 +186,85 @@ void Polytempo_AudioClick::eventNotification(Polytempo_Event* event)
 {
     if (event->getType() == eventType_Beat)
     {
-        // take pitch and volume from the event's properties
-        if (!event->getProperty("audioPitch").isVoid())
-        {
-            int pitch = event->getProperty("audioPitch");
-            float volume = event->getProperty("audioVolume");
+        int pitch = 0; float volume = 0;
 
-            keyboardState.noteOn(1, pitch, volume);
-            keyboardState.noteOff(1, pitch, 0);
-        }
-#ifdef POLYTEMPO_NETWORK
-        // or take default values if audio is turned on
-        else if (Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("audioClick"))
-        {
-            int pattern;
-            int pitch;
-            float volume;
-
-            if (event->hasProperty(eventPropertyString_Pattern))
-                pattern = event->getProperty(eventPropertyString_Pattern);
-            else
-                pattern = eventPropertyDefault_Pattern;
-
-            if (pattern < 3) return;
-
-            if (int(event->getProperty(eventPropertyString_Cue)) != 0)
-            {
-                pitch = cuePitch;
-                volume = cueVolume;
-            }
-            else
-            {
-                if (pattern < 20)
-                {
-                    pitch = downbeatPitch;
-                    volume = downbeatVolume;
-                }
-                else
-                {
-                    pitch = beatPitch;
-                    volume = beatVolume;
-                }
-            }
-
-            keyboardState.noteOn(1, pitch, volume);
-            keyboardState.noteOff(1, pitch, 0);
-        }
-#endif
+        getAudioParameter(&pitch, &volume, event);
+        keyboardState.noteOn(1, pitch, volume);
+        keyboardState.noteOff(1, pitch, 0);
     }
 }
+
+void Polytempo_AudioClick::writeClickforEvent(Polytempo_Event* event, AudioBuffer<float> &buffer, int channel, int sampleRate, int sampleOffset)
+{
+    if (event->getType() == eventType_Beat)
+    {
+        int pitch = 0; float volume = 0;
+        
+        getAudioParameter(&pitch, &volume, event);
+
+        float tailOff = 1.0;
+        float level = volume * 0.15f;
+        double currentAngle = 0;
+        double cyclesPerSecond = MidiMessage::getMidiNoteInHertz(pitch);
+        double cyclesPerSample = cyclesPerSecond / sampleRate;
+        double angleDelta = cyclesPerSample * 2.0 * double_Pi;
+        float sig;
+        
+        int sample = int(event->getTime() * 0.001 * sampleRate + sampleOffset);
+        
+        while(tailOff > 0.005)
+        {
+            sig = (float)(sin(currentAngle) * level * tailOff);
+            buffer.addSample(channel, sample, sig);
+
+            currentAngle += angleDelta;
+            ++sample;
+
+            tailOff *= 0.999f;
+        }
+    }
+}
+
+void Polytempo_AudioClick::getAudioParameter(int* pitch, float* volume, Polytempo_Event* event)
+{
+    // take pitch and volume from the event's properties
+    if (!event->getProperty("audioPitch").isVoid())
+    {
+        *pitch = event->getProperty("audioPitch");
+        *volume = event->getProperty("audioVolume");
+    }
+    // or take the default values from the preferences
+    else if (Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("audioClick"))
+    {
+        int pattern;
+
+        if (event->hasProperty(eventPropertyString_Pattern))
+            pattern = event->getProperty(eventPropertyString_Pattern);
+        else
+            pattern = eventPropertyDefault_Pattern;
+
+        if (pattern < 3) return;
+
+        if (int(event->getProperty(eventPropertyString_Cue)) != 0)
+        {
+            *pitch = cuePitch;
+            *volume = cueVolume;
+        }
+        else
+        {
+            if (pattern < 20)
+            {
+                *pitch = downbeatPitch;
+                *volume = downbeatVolume;
+            }
+            else
+            {
+                *pitch = beatPitch;
+                *volume = beatVolume;
+            }
+        }
+
+    }
+}
+
+

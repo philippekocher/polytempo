@@ -138,6 +138,61 @@ float Polytempo_TempoInterpolation::getTime(Rational pos, Polytempo_ControlPoint
     return float(x);
 }
 
+Rational Polytempo_TempoInterpolation::getPosition(float time, Polytempo_ControlPoint* cp1, Polytempo_ControlPoint* cp2)
+{
+    Point<float> p0, p1, p2, p3;
+    double t0, t, x, y=0, x0 = time, incr;
+    bool done = false;
+    const double epsilon = 1e-6;
+    
+    calculateBezierPoints(cp1, cp2, &p0, &p1, &p2, &p3);
+    
+    // no approximation needed
+    if     (time == cp1->time) return cp1->position;
+    else if(time == cp2->time) return cp2->position;
+    else if(time > cp2->time)  return NAN;
+        
+    // approximation
+    t0 = 0;
+    incr = 0.5;
+    int i=0;
+    while(!done)
+    {
+        if(++i == 1000)
+        {
+            DBG("too many approximation steps ("<<i<<")");
+            done = true;
+        }
+        
+        t = t0+incr;
+        x = (-1 * p0.x + 3 * p1.x - 3 * p2.x + p3.x) * t * t * t +
+            ( 3 * p0.x - 6 * p1.x + 3 * p2.x) * t * t +
+            (-3 * p0.x + 3 * p1.x) * t +
+        p0.x;
+        
+        if(fabs(x-x0) <= epsilon)
+        {
+            // calculate y only when x has been found
+            y = (-1 * p0.y + 3 * p1.y - 3 * p2.y + p3.y) * t * t * t +
+                ( 3 * p0.y - 6 * p1.y + 3 * p2.y) * t * t +
+                (-3 * p0.y + 3 * p1.y) * t +
+            p0.y;
+
+            done = true;
+        }
+        else if(x > x0)
+        {
+            incr *= 0.5;
+        }
+        else
+        {
+            t0 = t;
+            incr *= 0.5;
+        }
+    }
+    return float(y);
+    //return cp1->position + (cp2->position - cp1->position) * 0.5f;
+}
 
 float Polytempo_TempoInterpolation::getTempo(Rational pos, Polytempo_ControlPoint* cp1, Polytempo_ControlPoint* cp2)
 {

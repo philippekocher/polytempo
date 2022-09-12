@@ -21,6 +21,7 @@ public:
     Rational getLength();
     void   setPattern(String, bool allowEmptyPattern = false);
     String getPattern();
+    StringArray getPrintableTimeSignature();
     void   setRepeats(int);
     int    getRepeats();
     void   setMarker(String);
@@ -31,6 +32,8 @@ public:
     // pattern expansion
     void setCurrentCounter(int);
     int getCurrentCounter();
+    void setStartPosition(Rational pos);
+    Rational getStartPosition();
     Array<Polytempo_Event *> getEvents(Rational pos);
     
     // serialisation
@@ -43,6 +46,7 @@ private:
     String marker;
     String counterString;
     int    currentCounter = 0;
+    Rational startPosition;
     
     OwnedArray<Rational> pattern;
 };

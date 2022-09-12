@@ -88,6 +88,8 @@ PopupMenu Polytempo_ComposerMenuBarModel::getMenuForIndex (int /*menuIndex*/, co
         menu.addSubMenu("Open Recent", recentFilesMenu);
         menu.addSeparator();
         menu.addCommandItem (commandManager, Polytempo_CommandIDs::save);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::saveAs);
+        menu.addSeparator();
         menu.addCommandItem (commandManager, Polytempo_CommandIDs::exportSelected);
         menu.addCommandItem (commandManager, Polytempo_CommandIDs::exportAll);
         menu.addSeparator();
@@ -107,6 +109,9 @@ PopupMenu Polytempo_ComposerMenuBarModel::getMenuForIndex (int /*menuIndex*/, co
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::shiftControlPoints);
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::adjustControlPoints);
         menu.addCommandItem(commandManager, Polytempo_CommandIDs::adjustTempo);
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::moveLastControlPointToEnd);
+        menu.addSeparator();
+        menu.addCommandItem(commandManager, Polytempo_CommandIDs::selectAll);
     }
     else if (menuName == "View")
     {
@@ -180,6 +185,7 @@ void Polytempo_ComposerMenuBarModel::getAllCommands (Array <CommandID>& commands
         Polytempo_CommandIDs::clearOpenRecent,
         Polytempo_CommandIDs::close,
         Polytempo_CommandIDs::save,
+        Polytempo_CommandIDs::saveAs,
         Polytempo_CommandIDs::exportSelected,
         Polytempo_CommandIDs::exportAll,
 
@@ -207,7 +213,9 @@ void Polytempo_ComposerMenuBarModel::getAllCommands (Array <CommandID>& commands
         Polytempo_CommandIDs::shiftControlPoints,
         Polytempo_CommandIDs::adjustControlPoints,
         Polytempo_CommandIDs::adjustTempo,
-        
+        Polytempo_CommandIDs::moveLastControlPointToEnd,
+        Polytempo_CommandIDs::selectAll,
+
         Polytempo_CommandIDs::aboutWindow,
         Polytempo_CommandIDs::checkForNewVersion,
         Polytempo_CommandIDs::preferencesWindow,
@@ -270,6 +278,11 @@ void Polytempo_ComposerMenuBarModel::getCommandInfo(CommandID commandID, Applica
             result.addDefaultKeypress('s', ModifierKeys::commandModifier);
             break;
 
+        case Polytempo_CommandIDs::saveAs:
+            result.setInfo("Save As...", String(), infoCategory, 0);
+            result.addDefaultKeypress('s', ModifierKeys::shiftModifier | ModifierKeys::commandModifier);
+            break;
+
         case Polytempo_CommandIDs::exportSelected:
             result.setInfo("Export Selected Sequence...", String(), infoCategory, 0);
             result.addDefaultKeypress('e', ModifierKeys::commandModifier);
@@ -306,16 +319,17 @@ void Polytempo_ComposerMenuBarModel::getCommandInfo(CommandID commandID, Applica
         case Polytempo_CommandIDs::insertBeatPattern:
             result.setInfo("Insert Beat Pattern", String(), infoCategory, 0);
             result.addDefaultKeypress('b', ModifierKeys::commandModifier | ModifierKeys::altModifier);
-            result.setActive(composition->getSelectedSequence() != nullptr && composition->getSelectedSequence()->getSelectedBeatPattern() >= 0);
+            result.setActive(composition->getSelectedSequence() != nullptr && composition->getSelectedSequence()->getSelectedBeatPatternIndex() >= 0);
             break;
             
         case Polytempo_CommandIDs::removeBeatPattern:
             result.setInfo ("Remove Selected Beat Pattern", String(), infoCategory, 0);
-            result.setActive(composition->getSelectedSequence() != nullptr && composition->getSelectedSequence()->getSelectedBeatPattern() >= 0);
+            result.setActive(composition->getSelectedSequence() != nullptr && composition->getSelectedSequence()->getSelectedBeatPatternIndex() >= 0);
             break;
             
         case Polytempo_CommandIDs::insertControlPoint:
             result.setInfo ("Insert Control Point", String(), infoCategory, 0);
+            result.addDefaultKeypress('i', ModifierKeys::commandModifier);
             result.setActive(window->getContentID() == Polytempo_ComposerWindow::mainViewID);
             break;
             
@@ -339,20 +353,31 @@ void Polytempo_ComposerMenuBarModel::getCommandInfo(CommandID commandID, Applica
             result.setActive(composition->getSelectedControlPointIndices()->size() > 1);
             break;
 
+        case Polytempo_CommandIDs::moveLastControlPointToEnd:
+            result.setInfo ("Move Last Control Point to End", String(), infoCategory, 0);
+            result.setActive(composition->getSelectedSequence() &&
+                             !composition->getSelectedSequence()->getControlPoints()->isEmpty());
+            break;
             
+        case Polytempo_CommandIDs::selectAll:
+            result.setInfo("Select All", String(), infoCategory, 0);
+            result.addDefaultKeypress('a', ModifierKeys::commandModifier);
+            break;
+
+
         /* view menu
          ----------------------------------*/
 
         case Polytempo_CommandIDs::showMainView:
             result.setInfo ("Show Main View", String(), infoCategory, 0);
-            result.addDefaultKeypress('1', ModifierKeys::ctrlModifier |ModifierKeys::commandModifier);
-            result.addDefaultKeypress(KeyPress::numberPad1, ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
+            result.addDefaultKeypress('1', ModifierKeys::altModifier |ModifierKeys::commandModifier);
+            result.addDefaultKeypress(KeyPress::numberPad1, ModifierKeys::altModifier | ModifierKeys::commandModifier);
             break;
             
         case Polytempo_CommandIDs::showGraphicExportView:
             result.setInfo ("Show Graphic Export View", String(), infoCategory, 0);
-            result.addDefaultKeypress('2', ModifierKeys::ctrlModifier |ModifierKeys::commandModifier);
-            result.addDefaultKeypress(KeyPress::numberPad2, ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
+            result.addDefaultKeypress('2', ModifierKeys::altModifier |ModifierKeys::commandModifier);
+            result.addDefaultKeypress(KeyPress::numberPad2, ModifierKeys::altModifier | ModifierKeys::commandModifier);
             break;
             
         case Polytempo_CommandIDs::showTimeMap:
@@ -410,7 +435,11 @@ void Polytempo_ComposerMenuBarModel::getCommandInfo(CommandID commandID, Applica
 #if ! JUCE_LINUX
         case Polytempo_CommandIDs::fullScreen:
             result.setInfo ("Enter full-screen", String(), infoCategory, 0);
-            result.addDefaultKeypress ('f', ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
+#if JUCE_MAC
+        result.addDefaultKeypress('f', ModifierKeys::ctrlModifier | ModifierKeys::commandModifier);
+#else
+        result.addDefaultKeypress(KeyPress::F11Key, 0);
+#endif
             result.setTicked (Desktop::getInstance().getKioskModeComponent() != nullptr);
             break;
 #endif
@@ -491,7 +520,11 @@ bool Polytempo_ComposerMenuBarModel::perform (const InvocationInfo& info)
             break;
 
         case Polytempo_CommandIDs::save:
-            composition->saveToFile();
+            composition->saveToFile(false);
+            break;
+
+        case Polytempo_CommandIDs::saveAs:
+            composition->saveToFile(true);
             break;
 
         case Polytempo_CommandIDs::exportSelected:
@@ -549,7 +582,15 @@ bool Polytempo_ComposerMenuBarModel::perform (const InvocationInfo& info)
         case Polytempo_CommandIDs::adjustTempo:
             composition->getSelectedSequence()->adjustTempo(composition->getSelectedControlPointIndices());
             break;
+
+        case Polytempo_CommandIDs::moveLastControlPointToEnd:
+            composition->getSelectedSequence()->moveLastControlPointToEnd();
+            break;
             
+        case Polytempo_CommandIDs::selectAll:
+            composition->selectAllControlPoints();
+            break;
+
             
         /* view menu
          ----------------------------------*/

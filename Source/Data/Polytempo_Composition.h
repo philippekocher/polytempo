@@ -34,6 +34,7 @@ public:
     int getSelectedSequenceIndex();
     
     void clearSelectedControlPointIndices();
+    void selectAllControlPoints();
     void addSelectedControlPointIndex(int);
     void removeSelectedControlPointIndex(int);
     void setSelectedControlPointIndex(int);
@@ -42,11 +43,12 @@ public:
 
     void updateScore();
     void findCoincidingControlPoints();
+    float getEarliestTime();
     
     void unsavedChangesAlert(Polytempo_YesNoCancelAlert::callbackTag tag);
     void newComposition();
     void openFile(File file = File());
-    void saveToFile();
+    void saveToFile(bool showFileDialog);
     void writeJSONtoFile(File file);
     bool readJSONfromFile(File file);
 
@@ -56,6 +58,7 @@ public:
     void exportAsLispList();
     void exportAsCArray();
     void exportAsPolytempoScore();
+    void exportAsAudio();
 
 private:
     bool scoreNeedsUpdate = false;

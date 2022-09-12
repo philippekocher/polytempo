@@ -39,6 +39,7 @@ void Polytempo_CoordinateSystem::showPopupMenu()
     m.addCommandItem(commandManager, Polytempo_CommandIDs::shiftControlPoints);
     m.addCommandItem(commandManager, Polytempo_CommandIDs::adjustControlPoints);
     m.addCommandItem(commandManager, Polytempo_CommandIDs::adjustTempo);
+    m.addCommandItem(commandManager, Polytempo_CommandIDs::moveLastControlPointToEnd);
 
     m.show();
 }
@@ -147,7 +148,19 @@ void Polytempo_TimeMapCoordinateSystem::paint(Graphics& g)
     Polytempo_Composition* composition = Polytempo_Composition::getInstance();
     Polytempo_Sequence* sequence = Polytempo_Composition::getInstance()->getSelectedSequence();
     if(sequence == nullptr) return;
-
+    
+    // highlighted bars
+    
+    if(sequence->getSelectedBeatPatternIndex() > -1)
+    {
+        Polytempo_BeatPattern* bp = sequence->getSelectedBeatPattern();
+        Rational length = bp->getLength() * bp->getRepeats();
+        g.setColour(LookAndFeel::getDefaultLookAndFeel().findColour(0x1001600).withAlpha(0.1f));
+        g.fillRect(0,
+                   int(getHeight() - TIMEMAP_OFFSET - (bp->getStartPosition() + length) * zoomY),
+                   getWidth(),
+                   int(length * zoomY));
+    }
     
     // vertical grid lines (time)
     
@@ -367,15 +380,20 @@ void Polytempo_TimeMapCoordinateSystem::mouseDown(const MouseEvent &mouseEvent)
         return;
     }
 
-    // cmd-click: add control point
+    // cmd-click: add control point / cmd-alt-click: add adjusted
     if(mouseEvent.mods.isCommandDown())
     {
-        // quantise position
         mouseRationalPos = quantiseMousePosition(mouseFloatPos);
-
-        if(sequence->validateNewControlPointPosition(mouseTime, mouseRationalPos))
+        std::unique_ptr<Polytempo_ControlPoint> cp = sequence->getInterpolatedControlPoint(mouseRationalPos);
+        
+        if(mouseEvent.mods.isAltDown())
         {
-            sequence->addControlPoint(mouseTime, mouseRationalPos);
+            sequence->addControlPoint(cp->time, cp->position, cp->tempoIn, cp->tempoOut);
+        }
+        else if(sequence->validateNewControlPointPosition(mouseTime, mouseRationalPos))
+        {
+            if(!cp) sequence->addControlPoint(mouseTime, mouseRationalPos);
+            else    sequence->addControlPoint(mouseTime, mouseRationalPos, cp->tempoIn, cp->tempoOut);
             composition->updateContent();
             canDrag = true;
             return;

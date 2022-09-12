@@ -29,54 +29,66 @@ public:
         denominator = 1;
     }
     
-    Rational(const int n, const int d)
+    Rational(const int n, const int d, bool reduceRational = true)
     {
         numerator   = n;
         denominator = d;
 
         if(denominator == 0) denominator = 1;
         
-        reduce();
+        if(reduceRational) reduce();
     }
     
     Rational(float x)
     {
         const double epsilon = 1.e-6;
+        const int maxDenominator = 1000;
         const int sign = x < 0 ? -1 : 1;
         x = fabs(x);
         const int integerPart = int(x);
-        x -= integerPart;                 // x enthält jetzt den Nachkommaanteil
-        if(x <= epsilon)                  // x == Ganzzahl abfangen
+        x -= integerPart;
+        if(x <= epsilon)
         {
             numerator   = sign * integerPart;
             denominator = 1;
         }
         else
         {
-            // -- Verfahren von Farey
+            // approximation using the Farey sequence
 
-            Rational q1("0/1");
-            Rational q2("1/1");
+            Rational q1(0,1);
+            Rational q2(1,1);
+            Rational med;
+            double r;
             bool done = false;
             
             while(!done)
             {
-                Rational med(q1.numerator + q2.numerator, q1.denominator + q2.denominator); // Mediante bestimmen
-                const double r = double(med.numerator) / med.denominator;
+                med.numerator = q1.numerator + q2.numerator;
+                med.denominator = q1.denominator + q2.denominator;
+                
+                if(med.denominator > maxDenominator)
+                {
+                    numerator = sign * (q1.numerator + integerPart * q1.denominator);
+                    denominator = q1.denominator;
+                    done = true;
+                }
+
+                r = double(med.numerator) / med.denominator;
+
                 if(std::abs(r - x) < epsilon)
                 {
                     numerator = sign * (med.numerator + integerPart * med.denominator);
                     denominator = med.denominator;
                     done = true;
                 }
-                if(x < r)       // ist x < als die Mediante
-                    q2 = med;   // dann ist sie die obere Grenze
+                if(x < r)
+                    q2 = med;
                 else
-                    q1 = med;   // und ansonsten die untere Grenze
+                    q1 = med;
             }
         }
     }
-    
     
     String toString()
     {
@@ -202,7 +214,7 @@ private:
         int a, b, rem;
         int num = abs(numerator);
         int den = abs(denominator);
-        int sign = numerator * denominator < 0 ? -1 : 1;
+        int sign = toFloat() < 0 ? -1 : 1;
 
         if(num > den)
         {
