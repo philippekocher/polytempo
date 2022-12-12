@@ -121,7 +121,14 @@ public:
 
     void setFloat(float num, const NotificationType notification)
     {
-        setText(String(num, 0), notification);
+        set(String(num, 0));
+    }
+    
+    void set(const String& newText)
+    {
+        MessageManager::callAsync([this, newText]() {
+            setText(newText, dontSendNotification);
+        });
     }
 
     void reset()

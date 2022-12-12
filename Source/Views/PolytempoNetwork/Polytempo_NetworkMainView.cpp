@@ -79,5 +79,4 @@ void Polytempo_NetworkMainView::changeListenerCallback(ChangeBroadcaster*)
     visualMetro->setFrameColour(frColour);
 
     resized();
-    repaint();
 }

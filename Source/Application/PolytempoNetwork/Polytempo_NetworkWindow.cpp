@@ -32,17 +32,12 @@ Polytempo_NetworkWindow::Polytempo_NetworkWindow() : DocumentWindow(JUCEApplicat
 
     // restore the last size and position from our settings file...
     restoreWindowStateFromString(Polytempo_StoredPreferences::getInstance()->getProps().getValue("mainWindow"));
-
-    openGLContext.attachTo(*getTopLevelComponent());
-    openGLContext.setContinuousRepainting(true);
 }
 
 Polytempo_NetworkWindow::~Polytempo_NetworkWindow()
 {
     clearContentComponent();
     mainView = nullptr;
-
-    openGLContext.detach();
 }
 
 void Polytempo_NetworkWindow::closeButtonPressed()

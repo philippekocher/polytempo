@@ -39,8 +39,6 @@ private:
     std::unique_ptr<Polytempo_RegionEditorView> regionEditorView;
     std::unique_ptr<Polytempo_ScoreEditorView> scoreEditorView;
 
-    OpenGLContext openGLContext;
-
     contentID currentContentID = mainViewID;
     contentID contentIdToBeSet = mainViewID;
     

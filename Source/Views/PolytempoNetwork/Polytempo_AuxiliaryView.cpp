@@ -8,6 +8,8 @@
 
 Polytempo_AuxiliaryView::Polytempo_AuxiliaryView()
 {
+    setOpaque(true);
+
     addAndMakeVisible(imageBackwards = new Polytempo_Button("<<", Polytempo_Button::buttonType_black));
     imageBackwards->setConnectedEdges(Button::ConnectedOnTop | Button::ConnectedOnRight);
     imageBackwards->addListener(this);
@@ -69,7 +71,7 @@ void Polytempo_AuxiliaryView::paint(Graphics& g)
 {
     g.fillAll(Colours::white); // clear the background
 
-    networkInfoView->repaint();
+    MessageManager::callAsync([this]() { networkInfoView->repaint(); });
 
     g.setColour(Colours::black);
     g.drawHorizontalLine(separator1Position, 0.0f, (float)getWidth());
@@ -129,7 +131,7 @@ void Polytempo_AuxiliaryView::eventNotification(Polytempo_Event* event)
 
     if (event->getType() == eventType_Marker)
     {
-        markerTextbox->setText(event->getProperty("value"), dontSendNotification);
+        markerTextbox->set(event->getProperty("value"));
     }
     else if (event->getType() == eventType_TempoFactor)
     {
@@ -138,7 +140,7 @@ void Polytempo_AuxiliaryView::eventNotification(Polytempo_Event* event)
     else if (event->getType() == eventType_Tick)
     {
         // update the time with every tick
-        timeTextbox->setText(Polytempo_Textbox::timeToString(event->getValue()), dontSendNotification);
+        timeTextbox->set(Polytempo_Textbox::timeToString(event->getValue()));
     }
     else if (event->getType() == eventType_DeleteAll)
     {

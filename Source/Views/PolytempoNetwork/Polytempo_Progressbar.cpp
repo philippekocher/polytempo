@@ -59,14 +59,14 @@ void Polytempo_Progressbar::eventNotification(Polytempo_Event* event)
     {
         if ((float)event->getValue() == time * 0.001f) elapsedTime = 0;
         else elapsedTime = ((float)event->getValue() - time * 0.001f) / (float)duration;
-        repaint();
+        MessageManager::callAsync([this]() { repaint(); });
     }
     // update progress bar when jumping to a point in time
     else if (event->getType() == eventType_GotoTime)
     {
         if ((float)event->getValue() == time * 0.001f) elapsedTime = 0;
         else elapsedTime = ((float)event->getValue() - time * 0.001f) / (float)duration;
-        repaint();
+        MessageManager::callAsync([this]() { repaint(); });
     }
 
     // remove when time is over

@@ -59,13 +59,14 @@ void Polytempo_GraphicsView::deleteAll()
 void Polytempo_GraphicsView::clearAll()
 {
     HashMap<String, Polytempo_GraphicsViewRegion*>::Iterator it1(regionsMap);
-    while (it1.next()) { it1.getValue()->setVisible(false); }
 
     annotationLayer->requireUpdate();
 }
 
 void Polytempo_GraphicsView::addRegion(Polytempo_Event* event)
 {
+    const MessageManagerLock mml(Thread::getCurrentThread());
+
     Polytempo_GraphicsViewRegion* region = new Polytempo_GraphicsViewRegion(event->getProperty(eventPropertyString_RegionID));
     addChildComponent(region);
 
@@ -128,8 +129,7 @@ void Polytempo_GraphicsView::displayImage(Polytempo_Event* event)
     if (rect == var()) rect = Polytempo_Event::defaultRectangle();
 
     region->setImage(image, rect, imageId, event->getType() == eventType_AppendImage);
-    region->setVisible(true);
-    region->repaint();
+    MessageManager::callAsync([region]() { region->repaint(); });
 }
 
 void Polytempo_GraphicsView::displayText(Polytempo_Event* event)
@@ -151,8 +151,8 @@ void Polytempo_GraphicsView::displayText(Polytempo_Event* event)
         region->setText(String((double)event->getProperty("value"),0));
     else
         region->setText(String(event->getProperty("value").toString()));
-    region->setVisible(true);
-    region->repaint();
+
+    MessageManager::callAsync([region]() { region->repaint(); });
 }
 
 void Polytempo_GraphicsView::displayProgessbar(Polytempo_Event* event)
@@ -165,6 +165,5 @@ void Polytempo_GraphicsView::displayProgessbar(Polytempo_Event* event)
     Polytempo_GraphicsViewRegion* region = regionsMap[event->getProperty(eventPropertyString_RegionID)];
     int time = event->hasDefinedTime() ? event->getTime() : Polytempo_ScoreScheduler::getInstance()->getScoreTime();
     region->setProgressbar(String(event->getValue().toString()), time, event->getProperty("duration"));
-    region->setVisible(true);
-    region->repaint();
+    MessageManager::callAsync([region]() { region->repaint(); });
 }

@@ -5,6 +5,7 @@ Polytempo_GraphicsViewRegion::Polytempo_GraphicsViewRegion(var id)
 {
     setOpaque(true);
     setBufferedToImage(true);
+    setVisible(true);
 
     regionID = id;
     contentType = contentType_Empty;
@@ -26,11 +27,11 @@ Polytempo_GraphicsViewRegion::~Polytempo_GraphicsViewRegion()
 
 void Polytempo_GraphicsViewRegion::paint(Graphics& g)
 {
-    if (contentType == contentType_Empty) return;
-
     g.fillAll(Colours::white);
 
-    if (contentType == contentType_Image && displayedImages.size() > 0)
+    if (contentType == contentType_Empty) return;
+
+    if (contentType == contentType_Image && displayedImages.size() > 0 && offscreenImage != nullptr)
     {
         Polytempo_GraphicsAnnotationManager::eAnnotationMode annotationMode = Polytempo_GraphicsAnnotationManager::getInstance()->getAnnotationMode();
         if (annotationMode == Polytempo_GraphicsAnnotationManager::Standard || annotationMode == Polytempo_GraphicsAnnotationManager::Edit)
@@ -38,12 +39,7 @@ void Polytempo_GraphicsViewRegion::paint(Graphics& g)
             g.fillAll(Colours::lightgrey.brighter(0.7f));
         }
 
-        for (displayedImage img : displayedImages)
-        {
-            g.drawImage(*img.image,
-                        img.targetArea.getX(), img.targetArea.getY(), img.targetArea.getWidth(), img.targetArea.getHeight(),
-                        img.imageRect.getX(), img.imageRect.getY(), img.imageRect.getWidth(), img.imageRect.getHeight());
-        }
+        g.drawImageAt(*offscreenImage.get(), 0,0);
     }
     else if (contentType == contentType_Text)
     {
@@ -68,83 +64,7 @@ void Polytempo_GraphicsViewRegion::resized()
 
     if (contentType == contentType_Image)
     {
-        float totalWidth = 0, maxWidth = 0;
-        float totalHeight = 0, maxHeight = 0;
-        for (displayedImage img : displayedImages)
-        {
-            float imageWidth = (float)img.imageRect.getWidth();
-            float imageHeight = (float)img.imageRect.getHeight();
-            totalWidth += imageWidth;
-            if (imageWidth > maxWidth) maxWidth = imageWidth;
-            totalHeight += imageHeight;
-            if (imageHeight > maxHeight) maxHeight = imageHeight;
-        }
-        
-        float widthZoom, heightZoom;
-        if (contentLayout == contentLayout_Row)
-        {
-            widthZoom = getWidth() / totalWidth;
-            heightZoom = getHeight() / maxHeight;
-        }
-        else
-        {
-            widthZoom = getWidth() / maxWidth;
-            heightZoom = getHeight() / totalHeight;
-        }
-    
-        imageZoom = widthZoom < heightZoom ? widthZoom : heightZoom;
-
-        if (maxImageZoom > 0.0f && imageZoom > maxImageZoom) imageZoom = maxImageZoom;
-
-        if (imageZoom == INFINITY) imageZoom = 1;
-
-        float x = 0, y = 0;
-
-        if (contentLayout == contentLayout_Row)
-        {
-            if (contentXAlignment == contentXAlignment_Center)
-                x = (getWidth() - (totalWidth * imageZoom)) * 0.5f;
-            else if (contentXAlignment == contentXAlignment_Right)
-                x = getWidth() - (totalWidth * imageZoom);
-        }
-        else
-        {
-            if (contentYAlignment == contentYAlignment_Center)
-                y = (getHeight() - (totalHeight * imageZoom)) * 0.5f;
-            else if (contentYAlignment == contentYAlignment_Bottom)
-                y = getHeight() - (totalHeight * imageZoom);
-        }
-
-        for (displayedImage &img : displayedImages)
-        {
-            if (contentLayout == contentLayout_Column)
-            {
-                if (contentXAlignment == contentXAlignment_Center)
-                    x = (getWidth() - (img.imageRect.getWidth() * imageZoom)) * 0.5f;
-                else if (contentXAlignment == contentXAlignment_Right)
-                    x = (getWidth() - (img.imageRect.getWidth() * imageZoom));
-            }
-            else
-            {
-                if (contentYAlignment == contentYAlignment_Center)
-                    y = (getHeight() - (img.imageRect.getHeight() * imageZoom)) * 0.5f;
-                else if (contentYAlignment == contentYAlignment_Bottom)
-                    y = getHeight() - (img.imageRect.getHeight() * imageZoom);
-            }
-            
-            img.targetArea = Rectangle<int>(int(x), int(y), int(img.imageRect.getWidth() * imageZoom), int(img.imageRect.getHeight() * imageZoom));
-            
-            img.screenToImage = AffineTransform::translation(-float(getX() + img.targetArea.getX()), -float(getY() + img.targetArea.getY()));
-            img.screenToImage = img.screenToImage.followedBy(AffineTransform::scale(img.imageRect.getWidth() / float(img.targetArea.getWidth()), img.imageRect.getHeight() / float(img.targetArea.getHeight())));
-            img.screenToImage = img.screenToImage.followedBy(AffineTransform::translation((float)img.imageRect.getX(), (float)img.imageRect.getY()));
-
-            img.imageToScreen = img.screenToImage.inverted();
-
-            if(contentLayout == contentLayout_Row)
-                x += img.imageRect.getWidth() * imageZoom;
-            else
-                y += img.imageRect.getHeight() * imageZoom;
-        }
+        calculateOffscreenImage();
     }
     else if (contentType == contentType_Progressbar)
     {
@@ -157,21 +77,115 @@ void Polytempo_GraphicsViewRegion::resized()
         allowAnnotations = true;
 }
 
+void Polytempo_GraphicsViewRegion::calculateOffscreenImage()
+{
+    float totalWidth = 0, maxWidth = 0;
+    float totalHeight = 0, maxHeight = 0;
+    for (displayedImage img : displayedImages)
+    {
+        float imageWidth = (float)img.imageRect.getWidth();
+        float imageHeight = (float)img.imageRect.getHeight();
+        totalWidth += imageWidth;
+        if (imageWidth > maxWidth) maxWidth = imageWidth;
+        totalHeight += imageHeight;
+        if (imageHeight > maxHeight) maxHeight = imageHeight;
+    }
+
+    float widthZoom, heightZoom;
+    if (contentLayout == contentLayout_Row)
+    {
+        widthZoom = getWidth() / totalWidth;
+        heightZoom = getHeight() / maxHeight;
+    }
+    else
+    {
+        widthZoom = getWidth() / maxWidth;
+        heightZoom = getHeight() / totalHeight;
+    }
+
+    imageZoom = widthZoom < heightZoom ? widthZoom : heightZoom;
+
+    if (maxImageZoom > 0.0f && imageZoom > maxImageZoom) imageZoom = maxImageZoom;
+
+    if (imageZoom == INFINITY) imageZoom = 1;
+
+    float x = 0, y = 0;
+
+    if (contentLayout == contentLayout_Row)
+    {
+        if (contentXAlignment == contentXAlignment_Center)
+            x = (getWidth() - (totalWidth * imageZoom)) * 0.5f;
+        else if (contentXAlignment == contentXAlignment_Right)
+            x = getWidth() - (totalWidth * imageZoom);
+    }
+    else
+    {
+        if (contentYAlignment == contentYAlignment_Center)
+            y = (getHeight() - (totalHeight * imageZoom)) * 0.5f;
+        else if (contentYAlignment == contentYAlignment_Bottom)
+            y = getHeight() - (totalHeight * imageZoom);
+    }
+
+    Image* tempOffscreenImage = new Image(Image::ARGB, getWidth(), getHeight(), true);
+    Graphics offscreenContext(*tempOffscreenImage);
+    
+    for (displayedImage &img : displayedImages)
+    {
+        if (contentLayout == contentLayout_Column)
+        {
+            if (contentXAlignment == contentXAlignment_Center)
+                x = (getWidth() - (img.imageRect.getWidth() * imageZoom)) * 0.5f;
+            else if (contentXAlignment == contentXAlignment_Right)
+                x = (getWidth() - (img.imageRect.getWidth() * imageZoom));
+        }
+        else
+        {
+            if (contentYAlignment == contentYAlignment_Center)
+                y = (getHeight() - (img.imageRect.getHeight() * imageZoom)) * 0.5f;
+            else if (contentYAlignment == contentYAlignment_Bottom)
+                y = getHeight() - (img.imageRect.getHeight() * imageZoom);
+        }
+        
+        img.targetArea = Rectangle<int>(int(x), int(y), int(img.imageRect.getWidth() * imageZoom), int(img.imageRect.getHeight() * imageZoom));
+        
+        img.screenToImage = AffineTransform::translation(-float(getX() + img.targetArea.getX()), -float(getY() + img.targetArea.getY()));
+        img.screenToImage = img.screenToImage.followedBy(AffineTransform::scale(img.imageRect.getWidth() / float(img.targetArea.getWidth()), img.imageRect.getHeight() / float(img.targetArea.getHeight())));
+        img.screenToImage = img.screenToImage.followedBy(AffineTransform::translation((float)img.imageRect.getX(), (float)img.imageRect.getY()));
+
+        img.imageToScreen = img.screenToImage.inverted();
+
+        offscreenContext.drawImage(*img.image,
+                                   img.targetArea.getX(), img.targetArea.getY(),
+                                   img.targetArea.getWidth(), img.targetArea.getHeight(),
+                                   img.imageRect.getX(), img.imageRect.getY(),
+                                   img.imageRect.getWidth(), img.imageRect.getHeight());
+
+        if(contentLayout == contentLayout_Row)
+            x += img.imageRect.getWidth() * imageZoom;
+        else
+            y += img.imageRect.getHeight() * imageZoom;
+    }
+
+    offscreenImage.reset(tempOffscreenImage);
+}
+
 void Polytempo_GraphicsViewRegion::setRelativeBounds(const Rectangle<float>& newBounds)
 {
     relativeBounds = newBounds;
+    resized();
 }
 
 void Polytempo_GraphicsViewRegion::clear(bool keepImages)
 {
     contentType = contentType_Empty;
     
-    // call on the message thread
-    auto aProgressbar = progressbar.get();
-    MessageManager::callAsync([this, aProgressbar]() { removeChildComponent(aProgressbar); });
+    MessageManager::callAsync([this]() {
+        removeChildComponent(progressbar.get());
+        progressbar = nullptr;
+        repaint();
+    });
     
     if (!keepImages) displayedImages.clear();
-    setVisible(false);
 }
 
 void Polytempo_GraphicsViewRegion::setImage(Image* img, var rect, String imageId, bool append)
@@ -196,8 +210,7 @@ void Polytempo_GraphicsViewRegion::setImage(Image* img, var rect, String imageId
         
     displayedImages.push_back({img, imageId, imageRect});
 
-    // calculate zoom to fit image section
-    resized();
+    calculateOffscreenImage();
 }
 
 void Polytempo_GraphicsViewRegion::setText(String text_)
@@ -205,13 +218,12 @@ void Polytempo_GraphicsViewRegion::setText(String text_)
     clear();
     contentType = contentType_Text;
     text.reset(new String(text_));
-
-    resized();
 }
 
 void Polytempo_GraphicsViewRegion::setProgressbar(String txt, int time, float duration)
 {
-    clear();
+    const MessageManagerLock mml(Thread::getCurrentThread());
+
     contentType = contentType_Progressbar;
     progressbar.reset(new Polytempo_Progressbar());
     progressbar->setText(txt);
@@ -219,10 +231,8 @@ void Polytempo_GraphicsViewRegion::setProgressbar(String txt, int time, float du
     progressbar->setDuration(duration);
 
     progressbar->setBounds(getLocalBounds().reduced(15, 10)); // inset rect
-
     addAndMakeVisible(progressbar.get());
-
-    resized();
+    repaint();
 }
 
 void Polytempo_GraphicsViewRegion::setMaxImageZoom(float maxZoom)

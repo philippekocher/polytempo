@@ -63,6 +63,7 @@ void Polytempo_ScoreScheduler::eventNotification(Polytempo_Event* event)
     }
     else if(event->getType() == eventType_Ready)
     {
+        const MessageManagerLock mml(Thread::getCurrentThread());
 #ifdef USING_SCORE
         if(loadStatusWindow != nullptr)
         {
