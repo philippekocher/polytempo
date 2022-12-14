@@ -140,7 +140,7 @@ void Polytempo_NetworkEngine::run()
 
     while (!threadShouldExit() && !shouldStop)
     {
-        scoreTime += int(double(scoreTimeIncrement()) * tempoFactor);
+        scoreTime += scoreTimeIncrement() * tempoFactor;
 
         while (!shouldStop && !pausing && nextScoreEvent && nextScoreEvent->getTime() <= scoreTime + lookAhead)
         {
