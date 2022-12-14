@@ -72,6 +72,8 @@ Polytempo_PageEditorView::~Polytempo_PageEditorView()
 
 void Polytempo_PageEditorView::refresh()
 {
+    const MessageManagerLock mml(Thread::getCurrentThread());
+
     Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
     score = app->getScore();
     

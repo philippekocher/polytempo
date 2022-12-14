@@ -27,6 +27,8 @@ void Polytempo_ScoreEditorView::resized()
 
 void Polytempo_ScoreEditorView::refresh()
 {
+    const MessageManagerLock mml(Thread::getCurrentThread());
+
     Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
     score = app->getScore();
 
