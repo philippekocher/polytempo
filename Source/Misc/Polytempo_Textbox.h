@@ -3,7 +3,7 @@
 class Polytempo_Textbox : public Label
 {
 public:
-    static String timeToString(float seconds)
+    static String timeToString(float seconds, bool displayMilliseconds = true)
     {
         int miliseconds = (int)(seconds * 1000.0 + 0.5);
 
@@ -14,7 +14,10 @@ public:
 
         String timeString;
         if (miliseconds < 0) timeString << "-";
-        timeString << String(hours).paddedLeft('0', 2) << ":" << String(mins).paddedLeft('0', 2) << ":" << String(secs).paddedLeft('0', 2) << "." << String(msecs).paddedLeft('0', 3);
+        timeString << String(hours).paddedLeft('0', 2) << ":" << String(mins).paddedLeft('0', 2) << ":" << String(secs).paddedLeft('0', 2);
+        
+        if (displayMilliseconds)
+            timeString = timeString << "." << String(msecs).paddedLeft('0', 3);
 
         return timeString;
     }

@@ -74,7 +74,7 @@ void Polytempo_SectionInstancesComponent::setImageEvents(Array<Polytempo_Event*>
             markerTextboxes[i]->setText(marker, dontSendNotification);
         else
             markerTextboxes[i]->reset();
-        timeTextboxes[i]->setText(Polytempo_Textbox::timeToString(imageEvents[i]->getTime() * 0.001f), dontSendNotification);
+        timeTextboxes[i]->set(Polytempo_Textbox::timeToString(imageEvents[i]->getTime() * 0.001f, Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("displayMilliseconds")));
         regionTextboxes[i]->setText(imageEvents[i]->getProperty(eventPropertyString_RegionID).toString(), dontSendNotification);
     }
 }
@@ -116,7 +116,7 @@ void Polytempo_SectionInstancesComponent::labelTextChanged(Label* label)
             {
                 int time = int(Polytempo_Textbox::stringToTime(timeTextboxes[i]->getText()) * 1000.0f);
 
-                timeTextboxes[i]->setText(Polytempo_Textbox::timeToString(time * 0.001f), dontSendNotification);
+                timeTextboxes[i]->set(Polytempo_Textbox::timeToString(time * 0.001f, Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("displayMilliseconds")));
 
                 imageEvents[i]->setTime(time);
                 score->sortSection();

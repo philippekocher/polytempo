@@ -40,6 +40,7 @@ private:
     Polytempo_Button* returnToBeginning;
 
     Polytempo_Textbox* timeTextbox;
+    float timeTextboxValue;
 
     Polytempo_Textbox* tempoFactorTextbox;
 

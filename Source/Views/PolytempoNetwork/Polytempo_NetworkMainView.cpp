@@ -41,6 +41,7 @@ void Polytempo_NetworkMainView::resized()
         auxiliaryViewHeight = 0;
     }
 
+    auxiliaryView->resized(); // update GUI
     auxiliaryView->setBounds(getWidth() - auxiliaryViewWidth,
                              0,
                              auxiliaryViewWidth,

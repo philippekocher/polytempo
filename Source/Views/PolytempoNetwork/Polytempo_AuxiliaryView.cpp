@@ -102,6 +102,7 @@ void Polytempo_AuxiliaryView::resized()
     imageForwards->setBounds(10 + buttonWidth * 3, yPosition, buttonWidth + widthCorrection, 20);
     yPosition += 43;
 
+    timeTextbox->set(Polytempo_Textbox::timeToString(timeTextboxValue, Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("displayMilliseconds")));
     timeTextbox->setBounds(10, yPosition, getWidth() - 20, 34);
     yPosition += 55;
 
@@ -123,6 +124,7 @@ void Polytempo_AuxiliaryView::resized()
     networkInfoView->setBounds(10, yPosition, getWidth() - 20, getHeight() - yPosition);
 
     repaint();
+    printf(". ");
 }
 
 void Polytempo_AuxiliaryView::eventNotification(Polytempo_Event* event)
@@ -140,7 +142,8 @@ void Polytempo_AuxiliaryView::eventNotification(Polytempo_Event* event)
     else if (event->getType() == eventType_Tick)
     {
         // update the time with every tick
-        timeTextbox->set(Polytempo_Textbox::timeToString(event->getValue()));
+        timeTextboxValue = event->getValue();
+        timeTextbox->set(Polytempo_Textbox::timeToString(timeTextboxValue, Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("displayMilliseconds")));
     }
     else if (event->getType() == eventType_DeleteAll)
     {
