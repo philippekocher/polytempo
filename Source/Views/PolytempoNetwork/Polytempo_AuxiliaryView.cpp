@@ -124,7 +124,6 @@ void Polytempo_AuxiliaryView::resized()
     networkInfoView->setBounds(10, yPosition, getWidth() - 20, getHeight() - yPosition);
 
     repaint();
-    printf(". ");
 }
 
 void Polytempo_AuxiliaryView::eventNotification(Polytempo_Event* event)
