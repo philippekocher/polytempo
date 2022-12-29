@@ -3,6 +3,7 @@
 #include "../../Application/PolytempoComposer/Polytempo_ComposerApplication.h"
 #include "../../Application/Polytempo_CommandIDs.h"
 #include "../../Misc/Polytempo_Textbox.h"
+#include "../../Preferences/Polytempo_StoredPreferences.h"
 
 
 Polytempo_TransportComponent::Polytempo_TransportComponent()
