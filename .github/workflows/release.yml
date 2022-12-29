@@ -61,7 +61,7 @@ jobs:
       matrix:
         os: [windows-2019, ubuntu-latest, macos-latest]
         include:
-        - os: ubuntu-latest
+        - os: ubuntu-22.04
           artifact: Linux
           extension: ''
         - os: windows-2019
