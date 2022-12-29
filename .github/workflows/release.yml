@@ -57,7 +57,7 @@ jobs:
     name: ${{ matrix.artifact }}
     runs-on: ${{ matrix.os }}
     strategy:
-      fail-fast: true
+      fail-fast: ${{ steps.get_version.outputs.VERSION == steps.get_version.outputs.VERSIONLONG }} # allow prereleases to be partly built 
       matrix:
         os: [windows-2019, ubuntu-latest, macos-latest]
         include:
