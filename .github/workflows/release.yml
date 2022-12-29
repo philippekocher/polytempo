@@ -26,7 +26,7 @@ jobs:
 # preparation once for all platforms: create release and define version
   prepare:
     name: Prepare
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     outputs:
       release_url: ${{ steps.create_release.outputs.upload_url }}
       version: ${{ steps.get_version.outputs.VERSION }}
@@ -61,7 +61,7 @@ jobs:
       matrix:
         os: [windows-2019, ubuntu-latest, macos-latest]
         include:
-        - os: ubuntu-22.04
+        - os: ubuntu-latest
           artifact: Linux
           extension: ''
         - os: windows-2019
