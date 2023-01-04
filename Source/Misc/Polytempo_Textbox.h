@@ -122,7 +122,7 @@ public:
         numericalRangeMax = max;
     }
 
-    void setFloat(float num, const NotificationType notification)
+    void setFloat(float num, const NotificationType /*notification*/)
     {
         set(String(num, 0));
     }

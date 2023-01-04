@@ -47,7 +47,7 @@ void Polytempo_ScoreScheduler::eventNotification(Polytempo_Event* event)
     else if (event->getType() == eventType_TempoFactor) setTempoFactor(event);
     else if (event->getType() == eventType_LoadImage)
     {
-#ifdef USING_SCORE
+#if defined (USING_SCORE) && defined (POLYTEMPO_NETWORK)
         MessageManager::callAsync([this, event]() {
             if (loadStatusWindow == nullptr)
                 loadStatusWindow = new AlertWindow("Loading...", String(), AlertWindow::NoIcon);
@@ -64,7 +64,7 @@ void Polytempo_ScoreScheduler::eventNotification(Polytempo_Event* event)
     }
     else if(event->getType() == eventType_Ready)
     {
-#ifdef USING_SCORE
+#if defined (USING_SCORE) && defined (POLYTEMPO_NETWORK)
         MessageManager::callAsync([this]() {
             if(loadStatusWindow != nullptr)
             {
@@ -83,7 +83,7 @@ void Polytempo_ScoreScheduler::eventNotification(Polytempo_Event* event)
             gotoTime(time);
         });
 #else
-        gotoTime((0));
+        MessageManager::callAsync([this]() { gotoTime((0)); });
 #endif
     }
 }
