@@ -120,26 +120,11 @@ void Polytempo_PageEditorView::refresh()
         ValueTree item;
         vt.addChild(item = createTree(loadImageEvents[i]->getProperty(eventPropertyString_ImageID), String()), -1, nullptr);
         
-        if(selectedEvent && selectedEvent == loadImageEvents[i])
-        {
-            imageID       = loadImageEvents[i]->getProperty(eventPropertyString_ImageID);
-            sectionID     = var();
-            selectedItem  = (TreeItem*)tree->getItemOnRow(0);
-            selectedEvent = nullptr;
-        }
-
         for(int j=0;j<addSectionEvents.size();j++)
         {
             if(addSectionEvents[j]->getProperty(eventPropertyString_ImageID) == loadImageEvents[i]->getProperty(eventPropertyString_ImageID))
             {
                 item.addChild(createTree(loadImageEvents[i]->getProperty(eventPropertyString_ImageID), addSectionEvents[j]->getProperty(eventPropertyString_SectionID)), -1, nullptr);
-                if(selectedEvent && selectedEvent == addSectionEvents[j])
-                {
-                    imageID       = loadImageEvents[i]->getProperty(eventPropertyString_ImageID);
-                    sectionID     = selectedEvent->getProperty(eventPropertyString_SectionID);
-                    selectedItem  = (TreeItem*)tree->getItemOnRow(0);
-                    selectedEvent = nullptr;
-                }
             }
         }
     }
@@ -154,26 +139,24 @@ void Polytempo_PageEditorView::refresh()
     tree->setRootItemVisible(false);
     tree->setColour(TreeView::backgroundColourId, Colour(245,245,245));
     
-    if(selectedItem)
+    selectedItem = nullptr;
+    for(int i=0;i<tree->getNumRowsInTree();i++)
     {
-        for(int i=0;i<tree->getNumRowsInTree();i++)
+        TreeItem* item = (TreeItem*)tree->getItemOnRow(i);
+        if(item->getProperty(eventPropertyString_ImageID) == imageID)  // imageID matches
         {
-            TreeItem* item = (TreeItem*)tree->getItemOnRow(i);
-            if(item->getProperty(eventPropertyString_ImageID) == imageID)  // imageID matches
-            {
-                item->setSelected(true, true);
-                selectedItem = item;
+            item->setSelected(true, true);
+            selectedItem = item;
 
-                if(item->getProperty(eventPropertyString_SectionID) == sectionID)
-                {
-                    // both the imageID and the sectionID match
-                    // it can't get any better
-                    break;
-                }
+            if(item->getProperty(eventPropertyString_SectionID) == sectionID)
+            {
+                // both the imageID and the sectionID match
+                // it can't get any better
+                break;
             }
         }
     }
-    else if(tree->getNumRowsInTree() > 0)
+    if(selectedItem == nullptr && tree->getNumRowsInTree() > 0)
     {
         TreeItem* item = (TreeItem*)tree->getItemOnRow(0);
         item->setSelected(true, true);
@@ -240,11 +223,11 @@ void Polytempo_PageEditorView::update()
             }
         }
         
-        pageEditorViewport->getComponent()->setEditedEvent(selectedAddSectionEvent);
+        if(selectedAddSectionEvent) pageEditorViewport->getComponent()->setEditedEvent(selectedAddSectionEvent);
  
         // show handles
         Array<var> r;
-        if(selectedAddSectionEvent->hasProperty(eventPropertyString_Rect))
+        if(selectedAddSectionEvent != nullptr && selectedAddSectionEvent->hasProperty(eventPropertyString_Rect))
         {
             r = *selectedAddSectionEvent->getProperty(eventPropertyString_Rect).getArray();
         }
@@ -492,9 +475,16 @@ void Polytempo_PageEditorView::loadImage()
                         loadImage(result);
                     });
 #else
-    if(fileChooser.browseForFileToOpen())
+    if(fileChooser.browseForMultipleFilesToOpen())
     {
-        loadImage(fileChooser.getResult());
+        for(auto file : fileChooser.getResults())
+        {
+            loadImage(file);
+            addSection(imageID);
+            sectionID = var();
+            refresh();
+        }
+        Polytempo_EventScheduler::getInstance()->scheduleInitEvent(Polytempo_Event::makeEvent(eventType_Ready));
     }
 #endif
 }
@@ -507,31 +497,30 @@ void Polytempo_PageEditorView::loadImage(File file)
     Polytempo_Event *event = Polytempo_Event::makeEvent(eventType_LoadImage);
     event->setProperty(eventPropertyString_URL, url);
 
-    event->setProperty(eventPropertyString_ImageID,
-                       findNewID(eventPropertyString_ImageID, loadImageEvents));
+    imageID = findNewID(eventPropertyString_ImageID, loadImageEvents);
+    event->setProperty(eventPropertyString_ImageID, imageID);
 
     score->addEvent(event, true); // add to init
     score->setDirty();
 
-    Polytempo_EventScheduler::getInstance()->scheduleEvent(event); // execute event
-
-    selectedEvent = event;
-    refresh();
+    Polytempo_EventScheduler::getInstance()->scheduleInitEvent(event);
 }
 
-void Polytempo_PageEditorView::addSection()
+void Polytempo_PageEditorView::addSection(int imgID)
 {
     Polytempo_Event* event = Polytempo_Event::makeEvent(eventType_AddSection);
     
-    event->setProperty(eventPropertyString_ImageID, imageID);
-    event->setProperty(eventPropertyString_SectionID, findNewID(eventPropertyString_SectionID, addSectionEvents));
+    if (imgID == 0) imgID = imageID;
+    sectionID = findNewID(eventPropertyString_SectionID, addSectionEvents);
+
+    event->setProperty(eventPropertyString_ImageID, imgID);
+    event->setProperty(eventPropertyString_SectionID, sectionID);
     
     event->setProperty(eventPropertyString_Rect, Polytempo_Event::defaultRectangle());
     
     score->addEvent(event, true);
     score->setDirty();
     
-    selectedEvent = event;
     refresh();
 }
 

@@ -314,6 +314,7 @@ void Polytempo_MenuBarModel::getCommandInfo(CommandID commandID, ApplicationComm
          ----------------------------------*/
     case Polytempo_CommandIDs::loadImage:
         result.setInfo("Load Image", "Load an image", infoCategory, 0);
+        result.addDefaultKeypress('I', ModifierKeys::altModifier);
         result.setActive(window->getContentID() == Polytempo_NetworkWindow::pageEditorViewID);
         break;
 

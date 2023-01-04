@@ -14,7 +14,6 @@ public:
     TreeItem(const ValueTree& theTree, Component* theOwner)
     : tree (theTree), owner (theOwner)
     {
-        //tree.addListener (this);
     }
     
     void setTree(const ValueTree& theTree)
@@ -142,7 +141,7 @@ public:
     void deleteSelected();
 	void performDeleteSelected();
     void loadImage();
-    void addSection();
+    void addSection(int imgID = 0);
     void addInstance();
     
     // retrieve state
@@ -170,7 +169,6 @@ private:
     TreeView *tree;
 	std::unique_ptr < TreeItem > rootItem;
     TreeItem *selectedItem;
-    Polytempo_Event *selectedEvent;
     var imageID;
     var sectionID;
     
