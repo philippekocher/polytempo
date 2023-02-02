@@ -95,7 +95,7 @@ void Polytempo_ComposerEngine::run()
          set time in order to set the score's pointer to the next event
          (which is already ahead by the amount of lookahead).
 	*/
-    if(!killed) scoreScheduler->gotoTime(scoreTime);
+    if(!killed) scoreScheduler->gotoTime(int(scoreTime));
 
     Polytempo_ComposerApplication* const app = dynamic_cast<Polytempo_ComposerApplication*>(JUCEApplication::getInstance());
     if (app->quitApplication) app->applicationShouldQuit();
@@ -140,7 +140,7 @@ void Polytempo_NetworkEngine::run()
 
     while (!threadShouldExit() && !shouldStop)
     {
-        scoreTime += int(double(scoreTimeIncrement()) * tempoFactor);
+        scoreTime += scoreTimeIncrement() * tempoFactor;
 
         while (!shouldStop && !pausing && nextScoreEvent && nextScoreEvent->getTime() <= scoreTime + lookAhead)
         {

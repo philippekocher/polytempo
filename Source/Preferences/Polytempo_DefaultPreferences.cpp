@@ -19,6 +19,8 @@ Polytempo_DefaultPreferences::Polytempo_DefaultPreferences()
     setValue("stripBackgroundColour", "ffeeeeee");
     setValue("stripFrameColour", "ff000000");
     setValue("showAuxiliaryView", 1);
+    setValue("auxiliaryViewWidth", 200);
+    setValue("displayMilliseconds", 1);
     setValue("zoom", 0.4);
 
     // common

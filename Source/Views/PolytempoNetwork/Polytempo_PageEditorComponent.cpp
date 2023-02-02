@@ -85,7 +85,7 @@ void Polytempo_PageEditorComponent::setSectionRect(Rectangle<float> r)
     {
         for (int i = 0; i < 4; i++) { dragHandles.getUnchecked(i)->setVisible(false); }
     }
-    else
+    else if (image != nullptr)
     {
         for (int i = 0; i < 4; i++)
         {

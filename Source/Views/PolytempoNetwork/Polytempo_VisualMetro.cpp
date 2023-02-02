@@ -56,7 +56,6 @@ public:
     {
         position = pos;
         subdivisionPosition = subPos;
-        repaint();
     }
 
     void setForegroundColour(Colour& colour)
@@ -85,7 +84,7 @@ Polytempo_VisualMetro::Polytempo_VisualMetro(): Polytempo_EventObserver()
     setOpaque(true);
     width = 0.0f;
     pos = 0.5f;
-    timeInterval = 15; // good somewhere between 5 and 20
+    timeInterval = 50; // good somewhere between 5 and 20
     tempoFactor = 1.0f;
     pattern = 0;
     exponentMain = 1.5f;
@@ -161,7 +160,8 @@ void Polytempo_VisualMetro::timerCallback()
 
         hComponent->setPosition(x, subpos);
         vComponent->setPosition(y, subpos);
-
+        
+        repaint();
         return;
     }
 
@@ -230,8 +230,9 @@ void Polytempo_VisualMetro::timerCallback()
     if (pos > 0.5 && (pattern == 11 || pattern == 21))
     {
         foregroundColour = normalColour;
-        repaint(); // the square in the top left corner
     }
+    
+    repaint();
 }
 
 void Polytempo_VisualMetro::eventNotification(Polytempo_Event* event)
@@ -288,7 +289,6 @@ void Polytempo_VisualMetro::eventNotification(Polytempo_Event* event)
         else pos = 0.5f;
 
         startTimer(timeInterval);
-        repaint(); // the square in the top left corner
     }
     else if (event->getType() == eventType_TempoFactor)
     {

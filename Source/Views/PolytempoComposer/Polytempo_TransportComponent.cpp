@@ -3,6 +3,7 @@
 #include "../../Application/PolytempoComposer/Polytempo_ComposerApplication.h"
 #include "../../Application/Polytempo_CommandIDs.h"
 #include "../../Misc/Polytempo_Textbox.h"
+#include "../../Preferences/Polytempo_StoredPreferences.h"
 
 
 Polytempo_TransportComponent::Polytempo_TransportComponent()
@@ -104,7 +105,7 @@ void Polytempo_TransportComponent::eventNotification(Polytempo_Event *event)
     else if(event->getType() == eventType_Tick)
     {
         // update the time with every tick
-        timeTextbox->setText(Polytempo_Textbox::timeToString(event->getValue()), dontSendNotification);
+        timeTextbox->set(Polytempo_Textbox::timeToString(event->getValue(), Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("displayMilliseconds")));
     }
     else if(event->getType() == eventType_TempoFactor)
     {

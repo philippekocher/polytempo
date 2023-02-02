@@ -210,6 +210,9 @@ class VisualPreferencesPage : public Component, Button::Listener, Slider::Listen
     ColourChangeButton* stripFrameColourSelector;
 
     ToggleButton* showAuxiliaryView;
+    Label* auxiliaryViewLabel;
+    Slider* auxiliaryViewSlider;
+    ToggleButton* displayMilliseconds;
 
 public:
     VisualPreferencesPage()
@@ -285,6 +288,26 @@ public:
         showAuxiliaryView->setButtonText(L"Show Auxiliary View");
         showAuxiliaryView->setToggleState(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("showAuxiliaryView"), dontSendNotification);
         showAuxiliaryView->addListener(this);
+        
+        addAndMakeVisible(auxiliaryViewLabel = new Label(String(), "Width"));
+        auxiliaryViewLabel->setFont(Font(15.0000f, Font::plain));
+        auxiliaryViewLabel->setJustificationType(Justification::centredLeft);
+        auxiliaryViewLabel->setEditable(false, false, false);
+        auxiliaryViewLabel->setEnabled(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("showAuxiliaryView"));
+
+        addAndMakeVisible(auxiliaryViewSlider = new Slider(String()));
+        auxiliaryViewSlider->setRange(140, 260, 1);
+        auxiliaryViewSlider->setSliderStyle(Slider::LinearHorizontal);
+        auxiliaryViewSlider->setTextBoxStyle(Slider::TextBoxLeft, false, 80, 20);
+        auxiliaryViewSlider->addListener(this);
+        auxiliaryViewSlider->setValue(Polytempo_StoredPreferences::getInstance()->getProps().getIntValue("auxiliaryViewWidth"));
+        auxiliaryViewSlider->setEnabled(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("showAuxiliaryView"));
+
+        addAndMakeVisible(displayMilliseconds = new ToggleButton(String()));
+        displayMilliseconds->setButtonText("Display Milliseconds");
+        displayMilliseconds->setToggleState(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("displayMilliseconds"), dontSendNotification);
+        displayMilliseconds->addListener(this);
+        displayMilliseconds->setEnabled(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("showAuxiliaryView"));
     }
 
     ~VisualPreferencesPage() override
@@ -308,6 +331,9 @@ public:
         stripFrameColourSelector->setBounds(120, 210, getWidth() - 140, 24);
 
         showAuxiliaryView->setBounds(20, 280, proportionOfWidth(0.9f), 24);
+        auxiliaryViewLabel->setBounds(20, 310, 90, 24);
+        auxiliaryViewSlider->setBounds(120, 310, proportionOfWidth(0.7f), 24);
+        displayMilliseconds->setBounds(20, 340, proportionOfWidth(0.9f), 24);
     }
 
     /* slider & button listener
@@ -317,6 +343,10 @@ public:
         if (slider == stripWidthSlider)
         {
             Polytempo_StoredPreferences::getInstance()->getProps().setValue("stripWidth", int(slider->getValue()));
+        }
+        else if (slider == auxiliaryViewSlider)
+        {
+            Polytempo_StoredPreferences::getInstance()->getProps().setValue("auxiliaryViewWidth", int(slider->getValue()));
         }
     }
 
@@ -349,6 +379,13 @@ public:
         else if (button == showAuxiliaryView)
         {
             Polytempo_StoredPreferences::getInstance()->getProps().setValue("showAuxiliaryView", button->getToggleState());
+            auxiliaryViewLabel->setEnabled(button->getToggleState());
+            auxiliaryViewSlider->setEnabled(button->getToggleState());
+            displayMilliseconds->setEnabled(button->getToggleState());
+        }
+        else if (button == displayMilliseconds)
+        {
+            Polytempo_StoredPreferences::getInstance()->getProps().setValue("displayMilliseconds", button->getToggleState());
         }
     }
 

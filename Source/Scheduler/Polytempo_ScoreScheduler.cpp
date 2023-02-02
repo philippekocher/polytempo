@@ -9,13 +9,6 @@
 
 Polytempo_ScoreScheduler::Polytempo_ScoreScheduler()
 {
-#ifdef POLYTEMPO_NETWORK
-    Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
-    Polytempo_NetworkWindow* window = app->getMainWindow();
-
-    loadStatusWindow = new AlertWindow("Loading...", String(), AlertWindow::NoIcon);
-    window->getContentComponent()->addChildComponent(loadStatusWindow);
-#endif
 }
 
 Polytempo_ScoreScheduler::~Polytempo_ScoreScheduler()
@@ -54,29 +47,43 @@ void Polytempo_ScoreScheduler::eventNotification(Polytempo_Event* event)
     else if (event->getType() == eventType_TempoFactor) setTempoFactor(event);
     else if (event->getType() == eventType_LoadImage)
     {
-#ifdef USING_SCORE
-        if(loadStatusWindow != nullptr)
-        {
-            MessageManager::callAsync([this, event]() { loadStatusWindow->setMessage(event->getProperty(eventPropertyString_URL)); });
-        }
+#if defined (USING_SCORE) && defined (POLYTEMPO_NETWORK)
+        MessageManager::callAsync([this, event]() {
+            if (loadStatusWindow == nullptr)
+                loadStatusWindow = new AlertWindow("Loading...", String(), AlertWindow::NoIcon);
+            if (!loadStatusWindow->isCurrentlyModal()) {
+                Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
+                Polytempo_NetworkWindow* window = app->getMainWindow();
+                window->getContentComponent()->addChildComponent(loadStatusWindow);
+                loadStatusWindow->centreAroundComponent(nullptr,loadStatusWindow->getWidth(), loadStatusWindow->getHeight());
+                loadStatusWindow->enterModalState();
+            }
+            loadStatusWindow->setMessage(event->getProperty(eventPropertyString_URL));
+        });
 #endif
     }
     else if(event->getType() == eventType_Ready)
     {
-#ifdef USING_SCORE
-        if(loadStatusWindow != nullptr)
-        {
-            loadStatusWindow->setMessage(String());
-            loadStatusWindow->setVisible(false);
-            loadStatusWindow->exitModalState(0);
-        }
-        score->setReady();
-        // goto beginning of score (only local);
-        int time = score->getFirstEvent() != nullptr ? score->getFirstEvent()->getTime() : 0;
-        storeLocator(time);
-        gotoTime(time);
+#if defined (USING_SCORE) && defined (POLYTEMPO_NETWORK)
+        MessageManager::callAsync([this]() {
+            if(loadStatusWindow != nullptr)
+            {
+                loadStatusWindow->setMessage(String());
+                loadStatusWindow->setVisible(false);
+                loadStatusWindow->exitModalState(0);
+                
+                Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
+                Polytempo_NetworkWindow* window = app->getMainWindow();
+                window->repaint();
+            }
+            score->setReady();
+            // goto beginning of score (only local);
+            int time = score->getFirstEvent() != nullptr ? score->getFirstEvent()->getTime() : 0;
+            storeLocator(time);
+            gotoTime(time);
+        });
 #else
-        gotoTime((0));
+        MessageManager::callAsync([this]() { gotoTime((0)); });
 #endif
     }
 }
@@ -242,8 +249,6 @@ void Polytempo_ScoreScheduler::executeInit()
     if (initEvents != nullptr && !initEvents->isEmpty())
     {
         score->setReady(false);
-        loadStatusWindow->setMessage(" "); // force layout update
-        loadStatusWindow->enterModalState(true);
 
         int size = initEvents->size();
         for (int i = 0; i < size; i++)

@@ -118,5 +118,6 @@ bool Polytempo_ImageManager::deleteImage(var imageID)
 void Polytempo_ImageManager::eventNotification(Polytempo_Event* event)
 {
     if (event->getType() == eventType_DeleteAll) deleteAll();
-    else if (event->getType() == eventType_LoadImage) loadImage(event);
+    else if (event->getType() == eventType_LoadImage) MessageManager::callAsync([this, event]() { loadImage(event);
+    });
 }

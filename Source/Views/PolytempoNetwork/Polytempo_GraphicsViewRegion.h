@@ -47,6 +47,7 @@ public:
 
     void paint(Graphics& g) override;
     void resized() override;
+    void calculateOffscreenImage();
     void setImage(Image* img, var rect, String imageId, bool append = false);
 
     void setRelativeBounds(const Rectangle<float>& newBounds);
@@ -90,6 +91,7 @@ private:
     Rectangle<float> relativeBounds;
 
     std::vector<displayedImage> displayedImages;
+    std::unique_ptr<Image> offscreenImage;
 
     std::unique_ptr<String> text;
     std::unique_ptr<Polytempo_Progressbar> progressbar;

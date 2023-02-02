@@ -145,13 +145,6 @@ void Polytempo_EventScheduler::removeObserver(Polytempo_EventObserver* obs)
 
 void Polytempo_EventScheduler::notify(Polytempo_Event* event)
 {
-    // because this is a background thread, we mustn't do any UI work without
-    // first grabbing a MessageManagerLock..
-    const MessageManagerLock mml(Thread::getCurrentThread());
-
-    if (! mml.lockWasGained()) // if something is trying to kill this job, the lock
-        return; // will fail, in which case we'd better return..
-
     for (int i = 0; i < observers.size(); i++)
         observers[i]->eventNotification(event);
 }

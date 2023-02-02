@@ -120,6 +120,8 @@ void Polytempo_RegionEditorView::resized()
 
 void Polytempo_RegionEditorView::refresh()
 {
+    const MessageManagerLock mml(Thread::getCurrentThread());
+
     Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
     score = app->getScore();
 

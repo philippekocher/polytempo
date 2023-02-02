@@ -35,12 +35,11 @@ void Polytempo_NetworkMainView::resized()
         auxiliaryViewHeight = auxiliaryViewWidth = 0;
     else
     {
-        auxiliaryViewWidth = (int)(getWidth() * 0.12);
-        auxiliaryViewWidth = auxiliaryViewWidth < 120 ? 120 : auxiliaryViewWidth > 200 ? 200 : auxiliaryViewWidth;
-
+        auxiliaryViewWidth = Polytempo_StoredPreferences::getInstance()->getProps().getIntValue("auxiliaryViewWidth");
         auxiliaryViewHeight = 0;
     }
 
+    auxiliaryView->resized(); // update GUI
     auxiliaryView->setBounds(getWidth() - auxiliaryViewWidth,
                              0,
                              auxiliaryViewWidth,
@@ -79,5 +78,4 @@ void Polytempo_NetworkMainView::changeListenerCallback(ChangeBroadcaster*)
     visualMetro->setFrameColour(frColour);
 
     resized();
-    repaint();
 }

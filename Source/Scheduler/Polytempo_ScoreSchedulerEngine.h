@@ -72,7 +72,7 @@ public:
 
     int getScoreTime()
     {
-        return scoreTime;
+        return int(scoreTime);
     }
 
     void setTempoFactor(float factor)
@@ -93,7 +93,7 @@ protected:
 #endif
 
     Polytempo_ScoreScheduler* scoreScheduler;
-    int scoreTime; // the current time in the score
+    double scoreTime; // the current time in the score
     double tempoFactor = 1;
     bool killed;
     bool shouldStop;
