@@ -2,10 +2,6 @@
 #include "Polytempo_EventScheduler.h"
 #include "Polytempo_EventDispatcher.h"
 #include "../Network/Polytempo_InterprocessCommunication.h"
-#ifdef POLYTEMPO_NETWORK
-#include "../Application/PolytempoNetwork/Polytempo_NetworkApplication.h"
-#include "../Application/PolytempoNetwork/Polytempo_NetworkWindow.h"
-#endif
 
 Polytempo_ScoreScheduler::Polytempo_ScoreScheduler()
 {
@@ -45,37 +41,10 @@ void Polytempo_ScoreScheduler::eventNotification(Polytempo_Event* event)
     else if (event->getType() == eventType_GotoMarker) gotoMarker(event);
     else if (event->getType() == eventType_GotoTime) gotoTime(event);
     else if (event->getType() == eventType_TempoFactor) setTempoFactor(event);
-    else if (event->getType() == eventType_LoadImage)
-    {
-#if defined (USING_SCORE) && defined (POLYTEMPO_NETWORK)
-        MessageManager::callAsync([this, event]() {
-            if (loadStatusWindow == nullptr)
-                loadStatusWindow = new AlertWindow("Loading...", String(), AlertWindow::NoIcon);
-            if (!loadStatusWindow->isCurrentlyModal()) {
-                Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
-                Polytempo_NetworkWindow* window = app->getMainWindow();
-                window->getContentComponent()->addChildComponent(loadStatusWindow);
-                loadStatusWindow->centreAroundComponent(nullptr,loadStatusWindow->getWidth(), loadStatusWindow->getHeight());
-                loadStatusWindow->enterModalState();
-            }
-            loadStatusWindow->setMessage(event->getProperty(eventPropertyString_URL));
-        });
-#endif
-    }
     else if(event->getType() == eventType_Ready)
     {
 #if defined (USING_SCORE) && defined (POLYTEMPO_NETWORK)
         MessageManager::callAsync([this]() {
-            if(loadStatusWindow != nullptr)
-            {
-                loadStatusWindow->setMessage(String());
-                loadStatusWindow->setVisible(false);
-                loadStatusWindow->exitModalState(0);
-                
-                Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
-                Polytempo_NetworkWindow* window = app->getMainWindow();
-                window->repaint();
-            }
             score->setReady();
             // goto beginning of score (only local);
             int time = score->getFirstEvent() != nullptr ? score->getFirstEvent()->getTime() : 0;

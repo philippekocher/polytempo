@@ -55,8 +55,5 @@ private:
 
 #ifdef USING_SCORE
     Polytempo_Score* score = nullptr;
-#ifdef POLYTEMPO_NETWORK
-    AlertWindow* loadStatusWindow = nullptr;
-#endif
 #endif
 };
