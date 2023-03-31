@@ -26,7 +26,7 @@ public:
     void startStop();
     void broadcastStop();
     void start();
-    void stop();
+    void stop(bool returnToDownbeat = false);
     void pause(Polytempo_Event*);
     void kill();
     void returnToLocator();

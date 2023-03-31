@@ -24,6 +24,7 @@ public:
                                        killed(false),
                                        shouldStop(true),
                                        pausing(false),
+                                       shouldReturnToLastDownbeat(false),
                                        scoreTimeOffset(0)
     {
     }
@@ -47,9 +48,10 @@ public:
     }
 #endif
 
-    void stop()
+    void stop(bool returnToDownbeat = false)
     {
         shouldStop = true;
+        shouldReturnToLastDownbeat = returnToDownbeat;
     }
 
     void kill()
@@ -98,6 +100,7 @@ protected:
     bool killed;
     bool shouldStop;
     bool pausing;
+    bool shouldReturnToLastDownbeat;
 
 private:
     uint32 scoreTimeOffset;

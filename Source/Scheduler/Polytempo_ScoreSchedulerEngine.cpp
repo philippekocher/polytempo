@@ -119,8 +119,6 @@ void Polytempo_NetworkEngine::setScoreTime(int time)
     {
         scheduler->executeEvent(events[i]);
     }
-
-    lastDownbeat = time;
 }
 
 void Polytempo_NetworkEngine::run()
@@ -177,7 +175,11 @@ void Polytempo_NetworkEngine::run()
        this must be called here to make sure that the engine thread really
        has finished.
     */
-    if (!killed) scoreScheduler->gotoTime(lastDownbeat);
+    if (!killed && shouldReturnToLastDownbeat)
+    {
+        scoreScheduler->gotoTime(lastDownbeat);
+        shouldReturnToLastDownbeat = false;
+    }
 
     Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
     if (app->quitApplication) app->applicationShouldQuit();
