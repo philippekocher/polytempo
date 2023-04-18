@@ -123,8 +123,8 @@ void Polytempo_NetworkEngine::setScoreTime(int time)
 
 void Polytempo_NetworkEngine::run()
 {
-    int interval = 200;
-    int lookAhead = 800;
+    int interval = 200; // update interval in milliseconds
+    int lookAhead = 800; // look ahead in the score in milliseconds
 
     Polytempo_Event* nextScoreEvent = score->getNextEvent();
     Polytempo_Event* schedulerTick = Polytempo_Event::makeEvent(eventType_Tick);

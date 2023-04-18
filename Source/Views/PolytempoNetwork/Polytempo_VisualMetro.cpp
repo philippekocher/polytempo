@@ -84,7 +84,7 @@ Polytempo_VisualMetro::Polytempo_VisualMetro(): Polytempo_EventObserver()
     setOpaque(true);
     width = 0.0f;
     pos = 0.5f;
-    timeInterval = 20; // equals 50 fps
+    timeInterval = 20; // update interval in milliseconds (equals 50 fps)
     tempoFactor = 1.0f;
     pattern = 0;
     exponentMain = 1.5f;
