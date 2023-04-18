@@ -22,7 +22,7 @@ void Polytempo_SectionInstancesComponent::resized()
     for (int i = 0; i < markerTextboxes.size(); i++)
     {
         regionTextboxes[i]->setBounds(10, i * 120 + 20, int((getWidth() - 20) * 0.3), 28);
-        deleteButtons[i]->setBounds(10 + int((getWidth() - 20) * 0.75), i * 120 + 20, int((getWidth() - 20) * 0.25), 18);
+        deleteButtons[i]->setBounds(getWidth() - 56, i * 120 + 20, 46, 18);
         markerTextboxes[i]->setBounds(10, i * 120 + 65, int((getWidth() - 20) * 0.3), 28);
         timeTextboxes[i]->setBounds(10 + int((getWidth() - 20) * 0.35), i * 120 + 65, int((getWidth() - 20) * 0.65), 28);
     }

@@ -84,7 +84,7 @@ Polytempo_VisualMetro::Polytempo_VisualMetro(): Polytempo_EventObserver()
     setOpaque(true);
     width = 0.0f;
     pos = 0.5f;
-    timeInterval = 50; // good somewhere between 5 and 20
+    timeInterval = 20; // update interval in milliseconds (equals 50 fps)
     tempoFactor = 1.0f;
     pattern = 0;
     exponentMain = 1.5f;
@@ -174,7 +174,7 @@ void Polytempo_VisualMetro::timerCallback()
     /* conductor position
      ----------------------------------- */
 
-    float ictus = 1.0f - increment * 5.0f;
+    float ictus = 1.0f - pow(increment * 5, 2.0f);
     /* This factor creates a sudden jerk at the end of the movement. The animation of the conductor reaches only a certain amount of the total length (ictus < 1.0, dependent on the tempo) and jumps to the max when the next beat is due.
      */
     ictus = ictus < 0 ? 0 : ictus; // must not be negative!
@@ -271,14 +271,10 @@ void Polytempo_VisualMetro::eventNotification(Polytempo_Event* event)
         float actualDuration = beatDuration / tempoFactor;
         exponentMain = 0.75f + actualDuration;
         exponentMain = exponentMain > 2.5f ? 2.5f : exponentMain; // clip
-
-        /*
-         40 / timeInterval looks good on a fast computer.
-         60 / timeInterval is needed for slower computers (old mac minis)
-         */
+        exponentMain = exponentMain < 1.0f ? 1.0f : exponentMain;
 
         if (pattern < 3) holdMax = 0;
-        else holdMax = 60 / timeInterval;
+        else holdMax = 50 / timeInterval;
 
         increment = (float)timeInterval / actualDuration * 0.001f;
 

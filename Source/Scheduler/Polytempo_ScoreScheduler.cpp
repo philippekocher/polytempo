@@ -36,7 +36,7 @@ void Polytempo_ScoreScheduler::eventNotification(Polytempo_Event* event)
 {
     if (event == nullptr) return;
     if (event->getType() == eventType_Start) start();
-    else if (event->getType() == eventType_Stop) stop();
+    else if (event->getType() == eventType_Stop) stop(true);
     else if (event->getType() == eventType_Pause) pause(event);
     else if (event->getType() == eventType_GotoMarker) gotoMarker(event);
     else if (event->getType() == eventType_GotoTime) gotoTime(event);
@@ -87,9 +87,9 @@ void Polytempo_ScoreScheduler::start()
     else engine->startThread(5); // priority between 0 and 10
 }
 
-void Polytempo_ScoreScheduler::stop()
+void Polytempo_ScoreScheduler::stop(bool returnToDownbeat)
 {
-    engine->stop();
+    engine->stop(returnToDownbeat);
     engine->pause(false);
     Polytempo_EventScheduler::getInstance()->deletePendingEvents();
 }

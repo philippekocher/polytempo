@@ -195,6 +195,7 @@ private:
     Polytempo_Textbox *hTextbox;
     
     Label *sectionInstancesLabel;
+    TextButton * addSectionButton;
     Polytempo_SectionInstancesViewport* sectionInstancesViewport;
     
 	std::unique_ptr<FileChooser> fc;

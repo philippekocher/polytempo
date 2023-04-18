@@ -57,6 +57,9 @@ Polytempo_PageEditorView::Polytempo_PageEditorView()
     addChildComponent(sectionInstancesLabel = new Label(String(), "Instances"));
     sectionInstancesLabel->setFont(Font (15.0f, Font::plain));
     
+    addChildComponent(addSectionButton = new TextButton("add"));
+    addSectionButton->addListener(this);
+
     addChildComponent(sectionInstancesViewport = new Polytempo_SectionInstancesViewport());
     sectionInstancesViewport->setScrollBarsShown(true, false);
     sectionInstancesViewport->getComponent()->setModel(this);
@@ -202,6 +205,7 @@ void Polytempo_PageEditorView::update()
 
     // hide section instances
     sectionInstancesLabel->setVisible(false);
+    addSectionButton->setVisible(false);
     sectionInstancesViewport->setVisible(false);
         
     if(imageID != var() && sectionID == var())
@@ -250,6 +254,7 @@ void Polytempo_PageEditorView::update()
         hTextbox->setText(String((float)r[3],3), dontSendNotification);
         
         sectionInstancesLabel->setVisible(true);
+        addSectionButton->setVisible(true);
         sectionInstancesViewport->setVisible(true);
         sectionInstancesViewport->getComponent()->setImageEvents(imageEvents, sectionID);
     }
@@ -298,12 +303,13 @@ void Polytempo_PageEditorView::resized()
     
     relativePositionLabel->setBounds(getWidth() - TREE_VIEW_WIDTH + 5, 0, TREE_VIEW_WIDTH - 20, 34);
     
-    xTextbox->setBounds(getWidth() - TREE_VIEW_WIDTH + 10, 50, 55, 26);
-    yTextbox->setBounds((int)(getWidth() - TREE_VIEW_WIDTH * 0.5 + 10), 50, 55, 26);
-    wTextbox->setBounds(getWidth() - TREE_VIEW_WIDTH + 10, 95, 55, 26);
-    hTextbox->setBounds((int)(getWidth() - TREE_VIEW_WIDTH * 0.5 + 10), 95, 55, 26);
+    xTextbox->setBounds(getWidth() - TREE_VIEW_WIDTH + 10, 50, 80, 26);
+    yTextbox->setBounds((int)(getWidth() - TREE_VIEW_WIDTH * 0.5 + 10), 50, 80, 26);
+    wTextbox->setBounds(getWidth() - TREE_VIEW_WIDTH + 10, 95, 80, 26);
+    hTextbox->setBounds((int)(getWidth() - TREE_VIEW_WIDTH * 0.5 + 10), 95, 80, 26);
     
-    sectionInstancesLabel->setBounds(getWidth() - TREE_VIEW_WIDTH + 5, 140, TREE_VIEW_WIDTH - 20, 34);
+    sectionInstancesLabel->setBounds(getWidth() - TREE_VIEW_WIDTH + 5, 138, TREE_VIEW_WIDTH - 20, 34);
+    addSectionButton->setBounds(getWidth() - 56, 146, 46, 18);
     sectionInstancesViewport->setBounds(r.withLeft(int(getWidth()) - TREE_VIEW_WIDTH + 1).withTrimmedTop(170));
 }
 
@@ -642,6 +648,9 @@ void Polytempo_PageEditorView::buttonClicked(Button* button) {
             refresh();
         }
 #endif
+    }
+    else if (button == addSectionButton) {
+        addInstance();
     }
 }
 

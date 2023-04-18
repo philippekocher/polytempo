@@ -119,14 +119,12 @@ void Polytempo_NetworkEngine::setScoreTime(int time)
     {
         scheduler->executeEvent(events[i]);
     }
-
-    lastDownbeat = time;
 }
 
 void Polytempo_NetworkEngine::run()
 {
-    int interval = 200;
-    int lookAhead = 200;
+    int interval = 200; // update interval in milliseconds
+    int lookAhead = 800; // look ahead in the score in milliseconds
 
     Polytempo_Event* nextScoreEvent = score->getNextEvent();
     Polytempo_Event* schedulerTick = Polytempo_Event::makeEvent(eventType_Tick);
@@ -177,7 +175,11 @@ void Polytempo_NetworkEngine::run()
        this must be called here to make sure that the engine thread really
        has finished.
     */
-    if (!killed) scoreScheduler->gotoTime(lastDownbeat);
+    if (!killed && shouldReturnToLastDownbeat)
+    {
+        scoreScheduler->gotoTime(lastDownbeat);
+        shouldReturnToLastDownbeat = false;
+    }
 
     Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
     if (app->quitApplication) app->applicationShouldQuit();
