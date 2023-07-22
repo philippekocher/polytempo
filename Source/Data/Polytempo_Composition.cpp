@@ -623,12 +623,21 @@ void Polytempo_Composition::exportAsPolytempoScore()
         Polytempo_Score tempScore;
         Polytempo_Event *tempEvent;
         
+        // sync start event (the same earliest event for all sequences of a composition)
+        float earliestTime = Polytempo_Composition::getInstance()->getEarliestTime();
+        Polytempo_Event* syncStartEvent = new Polytempo_Event(eventType_Comment);
+        syncStartEvent->setProperty(eventPropertyString_Time, earliestTime);
+        syncStartEvent->setProperty(eventPropertyString_Value, "sync start");
+
         if(exportAll)
         {
             for(Polytempo_Sequence *sequence : sequences)
             {
                 tempScore.addSection("sequence"+String(sequence->getID()));
                 
+                if(earliestTime < sequence->getTimedEvents().getFirst()->getTime() * 0.001)
+                    tempScore.addEvent(syncStartEvent);
+
                 for(Polytempo_Event *event : sequence->getTimedEvents())
                 {
                     if(event->hasProperty("~sequence") && (int)event->getProperty("~sequence") == sequence->getID())
@@ -652,6 +661,9 @@ void Polytempo_Composition::exportAsPolytempoScore()
         {
             Polytempo_Sequence *sequence = getSelectedSequence();
             tempScore.addSection("sequence"+String(sequence->getID()));
+
+            if(earliestTime < sequence->getTimedEvents().getFirst()->getTime() * 0.001)
+                tempScore.addEvent(syncStartEvent);
 
             for(Polytempo_Event *event : sequence->getTimedEvents())
             {

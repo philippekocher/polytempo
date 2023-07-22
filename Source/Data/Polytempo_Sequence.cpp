@@ -742,18 +742,6 @@ bool Polytempo_Sequence::update()
         }
     }
     
-    // start event (same earliest for all sequences of a composition)
-    float earliestTime = Polytempo_Composition::getInstance()->getEarliestTime();
-    if(timedEvents.size() > 0 && earliestTime < timedEvents.getFirst()->getTime())
-    {
-        Polytempo_Event* startEvent = new Polytempo_Event(eventType_Comment);
-        startEvent->setOwned(true);
-        startEvent->setProperty("~sequence", sequenceID);
-        startEvent->setProperty(eventPropertyString_Time, earliestTime);
-        startEvent->setProperty(eventPropertyString_Value, "start");
-        timedEvents.add(startEvent);
-    }
-    
     Polytempo_Composition::getInstance()->updateContent();
     Polytempo_Composition::getInstance()->setDirty(true);
     
