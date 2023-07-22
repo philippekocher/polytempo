@@ -238,7 +238,11 @@ bool Polytempo_Score::setTime(int time, Array<Polytempo_Event*> *events, float *
             else
                 images[event->getProperty(eventPropertyString_RegionID)]->add(event);
         }
-
+        else if(eventType == eventType_Progressbar)
+        {
+            if(event->getTime() + (float)event->getProperty(eventPropertyString_Duration)*1000 > time + *waitBeforStart)
+                images.set(event->getProperty(eventPropertyString_RegionID), new Array<Polytempo_Event*>(event));
+        }
         else
             events->add(event);
 

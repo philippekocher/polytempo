@@ -3,7 +3,7 @@
 
 Polytempo_GraphicsViewRegion::Polytempo_GraphicsViewRegion(var id)
 {
-    setOpaque(true);
+    setOpaque(false);
     setBufferedToImage(true);
     setVisible(true);
 
@@ -27,9 +27,9 @@ Polytempo_GraphicsViewRegion::~Polytempo_GraphicsViewRegion()
 
 void Polytempo_GraphicsViewRegion::paint(Graphics& g)
 {
-    g.fillAll(Colours::white);
-
     if (contentType == contentType_Empty) return;
+
+    g.fillAll(Colours::white);
 
     if (contentType == contentType_Image && displayedImages.size() > 0 && offscreenImage != nullptr)
     {
