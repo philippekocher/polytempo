@@ -382,72 +382,77 @@ Array<Polytempo_Event*> Polytempo_Score::getEvents(Polytempo_EventType type)
 
 String Polytempo_Score::getJsonString()
 {
-    DynamicObject* jsonSections = new DynamicObject();
-    
+    String jsonString = "{\n";
     for(int i=-1;i<sections.size();i++)
     {
-        var jsonSection1, jsonSection2;
+        String tempString, block1, block2;
         Polytempo_Score_Section *section;
-        
-        if(i == -1) section = initSection.get();
-        else        section = sections[i];
-        
-        for(int j=0;j<section->events.size();j++)
+
+        if(i == -1)
         {
-            DynamicObject* jsonEvent = new DynamicObject();
-            DynamicObject* jsonEventProperties = new DynamicObject();
-            
-            Polytempo_Event* event = section->events[j];
-            NamedValueSet* properties = event->getProperties();
-            
-            for(int k=0;k<properties->size();k++)
+            section = initSection.get();
+            jsonString += "\"init\": [\n";
+        }
+        else
+        {
+            section = sections[i];
+            jsonString += "\"sequence"+String(i+1)+"\": [\n";
+        }
+
+        for(auto event : section->events)
+        {
+            tempString = "\t{\""+event->getTypeString()+"\": {";
+
+            for(auto property : *event->getProperties())
             {
-                Identifier key = properties->getName(k);
-                if(key.toString()[0] != '~' &&
-                   key.toString() != eventPropertyString_TimeTag)
-                    jsonEventProperties->setProperty(key, properties->getValueAt(k));
+                String key = property.name.toString();
+                var value = property.value;
+                if(key[0] != '~' &&
+                   key != eventPropertyString_TimeTag)
+                {
+                    tempString += "\""+key+"\": ";
+                    if(value.isDouble())
+                    {
+                        tempString += String(double(value), 3);
+                        if(tempString.endsWith("0")) tempString = tempString.dropLastCharacters(1);
+                        if(tempString.endsWith("0")) tempString = tempString.dropLastCharacters(1);
+                    }
+                    else if(value.isString())
+                        tempString += "\""+value.toString()+"\"";
+                    else if(value.isArray())
+                    {
+                        tempString += "[";
+                        for(auto item : *value.getArray())
+                        {
+                            tempString += String(double(item), 3);
+                            if(tempString.endsWith("0")) tempString = tempString.dropLastCharacters(1);
+                            if(tempString.endsWith("0")) tempString = tempString.dropLastCharacters(1);
+                            tempString += ", ";
+                        }
+                        tempString = tempString.trimCharactersAtEnd(", ");
+                        tempString += "]";
+                    }
+                    else
+                        tempString += value.toString();
+                }
+                tempString += ", ";
             }
             
-            jsonEvent->setProperty(event->getTypeString(), jsonEventProperties);
-            
+            tempString = tempString.trimCharactersAtEnd(", ");
+            tempString += "}},\n";
+
             if(jsonStringInTwoBlocks && i != -1 &&
                (event->getType() == eventType_Beat || event->getType() == eventType_Marker || event->getType() == eventType_Comment))
-                jsonSection2.append(jsonEvent);
+                block2 += tempString;
             else
-                jsonSection1.append(jsonEvent);
+                block1 += tempString;
         }
-        
-        for(int j=0;j<jsonSection2.size();j++)
-        {
-            jsonSection1.append(jsonSection2[j]);
-        }
-        
-        if(i == -1) jsonSections->setProperty("init", jsonSection1);
-        else jsonSections->setProperty(sectionMap->getReference(i), jsonSection1);
+        jsonString += block1 + block2;
+        jsonString = jsonString.trimCharactersAtEnd(",\n");
+        jsonString += "\n],\n";
     }
-    var json(jsonSections); // store the outer object in a var
-    
-    
-    String jsonString = JSON::toString(json, true);
-    
-    /* a semiprofessional formatter:
-     not as tight as the "all on one line" option
-     not as loose as the standard layout
-     */
-    
-    jsonString = jsonString.replaceSection(0,1,"{\n");    // beginning of file
-    
-    jsonString = jsonString.replace("null, ","[],\n");    // empty section
-    jsonString = jsonString.replace("null","[]\n");       // empty section
-    
-    jsonString = jsonString.replace("[{","[\n\t{");       // new section
-    jsonString = jsonString.replace("}], ","}\n\t],\n");  // between sections
-    
-    jsonString = jsonString.replace("}, ","},\n\t");      // indent events
-    
-    jsonString = jsonString.replace("}]}","}\n\t]\n}");   // end of file
-    
-    
+    jsonString = jsonString.trimCharactersAtEnd(",\n");
+    jsonString += "}\n";
 
     return jsonString;
 }
