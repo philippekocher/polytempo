@@ -104,7 +104,7 @@ Polytempo_SequenceControlComponent::Polytempo_SequenceControlComponent(int i) : 
     sequenceName.setColour(TextEditor::backgroundColourId, Colours::transparentBlack);
     sequenceName.setColour(TextEditor::highlightedTextColourId, Colours::white);
     sequenceName.setColour(TextEditor::focusedOutlineColourId, Colours::white);
-    sequenceName.setText(Polytempo_Composition::getInstance()->getSequence(sequenceIndex)->getName());
+    sequenceName.setText(Polytempo_Composition::getInstance()->getSequence(sequenceIndex)->getName(), false);
 
     playbackSettingsButton.reset(new Polytempo_Button("Playback Settings"));
     addAndMakeVisible(playbackSettingsButton.get());
