@@ -59,6 +59,9 @@ public:
     void mouseDown(const MouseEvent &);
     
     void textEditorTextChanged(TextEditor&);
+    void textEditorReturnKeyPressed(TextEditor&);
+    void textEditorEscapeKeyPressed(TextEditor&);
+    
     void buttonClicked(Button*);
 
 private:
