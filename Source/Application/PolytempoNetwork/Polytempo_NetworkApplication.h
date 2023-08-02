@@ -6,6 +6,7 @@
 #include "../../Network/Polytempo_OSCSender.h"
 #include "../../Data/Polytempo_Score.h"
 #include "../../Audio+Midi/Polytempo_MidiInput.h"
+#include "../../Audio+Midi/Polytempo_AudioPlayer.h"
 #include "../../Misc/Polytempo_Alerts.h"
 
 class Polytempo_NetworkApplication : public JUCEApplication
@@ -48,6 +49,7 @@ private:
     std::unique_ptr<Polytempo_OSCSender> oscSender;
     std::unique_ptr<Polytempo_MidiInput> midiInput;
     std::unique_ptr<Polytempo_Score> score;
+    std::unique_ptr<Polytempo_AudioPlayer> audioPlayer;
     std::unique_ptr<FileLogger> fileLogger;
 
 #ifdef JUCE_ANDROID
