@@ -221,6 +221,7 @@ bool Polytempo_Score::setTime(int time, Array<Polytempo_Event*> *events, float *
         
         if(eventType == eventType_Beat ||
            eventType == eventType_Osc ||
+           eventType == eventType_Audio ||
            eventType == eventType_GotoTime || eventType == eventType_GotoMarker ||
            eventType == eventType_Start || eventType == eventType_Pause || eventType == eventType_Stop)
             continue;
