@@ -31,6 +31,9 @@ enum Polytempo_EventType
     eventType_Text,
     eventType_Progressbar,
     
+    eventType_LoadAudio,
+    eventType_Audio,
+    
     eventType_AddSender,
     eventType_Osc,
     
@@ -70,6 +73,9 @@ enum Polytempo_EventType
 #define eventTypeString_Text            "text"
 #define eventTypeString_Progressbar     "progressbar"
 
+#define eventTypeString_LoadAudio       "loadAudio"
+#define eventTypeString_Audio           "audio"
+
 #define eventTypeString_AddSender       "addSender"
 #define eventTypeString_Osc             "osc"
 
@@ -90,6 +96,7 @@ enum Polytempo_EventType
 #define eventPropertyString_Time        "time"
 #define eventPropertyString_Defer       "defer"
 #define eventPropertyString_Duration    "duration"
+#define eventPropertyString_AudioID     "audioID"
 #define eventPropertyString_ImageID     "imageID"
 #define eventPropertyString_RegionID    "regionID"
 #define eventPropertyString_MaxZoom     "maxZoom"
@@ -104,6 +111,7 @@ enum Polytempo_EventType
 #define eventPropertyDefault_Pattern    10
 #define eventPropertyString_Linear      "linear"
 #define eventPropertyString_Cue         "cue"
+#define eventPropertyString_Gain        "gain"
 
 
 class Polytempo_Event

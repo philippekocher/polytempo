@@ -48,6 +48,7 @@ void Polytempo_NetworkApplication::initialise(const String& commandLine)
     Polytempo_AudioClick::getInstance();
     Polytempo_MidiClick::getInstance();
     midiInput.reset(new Polytempo_MidiInput());
+    audioPlayer.reset(new Polytempo_AudioPlayer());
 
     // image manager
     Polytempo_ImageManager::getInstance();
@@ -111,6 +112,7 @@ void Polytempo_NetworkApplication::shutdown()
     oscListener = nullptr;
     oscSender = nullptr;
     midiInput = nullptr;
+    audioPlayer = nullptr;
     score = nullptr;
     menuBarModel = nullptr;
 

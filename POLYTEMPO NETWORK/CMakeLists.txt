@@ -31,6 +31,8 @@ target_sources(PolytempoNetwork PRIVATE
     ../Source/Audio+Midi/Polytempo_MidiClick.cpp
     ../Source/Audio+Midi/Polytempo_MidiInput.h
     ../Source/Audio+Midi/Polytempo_MidiInput.cpp
+    ../Source/Audio+Midi/Polytempo_AudioPlayer.h
+    ../Source/Audio+Midi/Polytempo_AudioPlayer.cpp
     ../Source/Data/Polytempo_Score.h
     ../Source/Data/Polytempo_Score.cpp
     ../Source/Network/Polytempo_OSCSender.h
