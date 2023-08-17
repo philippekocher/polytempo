@@ -40,14 +40,18 @@ void Polytempo_LatestVersionChecker::run()
     if(!fetchFromUpdateServer())
     {
         if(showAlert)
-            Polytempo_Alert::show("Error", "Failed to communicate with the update server");
+            MessageManager::callAsync([applicationName]() {
+                Polytempo_Alert::show("Error", "Failed to communicate with the update server");
+            });
         return;
     }
     
     if(!newerVersionAvailable())
     {
         if(showAlert)
-            Polytempo_Alert::show("No new version available", applicationName + " is up to date");
+            MessageManager::callAsync([applicationName]() {
+                Polytempo_Alert::show("No new version available", applicationName + " is up to date");
+            });
         return;
     }
     
@@ -73,7 +77,9 @@ void Polytempo_LatestVersionChecker::run()
     }
 
     if (showAlert)
-        Polytempo_Alert::show("Error", "Failed to find any new downloads. Please try again later.");
+        MessageManager::callAsync([applicationName]() {
+            Polytempo_Alert::show("Error", "Failed to find any new downloads. Please try again later.");
+        });
 }
 
 bool Polytempo_LatestVersionChecker::fetchFromUpdateServer()

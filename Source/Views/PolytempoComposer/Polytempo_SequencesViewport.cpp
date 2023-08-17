@@ -104,7 +104,7 @@ Polytempo_SequenceControlComponent::Polytempo_SequenceControlComponent(int i) : 
     sequenceName.setColour(TextEditor::backgroundColourId, Colours::transparentBlack);
     sequenceName.setColour(TextEditor::highlightedTextColourId, Colours::white);
     sequenceName.setColour(TextEditor::focusedOutlineColourId, Colours::white);
-    sequenceName.setText(Polytempo_Composition::getInstance()->getSequence(sequenceIndex)->getName());
+    sequenceName.setText(Polytempo_Composition::getInstance()->getSequence(sequenceIndex)->getName(), false);
 
     playbackSettingsButton.reset(new Polytempo_Button("Playback Settings"));
     addAndMakeVisible(playbackSettingsButton.get());
@@ -147,8 +147,6 @@ void Polytempo_SequenceControlComponent::paint (Graphics& g)
         g.setColour(Colour(235,235,235));
 
     g.fillRoundedRectangle(5.0f, 10.0f, 92.0f, float(getHeight() - 20), 4.0f);
-
-    sequenceName.setText(composition->getSequence(sequenceIndex)->getName());
 }
 
 void Polytempo_SequenceControlComponent::resized()
@@ -190,6 +188,16 @@ void Polytempo_SequenceControlComponent::mouseDown(const MouseEvent &event)
 void Polytempo_SequenceControlComponent::textEditorTextChanged(TextEditor &editor)
 {
     Polytempo_Composition::getInstance()->getSequence(sequenceIndex)->setName(editor.getText());
+}
+
+void Polytempo_SequenceControlComponent::textEditorReturnKeyPressed(TextEditor &editor)
+{
+    editor.giveAwayKeyboardFocus();
+}
+
+void Polytempo_SequenceControlComponent::textEditorEscapeKeyPressed(TextEditor &editor)
+{
+    editor.giveAwayKeyboardFocus();
 }
 
 void Polytempo_SequenceControlComponent::buttonClicked(Button* button)

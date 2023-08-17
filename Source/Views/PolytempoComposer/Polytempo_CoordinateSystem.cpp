@@ -79,6 +79,7 @@ void Polytempo_CoordinateSystemComponent::eventNotification(Polytempo_Event *eve
 {
     if(event->getType() == eventType_Tick)
     {
+        const MessageManagerLock mml(Thread::getCurrentThread());
         playhead->setRectangle(Rectangle<float>(TIMEMAP_OFFSET + (float)event->getValue() * zoomX, 0, PLAYHEAD_WIDTH, (float)(getHeight())));
     }
     else if(event->getType() == eventType_DeleteAll)

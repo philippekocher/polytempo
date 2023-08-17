@@ -191,7 +191,6 @@ Rational Polytempo_TempoInterpolation::getPosition(float time, Polytempo_Control
         }
     }
     return float(y);
-    //return cp1->position + (cp2->position - cp1->position) * 0.5f;
 }
 
 float Polytempo_TempoInterpolation::getTempo(Rational pos, Polytempo_ControlPoint* cp1, Polytempo_ControlPoint* cp2)
