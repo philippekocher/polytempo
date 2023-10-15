@@ -146,6 +146,7 @@ void Polytempo_NetworkEngine::run()
 
             uint32 syncTime;
             Polytempo_TimeProvider::getInstance()->getSyncTime(&syncTime);
+            syncTime += uint32(interval); // safety
             syncTime += uint32(double(nextScoreEvent->getTime() - scoreTime) / tempoFactor);
 
             if (nextScoreEvent->hasProperty(eventPropertyString_Defer))
