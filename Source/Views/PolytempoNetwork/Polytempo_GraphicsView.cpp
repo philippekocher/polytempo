@@ -59,6 +59,7 @@ void Polytempo_GraphicsView::deleteAll()
 void Polytempo_GraphicsView::clearAll()
 {
     HashMap<String, Polytempo_GraphicsViewRegion*>::Iterator it1(regionsMap);
+    while(it1.next()) { it1.getValue()->clear(); }
 
     annotationLayer->requireUpdate();
 }
