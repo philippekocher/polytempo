@@ -429,9 +429,16 @@ String Polytempo_Score::getJsonString()
                         tempString += "[";
                         for(auto item : *value.getArray())
                         {
-                            tempString += String(double(item), 3);
-                            if(tempString.endsWith("0")) tempString = tempString.dropLastCharacters(1);
-                            if(tempString.endsWith("0")) tempString = tempString.dropLastCharacters(1);
+                            if(item.isDouble())
+                            {
+                                tempString += String(double(item), 3);
+                                if(tempString.endsWith("0")) tempString = tempString.dropLastCharacters(1);
+                                if(tempString.endsWith("0")) tempString = tempString.dropLastCharacters(1);
+                            }
+                            else if(item.isString())
+                                tempString += "\""+item.toString()+"\"";
+                            else
+                                tempString += item.toString();
                             tempString += ", ";
                         }
                         tempString = tempString.trimCharactersAtEnd(", ");
