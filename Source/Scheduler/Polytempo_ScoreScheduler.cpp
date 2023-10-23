@@ -233,7 +233,11 @@ void Polytempo_ScoreScheduler::executeInit()
 void Polytempo_ScoreScheduler::setScore(Polytempo_Score* theScore)
 {
     // reset / delete everything that belongs to an old score
-    engine->kill();
+    if(engine->isRunning()) {
+         Polytempo_EventScheduler::getInstance()->deletePendingEvents();
+         engine->stop();
+         engine->kill();
+     }
     Polytempo_EventScheduler::getInstance()->scheduleEvent(Polytempo_Event::makeEvent(eventType_DeleteAll));
     Polytempo_EventScheduler::getInstance()->scheduleEvent(Polytempo_Event::makeEvent(eventType_TempoFactor, 1.0));
 
