@@ -19,7 +19,7 @@ void Polytempo_ComposerApplication::initialise(const String& commandLine)
     
     // scheduler
     Polytempo_ScoreScheduler::getInstance()->setEngine(new Polytempo_ComposerEngine);
-    Polytempo_EventScheduler::getInstance()->startThread(5); // priority between 0 and 10
+    Polytempo_EventScheduler::getInstance()->startThread(Thread::Priority::normal); // priority between 0 and 10
     
     // network
     oscSender.reset(new Polytempo_OSCSender());

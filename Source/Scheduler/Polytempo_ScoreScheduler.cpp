@@ -84,7 +84,7 @@ void Polytempo_ScoreScheduler::start()
         return;
 
     if (engine->isPausing()) engine->pause(false);
-    else engine->startThread(5); // priority between 0 and 10
+    else engine->startThread(Thread::Priority::normal);
 }
 
 void Polytempo_ScoreScheduler::stop(bool returnToDownbeat)

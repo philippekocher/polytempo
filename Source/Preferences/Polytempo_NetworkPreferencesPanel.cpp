@@ -804,15 +804,27 @@ public:
 
         addAndMakeVisible(midiOutputDeviceList = new ComboBox());
         midiOutputDeviceList->setTextWhenNoChoicesAvailable("No MIDI Outputs Enabled");
-        const StringArray midiOutputs(MidiOutput::getDevices());
-        midiOutputDeviceList->addItemList(midiOutputs, 1);
+        const Array<MidiDeviceInfo> midiOutputs(MidiOutput::getAvailableDevices());
+        StringArray deviceNames;
+        for (auto& d : midiOutputs)
+            deviceNames.add (d.name);
+        midiOutputDeviceList->addItemList(deviceNames, 1);
         midiOutputDeviceList->setEnabled(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("midiClick"));
         midiOutputDeviceList->addListener(this);
 
         // find the device stored in the settings
-        StringArray midiDevices = MidiOutput::getDevices();
-        int index = midiDevices.indexOf(Polytempo_StoredPreferences::getInstance()->getProps().getValue("midiOutputDevice"));
-        if (index < 0) index = 0; // otherwise set first device
+        Array<MidiDeviceInfo> midiDevices = MidiOutput::getAvailableDevices();
+        int index = -1;
+        String idToLookFor = Polytempo_StoredPreferences::getInstance()->getProps().getValue("midiOutputDevice");
+        for(int i = 0; i < midiDevices.size(); i++)
+        {
+            if(midiDevices[i].identifier == idToLookFor)
+            {
+                index = i;
+                break;
+            }
+        }
+        if (index < 0) index = 0; // fallback to first device
         midiOutputDeviceList->setSelectedId(index + 1, dontSendNotification);
 
         addAndMakeVisible(midiChannelLabel = new Label(String(), L"Channel"));
@@ -975,8 +987,8 @@ public:
             int index = midiOutputDeviceList->getSelectedItemIndex();
             Polytempo_MidiClick::getInstance()->setOutputDeviceIndex(index);
 
-            StringArray midiDevices = MidiOutput::getDevices();
-            Polytempo_StoredPreferences::getInstance()->getProps().setValue("midiOutputDevice", midiDevices[index]);
+            Array<MidiDeviceInfo> midiDevices = MidiOutput::getAvailableDevices();
+            Polytempo_StoredPreferences::getInstance()->getProps().setValue("midiOutputDevice", midiDevices[index].identifier);
         }
     }
 
