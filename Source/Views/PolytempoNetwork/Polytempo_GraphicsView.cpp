@@ -44,11 +44,11 @@ void Polytempo_GraphicsView::eventNotification(Polytempo_Event* event)
 
 void Polytempo_GraphicsView::deleteAll()
 {
-    HashMap<String, Polytempo_GraphicsViewRegion*>::Iterator it1(regionsMap);
-    while (it1.next())
+    HashMap<String, Polytempo_GraphicsViewRegion*>::Iterator it(regionsMap);
+    while (it.next())
     {
-        removeChildComponent(it1.getValue());
-        delete(it1.getValue());
+        removeChildComponent(it.getValue());
+        delete(it.getValue());
     }
     regionsMap.clear();
 
@@ -58,8 +58,6 @@ void Polytempo_GraphicsView::deleteAll()
 
 void Polytempo_GraphicsView::clearAll()
 {
-    HashMap<String, Polytempo_GraphicsViewRegion*>::Iterator it1(regionsMap);
-
     annotationLayer->requireUpdate();
 }
 
