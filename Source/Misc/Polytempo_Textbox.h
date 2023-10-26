@@ -90,7 +90,7 @@ public:
 
     void textWasEdited()
     {
-        if (numericalRangeMin == 0 && numericalRangeMax == 0)
+        if (approximatelyEqual(numericalRangeMin, 0.0f) && approximatelyEqual(numericalRangeMax, 0.0f))
             return;
 
         if (getText().getFloatValue() < numericalRangeMin)

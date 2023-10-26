@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.22)
 
-set(CMAKE_OSX_DEPLOYMENT_TARGET "13.0" CACHE STRING "Minimum OSX deployment version")
+if(APPLE)
+    set(CMAKE_OSX_ARCHITECTURES "x86_64;arm64" CACHE STRING "")
+    set(CMAKE_OSX_DEPLOYMENT_TARGET "13.0" CACHE STRING "Minimum OSX deployment version")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,-ld_classic" CACHE STRING "Xcode 15 Linker issue")
+endif()
 
 project(Polytempo)
 

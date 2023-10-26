@@ -81,7 +81,7 @@ void Polytempo_PageEditorComponent::setSectionRect(Rectangle<float> r)
 {
     sectionRect = r;
 
-    if (sectionRect.getWidth() == 0 || sectionRect.getHeight() == 0)
+    if (sectionRect.getWidth() == 0.0 || sectionRect.getHeight() == 0.0)
     {
         for (int i = 0; i < 4; i++) { dragHandles.getUnchecked(i)->setVisible(false); }
     }
@@ -144,7 +144,7 @@ void Polytempo_PageEditorComponent::changeListenerCallback(ChangeBroadcaster*)
 {
     if (!isVisible()) return;
 
-    if (zoomFactor != Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("zoom"))
+    if (!approximatelyEqual((double)zoomFactor, Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("zoom")))
     {
         zoomFactor = (float)Polytempo_StoredPreferences::getInstance()->getProps().getDoubleValue("zoom");
         resized();

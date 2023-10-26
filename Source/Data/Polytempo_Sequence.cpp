@@ -419,13 +419,13 @@ void Polytempo_Sequence::addControlPoint(float t, Rational pos, float tin, float
     if(index == 0) point->start = true;
     if(index > 0 && index < controlPoints.size() - 1)
     {
-        point->tempoIn  = tin == 0 ? controlPoints[index-1]->tempoOut : tin;
-        point->tempoOut = tout == 0 ? controlPoints[index+1]->tempoIn : tout;
+        point->tempoIn  = approximatelyEqual(tin, 0.0f) ? controlPoints[index-1]->tempoOut : tin;
+        point->tempoOut = approximatelyEqual(tout, 0.0f) ? controlPoints[index+1]->tempoIn : tout;
     }
     else
     {
-        point->tempoIn = tin == 0 ? 0.25f : tin;
-        point->tempoOut = tout == 0 ? 0.25f : tout;
+        point->tempoIn = approximatelyEqual(tin, 0.0f) ? 0.25f : tin;
+        point->tempoOut = approximatelyEqual(tout, 0.0f) ? 0.25f : tout;
     }
     
     update();
@@ -664,7 +664,7 @@ bool Polytempo_Sequence::update()
         else if(cp2->start)
         {
             float temp = Polytempo_TempoInterpolation::getTime(event->getPosition(), cp1, cp2);
-            if(temp == cp1->time)
+            if(approximatelyEqual(temp, cp1->time))
                 event->setProperty(eventPropertyString_Time, temp);
             else
                 event->setProperty(eventPropertyString_Time, NAN);

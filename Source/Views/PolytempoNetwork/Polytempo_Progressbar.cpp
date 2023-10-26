@@ -57,14 +57,14 @@ void Polytempo_Progressbar::eventNotification(Polytempo_Event* event)
     // update progress bar on every tick
     if (event->getType() == eventType_Tick)
     {
-        if ((float)event->getValue() == time * 0.001f) elapsedTime = 0;
+        if (approximatelyEqual((float)event->getValue(), time * 0.001f)) elapsedTime = 0;
         else elapsedTime = ((float)event->getValue() - time * 0.001f) / (float)duration;
         MessageManager::callAsync([this]() { repaint(); });
     }
     // update progress bar when jumping to a point in time
     else if (event->getType() == eventType_GotoTime)
     {
-        if ((float)event->getValue() == time * 0.001f) elapsedTime = 0;
+        if (approximatelyEqual((float)event->getValue(), time * 0.001f)) elapsedTime = 0;
         else elapsedTime = ((float)event->getValue() - time * 0.001f) / (float)duration;
         MessageManager::callAsync([this]() { repaint(); });
     }

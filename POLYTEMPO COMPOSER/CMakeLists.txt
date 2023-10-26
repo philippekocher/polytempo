@@ -105,7 +105,8 @@ target_compile_definitions(PolytempoComposer PRIVATE
     JUCE_USE_CURL=0
     JUCE_WEB_BROWSER=0
     JUCE_MODAL_LOOPS_PERMITTED=1
-    POLYTEMPO_COMPOSER=1)
+    POLYTEMPO_COMPOSER=1
+    JUCE_SILENCE_XCODE_15_LINKER_WARNING=1)
 
 
 juce_add_binary_data(PolytempoComposerData SOURCES
