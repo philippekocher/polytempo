@@ -70,11 +70,6 @@ void Polytempo_GraphicsViewRegion::resized()
     {
         progressbar->setBounds(getLocalBounds());
     }
-
-    if (displayedImages.size() == 0)
-        allowAnnotations = false;
-    else
-        allowAnnotations = true;
 }
 
 void Polytempo_GraphicsViewRegion::calculateOffscreenImage()
@@ -185,7 +180,11 @@ void Polytempo_GraphicsViewRegion::clear(bool keepImages)
         repaint();
     });
     
-    if (!keepImages) displayedImages.clear();
+    if (!keepImages) 
+    {
+        displayedImages.clear();
+        allowAnnotations = false;
+    }
 }
 
 void Polytempo_GraphicsViewRegion::setImage(Image* img, var rect, String imageId, bool append)
@@ -208,8 +207,9 @@ void Polytempo_GraphicsViewRegion::setImage(Image* img, var rect, String imageId
     imageRect.setWidth(int(img->getWidth() * float(r[2]))); // width
     imageRect.setHeight(int(img->getHeight() * float(r[3]))); // height
         
-    displayedImages.push_back({img, imageId, imageRect});
-
+    displayedImages.push_back({img, imageId, imageRect, Rectangle<int>(), AffineTransform(), AffineTransform()});
+    allowAnnotations = true;
+    
     calculateOffscreenImage();
 }
 
