@@ -3,6 +3,7 @@
 #include "../../Scheduler/Polytempo_EventObserver.h"
 #include "../../Misc/Polytempo_Textbox.h"
 #include "../../Data/Polytempo_Score.h"
+#include "Polytempo_NetworkView.h"
 #include "Polytempo_ImageManager.h"
 #include "Polytempo_PageEditorComponent.h"
 #include "Polytempo_SectionInstancesComponent.h"
@@ -117,6 +118,7 @@ private:
 };
 
 class Polytempo_PageEditorView : public Component,
+                                 public Polytempo_NetworkView,
                                  public Label::Listener,
                                  public Button::Listener,
                                  public Polytempo_EventObserver
@@ -138,7 +140,7 @@ public:
 	void mouseDown(const MouseEvent &) override; 
 #endif
 
-    void deleteSelected();
+    void deleteSelected() override;
 	void performDeleteSelected();
     void loadImage();
     void addSection(int imgID = 0);

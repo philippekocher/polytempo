@@ -142,7 +142,7 @@ int Polytempo_NetworkWindow::getContentID()
     return currentContentID;
 }
 
-Component* Polytempo_NetworkWindow::getContentComponent()
+Polytempo_NetworkView* Polytempo_NetworkWindow::getContentComponent()
 {
     if (currentContentID == mainViewID) return mainView.get();
     if (currentContentID == pageEditorViewID) return pageEditorView.get();

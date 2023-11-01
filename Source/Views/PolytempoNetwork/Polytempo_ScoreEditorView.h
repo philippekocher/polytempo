@@ -1,10 +1,11 @@
 #pragma once
 
 #include "JuceHeader.h"
+#include "Polytempo_NetworkView.h"
 #include "../../Data/Polytempo_Score.h"
 #include "../../Scheduler/Polytempo_EventObserver.h"
 
-class Polytempo_ScoreEditorView : public Component, public Polytempo_EventObserver
+class Polytempo_ScoreEditorView : public Component, public Polytempo_NetworkView, public Polytempo_EventObserver
 {
 public:
     Polytempo_ScoreEditorView();

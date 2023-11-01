@@ -104,6 +104,7 @@ target_sources(PolytempoNetwork PRIVATE
     ../Source/Views/PolytempoNetwork/Polytempo_NetworkInfoView.cpp
     ../Source/Views/PolytempoNetwork/Polytempo_NetworkMainView.h
     ../Source/Views/PolytempoNetwork/Polytempo_NetworkMainView.cpp
+    ../Source/Views/PolytempoNetwork/Polytempo_NetworkView.h
     ../Source/Views/PolytempoNetwork/Polytempo_Progressbar.h
     ../Source/Views/PolytempoNetwork/Polytempo_Progressbar.cpp
     ../Source/Views/PolytempoNetwork/Polytempo_TimeSyncControl.h
