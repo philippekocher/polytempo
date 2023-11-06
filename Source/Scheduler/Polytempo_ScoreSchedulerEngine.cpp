@@ -181,6 +181,8 @@ void Polytempo_NetworkEngine::run()
         scoreScheduler->gotoTime(lastDownbeat);
         shouldReturnToLastDownbeat = false;
     }
+    
+    if(killed) MessageManager::callAsync([this]() { scoreScheduler->swapScores(); });
 
     Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
     if (app->quitApplication) app->applicationShouldQuit();
