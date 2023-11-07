@@ -179,11 +179,14 @@ void Polytempo_GraphicsViewRegion::clear(bool keepImages)
 {
     contentType = contentType_Empty;
     
-    MessageManager::callAsync([this]() {
-        removeChildComponent(progressbar.get());
-        progressbar = nullptr;
-        repaint();
-    });
+    if (progressbar != nullptr)
+    {
+        MessageManager::callAsync([this]() {
+            removeChildComponent(progressbar.get());
+            progressbar = nullptr;
+            repaint();
+        });
+    }
     
     if (!keepImages) displayedImages.clear();
 }
