@@ -331,6 +331,7 @@ void Polytempo_NetworkApplication::openScoreFile(File aFile)
     if (score && !score->isReady())
     {
         DBG("Can't open file, still loading the previous one...");
+        Polytempo_EventScheduler::getInstance()->scheduleInitEvent(Polytempo_Event::makeEvent(eventType_Ready));
         return;
     }
 
