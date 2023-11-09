@@ -28,7 +28,7 @@ public:
     void setContentID(contentID);
     int getContentID();
 
-    Component* getContentComponent();
+    Polytempo_NetworkView* getContentComponent();
     void performSetContentID();
 
     bool applyChanges();

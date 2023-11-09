@@ -1,6 +1,7 @@
 #pragma once
 
 #include "JuceHeader.h"
+#include "Polytempo_NetworkView.h"
 
 class Polytempo_VisualMetro;
 class Polytempo_GraphicsView;
@@ -12,6 +13,7 @@ class Polytempo_AuxiliaryView;
     your controls and content.
 */
 class Polytempo_NetworkMainView : public Component,
+                                  public Polytempo_NetworkView,
                                   public ChangeListener
 {
 public:

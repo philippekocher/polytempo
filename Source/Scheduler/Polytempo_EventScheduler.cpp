@@ -111,7 +111,7 @@ void Polytempo_EventScheduler::run()
                 if (!event->isOwned()) delete event;
                 scheduledScoreEvents.remove(i);
             }
-            else ++i;
+            else break; // no need to iterate further, these events are sorted by time
         }
         for (int j = 0; j < scheduledEvents.size();)
         {

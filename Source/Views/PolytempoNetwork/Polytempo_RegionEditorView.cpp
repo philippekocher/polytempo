@@ -1,5 +1,6 @@
 #include "Polytempo_RegionEditorView.h"
 #include "../../Application/PolytempoNetwork/Polytempo_NetworkApplication.h"
+#include "../../Scheduler/Polytempo_EventScheduler.h"
 
 #define COORDINATE_VIEW_WIDTH 150
 
@@ -53,7 +54,7 @@ void Polytempo_RegionEditorView::paint(Graphics& g)
     int height = getHeight();
     int index = 0;
 
-    if (selectedRegionID < addRegionEvents.size())
+    if (selectedRegionIdx < addRegionEvents.size())
         for (int i = 0; i < 4; i++) dragHandles.getUnchecked(i)->setVisible(true);
     else
         for (int i = 0; i < 4; i++) dragHandles.getUnchecked(i)->setVisible(false);
@@ -64,7 +65,7 @@ void Polytempo_RegionEditorView::paint(Graphics& g)
 
         Rectangle<int> bounds = Rectangle<int>(int(width * float(rect[0])), int(height * float(rect[1])), int(width * float(rect[2])), int(height * float(rect[3])));
 
-        if (index++ == selectedRegionID)
+        if (index++ == selectedRegionIdx)
         {
             dragHandles.getUnchecked(0)->setCentrePosition(int((bounds.getX() + bounds.getWidth() * 0.5f)), int(bounds.getY()));
 
@@ -128,7 +129,7 @@ void Polytempo_RegionEditorView::refresh()
     if (score == nullptr) return;
 
     addRegionEvents = score->getEvents(eventType_AddRegion);
-    setSelectedRegionID(0);
+    setSelectedRegionIdx(0);
     repaint();
 }
 
@@ -153,12 +154,51 @@ void Polytempo_RegionEditorView::mouseDown(const MouseEvent& event)
 
         i++;
     }
-    if (selectedRegionID != i)
+    if (selectedRegionIdx != i)
     {
-        setSelectedRegionID(i);
+        setSelectedRegionIdx(i);
         repaint();
     }
 }
+
+static void saveOkCancelCallback(int result, Polytempo_RegionEditorView* parent)
+{
+    if (result) parent->performDeleteSelected();
+}
+
+void Polytempo_RegionEditorView::deleteSelected()
+{
+    DBG("delete region..."<<selectedRegionIdx);
+    regionID = addRegionEvents.getUnchecked(selectedRegionIdx)->getProperty(eventPropertyString_RegionID);
+
+    String text("Do you want to remove Region " + regionID.toString() + "?");
+    Polytempo_OkCancelAlert::show("Delete?", text, ModalCallbackFunction::create(saveOkCancelCallback, this));
+}
+
+void Polytempo_RegionEditorView::performDeleteSelected()
+{
+    score->setDirty();
+
+    for (int i = 0; i < addRegionEvents.size(); i++)
+    {
+        if (addRegionEvents[i]->getProperty(eventPropertyString_RegionID) == regionID)
+        {
+            // remove from score
+            score->removeEvent(addRegionEvents[i], true);
+            
+            // make invisible
+            Polytempo_Event* invisibleRegion = Polytempo_Event::makeEvent(eventType_AddRegion);
+            invisibleRegion->setProperty(eventPropertyString_RegionID, regionID);
+            Array<var> r; r.set(0, -1); r.set(1, -1); r.set(2, 1); r.set(3, 1);
+            invisibleRegion->setProperty(eventPropertyString_Rect, r);
+            Polytempo_EventScheduler::getInstance()->scheduleEvent(invisibleRegion);
+
+            break;
+        }
+    }
+    refresh();
+}
+
 
 void Polytempo_RegionEditorView::addRegion()
 {
@@ -188,7 +228,7 @@ void Polytempo_RegionEditorView::addRegion()
     score->setDirty();
 
     addRegionEvents.add(event);
-    setSelectedRegionID(addRegionEvents.size() - 1);
+    setSelectedRegionIdx(addRegionEvents.size() - 1);
 
     repaint();
 }
@@ -234,7 +274,7 @@ void Polytempo_RegionEditorView::labelTextChanged(Label* label)
 {
     if (label == xTextbox || label == yTextbox || label == wTextbox || label == hTextbox)
     {
-        Array<var> r = *addRegionEvents.getUnchecked(selectedRegionID)->getProperty(eventPropertyString_Rect).getArray();
+        Array<var> r = *addRegionEvents.getUnchecked(selectedRegionIdx)->getProperty(eventPropertyString_Rect).getArray();
 
         float num = label->getText().getFloatValue();
         num = num < 0.0f ? 0.0f : num > 1.0f ? 1.0f : num;
@@ -267,22 +307,22 @@ void Polytempo_RegionEditorView::eventNotification(Polytempo_Event* event)
     }
 }
 
-void Polytempo_RegionEditorView::setSelectedRegionID(int id)
+void Polytempo_RegionEditorView::setSelectedRegionIdx(int idx)
 {
-    selectedRegionID = id;
+    selectedRegionIdx = idx;
 
-    if (selectedRegionID < addRegionEvents.size())
+    if (selectedRegionIdx < addRegionEvents.size())
     {
-        if (!addRegionEvents.getUnchecked(selectedRegionID)->hasProperty(eventPropertyString_Rect))
-            addRegionEvents.getUnchecked(selectedRegionID)->setProperty(eventPropertyString_Rect, Polytempo_Event::defaultRectangle());
+        if (!addRegionEvents.getUnchecked(selectedRegionIdx)->hasProperty(eventPropertyString_Rect))
+            addRegionEvents.getUnchecked(selectedRegionIdx)->setProperty(eventPropertyString_Rect, Polytempo_Event::defaultRectangle());
         
-        Array<var> r = *addRegionEvents.getUnchecked(selectedRegionID)->getProperty(eventPropertyString_Rect).getArray();
+        Array<var> r = *addRegionEvents.getUnchecked(selectedRegionIdx)->getProperty(eventPropertyString_Rect).getArray();
 
         xTextbox->setFloat(r[0], dontSendNotification);
         yTextbox->setFloat(r[1], dontSendNotification);
         wTextbox->setFloat(r[2], dontSendNotification);
         hTextbox->setFloat(r[3], dontSendNotification);
-        relativePositionLabel->setText("Region " + addRegionEvents.getUnchecked(selectedRegionID)->getProperty(eventPropertyString_RegionID).toString(), dontSendNotification);
+        relativePositionLabel->setText("Region " + addRegionEvents.getUnchecked(selectedRegionIdx)->getProperty(eventPropertyString_RegionID).toString(), dontSendNotification);
     }
     else
     {
@@ -296,7 +336,7 @@ void Polytempo_RegionEditorView::setSelectedRegionID(int id)
 
 void Polytempo_RegionEditorView::updateSelectedRegion(Array<var> r)
 {
-    addRegionEvents.getUnchecked(selectedRegionID)->setProperty(eventPropertyString_Rect, r);
+    addRegionEvents.getUnchecked(selectedRegionIdx)->setProperty(eventPropertyString_Rect, r);
 
     xTextbox->setFloat(r[0], dontSendNotification);
     yTextbox->setFloat(r[1], dontSendNotification);

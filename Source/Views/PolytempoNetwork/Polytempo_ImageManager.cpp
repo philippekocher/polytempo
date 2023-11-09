@@ -147,9 +147,6 @@ void Polytempo_ImageManager::showLoadStatusWindow(var url)
     loadStatusWindow->setVisible(true);
     if (!loadStatusWindow->isCurrentlyModal())
     {
-        Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
-        Polytempo_NetworkWindow* window = app->getMainWindow();
-        window->getContentComponent()->addChildComponent(loadStatusWindow);
         loadStatusWindow->centreAroundComponent(nullptr,loadStatusWindow->getWidth(), loadStatusWindow->getHeight());
         loadStatusWindow->enterModalState();
     }

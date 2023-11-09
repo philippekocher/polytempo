@@ -30,7 +30,7 @@ void Polytempo_NetworkInfoView::paint(Graphics& g)
         }
         else
         {
-            attributedPeers.append("Connected peers:\n", Font(12, Font::bold));
+            attributedPeers.append("Connected peers ("+String(peers.size())+"):\n", Font(12, Font::bold));
             for (Polytempo_PeerInfo* peer : peers)
             {
                 attributedPeers.append(" \n", Font(4.0f, Font::plain));

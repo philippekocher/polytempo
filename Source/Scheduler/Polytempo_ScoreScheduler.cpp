@@ -232,14 +232,27 @@ void Polytempo_ScoreScheduler::executeInit()
 #ifdef USING_SCORE
 void Polytempo_ScoreScheduler::setScore(Polytempo_Score* theScore)
 {
+    // set new score
+    newScore = theScore;
+
     // reset / delete everything that belongs to an old score
-    engine->kill();
+    if(engine->isRunning()) {
+        Polytempo_EventScheduler::getInstance()->deletePendingEvents();
+        engine->kill();
+    }
+    else swapScores();
+}
+
+void Polytempo_ScoreScheduler::swapScores()
+{
+    if (score == newScore) return;
+    
     Polytempo_EventScheduler::getInstance()->scheduleEvent(Polytempo_Event::makeEvent(eventType_DeleteAll));
     Polytempo_EventScheduler::getInstance()->scheduleEvent(Polytempo_Event::makeEvent(eventType_TempoFactor, 1.0));
 
     // set new score
-    score = theScore;
-    engine->setScore(theScore);
+    score = newScore;
+    engine->setScore(score);
 
     executeInit();
 

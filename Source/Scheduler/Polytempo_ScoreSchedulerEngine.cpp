@@ -146,6 +146,7 @@ void Polytempo_NetworkEngine::run()
 
             uint32 syncTime;
             Polytempo_TimeProvider::getInstance()->getSyncTime(&syncTime);
+            syncTime += uint32(interval); // safety
             syncTime += uint32(double(nextScoreEvent->getTime() - scoreTime) / tempoFactor);
 
             if (nextScoreEvent->hasProperty(eventPropertyString_Defer))
@@ -180,6 +181,8 @@ void Polytempo_NetworkEngine::run()
         scoreScheduler->gotoTime(lastDownbeat);
         shouldReturnToLastDownbeat = false;
     }
+    
+    if(killed) MessageManager::callAsync([this]() { scoreScheduler->swapScores(); });
 
     Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
     if (app->quitApplication) app->applicationShouldQuit();

@@ -332,12 +332,14 @@ void Polytempo_MenuBarModel::getCommandInfo(CommandID commandID, ApplicationComm
 
     case Polytempo_CommandIDs::addRegion:
         result.setInfo("Add Region", "Add a region", infoCategory, 0);
+        result.addDefaultKeypress('R', ModifierKeys::altModifier);
         result.setActive(window->getContentID() == Polytempo_NetworkWindow::regionEditorViewID);
         break;
 
     case Polytempo_CommandIDs::deleteSelected:
         result.setInfo("Delete selected", "Delete the selected item", infoCategory, 0);
-        result.setActive(window->getContentID() == Polytempo_NetworkWindow::pageEditorViewID);
+        result.addDefaultKeypress(KeyPress::backspaceKey, ModifierKeys::commandModifier);
+        result.setActive(window->getContentID() == Polytempo_NetworkWindow::pageEditorViewID || window->getContentID() == Polytempo_NetworkWindow::regionEditorViewID);
         break;
 
         /* view menu
@@ -575,7 +577,7 @@ bool Polytempo_MenuBarModel::perform(const InvocationInfo& info)
         break;
 
     case Polytempo_CommandIDs::deleteSelected:
-        ((Polytempo_PageEditorView*)window->getContentComponent())->deleteSelected();
+        ((Polytempo_NetworkView*)window->getContentComponent())->deleteSelected();
         break;
 
         /* view menu

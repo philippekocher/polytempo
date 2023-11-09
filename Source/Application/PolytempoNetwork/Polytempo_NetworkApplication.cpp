@@ -96,7 +96,8 @@ void Polytempo_NetworkApplication::shutdown()
     if (mainWindow != nullptr) mainWindow->setMenuBar(nullptr);
 
     // save the current size and position to our settings file..
-    Polytempo_StoredPreferences::getInstance()->getProps().setValue("mainWindow", mainWindow->getWindowStateAsString());
+    if(mainWindow != nullptr)
+        Polytempo_StoredPreferences::getInstance()->getProps().setValue("mainWindow", mainWindow->getWindowStateAsString());
     Polytempo_StoredPreferences::getInstance()->getProps().save();
 
     // delete all open windows (except the main window)
@@ -330,6 +331,7 @@ void Polytempo_NetworkApplication::openScoreFile(File aFile)
     if (score && !score->isReady())
     {
         DBG("Can't open file, still loading the previous one...");
+        Polytempo_EventScheduler::getInstance()->scheduleInitEvent(Polytempo_Event::makeEvent(eventType_Ready));
         return;
     }
 
