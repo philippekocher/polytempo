@@ -44,7 +44,7 @@ void Polytempo_ComposerApplication::initialise(const String& commandLine)
 #if (! JUCE_DEBUG)
     // contact web server
     URL url = URL("https://polytempo.zhdk.ch/stats/log.php?application="+getApplicationName()+"&version="+getApplicationVersion()+"&os="+SystemStats::getOperatingSystemName()+"&user="+SystemStats::getFullUserName());
-    auto stream = url.createInputStream(true);
+    auto stream = url.createInputStream(URL::InputStreamOptions(URL::ParameterHandling::inPostData));
 #endif
     
     if (File::isAbsolutePath(commandLine.unquoted()))
