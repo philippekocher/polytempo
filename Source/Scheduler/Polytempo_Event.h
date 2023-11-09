@@ -12,21 +12,21 @@ enum Polytempo_EventType
     
     eventType_Tick,
     eventType_Beat,
-    eventType_Marker, // 4
+    eventType_Marker,
     
     eventType_Start,
     eventType_Stop,
     eventType_Pause,
     
     eventType_GotoMarker,
-    eventType_GotoTime,  // 9
+    eventType_GotoTime,
     eventType_TempoFactor,
     
     eventType_LoadImage,
     eventType_AddRegion,
     eventType_AddSection,
     
-    eventType_Image,  // 14
+    eventType_Image,
     eventType_AppendImage,
     eventType_Text,
     eventType_Progressbar,

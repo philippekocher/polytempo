@@ -44,6 +44,7 @@ public:
      --------------------------------------- */
 #ifdef USING_SCORE
     void setScore(Polytempo_Score* score_);
+    void swapScores();
 #endif
     int getScoreTime();
 
@@ -55,5 +56,6 @@ private:
 
 #ifdef USING_SCORE
     Polytempo_Score* score = nullptr;
+    Polytempo_Score* newScore = nullptr;
 #endif
 };
