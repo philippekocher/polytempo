@@ -4,13 +4,13 @@ on:
   push:
     tags:
     - '[0-9]+.[0-9]+.[0-9]+'
-    - '[0-9]+.[0-9].[0-9]-**'
+    - '[0-9]+.[0-9]+.[0-9]+.[0-9]+'
 
   workflow_dispatch:
     inputs:
       version:
         description: Release Version
-        default: 0.0.1
+        default: 0.0.0.1
         required: true
       
 env:
@@ -28,9 +28,8 @@ jobs:
     name: Prepare
     runs-on: ubuntu-latest
     outputs:
-      release_url: ${{ steps.create_release.outputs.upload_url }}
       version: ${{ steps.get_version.outputs.VERSION }}
-      versionlong: ${{ steps.get_version.outputs.VERSIONLONG }}
+      hasTweak: ${{ steps.get_version.outputs.HASTWEAK }}
     steps:
     - name: Get the version
       id: get_version
@@ -38,26 +37,16 @@ jobs:
       run: |
         [ "${{github.event_name}}" == "workflow_dispatch" ] && v=${{github.event.inputs.version}} || v=${GITHUB_REF/refs\/tags\//}
         va=${v}
-        vb=${v%-*}
-        echo ::set-output name=VERSIONLONG::${va}
-        echo ::set-output name=VERSION::${vb}      
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
-        draft: false
-        prerelease: ${{ steps.get_version.outputs.VERSION != steps.get_version.outputs.VERSIONLONG }}
+        if [[ ${va} =~ [0-9]+\.[0-9]+\.[0-9]+\.[0-9]+ ]]; then hasTweak=true; else hasTweak=false; fi
+        echo "HASTWEAK=${hasTweak}" >> "$GITHUB_OUTPUT" 
+        echo "VERSION=${va}" >> "$GITHUB_OUTPUT"      
     
   build:
     needs: prepare
     name: ${{ matrix.artifact }}
     runs-on: ${{ matrix.os }}
     strategy:
-      fail-fast: ${{ needs.prepare.outputs.version == needs.prepare.outputs.versionlong }} # allow prereleases to be partly built 
+      fail-fast: ${{ needs.prepare.outputs.hasTweak == false }} # allow prereleases to be partly built 
       matrix:
         os: [windows-2019, ubuntu-latest, macos-latest]
         include:
@@ -73,11 +62,10 @@ jobs:
     
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v3
-      
-    - name: Checkout submodules
-      run: git submodule update --init --recursive --depth 1
-      
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+    
     - name: Set Project Version
       shell: bash
       run: |
@@ -114,25 +102,34 @@ jobs:
       run: |
         cmake -E tar cfv "${{ env.PROJECT_NAME_COMPOSER }}.zip" --format=zip "${{env.PROJECT_NAME_COMPOSER}}${{matrix.extension}}"
 
-# upload assets
-    - name: Upload Release Asset (Polytempo Network)
-      id: upload-release-asset-network
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Upload Artifact Polytempo Network
+      uses: actions/upload-artifact@v3
       with:
-        upload_url: ${{ needs.prepare.outputs.release_url }} 
-        asset_path: ${{github.workspace}}/${{ env.BUILD_DIR }}/${{env.NETWORK_DIR}}/${{ env.PROJECT_NAME_NETWORK }}_artefacts/${{ env.BUILD_TYPE }}/${{env.PROJECT_NAME_NETWORK}}.zip
-        asset_name: ${{env.PROJECT_NAME_NETWORK}}_${{ matrix.artifact }}_${{ needs.prepare.outputs.versionlong }}.zip
-        asset_content_type: application/x-executable    
-    
-    - name: Upload Release Asset (Polytempo Composer)
-      id: upload-release-asset-composer
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        path: ${{github.workspace}}/${{ env.BUILD_DIR }}/${{env.NETWORK_DIR}}/${{ env.PROJECT_NAME_NETWORK }}_artefacts/${{ env.BUILD_TYPE }}/${{env.PROJECT_NAME_NETWORK}}.zip
+        name: ${{ env.PROJECT_NAME_NETWORK }}_${{ matrix.artifact }}_CI
+  
+    - name: Upload Artifact Polytempo Composer
+      uses: actions/upload-artifact@v3
       with:
-        upload_url: ${{ needs.prepare.outputs.release_url }} 
-        asset_path: ${{github.workspace}}/${{ env.BUILD_DIR }}/${{env.COMPOSER_DIR}}/${{ env.PROJECT_NAME_COMPOSER }}_artefacts/${{ env.BUILD_TYPE }}/${{env.PROJECT_NAME_COMPOSER}}.zip
-        asset_name: ${{env.PROJECT_NAME_COMPOSER}}_${{ matrix.artifact }}_${{ needs.prepare.outputs.versionlong }}.zip
-        asset_content_type: application/x-executable
+        path: ${{github.workspace}}/${{ env.BUILD_DIR }}/${{env.COMPOSER_DIR}}/${{ env.PROJECT_NAME_COMPOSER }}_artefacts/${{ env.BUILD_TYPE }}/${{env.PROJECT_NAME_COMPOSER}}.zip
+        name: ${{ env.PROJECT_NAME_COMPOSER }}_${{ matrix.artifact }}_CI
+  
+  publish:
+    name: Publish Release
+    needs: [prepare, build]
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download artiacts
+      uses: actions/download-artifact@v3
+      with:
+        path: artifacts
+              
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      with:
+        name: ${{ needs.prepare.outputs.version }}
+        prerelease: ${{ needs.prepare.outputs.hasTweak }}
+        files: |
+          artifacts/*/*
