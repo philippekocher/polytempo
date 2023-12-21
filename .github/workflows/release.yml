@@ -106,13 +106,13 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         path: ${{github.workspace}}/${{ env.BUILD_DIR }}/${{env.NETWORK_DIR}}/${{ env.PROJECT_NAME_NETWORK }}_artefacts/${{ env.BUILD_TYPE }}/${{env.PROJECT_NAME_NETWORK}}.zip
-        name: ${{ env.PROJECT_NAME_NETWORK }}_${{ matrix.artifact }}_CI
+        name: ${{ env.PROJECT_NAME_NETWORK }}_${{ matrix.artifact }}_${{ needs.prepare.outputs.version }}
   
     - name: Upload Artifact Polytempo Composer
       uses: actions/upload-artifact@v3
       with:
         path: ${{github.workspace}}/${{ env.BUILD_DIR }}/${{env.COMPOSER_DIR}}/${{ env.PROJECT_NAME_COMPOSER }}_artefacts/${{ env.BUILD_TYPE }}/${{env.PROJECT_NAME_COMPOSER}}.zip
-        name: ${{ env.PROJECT_NAME_COMPOSER }}_${{ matrix.artifact }}_CI
+        name: ${{ env.PROJECT_NAME_COMPOSER }}_${{ matrix.artifact }}_${{ needs.prepare.outputs.version }}
   
   publish:
     name: Publish Release
@@ -126,6 +126,11 @@ jobs:
       with:
         path: artifacts
               
+    - name: Show content tree
+      shell: bash
+      run: |
+        find . | sed -e "s/[^-][^\/]*\// |/g" -e "s/|\([^ ]\)/|-\1/"
+
     - name: Release
       uses: softprops/action-gh-release@v1
       with:
