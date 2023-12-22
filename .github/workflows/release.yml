@@ -95,23 +95,23 @@ jobs:
     - name: Zip Polytempo Network
       working-directory: ${{github.workspace}}/${{ env.BUILD_DIR }}/${{env.NETWORK_DIR}}/${{ env.PROJECT_NAME_NETWORK }}_artefacts/${{ env.BUILD_TYPE }}
       run: |
-        cmake -E tar cfv "${{ env.PROJECT_NAME_NETWORK }}.zip" --format=zip "${{env.PROJECT_NAME_NETWORK}}${{matrix.extension}}"
+        cmake -E tar cfv "${{ env.PROJECT_NAME_NETWORK }}_${{ matrix.artifact }}_${{ needs.prepare.outputs.version }}.zip" --format=zip "${{env.PROJECT_NAME_NETWORK}}${{matrix.extension}}"
     
     - name: Zip Polytempo Composer
       working-directory: ${{github.workspace}}/${{ env.BUILD_DIR }}/${{env.COMPOSER_DIR}}/${{ env.PROJECT_NAME_COMPOSER }}_artefacts/${{ env.BUILD_TYPE }}
       run: |
-        cmake -E tar cfv "${{ env.PROJECT_NAME_COMPOSER }}.zip" --format=zip "${{env.PROJECT_NAME_COMPOSER}}${{matrix.extension}}"
+        cmake -E tar cfv "${{ env.PROJECT_NAME_COMPOSER }}_${{ matrix.artifact }}_${{ needs.prepare.outputs.version }}.zip" --format=zip "${{env.PROJECT_NAME_COMPOSER}}${{matrix.extension}}"
 
     - name: Upload Artifact Polytempo Network
       uses: actions/upload-artifact@v3
       with:
-        path: ${{github.workspace}}/${{ env.BUILD_DIR }}/${{env.NETWORK_DIR}}/${{ env.PROJECT_NAME_NETWORK }}_artefacts/${{ env.BUILD_TYPE }}/${{env.PROJECT_NAME_NETWORK}}.zip
+        path: ${{github.workspace}}/${{ env.BUILD_DIR }}/${{env.NETWORK_DIR}}/${{ env.PROJECT_NAME_NETWORK }}_artefacts/${{ env.BUILD_TYPE }}/*.zip
         name: ${{ env.PROJECT_NAME_NETWORK }}_${{ matrix.artifact }}_${{ needs.prepare.outputs.version }}
   
     - name: Upload Artifact Polytempo Composer
       uses: actions/upload-artifact@v3
       with:
-        path: ${{github.workspace}}/${{ env.BUILD_DIR }}/${{env.COMPOSER_DIR}}/${{ env.PROJECT_NAME_COMPOSER }}_artefacts/${{ env.BUILD_TYPE }}/${{env.PROJECT_NAME_COMPOSER}}.zip
+        path: ${{github.workspace}}/${{ env.BUILD_DIR }}/${{env.COMPOSER_DIR}}/${{ env.PROJECT_NAME_COMPOSER }}_artefacts/${{ env.BUILD_TYPE }}/*.zip
         name: ${{ env.PROJECT_NAME_COMPOSER }}_${{ matrix.artifact }}_${{ needs.prepare.outputs.version }}
   
   publish:
@@ -121,7 +121,7 @@ jobs:
       contents: write
     runs-on: ubuntu-latest
     steps:
-    - name: Download artiacts
+    - name: Download artifacts
       uses: actions/download-artifact@v3
       with:
         path: artifacts
