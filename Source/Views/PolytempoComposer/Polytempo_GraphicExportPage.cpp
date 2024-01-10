@@ -92,7 +92,7 @@ void Polytempo_GraphicExportPage::drawBarline(int x, int y, int numberOfStaves, 
             if(i>0)
             {
                 tempGlyphs.clear();
-                tempGlyphs.addLineOfText(font, "+", x1, y1 - timeSignatureFontHeight * 0.5f);
+                tempGlyphs.addLineOfText(font, "+", (float)x1, (float)y1 - timeSignatureFontHeight * 0.5f);
                 glyphs.addGlyphArrangement(tempGlyphs);
                 width = tempGlyphs.getBoundingBox(0,-1,true).getWidth();
                 x1 += int(width+1);
@@ -102,12 +102,12 @@ void Polytempo_GraphicExportPage::drawBarline(int x, int y, int numberOfStaves, 
             String den = printableTimeSignature[i*2+1];
 
             tempGlyphs.clear();
-            tempGlyphs.addLineOfText(font, num, x1, 0);
-            tempGlyphs.addLineOfText(font, den, x1, 0);
+            tempGlyphs.addLineOfText(font, num, (float)x1, 0.0f);
+            tempGlyphs.addLineOfText(font, den, (float)x1, 0.0f);
             
             width = tempGlyphs.getBoundingBox(0,-1,true).getWidth();
-            tempGlyphs.justifyGlyphs(0, num.length(), x1, y1 - timeSignatureFontHeight * 1.25f, width, 0, Justification::horizontallyCentred);
-            tempGlyphs.justifyGlyphs(num.length(), den.length(), x1, y1 - timeSignatureFontHeight * 0.5f, width, 0, Justification::horizontallyCentred);
+            tempGlyphs.justifyGlyphs(0, num.length(), (float)x1, (float)y1 - timeSignatureFontHeight * 1.25f, width, 0, Justification::horizontallyCentred);
+            tempGlyphs.justifyGlyphs(num.length(), den.length(), (float)x1, (float)y1 - timeSignatureFontHeight * 0.5f, width, 0, Justification::horizontallyCentred);
 
             glyphs.addGlyphArrangement(tempGlyphs);
             x1 += int(width+1);

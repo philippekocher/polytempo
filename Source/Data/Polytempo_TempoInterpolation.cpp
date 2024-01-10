@@ -1,6 +1,6 @@
 #include "Polytempo_TempoInterpolation.h"
 
-void calculateBezierPoints(Polytempo_ControlPoint* cp1, Polytempo_ControlPoint* cp2, Point<float>* p0, Point<float>* p1, Point<float>* p2, Point<float>* p3)
+static void calculateBezierPoints(Polytempo_ControlPoint* cp1, Polytempo_ControlPoint* cp2, Point<float>* p0, Point<float>* p1, Point<float>* p2, Point<float>* p3)
 {
     // p0 and p3 correlate with cp1 and cp2
     
@@ -148,8 +148,8 @@ Rational Polytempo_TempoInterpolation::getPosition(float time, Polytempo_Control
     calculateBezierPoints(cp1, cp2, &p0, &p1, &p2, &p3);
     
     // no approximation needed
-    if     (time == cp1->time) return cp1->position;
-    else if(time == cp2->time) return cp2->position;
+    if     (approximatelyEqual(time, cp1->time)) return cp1->position;
+    else if(approximatelyEqual(time, cp2->time)) return cp2->position;
     else if(time > cp2->time)  return NAN;
         
     // approximation

@@ -174,68 +174,61 @@ void Polytempo_NetworkSupervisor::setComponent(Component* aComponent)
 
 void Polytempo_NetworkSupervisor::eventNotification(Polytempo_Event* event)
 {
-    switch (event->getType())
+    if(event->getType() == eventType_Open)
     {
 #ifdef POLYTEMPO_NETWORK
-    case eventType_Open:
-        {
-            const MessageManagerLock mml(Thread::getCurrentThread());
+        const MessageManagerLock mml(Thread::getCurrentThread());
 
-            Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
-            if (event->hasProperty(eventPropertyString_URL) || event->hasProperty(eventPropertyString_Value))
-            {
-                String filePath(event->getProperty(eventPropertyString_URL).toString());
-                if (filePath.isEmpty()) filePath = event->getProperty(eventPropertyString_Value).toString();
-                File file(filePath);
-                if (file.existsAsFile())
-                {
-                    // call on the message thread
-                    MessageManager::callAsync([app, filePath]() { app->openScoreFilePath(filePath); });
-                }
-            }
-        }
-        break;
-#endif
-    case eventType_Settings:
+        Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
+        if (event->hasProperty(eventPropertyString_URL) || event->hasProperty(eventPropertyString_Value))
         {
-            if (event->hasProperty("name"))
-                localName.reset(new String(event->getProperty("name").toString()));
-#ifdef POLYTEMPO_NETWORK
-            if (event->hasProperty("brightness"))
+            String filePath(event->getProperty(eventPropertyString_URL).toString());
+            if (filePath.isEmpty()) filePath = event->getProperty(eventPropertyString_Value).toString();
+            File file(filePath);
+            if (file.existsAsFile())
             {
-                Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
-                Polytempo_NetworkWindow* window = app->getMainWindow();
-                window->setBrightness(float(event->getProperty("brightness")));
-            }
-            if (event->hasProperty("fullScreen"))
-            {
-                bool fullScreen = int(event->getProperty("fullScreen")) != 0;
-
                 // call on the message thread
-                MessageManager::callAsync([fullScreen]() {
-
-                    Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
-                    Polytempo_NetworkWindow* window = app->getMainWindow();
-
-                    window->setFullScreen(fullScreen);
-                    });
+                MessageManager::callAsync([app, filePath]() { app->openScoreFilePath(filePath); });
             }
-#endif
         }
-        break;
-    case eventType_DeleteAll:
+#endif
+    }
+    else if(event->getType() == eventType_Settings)
+    {
+        if (event->hasProperty("name"))
         {
-            // reset name
-            localName.reset(nullptr);
+            localName.reset(new String(event->getProperty("name").toString()));
+        }
+        
 #ifdef POLYTEMPO_NETWORK
-            // reset brightness
+        if (event->hasProperty("brightness"))
+        {
             Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
             Polytempo_NetworkWindow* window = app->getMainWindow();
-            window->setBrightness(1.0f);
-#endif
+            window->setBrightness(float(event->getProperty("brightness")));
         }
-        break;
-    default:
-        break;
+        if (event->hasProperty("fullScreen"))
+        {
+            bool fullScreen = int(event->getProperty("fullScreen")) != 0;
+
+            // call on the message thread
+            MessageManager::callAsync([fullScreen]() {
+                Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
+                Polytempo_NetworkWindow* window = app->getMainWindow();
+                window->setFullScreen(fullScreen);
+                });
+        }
+#endif
+    }
+    else if(event->getType() == eventType_DeleteAll)
+    {
+        // reset name
+        localName.reset(nullptr);
+#ifdef POLYTEMPO_NETWORK
+        // reset brightness
+        Polytempo_NetworkApplication* const app = dynamic_cast<Polytempo_NetworkApplication*>(JUCEApplication::getInstance());
+        Polytempo_NetworkWindow* window = app->getMainWindow();
+        window->setBrightness(1.0f);
+#endif
     }
 }

@@ -1,8 +1,15 @@
-cmake_minimum_required(VERSION 3.12)
-
-set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13" CACHE STRING "Minimum OSX deployment version")
+cmake_minimum_required(VERSION 3.22)
 
 project(Polytempo)
+
+if(APPLE)
+    set(CMAKE_OSX_ARCHITECTURES "x86_64;arm64" CACHE STRING "")
+    set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13" CACHE STRING "Minimum OSX deployment version")
+    if(XCODE_VERSION VERSION_GREATER_EQUAL 15)
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-ld_classic")
+        message("Xcode ${XCODE_VERSION} detected, using old linker style")
+    endif()
+endif()
 
 # Disable MSVC pragma warning
 if ( MSVC )

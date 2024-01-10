@@ -106,6 +106,12 @@ public:
         return *this;
     }
     
+    Rational(const Rational& other)
+    {
+        numerator   = other.numerator;
+        denominator = other.denominator;
+    }
+    
     int getNumerator() { return numerator; }
     int getDenominator() { return denominator; }
     

@@ -2,8 +2,7 @@ name: CI
 
 on:  
   pull_request:
-    branches:
-      - master
+    branches: [ "master" ]
       
 env:
   BUILD_TYPE: Release
@@ -34,10 +33,9 @@ jobs:
     
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v2
-      
-    - name: Checkout submodules
-      run: git submodule update --init --recursive --depth 1
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
       
     - if: ${{ runner.os == 'Linux' }}
       name: Install JUCE dependencies (Linux only)
@@ -47,37 +45,37 @@ jobs:
         sudo apt-get install -y g++ libgtk-3-dev libfreetype6-dev libx11-dev libxinerama-dev libxrandr-dev libxcursor-dev mesa-common-dev libasound2-dev freeglut3-dev libxcomposite-dev libcurl4-openssl-dev
         
     - name: Create Build Environment
-      run: cmake -E make_directory ${{runner.workspace}}/${{ env.BUILD_DIR }}
+      run: cmake -E make_directory ${{github.workspace}}/${{ env.BUILD_DIR }}
 
     - name: Configure CMake
       shell: bash
-      working-directory: ${{runner.workspace}}/${{ env.BUILD_DIR }}
+      working-directory: ${{github.workspace}}/${{ env.BUILD_DIR }}
       run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE
 
     - name: Build
-      working-directory: ${{runner.workspace}}/${{ env.BUILD_DIR }}
+      working-directory: ${{github.workspace}}/${{ env.BUILD_DIR }}
       shell: bash
       run: cmake --build . --config $BUILD_TYPE
 
 # upload artifacts
     - name: Zip Polytempo Network
-      working-directory: ${{runner.workspace}}/${{ env.BUILD_DIR }}/${{env.NETWORK_DIR}}/${{ env.PROJECT_NAME_NETWORK }}_artefacts/${{ env.BUILD_TYPE }}
+      working-directory: ${{github.workspace}}/${{ env.BUILD_DIR }}/${{env.NETWORK_DIR}}/${{ env.PROJECT_NAME_NETWORK }}_artefacts/${{ env.BUILD_TYPE }}
       run: |
         cmake -E tar cfv "${{ env.PROJECT_NAME_NETWORK }}.zip" --format=zip "${{env.PROJECT_NAME_NETWORK}}${{matrix.extension}}"
     
     - name: Zip Polytempo Composer
-      working-directory: ${{runner.workspace}}/${{ env.BUILD_DIR }}/${{env.COMPOSER_DIR}}/${{ env.PROJECT_NAME_COMPOSER }}_artefacts/${{ env.BUILD_TYPE }}
+      working-directory: ${{github.workspace}}/${{ env.BUILD_DIR }}/${{env.COMPOSER_DIR}}/${{ env.PROJECT_NAME_COMPOSER }}_artefacts/${{ env.BUILD_TYPE }}
       run: |
         cmake -E tar cfv "${{ env.PROJECT_NAME_COMPOSER }}.zip" --format=zip "${{env.PROJECT_NAME_COMPOSER}}${{matrix.extension}}"
 
     - name: Upload Artifact Polytempo Network
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
-        path: ${{runner.workspace}}/${{ env.BUILD_DIR }}/${{env.NETWORK_DIR}}/${{ env.PROJECT_NAME_NETWORK }}_artefacts/${{ env.BUILD_TYPE }}/${{env.PROJECT_NAME_NETWORK}}.zip
+        path: ${{github.workspace}}/${{ env.BUILD_DIR }}/${{env.NETWORK_DIR}}/${{ env.PROJECT_NAME_NETWORK }}_artefacts/${{ env.BUILD_TYPE }}/${{env.PROJECT_NAME_NETWORK}}.zip
         name: ${{ env.PROJECT_NAME_NETWORK }}_${{ matrix.artifact }}_CI
 
     - name: Upload Artifact Polytempo Composer
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
-        path: ${{runner.workspace}}/${{ env.BUILD_DIR }}/${{env.COMPOSER_DIR}}/${{ env.PROJECT_NAME_COMPOSER }}_artefacts/${{ env.BUILD_TYPE }}/${{env.PROJECT_NAME_COMPOSER}}.zip
+        path: ${{github.workspace}}/${{ env.BUILD_DIR }}/${{env.COMPOSER_DIR}}/${{ env.PROJECT_NAME_COMPOSER }}_artefacts/${{ env.BUILD_TYPE }}/${{env.PROJECT_NAME_COMPOSER}}.zip
         name: ${{ env.PROJECT_NAME_COMPOSER }}_${{ matrix.artifact }}_CI

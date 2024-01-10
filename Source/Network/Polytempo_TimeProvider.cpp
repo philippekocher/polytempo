@@ -197,11 +197,10 @@ void Polytempo_TimeProvider::handleMessage(XmlElement message, Ipc* sender)
         uint32 maxRoundTripFromMaster = uint32(int32(syncParams.getWithDefault("MaxRT", 0)));
         
         // not yet used params:
-        bool isRunning = bool(syncParams.getWithDefault("IsRunning", false));
-        int scoreTime = int(syncParams.getWithDefault("ScoreTime", 0.0));
+        // bool isRunning = bool(syncParams.getWithDefault("IsRunning", false));
+        // int scoreTime = int(syncParams.getWithDefault("ScoreTime", 0.0));
         
         sender->setRemoteNames(senderScoreName, senderPeerName);
-
         handleTimeSyncMessage(senderId, argMasterTime, timeIndex, maxRoundTripFromMaster);
     }
 }

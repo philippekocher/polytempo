@@ -178,7 +178,7 @@ bool Polytempo_Score::setTime(int time, Array<Polytempo_Event*> *events, float *
             
             // find the first event that has the same time as the downbeat
             j=i;
-            while(j>0 && sections[currentSectionIndex]->events[--j]->getTime() == tempTime) i=j;
+            while(j>0 && sections[currentSectionIndex]->events[--j]->getTime() == (int)tempTime) i=j;
             nextEventIndex = i;
             
             done = true;

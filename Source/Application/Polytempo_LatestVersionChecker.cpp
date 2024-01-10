@@ -18,7 +18,7 @@ void Polytempo_LatestVersionChecker::checkForNewVersion(bool userInteraction)
     if (!isThreadRunning())
     {
         showAlert = userInteraction;
-        startThread(3);
+        startThread(Priority::background);
     }
 }
 
@@ -85,7 +85,7 @@ void Polytempo_LatestVersionChecker::run()
 bool Polytempo_LatestVersionChecker::fetchFromUpdateServer()
 {
     URL serverURL ("https://api.github.com/repos/philippekocher/polytempo/releases/latest");
-    std::unique_ptr<InputStream> inStream(serverURL.createInputStream (false, nullptr, nullptr, {}, 5000));
+    std::unique_ptr<InputStream> inStream(serverURL.createInputStream (URL::InputStreamOptions(URL::ParameterHandling::inAddress).withConnectionTimeoutMs(5000)));
 
     if(inStream == nullptr)
         return false;

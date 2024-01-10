@@ -11,10 +11,19 @@ Polytempo_MidiClick::Polytempo_MidiClick()
     cueVelocity = Polytempo_StoredPreferences::getInstance()->getProps().getIntValue("midiCueVelocity");
     channel = Polytempo_StoredPreferences::getInstance()->getProps().getIntValue("midiChannel");
 
-    StringArray midiDevices = MidiOutput::getDevices();
-    outputDeviceIndex = midiDevices.indexOf(Polytempo_StoredPreferences::getInstance()->getProps().getValue("midiOutputDevice"));
-    if (outputDeviceIndex < 0) outputDeviceIndex = 0;
-    midiOutput = MidiOutput::openDevice(outputDeviceIndex);
+    Array<MidiDeviceInfo> midiDevices = MidiOutput::getAvailableDevices();
+    MidiDeviceInfo midiDevice = midiDevices.getFirst();
+    String idToLookFor = Polytempo_StoredPreferences::getInstance()->getProps().getValue("midiOutputDevice");
+    for(int i = 0; i < midiDevices.size(); i++)
+    {
+        if(midiDevices[i].identifier == idToLookFor)
+        {
+            midiDevice = midiDevices[i];
+            break;
+        }
+    }
+    
+    midiOutput = MidiOutput::openDevice(midiDevice.identifier);
 }
 
 Polytempo_MidiClick::~Polytempo_MidiClick()
@@ -93,5 +102,7 @@ void Polytempo_MidiClick::setChannel(int value) { channel = value; }
 void Polytempo_MidiClick::setOutputDeviceIndex(int value)
 {
     outputDeviceIndex = value;
-    midiOutput = MidiOutput::openDevice(outputDeviceIndex);
+    auto devices = MidiOutput::getAvailableDevices();
+    MidiDeviceInfo midiDevice = value < devices.size() ? devices[value] : devices.getFirst();
+    midiOutput = MidiOutput::openDevice(midiDevice.identifier);
 }

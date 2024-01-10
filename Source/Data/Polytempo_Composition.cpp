@@ -229,7 +229,7 @@ void Polytempo_Composition::findCoincidingControlPoints()
                 int jj = -1;
                 while((controlPoint1 = sequence1->getControlPoint(++jj)) != nullptr)
                 {
-                    if(controlPoint0->time == controlPoint1->time)  controlPoint0->isCoinciding = true;
+                    if(approximatelyEqual(controlPoint0->time, controlPoint1->time))  controlPoint0->isCoinciding = true;
                 }
             }
         }

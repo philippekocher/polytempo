@@ -1,6 +1,7 @@
 [submodule "JUCE"]
 	path = JUCE
 	url = https://github.com/juce-framework/JUCE
+	branch = main
 [submodule "min-api"]
 	path = Max/source/min-api
 	url = https://github.com/Cycling74/min-api.git

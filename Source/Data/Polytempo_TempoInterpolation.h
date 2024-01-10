@@ -79,7 +79,7 @@ public:
 class ControlPointTimeComparator
 {
 public:
-    static int compareElements(Polytempo_ControlPoint* v1, Polytempo_ControlPoint* v2) throw()
+    static int compareElements(Polytempo_ControlPoint* v1, Polytempo_ControlPoint* v2) noexcept
     {
         float t1 = v1->time;
         float t2 = v2->time;

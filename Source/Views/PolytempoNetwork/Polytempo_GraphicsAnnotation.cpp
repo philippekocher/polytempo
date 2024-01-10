@@ -5,11 +5,6 @@ Polytempo_GraphicsAnnotation::Polytempo_GraphicsAnnotation()
     clear();
 }
 
-Polytempo_GraphicsAnnotation::~Polytempo_GraphicsAnnotation()
-{
-    clear();
-}
-
 void Polytempo_GraphicsAnnotation::clear()
 {
     m_color = Colours::black;

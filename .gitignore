@@ -1,6 +1,7 @@
 # Exclude the build directory
 build/
 build.*/
+build-*/
 
 # Exclude OS X folder attributes
 .DS_Store

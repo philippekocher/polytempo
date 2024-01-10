@@ -142,7 +142,7 @@ void Polytempo_VisualMetro::paint(Graphics& g)
 
 void Polytempo_VisualMetro::timerCallback()
 {
-    if (width == 0) return;
+    if (approximatelyEqual(width, 0.0f)) return;
 
     // stop when a new beat event is overdue
     if (pos > 1.1f && !linear)

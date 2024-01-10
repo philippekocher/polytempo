@@ -185,7 +185,7 @@ private:
 class Polytempo_EventComparator
 {
 public:
-    static int compareElements(Polytempo_Event* e1, Polytempo_Event* e2) throw()
+    static int compareElements(Polytempo_Event* e1, Polytempo_Event* e2) noexcept
     {
         float t1 = float(e1->getTime());
         float t2 = float(e2->getTime());

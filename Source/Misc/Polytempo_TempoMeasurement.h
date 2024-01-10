@@ -15,8 +15,8 @@ public:
 
         // round to max. 3 decimal places
         float value = absoluteTempo / Rational(tokens[0]).toFloat() * tokens[1].getFloatValue();
-        value = int(value * 1000 + 0.5);
-        return value / 1000;
+        value = (float)(int(value * 1000.0f + 0.5f));
+        return value / 1000.0f;
     }
 
     static float encodeTempoFromUI(float displayedTempo)

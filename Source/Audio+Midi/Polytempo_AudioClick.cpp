@@ -41,7 +41,7 @@ public:
         double cyclesPerSecond = MidiMessage::getMidiNoteInHertz(midiNoteNumber);
         double cyclesPerSample = cyclesPerSecond / getSampleRate();
 
-        angleDelta = cyclesPerSample * 2.0 * double_Pi;
+        angleDelta = cyclesPerSample * 2.0 * MathConstants<double>::pi;
     }
 
     void stopNote(float /*velocity*/, bool /*allowTailOff*/) override
@@ -207,7 +207,7 @@ void Polytempo_AudioClick::writeClickforEvent(Polytempo_Event* event, AudioBuffe
         double currentAngle = 0;
         double cyclesPerSecond = MidiMessage::getMidiNoteInHertz(pitch);
         double cyclesPerSample = cyclesPerSecond / sampleRate;
-        double angleDelta = cyclesPerSample * 2.0 * double_Pi;
+        double angleDelta = cyclesPerSample * 2.0 * MathConstants<double>::pi;
         float sig;
         
         int sample = int(event->getTime() * 0.001 * sampleRate + sampleOffset);

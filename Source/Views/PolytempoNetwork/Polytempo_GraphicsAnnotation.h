@@ -25,8 +25,6 @@ public:
     {
     }
 
-    ~Polytempo_GraphicsAnnotation();
-
     void clear();
 
     Uuid m_id;

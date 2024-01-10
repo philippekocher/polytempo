@@ -37,7 +37,7 @@ void Polytempo_NetworkApplication::initialise(const String& commandLine)
 
     // scheduler
     Polytempo_ScoreScheduler::getInstance()->setEngine(new Polytempo_NetworkEngine());
-    Polytempo_EventScheduler::getInstance()->startThread(8); // priority between 0 and 10
+    Polytempo_EventScheduler::getInstance()->startThread(Thread::Priority::high);
 
     // create network connection
     oscListener.reset(new Polytempo_OSCListener(POLYTEMPO_NETWORK_PORT_APP));
@@ -60,10 +60,10 @@ void Polytempo_NetworkApplication::initialise(const String& commandLine)
     if(Polytempo_StoredPreferences::getInstance()->getProps().getBoolValue("checkForNewVersion"))
         Polytempo_LatestVersionChecker::getInstance()->checkForNewVersion(false);
 
-    #if (! JUCE_DEBUG)
+#if (! JUCE_DEBUG)
     // contact web server
     URL url = URL("https://polytempo.zhdk.ch/stats/log.php?application="+getApplicationName()+"&version="+getApplicationVersion()+"&os="+SystemStats::getOperatingSystemName()+"&user="+SystemStats::getFullUserName());
-    auto stream = url.createInputStream(true);
+    auto stream = url.createInputStream(URL::InputStreamOptions(URL::ParameterHandling::inPostData));
 #endif
     
     if (File::isAbsolutePath(commandLine.unquoted()))
