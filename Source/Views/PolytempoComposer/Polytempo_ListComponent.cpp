@@ -46,8 +46,10 @@ void Polytempo_ListComponent::paintRowBackground(Graphics& g, int /*rowNumber*/,
 
     if(focusRow >= 0)
     {
-        EditableTextCustomComponent* cell = ((EditableTextCustomComponent*)table->getCellComponent(1, focusRow));
-        if(cell != nullptr) cell->showEditor();
-        focusRow = -1;
+        MessageManager::callAsync([this]() {
+            EditableTextCustomComponent* cell = ((EditableTextCustomComponent*)table->getCellComponent(1, focusRow));
+            if(cell != nullptr) cell->showEditor();
+            focusRow = -1;
+        });
     }
 }
