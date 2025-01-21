@@ -78,6 +78,8 @@ target_sources(PolytempoNetwork PRIVATE
     ../Source/Views/PolytempoNetwork/Polytempo_GraphicsPalette.cpp
     ../Source/Views/PolytempoNetwork/Polytempo_AuxiliaryView.h
     ../Source/Views/PolytempoNetwork/Polytempo_AuxiliaryView.cpp
+    ../Source/Views/PolytempoNetwork/Polytempo_Cursor.h
+    ../Source/Views/PolytempoNetwork/Polytempo_Cursor.cpp
     ../Source/Views/PolytempoNetwork/Polytempo_GraphicsAnnotation.h
     ../Source/Views/PolytempoNetwork/Polytempo_GraphicsAnnotation.cpp
     ../Source/Views/PolytempoNetwork/Polytempo_GraphicsAnnotationManager.h

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Polytempo_Progressbar.h"
+#include "Polytempo_Cursor.h"
 
 enum Polytempo_ViewContentType
 {
@@ -58,6 +59,9 @@ public:
     void setProgressbar(String text,
                         int time,
                         float duration = 0);
+    void setCursor(int time,
+                   float x = 0,
+                   float incr = 0);
 
     void setMaxImageZoom(float maxZoom);
     void setLayout(String layout);
@@ -95,6 +99,7 @@ private:
 
     std::unique_ptr<String> text;
     std::unique_ptr<Polytempo_Progressbar> progressbar;
+    std::unique_ptr<Polytempo_Cursor> cursor;
     float imageZoom = 1;
     float maxImageZoom = -1;
 

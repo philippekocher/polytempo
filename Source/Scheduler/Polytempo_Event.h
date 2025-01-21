@@ -30,6 +30,7 @@ enum Polytempo_EventType
     eventType_AppendImage,
     eventType_Text,
     eventType_Progressbar,
+    eventType_Cursor,
     
     eventType_LoadAudio,
     eventType_Audio,
@@ -72,6 +73,7 @@ enum Polytempo_EventType
 #define eventTypeString_AppendImage     "appendImage"
 #define eventTypeString_Text            "text"
 #define eventTypeString_Progressbar     "progressbar"
+#define eventTypeString_Cursor          "cursor"
 
 #define eventTypeString_LoadAudio       "loadAudio"
 #define eventTypeString_Audio           "audio"
@@ -112,6 +114,8 @@ enum Polytempo_EventType
 #define eventPropertyString_Linear      "linear"
 #define eventPropertyString_Cue         "cue"
 #define eventPropertyString_Gain        "gain"
+#define eventPropertyString_Incr        "incr"
+#define eventPropertyString_X           "x"
 
 
 class Polytempo_Event

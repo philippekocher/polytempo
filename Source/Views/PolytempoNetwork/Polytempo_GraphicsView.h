@@ -24,6 +24,7 @@ private:
     void displayImage(Polytempo_Event* event);
     void displayText(Polytempo_Event* event);
     void displayProgessbar(Polytempo_Event* event);
+    void displayCursor(Polytempo_Event* event);
 
     HashMap<String, Polytempo_GraphicsViewRegion*> regionsMap;
     HashMap<String, var> sectionBoundsMap;

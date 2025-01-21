@@ -21,6 +21,7 @@ Polytempo_GraphicsViewRegion::~Polytempo_GraphicsViewRegion()
 {
     text = nullptr;
     progressbar = nullptr;
+    cursor = nullptr;
 
     Polytempo_GraphicsAnnotationManager::getInstance()->removeChangeListener(this);
 }
@@ -236,6 +237,19 @@ void Polytempo_GraphicsViewRegion::setProgressbar(String txt, int time, float du
     progressbar->setBounds(getLocalBounds().reduced(15, 10)); // inset rect
     addAndMakeVisible(progressbar.get());
     repaint();
+}
+
+void Polytempo_GraphicsViewRegion::setCursor(int time, float x, float incr)
+{
+    const MessageManagerLock mml(Thread::getCurrentThread());
+
+    if(cursor == nullptr) cursor.reset(new Polytempo_Cursor());
+    addAndMakeVisible(cursor.get());
+
+    cursor->setTime(time);
+    cursor->setX(x);
+    cursor->setIncrement(incr);
+    cursor->setBounds(getLocalBounds());
 }
 
 void Polytempo_GraphicsViewRegion::setMaxImageZoom(float maxZoom)

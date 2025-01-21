@@ -170,7 +170,8 @@ bool Polytempo_Score::setTime(int time, Array<Polytempo_Event*> *events, float *
         if((eventType == eventType_Beat &&
             (int(event->getProperty(eventPropertyString_Pattern)) < 20 ||
              int(event->getProperty(eventPropertyString_Cue)) > 0))
-            || eventType == eventType_Progressbar
+           || eventType == eventType_Progressbar
+           || eventType == eventType_Cursor
            || (eventType == eventType_Image && imageEvent != nullptr))
         {
             tempTime = imageEvent == nullptr ? float(event->getTime()) : float(imageEvent->getTime());

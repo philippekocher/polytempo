@@ -40,6 +40,7 @@ void Polytempo_GraphicsView::eventNotification(Polytempo_Event* event)
     else if (event->getType() == eventType_AppendImage) displayImage(event);
     else if (event->getType() == eventType_Text) displayText(event);
     else if (event->getType() == eventType_Progressbar) displayProgessbar(event);
+    else if (event->getType() == eventType_Cursor) displayCursor(event);
 }
 
 void Polytempo_GraphicsView::deleteAll()
@@ -163,5 +164,20 @@ void Polytempo_GraphicsView::displayProgessbar(Polytempo_Event* event)
     Polytempo_GraphicsViewRegion* region = regionsMap[event->getProperty(eventPropertyString_RegionID)];
     int time = event->hasDefinedTime() ? event->getTime() : Polytempo_ScoreScheduler::getInstance()->getScoreTime();
     region->setProgressbar(String(event->getValue().toString()), time, event->getProperty("duration"));
+    MessageManager::callAsync([region]() { region->repaint(); });
+}
+
+void Polytempo_GraphicsView::displayCursor(Polytempo_Event* event)
+{
+    if (!regionsMap.contains(event->getProperty(eventPropertyString_RegionID)))
+        return; // invalid region id
+
+    annotationLayer->requireUpdate();
+
+    Polytempo_GraphicsViewRegion* region = regionsMap[event->getProperty(eventPropertyString_RegionID)];
+    int time = event->hasDefinedTime() ? event->getTime() : Polytempo_ScoreScheduler::getInstance()->getScoreTime();
+    region->setCursor(time,
+                      event->getProperty(eventPropertyString_X),
+                      event->getProperty(eventPropertyString_Incr));
     MessageManager::callAsync([region]() { region->repaint(); });
 }
