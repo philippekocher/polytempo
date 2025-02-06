@@ -102,6 +102,7 @@ private:
     std::unique_ptr<Polytempo_Cursor> cursor;
     float imageZoom = 1;
     float maxImageZoom = -1;
+    float actualImageWidth;
 
     bool allowAnnotations;
 };

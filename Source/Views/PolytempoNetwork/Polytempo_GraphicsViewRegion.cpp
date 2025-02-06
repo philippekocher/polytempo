@@ -71,6 +71,15 @@ void Polytempo_GraphicsViewRegion::resized()
     {
         progressbar->setBounds(getLocalBounds());
     }
+    
+    if(cursor != nullptr) {
+        cursor->setBounds(getLocalBounds());
+        if(contentType == contentType_Image)
+            cursor->setUsedWidth(actualImageWidth);
+        else
+            cursor->setUsedWidth(getWidth());
+    }
+
 }
 
 void Polytempo_GraphicsViewRegion::calculateOffscreenImage()
@@ -163,6 +172,7 @@ void Polytempo_GraphicsViewRegion::calculateOffscreenImage()
     }
 
     offscreenImage.reset(tempOffscreenImage);
+    actualImageWidth = totalWidth * imageZoom;
 }
 
 void Polytempo_GraphicsViewRegion::setRelativeBounds(const Rectangle<float>& newBounds)
@@ -250,6 +260,11 @@ void Polytempo_GraphicsViewRegion::setCursor(int time, float x, float incr)
     cursor->setX(x);
     cursor->setIncrement(incr);
     cursor->setBounds(getLocalBounds());
+    
+    if(contentType == contentType_Image)
+        cursor->setUsedWidth(actualImageWidth);
+    else
+        cursor->setUsedWidth(getWidth());
 }
 
 void Polytempo_GraphicsViewRegion::setMaxImageZoom(float maxZoom)

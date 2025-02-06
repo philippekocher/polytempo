@@ -14,11 +14,13 @@ public:
     void setTime(int time);
     void setX(float x);
     void setIncrement(float incr);
+    void setUsedWidth(float width);
 
     void eventNotification(Polytempo_Event* event) override;
 
 private:
     int time;
     float increment, elapsedTime;
+    float usedWidth;
     OwnedArray<class Rectangle<float>> regionBounds;
 };
