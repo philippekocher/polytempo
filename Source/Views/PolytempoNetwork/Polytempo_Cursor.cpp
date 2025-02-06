@@ -14,14 +14,14 @@ Polytempo_Cursor::~Polytempo_Cursor()
 
 void Polytempo_Cursor::paint(Graphics& g)
 {
-    Rectangle<int> bounds = getLocalBounds();
     g.setColour(Colours::blue.withAlpha(0.4f));
-    g.drawVerticalLine((int)(bounds.getWidth() * elapsedTime), 0.0f, (float)getHeight());
+    g.drawVerticalLine((int)(elapsedTime * usedWidth), 0.0f, (float)getHeight());
 }
 
 void Polytempo_Cursor::setTime(int time_) { time = time_; }
 void Polytempo_Cursor::setX(float x) { elapsedTime = x; }
 void Polytempo_Cursor::setIncrement(float incr) { increment = incr; }
+void Polytempo_Cursor::setUsedWidth(float width) { usedWidth = width; }
 
 void Polytempo_Cursor::eventNotification(Polytempo_Event* event)
 {
@@ -32,7 +32,10 @@ void Polytempo_Cursor::eventNotification(Polytempo_Event* event)
 
         if (tick <= time * 0.001f) elapsedTime = 0;
         else elapsedTime = (tick - time * 0.001f) * (float)increment;
-        MessageManager::callAsync([this]() { repaint(); });
+        if(elapsedTime <= 1.0f)
+        {
+            MessageManager::callAsync([this]() { repaint(); });
+        }
     }
     // update progress bar when jumping to a point in time
     else if (event->getType() == eventType_GotoTime)

@@ -14,6 +14,8 @@ Polytempo_GraphicsViewRegion::Polytempo_GraphicsViewRegion(var id)
     contentYAlignment = contentYAlignment_Center;
     allowAnnotations = false;
 
+    cursor.reset(new Polytempo_Cursor());
+
     Polytempo_GraphicsAnnotationManager::getInstance()->addChangeListener(this);
 }
 
@@ -163,6 +165,9 @@ void Polytempo_GraphicsViewRegion::calculateOffscreenImage()
     }
 
     offscreenImage.reset(tempOffscreenImage);
+    
+    cursor->setUsedWidth(totalWidth * imageZoom);
+
 }
 
 void Polytempo_GraphicsViewRegion::setRelativeBounds(const Rectangle<float>& newBounds)
@@ -222,6 +227,8 @@ void Polytempo_GraphicsViewRegion::setText(String text_)
     clear();
     contentType = contentType_Text;
     text.reset(new String(text_));
+
+    cursor->setUsedWidth(getWidth());
 }
 
 void Polytempo_GraphicsViewRegion::setProgressbar(String txt, int time, float duration)
@@ -243,7 +250,6 @@ void Polytempo_GraphicsViewRegion::setCursor(int time, float x, float incr)
 {
     const MessageManagerLock mml(Thread::getCurrentThread());
 
-    if(cursor == nullptr) cursor.reset(new Polytempo_Cursor());
     addAndMakeVisible(cursor.get());
 
     cursor->setTime(time);
